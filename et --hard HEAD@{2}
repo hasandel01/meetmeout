@@ -1,0 +1,34 @@
+[33m4296989[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: commit: Hub Debug
+[33me9ade27[m HEAD@{1}: commit: debugging
+[33m484ee5f[m HEAD@{2}: rebase (finish): returning to refs/heads/main
+[33m484ee5f[m HEAD@{3}: commit (amend): Github Debugging.
+[33mb7ca24f[m HEAD@{4}: rebase (edit): Github Debugging.
+[33m121ac5e[m HEAD@{5}: commit (amend): Github debugging.
+[33m58b0729[m HEAD@{6}: rebase (edit): Github debugging.
+[33m8919fbd[m HEAD@{7}: commit (amend): User update is implemented. Like, Comment, and Review system structure is implemented.
+[33m477e35b[m HEAD@{8}: rebase (edit): User update is implemented. Like, Comment, and Review system structure is implemented.
+[33mf7923af[m HEAD@{9}: commit (amend): Badge system is updated, user profile UI is redisgned.
+[33m3b51acc[m HEAD@{10}: rebase (edit): Badge system is updated, user profile UI is redisgned.
+[33m6006fab[m HEAD@{11}: commit (amend): Event joining, leaving logic is implemented. Notification UI is designed. Improvemeents on UI implemented, and userService is created. API calls renewed (interceptorps are added)
+[33m0a14385[m HEAD@{12}: rebase (edit): Event joining, leaving logic is implemented. Notification UI is designed. Improvemeents on UI implemented, and userService is created. API calls renewed (interceptorps are added)
+[33m842c6c5[m HEAD@{13}: commit (amend): Software architecture is renewed and switched to the CSS modules. Event creation is updated, log-in and registering logic is renewed. Toast is implemented. ProtectedRoutes are implemented.
+[33me39b452[m HEAD@{14}: commit (amend): Software architecture is renewed and switched to the CSS modules. Event creation is updated, log-in and registering logic is renewed. Toast is implemented. ProtectedRoutes are implemented.
+[33mdebf0f4[m HEAD@{15}: rebase (edit): Software architecture is renewed and switched to the CSS modules. Event creation is updated, log-in and registering logic is renewed. Toast is implemented. ProtectedRoutes are implemented.
+[33m94faaed[m HEAD@{16}: commit (amend): WebSocket based notification service and global search are implemented.
+[33m9e8d549[m HEAD@{17}: rebase (edit): WebSocket based notification service and global search are implemented.
+[33m7fe0d5b[m HEAD@{18}: commit (amend): ReadME.md file is added.
+[33mf699155[m HEAD@{19}: rebase (edit): Initial commit
+[33m113300a[m HEAD@{20}: commit (amend): Initial commit. Security and routing implemented. Companion logic is implemented.
+[33m3c568da[m HEAD@{21}: rebase: fast-forward
+[33m25105b2[m HEAD@{22}: rebase (start): checkout 25105b28437caea9ca46437c6816079d13b5e140
+[33me8953ce[m HEAD@{23}: reset: moving to HEAD
+[33me8953ce[m HEAD@{24}: commit: Github Debugging.
+[33m0c42296[m HEAD@{25}: commit: Github debugging.
+[33m8465bc0[m HEAD@{26}: commit: User update is implemented. Like, Comment, and Review system structure is implemented.
+[33mcdf8b93[m HEAD@{27}: commit: Badge system is updated, user profile UI is redisgned.
+[33m49125d9[m HEAD@{28}: commit: Event joining, leaving logic is implemented. Notification UI is designed. Improvemeents on UI implemented, and userService is created. API calls renewed (interceptorps are added)
+[33m32f3c5c[m HEAD@{29}: commit: Software architecture is renewed and switched to the CSS modules. Event creation is updated, log-in and registering logic is renewed. Toast is implemented. ProtectedRoutes are implemented.
+[33m5554240[m HEAD@{30}: commit: WebSocket based notification service and global search are implemented.
+[33m8884ca2[m HEAD@{31}: pull origin main --allow-unrelated-histories: Merge made by the 'ort' strategy.
+[33m3c568da[m HEAD@{32}: Branch: renamed refs/heads/master to refs/heads/main
+[33m3c568da[m HEAD@{34}: commit (initial): Initial commit. Security and routing implemented. Companion logic is implemented.

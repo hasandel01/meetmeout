@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.service;
 
 
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.mappers.UserMapper;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.repository.UserRepository;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,6 +33,7 @@ public class UserService {
     private final CloudStorageService cloudStorageService;
 
     private final CompanionService companionService;
+    private final EmailSenderService emailSenderService;
 
     public UserDTO getMe() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -69,13 +73,48 @@ public class UserService {
         Set<Long> companionIds = companions.stream().map(UserDTO::id).collect(Collectors.toSet());
 
 
-        List<UserDTO> filteredUsers = users.stream()
+        return users.stream()
                 .filter(user -> !user.getId().equals(currentUser.getId()))
                 .filter(user -> !companionIds.contains(user.getId()))
                 .map(UserMapper::toUserDTO)
                 .toList();
-
-        return filteredUsers;
     }
 
+    public UserDTO updateMe(UserDTO userDTO) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Optional<User> anyOtherUser = userRepository.findByEmail(userDTO.email());
+
+        if(anyOtherUser.isPresent() && !anyOtherUser.get().getId().equals(user.getId())) {
+            throw new UserIsRegisteredException("User already registered");
+        } else {
+
+            if(!user.getEmail().equals(userDTO.email())) {
+
+                String verificationToken = UUID.randomUUID().toString();
+
+                emailSenderService.sendEmail(userDTO.email(), "Please verify your email",
+                        "Click the link to verify your account: http://localhost:5173/verify?token=" + verificationToken);
+
+                user.setEmail(userDTO.email());
+                user.setVerificationToken(verificationToken);
+                user.setEmailVerified(false);
+            }
+
+            user.setUsername(userDTO.username());
+            user.setPhone(userDTO.phone());
+            user.setAbout(userDTO.about());
+            user.setFirstName(userDTO.firstName());
+            user.setLastName(userDTO.lastName());
+
+            userRepository.save(user);
+        }
+
+
+        return userDTO;
+    }
 }

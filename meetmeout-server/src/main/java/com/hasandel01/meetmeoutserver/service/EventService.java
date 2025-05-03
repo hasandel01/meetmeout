@@ -2,13 +2,17 @@ package com.hasandel01.meetmeoutserver.service;
 
 
 import com.hasandel01.meetmeoutserver.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.dto.ReviewDTO;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.event.Comment;
+import com.hasandel01.meetmeoutserver.event.Like;
+import com.hasandel01.meetmeoutserver.event.Review;
 import com.hasandel01.meetmeoutserver.mappers.EventMapper;
 import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.models.User;
-import com.hasandel01.meetmeoutserver.repository.EventRepository;
-import com.hasandel01.meetmeoutserver.repository.UserRepository;
+import com.hasandel01.meetmeoutserver.repository.*;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,11 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import java.util.*;
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,6 +32,9 @@ public class EventService {
     private final EventRepository eventRepository;
     private final CloudStorageService cloudStorageService;
     private final NotificationService notificationService;
+    private final LikeRepository likeRepository;
+    private final ReviewRepository reviewRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Event createEvent(EventDTO event) {
@@ -81,6 +84,13 @@ public class EventService {
 
     public Set<EventDTO> getEvents(EventStatus status) {
         if (status == null) {
+
+            log.info("Status is null");
+
+            List<Event> events = eventRepository.findAll();
+
+            events.forEach(event -> System.out.println(event.getLikes()));
+
             return EventMapper.toEventsDto(eventRepository.findAll());
         } else {
             return EventMapper.toEventsDto( eventRepository.findByStatus(status));
@@ -147,6 +157,109 @@ public class EventService {
             user.getOrganizedEvents().remove(event);
             eventRepository.delete(event);
         }
+        return null;
+    }
+
+    @Transactional
+    public Void likeEvent(long eventId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        Optional<Like> like = likeRepository.findByUserAndEvent(user,event);
+
+        if(like.isPresent()) {
+            likeRepository.delete(like.get());
+        }else {
+            Like newLike = Like.builder().user(user).event(event).build();
+            likeRepository.save(newLike);
+        }
+
+        return null;
+    }
+
+    public Void addReviewToEvent(@Valid long eventId, ReviewDTO reviewDTO) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+
+        Review review = Review.builder()
+                .reviewer(user)
+                .event(event)
+                .content(reviewDTO.content())
+                .title(reviewDTO.title())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .rating(reviewDTO.rating())
+                .build();
+
+
+        reviewRepository.save(review);
+
+        return null;
+    }
+
+    public Void deleteReviewFromEvent(long eventId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+
+        Optional<Review> review = reviewRepository.findByReviewerAndEvent(user,event);
+
+
+        review.ifPresent(reviewRepository::delete);
+
+        return null;
+    }
+
+
+    public Void addComment(@Valid long eventId, Comment commentDTO) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+
+        Comment comment = Comment.builder()
+                .event(event)
+                .sender(user)
+                .comment(commentDTO.getComment())
+                .sentAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        commentRepository.save(comment);
+
+        return null;
+    }
+
+    public Void deleteComment(long commentId) {
+
+        Optional<Comment> comment = commentRepository.findById(commentId);
+
+        comment.ifPresent(commentRepository::delete);
+
         return null;
     }
 }

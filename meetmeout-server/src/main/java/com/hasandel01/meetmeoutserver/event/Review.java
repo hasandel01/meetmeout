@@ -3,7 +3,12 @@ package com.hasandel01.meetmeoutserver.event;
 
 import com.hasandel01.meetmeoutserver.models.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +18,9 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
 
     @Id
@@ -22,6 +30,10 @@ public class Review {
     private String title;
 
     private String content;
+
+    @Min(1)
+    @Max(5)
+    private int rating;
 
     @ManyToOne
     private User reviewer;

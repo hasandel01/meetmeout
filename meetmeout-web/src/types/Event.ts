@@ -1,6 +1,6 @@
 
 import { User } from './User';
-
+import { Like, Comment, Review} from './Like';
 
 export interface Event {
     id: number;
@@ -21,4 +21,8 @@ export interface Event {
     attendees: User[];
     organizer: User | null;
     addressName: string;
+    likes: Like[];
+    comments: Comment[];
+    reviews: Review[];
+
 }

@@ -1,0 +1,19 @@
+.formContainer {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 100%;
+    padding: 50px;
+    z-index: 1;
+    background-color: rgba(128, 128, 128, 0.4);
+    box-shadow: 2px 2px 5px gray;
+}
+
+
+.formContainer form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

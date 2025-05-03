@@ -5,6 +5,7 @@ import styles from "./UserProfile.module.css";
 import { faCamera, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
+import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
 
 const UserProfile = () => {
 
@@ -62,7 +63,13 @@ const UserProfile = () => {
                 if (file) {
                     formData.append("profilePicture", file);
                     try {
-                        const response = await axiosInstance.post("/update/profile-picture", formData);
+                        const response = await axiosInstance.post("/update/profile-picture", formData,
+                            {
+                                headers: {
+                                "Content-Type": "multipart/form-data"
+                              }
+                            }
+                        );
                         
                         console.log("Profile picture updated successfully:", response.data);
                         getUserProfile();
@@ -81,13 +88,12 @@ const UserProfile = () => {
 
 
     const updateProfile = async () => {
-
-
-
+        setShowUserUpdateForm(prev => !prev);
     }
 
     return (
         <div className={styles.userProfile}>
+            {user && showUserUpdateForm && <UserUpdateForm currentUser={user} />}
             <div className={styles.userProfileHeader}>
                 <div className={styles.userProfileDetails}>
                     <FontAwesomeIcon 
@@ -125,7 +131,6 @@ const UserProfile = () => {
                         </span>
                     </div>
                     </div>
-
                 </div>
                 <div className={styles.badgeContainer}>
                     <div>

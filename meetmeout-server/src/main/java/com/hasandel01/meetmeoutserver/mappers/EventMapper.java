@@ -33,6 +33,9 @@ public class EventMapper {
                 .attendees(event.getAttendees().stream().map(UserMapper::toUserDTO).collect(Collectors.toSet()))
                 .organizer(UserMapper.toUserDTO(event.getOrganizer()))
                 .addressName(event.getAddressName())
+                .likes(event.getLikes().stream().map(LikeMapper::toLikeDTO).collect(Collectors.toSet()))
+                .comments(event.getComments().stream().map(CommentMapper::toCommentDTO).collect(Collectors.toSet()))
+                .reviews(event.getReviews().stream().map(ReviewMapper::toReviewDTO).collect(Collectors.toSet()))
                 .build();
     }
 

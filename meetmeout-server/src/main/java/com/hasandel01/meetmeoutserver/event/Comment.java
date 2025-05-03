@@ -3,7 +3,10 @@ package com.hasandel01.meetmeoutserver.event;
 
 import com.hasandel01.meetmeoutserver.models.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,6 +16,9 @@ import java.time.LocalDateTime;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Comment {
 
     @Id
@@ -21,9 +27,6 @@ public class Comment {
 
     private String comment;
 
-    @CreatedDate
-    private LocalDateTime sentAt;
-
     @ManyToOne
     private User sender;
 
@@ -31,7 +34,7 @@ public class Comment {
     private Event event;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime sentAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;

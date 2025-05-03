@@ -8,7 +8,7 @@ import { Forecast } from "../../../types/Forecast";
 import {User} from '../../../types/User';
 import styles from './EventDetails.module.css'
 import { faCalendar, faLocationDot} from "@fortawesome/free-solid-svg-icons";
-import { faHeart, faShare, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 
@@ -38,7 +38,10 @@ const EventDetails = () => {
         addressName: '',
         category: '',
         longitude: 0,
-        latitude: 0
+        latitude: 0,
+        likes: [],
+        comments: [],
+        reviews: []
     });
     const [weather, setWeather] = useState<Forecast | null>(null);
 
@@ -124,9 +127,20 @@ const EventDetails = () => {
 
 }
 
-const isDisabled = (event: Event) => {
-  return event.attendees.some(element => element.username === currentUser?.username)
-}
+  const isDisabled = (event: Event) => {
+    return event.attendees.some(element => element.username === currentUser?.username)
+  }
+
+  const likeEvent = async () => {
+
+    try {
+        const response = await axiosInstance.post(`/like-event/${eventId.eventId}`);
+
+    } catch(error) {
+
+    }
+
+  }
 
   return (
     <div className={styles.eventContainer}>
@@ -167,15 +181,14 @@ const isDisabled = (event: Event) => {
                             </div>
                       )}
                       <div className={styles.eventActions}>
-                                    <button className="heart-button">
+                                    <button className="heart-button" onClick={likeEvent}>
                                         <FontAwesomeIcon icon={faHeart} className="heart-icon" />
                                     </button>
-                                    <button className="share-button">
-                                        <FontAwesomeIcon icon={faShare} className="share-icon" />
-                                    </button>
+                                    <p>{event.likes?.length}</p>
                                     <button className="comment-button">
                                         <FontAwesomeIcon icon={faComment} className="comment-icon" />
                                     </button>
+                                    <p>{event.comments?.length}</p>
                                      <button disabled={isDisabled(event)}
                                             onClick={() => handleJoinEvent(event.id)} 
                                             className={styles.joinButton}>

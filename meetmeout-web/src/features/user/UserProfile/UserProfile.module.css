@@ -1,6 +1,5 @@
 .userProfile {
     position: relative;
-    top: ;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,8 +28,14 @@
     align-items: center;
     justify-content: center;
     right: 10px;
+    padding: 5px;
     cursor: pointer;
     font-size: 16px;
+    border-radius: 50%;
+}
+
+.updateIcon:hover {
+    background-color: #d4d3d3;
 }
 
 .userProfileDetails img {

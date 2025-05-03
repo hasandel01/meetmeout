@@ -3,11 +3,17 @@ package com.hasandel01.meetmeoutserver.event;
 
 import com.hasandel01.meetmeoutserver.models.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@Table(name= "app_like")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "app_like")
 public class Like {
 
     @Id

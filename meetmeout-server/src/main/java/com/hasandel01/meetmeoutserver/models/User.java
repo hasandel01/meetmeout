@@ -1,7 +1,10 @@
 package com.hasandel01.meetmeoutserver.models;
 
 
+import com.hasandel01.meetmeoutserver.event.Comment;
 import com.hasandel01.meetmeoutserver.event.Event;
+import com.hasandel01.meetmeoutserver.event.Like;
+import com.hasandel01.meetmeoutserver.event.Review;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -96,5 +99,20 @@ public class User implements UserDetails {
     boolean emailVerified = false;
 
     private String verificationToken;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Like> likes = new HashSet<>();
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Review> reviews = new HashSet<>();
 
 }

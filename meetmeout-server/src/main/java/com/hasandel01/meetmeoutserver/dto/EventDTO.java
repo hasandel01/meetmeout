@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.event.Like;
 import com.hasandel01.meetmeoutserver.models.User;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,5 +32,8 @@ public record EventDTO(
         Set<UserDTO> attendees,
         UserDTO organizer,
         String addressName,
-        MultipartFile eventImage) {
+        MultipartFile eventImage,
+        Set<LikeDTO> likes,
+        Set<CommentDTO> comments,
+        Set<ReviewDTO> reviews) {
 }

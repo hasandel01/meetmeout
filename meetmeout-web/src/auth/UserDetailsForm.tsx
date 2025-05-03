@@ -4,7 +4,6 @@ import styles from'./Form.module.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ToastContainer } from 'react-toastify';
 
 interface UserDetailsFormProps {
     email: string;

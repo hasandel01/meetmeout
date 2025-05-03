@@ -2,9 +2,12 @@ package com.hasandel01.meetmeoutserver.controller;
 
 
 import com.hasandel01.meetmeoutserver.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.dto.ReviewDTO;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.event.Comment;
 import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -87,6 +90,54 @@ public class EventController {
     public ResponseEntity<Void> leaveEvent(@PathVariable long eventId) {
         try {
             return ResponseEntity.ok(eventService.leaveEvent(eventId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @PostMapping("/like-event/{eventId}")
+    public ResponseEntity<Void> likeEvent(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.likeEvent(eventId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/add-review/{eventId}")
+    public ResponseEntity<Void> addReview(@Valid @PathVariable long eventId, @RequestBody ReviewDTO reviewDTO) {
+        try {
+            return ResponseEntity.ok(eventService.addReviewToEvent(eventId, reviewDTO));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/delete-review/{eventId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.deleteReviewFromEvent(eventId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @PostMapping("/add-comment/{eventId}")
+    public ResponseEntity<Void> addComment(@Valid @PathVariable long eventId, @RequestBody Comment comment) {
+        try {
+            return ResponseEntity.ok(eventService.addComment(eventId, comment));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @PostMapping("/delete-comment/{commentId}")
+    public ResponseEntity<Void> deleteComment(@PathVariable long commentId) {
+        try {
+            return ResponseEntity.ok(eventService.deleteComment(commentId));
         }catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();
         }

@@ -34,7 +34,10 @@ const CreateEvent = () => {
         addressName: '',
         category: '',
         longitude: 0,
-        latitude: 0
+        latitude: 0,
+        likes: [],
+        comments: [],
+        reviews: []
     });
 
 

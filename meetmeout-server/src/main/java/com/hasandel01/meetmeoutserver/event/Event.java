@@ -71,13 +71,19 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventStatus status;
 
-    @OneToMany
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "event",  cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Like> likes = new HashSet<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Review> reviews = new HashSet<>();
 
     @CreatedDate

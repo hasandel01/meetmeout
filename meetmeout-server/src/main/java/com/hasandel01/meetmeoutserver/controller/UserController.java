@@ -64,4 +64,14 @@ public class UserController {
         }
     }
 
+
+    @PostMapping("/me/update")
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
+        try {
+            return ResponseEntity.ok(userService.updateMe(userDTO));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

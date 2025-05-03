@@ -53,7 +53,7 @@ public class Event {
     @EqualsAndHashCode.Exclude
     private User organizer;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "event_participants",
             joinColumns = @JoinColumn(name = "event_id"),
@@ -62,6 +62,7 @@ public class Event {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<User> attendees = new HashSet<>();
+
     private int maximumCapacity;
 
     private boolean isPrivate;

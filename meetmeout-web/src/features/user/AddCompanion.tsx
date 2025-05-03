@@ -10,11 +10,7 @@ const AddCompanion = () => {
     const getAllUsers = async () => {
 
         try {
-            const response = await axiosInstance.get(`/all-users-except-companions`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const response = await axiosInstance.get(`/all-users-except-companions`);
             console.log("All users fetched successfully:", response.data);
             setUsers(response.data);
         } catch (error) {
@@ -27,12 +23,7 @@ const AddCompanion = () => {
     const handleAddCompanion = async (receiverEmail: string) => {
         try {
             const response = await axiosInstance.post(`/add-a-companion/${encodeURIComponent(receiverEmail)}`,
-                null,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                });
+                null);
             console.log("Friend request is sent:", response.data);
         }
         catch (error) {

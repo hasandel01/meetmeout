@@ -24,6 +24,8 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private Long EXPIRATION;
 
+    @Value("${jwt.refresh.expiration}")
+    private Long REFRESH_EXPIRATION;
 
     public String generateToken(Map<String, Object> claims, UserDetails userDetails)  {
 
@@ -78,6 +80,22 @@ public class JwtService {
 
     public String getSubject(String token) {
         return parseToken(token, Claims::getSubject);
+    }
+
+    public String generateRefreshToken(Map<String, Object> claims, UserDetails userDetails) {
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
+                .signWith(getKey(), Jwts.SIG.HS256)
+                .compact();
+
+    }
+
+    public String generateRefreshToken(User user) {
+        return generateRefreshToken(new HashMap<>(), user);
     }
 
 }

@@ -4,7 +4,7 @@
     flex-direction: column;
     align-items: center;
     background-color: #f0f0f0;
-    padding: 20px;
+    padding: 10px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -19,12 +19,13 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: yellow;
 }
 
 
 .userProfileDetails img {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     margin-bottom: 20px;
     margin-right: 20px;
@@ -54,6 +55,7 @@
     overflow: hidden;
     cursor: pointer;
     border-radius: 50%;
+    background-color: green;
 }
 
 .profilePicture {

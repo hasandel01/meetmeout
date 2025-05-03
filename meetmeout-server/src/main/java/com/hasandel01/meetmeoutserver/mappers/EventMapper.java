@@ -4,6 +4,7 @@ import com.hasandel01.meetmeoutserver.dto.EventDTO;
 import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.models.User;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,7 +36,7 @@ public class EventMapper {
                 .build();
     }
 
-    public static Set<EventDTO> toEventsDto(final Set<Event> events) {
+    public static Set<EventDTO> toEventsDto(final List<Event> events) {
         if(events == null) return null;
 
         return events.stream().map(EventMapper::toEventDto).collect(Collectors.toSet());

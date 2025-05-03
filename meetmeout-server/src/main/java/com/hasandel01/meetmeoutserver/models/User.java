@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @Transient
     private Set<User> companions = new HashSet<>();
 
-    @ManyToMany(mappedBy = "attendees")
+    @ManyToMany(mappedBy = "attendees", cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Event> participatedEvents = new HashSet<>();

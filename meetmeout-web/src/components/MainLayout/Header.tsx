@@ -25,7 +25,6 @@ const Header = () => {
     const size = 20;
 
 
-    /* State variables for search results */
     const [users, setUsers] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
 
@@ -35,12 +34,13 @@ const Header = () => {
   
     useEffect(() => {
         getMe();
+        getNotifications();
       }
     , []); 
   
   
       const handleSignOut = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("accessToken");
         navigate("/login");
     }
     
@@ -48,13 +48,7 @@ const Header = () => {
     
         try {
     
-            const response = await axiosInstance.get("/me", 
-              {
-                headers: {
-                  Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-              }
-            );
+            const response = await axiosInstance.get("/me");
             setUser(response.data);
         } catch(error) {
           console.error("Error fetching user data:", error);
@@ -72,12 +66,7 @@ const Header = () => {
             {
               params: {
                 query: query,
-              },
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              },
-            } 
-          )
+              }})
 
           setUsers(response.data.users);
           setEvents(response.data.events);
@@ -91,7 +80,7 @@ const Header = () => {
       const handleSearchBlur = () => {
         setTimeout(() => {
           setShowSearchResults(false);
-        }, 200); // Delay to allow click event to register
+        }, 200); 
       }
 
       const handleSearchFocus = () => {
@@ -108,7 +97,7 @@ const Header = () => {
 
     useEffect(() => {
         
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('accessToken');
         const socket = new SockJS(`http://localhost:8081/ws?token=${token}`);
 
         const client = new Client({
@@ -135,21 +124,18 @@ const Header = () => {
         };
     }, []);
 
-
     const getNotifications = async () => {
         try {
-            const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+            const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
             setNotifications(response.data.content);
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
     }
       
-      
+    const goToNoticationUrl = (index: number) => {
+      navigate(`${notifications.at(index)?.url}`)
+    }      
 
     return (
         <header> 
@@ -230,22 +216,26 @@ const Header = () => {
                         <label> Companions </label>
                       </span>
 
-                      <span className={styles.navItem}>
-                        <FontAwesomeIcon icon={faBell} size="2x" onClick={handleNotifications} />
+                      <span className={styles.navItem} onClick={handleNotifications}>
+                        <FontAwesomeIcon icon={faBell} size="2x"  />
                         <label> Notifications </label>
-                        {notifications.length > 0 && (
+                        {notifications
+                        .filter((notification) => {notification.read === false})
+                        .length > 0 && (
                           <span className={styles.notificationBadge}>{notifications.length}</span>
                         )}
                       </span>
                       {showNotifications && (
                                   <div className={styles.notificationDropdown}>
-                                  <h2>Notifications</h2>
-                                  {notifications.length === 0 && <p>No notifications</p>}
-                                  {notifications.map((notification, index) => (
-                                      <div key={index} className='notification-item'>
-                                          <p>{notification.title}</p>
-                                          <p>{notification.body}</p>
-                                      </div>
+                                  {notifications.length < 1 && <p>No notifications</p>}
+                                  {notifications
+                                  .map((notification, index) => (
+                                      <ul key={index} onClick={() => goToNoticationUrl(index)}>
+                                          <li>
+                                            <h4>{notification.title}</h4>
+                                            <p>{notification.body}</p>
+                                          </li>
+                                      </ul>
                                   ))}
                                   </div>    
                       )}

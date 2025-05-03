@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Form.module.css';
 import { Link } from 'react-router-dom';
 
-
 const Login = ()  => {
 
     const [username, setUsername] = useState('');
@@ -23,14 +22,16 @@ const Login = ()  => {
                 password: password,
             });
 
-            const {token} = response.data;
-            console.log(token);
-            localStorage.setItem('token', token);
+            const { accessToken, refreshToken } = response.data;
+
+            console.log(response.data);
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
             navigate('/');
 
         } catch (err) {
             console.error(err);
-            setError('Invalid email or password');
+            setError('Invalid username or password');
         }
 
     }

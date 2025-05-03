@@ -10,6 +10,7 @@ import com.hasandel01.meetmeoutserver.models.RegisterRequest;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -70,7 +72,8 @@ public class AuthenticationService {
         }
 
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        var refreshToken = jwtService.generateRefreshToken(user);
+        return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
@@ -85,10 +88,12 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder().token(jwtToken).build();
+        var jwtRefreshToken = jwtService.generateRefreshToken(user);
+
+        return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(jwtRefreshToken).build();
     }
 
-    public Boolean checkUser(Map<String, String> payload) {
+    public Boolean   checkUser(Map<String, String> payload) {
 
         String email = payload.get("email");
 
@@ -123,4 +128,22 @@ public class AuthenticationService {
                 .build();
     }
 
+    public AuthenticationResponse validateRefreshToken(String refreshToken) {
+
+        String username = jwtService.getSubject(refreshToken);
+
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found"));
+
+        if(!jwtService.isTokenValid(refreshToken, user)) {
+            throw new RuntimeException("Invalid refresh token");
+        }
+
+        var newAccessToken = jwtService.generateToken(user);
+        return AuthenticationResponse
+                .builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
 }

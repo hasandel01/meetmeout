@@ -8,11 +8,7 @@ const PendingFriendRequests = () => {
 
     const getPendingRequests = async () => {
         try {
-            const response = await axiosInstance.get(`/get-pending-requests`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const response = await axiosInstance.get(`/get-pending-requests`);
             console.log("Pending friend requests fetched successfully:", response.data);
             setFriendRequests(response.data);
         } catch (error) {
@@ -29,11 +25,7 @@ const PendingFriendRequests = () => {
 
     const handleAcceptRequest = async (senderEmail: string) => {
         try {
-            const response = await axiosInstance.post(`/accept-companion-request/${senderEmail}`, null, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const response = await axiosInstance.post(`/accept-companion-request/${senderEmail}`, null);
             console.log("Companion request accepted:", response.data);
             setFriendRequests((prevRequests) => prevRequests.filter((request) => request.sender.email !== senderEmail));
         } catch (error) {
@@ -43,11 +35,7 @@ const PendingFriendRequests = () => {
 
     const handleRejectRequest = async (senderEmail: string) => {
         try {
-            const response = await axiosInstance.post(`/reject-companion-request/${senderEmail}`, null, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
+            const response = await axiosInstance.post(`/reject-companion-request/${senderEmail}`, null);
             console.log("Companion request rejected:", response.data);
             setFriendRequests((prevRequests) => prevRequests.filter((request) =>  request.sender.email !== senderEmail));
         }
@@ -61,7 +49,6 @@ const PendingFriendRequests = () => {
             <h2>Pending Friend Requests</h2>
             <ul className="friend-requests-list">
                 {friendRequests
-                .filter((request) => request.status === "PENDING")
                 .map((request) => (
                     <li key={request.id} className="friend-request-item">
                         <img src={request.sender.profilePictureUrl} alt="User" className="user-picture" />

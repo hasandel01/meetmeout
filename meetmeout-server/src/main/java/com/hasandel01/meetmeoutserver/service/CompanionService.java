@@ -41,6 +41,9 @@ public class CompanionService {
 
         Set<User> friends = friendRequestRepository.findAcceptedFriends(user.getId());
 
+        if(friends.isEmpty())
+            return new ArrayList<>();
+
         return friends.stream()
                 .map(friend -> UserDTO.builder()
                         .id(friend.getId())
@@ -49,7 +52,7 @@ public class CompanionService {
                         .lastName(friend.getLastName())
                         .email(friend.getEmail())
                         .companions(UserMapper.toUserDTOSet(friend.getCompanions()))
-                        .events(EventMapper.toEventsDto(friend.getParticipatedEvents()))
+                        .events(EventMapper.toEventsDto(friend.getParticipatedEvents().stream().toList()))
                         .profilePictureUrl(friend.getProfilePictureUrl())
                         .phone(friend.getPhone())
                         .bio(friend.getBio())
@@ -89,8 +92,6 @@ public class CompanionService {
         String receiverUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User receiver = userRepository.findByUsername(receiverUsername).orElseThrow();
         User sender = userRepository.findByEmail(senderEmail).orElseThrow();
-
-        log.info("Accepting request from {} to {}", senderEmail, receiver.getEmail());
 
         FriendRequest request = friendRequestRepository
                 .findBySenderAndReceiver(sender, receiver)

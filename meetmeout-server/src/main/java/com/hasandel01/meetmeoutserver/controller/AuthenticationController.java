@@ -72,4 +72,14 @@ public class AuthenticationController {
     }
 
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> getRefreshToken(@RequestBody Map<String, String> payload) {
+        try {
+            return ResponseEntity.ok(authenticationService.validateRefreshToken(payload.get("refreshToken")));
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
 }

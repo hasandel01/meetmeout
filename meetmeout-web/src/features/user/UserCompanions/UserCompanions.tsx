@@ -14,7 +14,7 @@ const UserCompanions = () => {
     const [companions, setCompanions] = useState<User[]>([]);
     const navigate = useNavigate();
 
-        const goToUserProfile = async (username: string) => {
+        const goToUserProfile = (username: string) => {
             try {
                 navigate(`/user-profile/${username}`);
             }
@@ -26,12 +26,7 @@ const UserCompanions = () => {
     
         const getCompanions = async () => {
             try {
-                const response = await axiosInstance.get(`/${username}/companions`, {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                  });
-            
+                const response = await axiosInstance.get(`/${username}/companions`);
                 console.log("Companion profile fetched successfully:", response.data);
                 setCompanions(response.data );
             }
@@ -42,12 +37,7 @@ const UserCompanions = () => {
 
         const getMe = async () => {
             try {
-                const response = await axiosInstance.get(`/me`, {
-                    headers: {
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                  });
-            
+                const response = await axiosInstance.get(`/me`);
                 console.log("Current user fetched successfully:", response.data);
                 setCurrentUser(response.data);
             }

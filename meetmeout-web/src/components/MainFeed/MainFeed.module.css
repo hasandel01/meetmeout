@@ -1,14 +1,24 @@
-body{
-    background-color: var(--error-color);
+body {
 }
 
+.mainFeedContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.mainFeedContainer header {
+    position: relative;
+    display: flex;
+    background-color: #1976d2;
+}
 
 .onGoingEventsContainer{
+    position: relative;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
     padding: 20px;
-    background-color: red;
+    gap: 10px;
     overflow: auto;
     justify-items: center;
     align-items: start;
@@ -20,14 +30,15 @@ body{
     justify-content: center;
     align-items: center;
     background-color: #f0f0f0;
-    border-radius: 8px;
+    border-radius: 16px;
     padding: 16px;
-    margin: 8px;
+    margin: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
-    width: 250px;
-    height: 250px;
     cursor: pointer;
+    width: 300px;
+    height: 300px;
+    gap: 5px;
 }
 
 .eventCard img {
@@ -55,18 +66,97 @@ body{
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
+
+.eventTitle {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 10px;
+}
+
+.eventTitle h2 {
+    font-size: 14px;
+    margin: 0;
+}
+
+.eventCategory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: #00796b solid 1px;
+    color: #00796b;
+}
+
+/* EVENT TIME, DATE & LOCATION */
+
+.eventTimeDate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.eventTimeDate span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.eventLocation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.icon {
+    font-size: 18px;
+    color: var(--primary-color-dark);
+    margin: 0;
+}
+
+p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.tags p {
+    color: var(--primary-color-dark);
+    font-weight: bolder;
+}
+
 /** EventStatus **/
 
 .eventStatus {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e0f7fa;
+    background-color: white;
     border-radius: 4px;
-    padding: 4px 8px;
+    padding: 2px 4px;
     font-size: 12px;
-    color: #00796b;
+    color: var(--error-color);
+    border: 1px solid red;
 }
+
+.eventStatus.ONGOING {
+    background-color: rgb(223, 248, 223);
+    color: green;
+    border: 1px solid green;
+}
+
+.eventStatus.FULL {
+    background-color: #ffe0b2;
+    color: orange;
+    border: 1px solid orange;
+}
+
+/* TO BE IMPLEMENTED */
 
 .eventStatus.completed {
     background-color: #ffecb3;
@@ -77,41 +167,18 @@ body{
     color: #d32f2f;
 }
 
-.eventStatus.ongoing {
-    background-color: #bbdefb;
-    color: #1976d2;
-}
 
 .eventStatus.draft {
     background-color: #e1bee7;
     color: #8e24aa;
 }
 
-.eventStatus.full {
-    background-color: #ffe0b2;
-    color: #f57c00;
-}
-
-.eventTimeDate {
-    display: flex;
-    flex-direction: row;
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-.eventTimeDate span {
-    display: flex;
-    flex-direction: row;
-    margin-top: 2px;
-    font-size: 12px;
-}
-
+/* EVENT BUTTON */
 
 .eventActions {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 8px;
 }
 
 .eventActions button {
@@ -130,16 +197,6 @@ body{
     background-color: #1565c0;
 }
 
-.eventCategory {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
-    border: #00796b solid 1px;
-    color: #00796b;
-}
 
 .joinButton {
     background-color: #4caf50;
@@ -154,35 +211,29 @@ body{
     transition: background-color 0.2s;
 }
 
+.joinButton:disabled {
+    background-color: grey;
+    cursor: default;
+}
+.joinButton:disabled:hover {
+    background-color: grey;
+}
+
 .joinButton:hover {
     background-color: #388e3c;
 }
-
-.eventParticipants {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    color: #666;
-    font-style: italic;
-}
-
 
 .eventOrganizer {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 12px;
-    color: #666;
     font-style: italic;
-    margin-top: 4px;
 }
 
 .eventOrganizer img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-top: 20px;
     margin-right: 4px;
 }
 

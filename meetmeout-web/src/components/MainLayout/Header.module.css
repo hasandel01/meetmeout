@@ -1,5 +1,5 @@
 header {
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     display: flex;
@@ -140,6 +140,7 @@ header .userShortcut img {
     justify-content: center;
     background-color: var(--card-color);
     width: 200px;
+    z-index: 1;
 }
 
 .userMenu ul {
@@ -147,6 +148,7 @@ header .userShortcut img {
     padding: 0;
     margin: 0;
     width: 100%;
+    cursor: pointer;
 }
 
 .userMenu li {
@@ -193,6 +195,7 @@ header .userShortcut img {
     background-color: var(--card-color);
     left: 20vw;
     width: 20vw;
+    z-index: 1;
 }
 
 .searchResults ul {
@@ -249,4 +252,50 @@ header .userShortcut img {
 
 .searchResults li:last-child {
     border-bottom: none;
+}
+
+
+.notificationDropdown {
+    position: fixed;
+    top: 8vh;
+    width: 25vh;
+    right: 35vh;
+    pad: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.notificationDropdown ul {
+    list-style: none;
+    padding: 4px;
+    background-color: var(--card-color);
+    cursor: pointer;
+}
+
+.notificationDropdown li {
+    background-color: var(--input-background);
+}
+
+.notificationDropdown li:hover {
+    background-color: var(--secondary-color-light);
+}
+
+.notificationDropdown h4 {
+    font-size: 12px;
+}
+
+.notificationDropdown p {
+    font-size: 12px;
+}
+
+
+.notificationBadge {
+    position: absolute;
+    padding: 2px 4px;
+    width: 12px;
+    color: white;
+    top: 1vh;
+    right: 24.3vw;
+    background-color: red;
+    border-radius: 50%;
 }

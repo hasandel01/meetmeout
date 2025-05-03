@@ -2,8 +2,8 @@ package com.hasandel01.meetmeoutserver.controller;
 
 
 import com.hasandel01.meetmeoutserver.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.Event;
-import com.hasandel01.meetmeoutserver.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.service.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -39,10 +40,10 @@ public class EventController {
 
     }
 
-    @GetMapping("/get-ongoing-events")
-    public ResponseEntity<Set<EventDTO>> getAllOngoingEvents() {
+    @GetMapping("/get-events")
+    public ResponseEntity<Set<EventDTO>> getAllOngoingEvents(@RequestParam(required = false) EventStatus status) {
         try {
-            return ResponseEntity.ok(eventService.getOngoingEvents());
+            return ResponseEntity.ok(eventService.getEvents(status));
         } catch (UsernameNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
@@ -60,6 +61,35 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
+    }
+
+    @GetMapping("/get-event/{eventId}")
+    public ResponseEntity<EventDTO> getEventById(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.getEventById(eventId));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @PostMapping("/join-event/{eventId}")
+    public ResponseEntity<Void> joinEvent(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.join(eventId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @PostMapping("/leave-event/{eventId}")
+    public ResponseEntity<Void> leaveEvent(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.leaveEvent(eventId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

@@ -55,7 +55,9 @@ const CreateEvent = () => {
                 formData.append("date", event.date);
                 formData.append("time", event.time);
                 formData.append("location", address || '');
-                formData.append("tags", JSON.stringify(event.tags));
+                event.tags.forEach((tag) => {
+                    formData.append("tags",tag);
+                });
                 formData.append("latitude", coordinates?.latitude.toString() || '');
                 formData.append("longitude", coordinates?.longitude.toString() || '');
                 formData.append("isPrivate", event.isPrivate.toString());

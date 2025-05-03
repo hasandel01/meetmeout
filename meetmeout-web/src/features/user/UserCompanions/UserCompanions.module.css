@@ -1,0 +1,9 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.container img {
+    width: 60px;
+    height: 60px;
+}

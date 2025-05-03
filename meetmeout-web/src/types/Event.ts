@@ -1,3 +1,7 @@
+
+import { User } from './User';
+
+
 export interface Event {
     id: number;
     title: string;
@@ -13,5 +17,8 @@ export interface Event {
     isDraft: boolean;
     category: string;
     tags: string[];
-    eventStatus: string;
+    status: string;
+    attendees: User[];
+    organizer: User;
+    addressName: string;
 }

@@ -12,6 +12,7 @@ const CreateEvent = () => {
     const [event, setEvent] = useState<Event | null>(null);
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
     const [address, setAddress] = useState<string | null>(null);
+    const [addressName, setAddressName] = useState<string | null>(null);
 
     const defaultEventUrl = "https://res.cloudinary.com/droju2iga/image/upload/v1745237659/default_event_artbhy.png";
     const defaultEventStatus = "ONGOING";
@@ -35,7 +36,8 @@ const CreateEvent = () => {
                     isPrivate: event?.isPrivate,
                     isDraft: false,
                     maximumCapacity: event?.maximumCapacity,
-                    eventStatus: event?.eventStatus ?? defaultEventStatus,
+                    eventStatus: event?.status ?? defaultEventStatus,
+                    addressName: addressName,
                 }
                 , {
                   headers: {
@@ -103,7 +105,7 @@ const CreateEvent = () => {
                   </div>
             </div>
             <div className='event-location-selector'>
-                <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} />
+                <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} setAddressName={setAddressName} />
                 {coordinates && (
                     <div className="coordinates-display">
                         Latitude: {coordinates.latitude}, Longitude: {coordinates.longitude}

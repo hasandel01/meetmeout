@@ -7,6 +7,7 @@ import UserProfile from './components/UserProfile'
 import UserCompanions from './components/UserCompanions'
 import MainLayout from './components/MainLayout'
 import CreateEvent from './components/CreateEvent'
+import EventDetails from './components/EventDetails'
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
               <Route path="/user-profile/:username" element={<UserProfile />} />
               <Route path=":username/companions/" element={<UserCompanions/>} />
               <Route path="/create-event" element={<CreateEvent/>} />
+              <Route path="/event/:eventId" element={<EventDetails />} />
             </Route>
         </Routes>  
     </Router>

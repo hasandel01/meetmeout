@@ -1,7 +1,7 @@
 package com.hasandel01.meetmeoutserver.models;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.hasandel01.meetmeoutserver.event.Event;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +16,6 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@EqualsAndHashCode(exclude = "organizedEvents")
 @Builder
 @Table(name = "app_user")
 public class User implements UserDetails {
@@ -47,9 +46,13 @@ public class User implements UserDetails {
     private Set<User> companions = new HashSet<>();
 
     @ManyToMany(mappedBy = "attendees")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Event> participatedEvents = new HashSet<>();
 
     @OneToMany(mappedBy = "organizer")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Event> organizedEvents = new HashSet<>();
 
     @ManyToMany

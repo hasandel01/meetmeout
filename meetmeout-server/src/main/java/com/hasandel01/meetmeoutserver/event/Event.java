@@ -1,7 +1,8 @@
-package com.hasandel01.meetmeoutserver.models;
+package com.hasandel01.meetmeoutserver.event;
 
 import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.models.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,7 +18,6 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
-@EqualsAndHashCode(exclude = "organizer")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -43,11 +43,14 @@ public class Event {
     private LocalDate date;
     private LocalTime time;
     private String location;
+    private String addressName;
     private double latitude;
     private double longitude;
 
     @ManyToOne
     @JoinColumn(name = "organizer_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User organizer;
 
     @ManyToMany
@@ -56,6 +59,8 @@ public class Event {
             joinColumns = @JoinColumn(name = "event_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<User> attendees = new HashSet<>();
     private int maximumCapacity;
 

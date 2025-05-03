@@ -6,9 +6,10 @@ import axios from 'axios';
 interface Props {
   setCoordinates: (coords: { latitude: number; longitude: number }) => void;
   setAddress: (address: string) => void;
+  setAddressName: (addressName: string) => void;
 }
 
-const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress }) => {
+const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress, setAddressName }) => {
   
   const [position, setPosition] = useState<[number, number]>([41.015, 28.97]);
 
@@ -16,7 +17,9 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress }) 
   const getAddressFromCoords = async (latitude: number, longitude: number) => {
     try {
         const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+        console.log("Address response:", response.data);
         setAddress(response.data.display_name);
+        setAddressName(response.data.name);
     }
     catch (error) {
         console.error("Error fetching address:", error);

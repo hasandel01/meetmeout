@@ -1,25 +1,19 @@
 package com.hasandel01.meetmeoutserver.controller;
 
 
-import com.hasandel01.meetmeoutserver.dto.EventShortDTO;
-import com.hasandel01.meetmeoutserver.models.Event;
-import com.hasandel01.meetmeoutserver.models.User;
-import com.hasandel01.meetmeoutserver.repository.UserRepository;
+import com.hasandel01.meetmeoutserver.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.service.EventService;
-import com.hasandel01.meetmeoutserver.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -33,10 +27,9 @@ public class EventController {
 
 
     @PostMapping("/create-event")
-    public ResponseEntity<Event> createEvent(@RequestBody EventShortDTO event) {
+    public ResponseEntity<Event> createEvent(@RequestBody EventDTO event) {
 
         try {
-            log.info("Creating event {}", event);
             return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.CREATED);
         } catch (UsernameNotFoundException e ) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -48,7 +41,7 @@ public class EventController {
     }
 
     @GetMapping("/get-ongoing-events")
-    public ResponseEntity<Set<EventShortDTO>> getAllOngoingEvents() {
+    public ResponseEntity<Set<EventDTO>> getAllOngoingEvents() {
         try {
             return ResponseEntity.ok(eventService.getOngoingEvents());
         } catch (UsernameNotFoundException e) {

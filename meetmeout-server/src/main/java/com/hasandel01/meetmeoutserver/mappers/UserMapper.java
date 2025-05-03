@@ -22,13 +22,12 @@ public class UserMapper {
                 .phone(user.getPhone())
                 .profilePictureUrl(user.getProfilePictureUrl())
                 .bio(user.getBio())
-                .companions(user.getCompanions().stream()
-                        .map(friend -> UserDTO.builder()
-                                .firstName(friend.getFirstName())
-                                .lastName(friend.getLastName())
-                                .profilePictureUrl(friend.getProfilePictureUrl())
-                                .build())
-                        .collect(Collectors.toSet()))
+                .companions(user.getCompanions() != null ?
+                        user.getCompanions().stream()
+                                .map(UserMapper::toUserDTO)
+                                .collect(Collectors.toSet())
+                        : null
+                )
                 .build();
     }
 
@@ -39,11 +38,27 @@ public class UserMapper {
         return users.stream().map(UserMapper::toUserDTO).collect(Collectors.toSet());
     }
 
+    public static User toUser(UserDTO userDTO) {
+        if (userDTO == null) return null;
 
-    public static List<UserDTO> toUserDTOList(List<User> users) {
-        if (users == null) return null;
+        return User.builder()
+                .id(userDTO.id())
+                .username(userDTO.username())
+                .email(userDTO.email())
+                .firstName(userDTO.firstName())
+                .lastName(userDTO.lastName())
+                .bio(userDTO.bio())
+                .phone(userDTO.phone())
+                .profilePictureUrl(userDTO.profilePictureUrl())
+                .companions(userDTO.companions() != null ?
+                        userDTO.companions().stream()
+                                .map(UserMapper::toUser)
+                                .collect(Collectors.toSet())
+                        : null
+                )
+                .build();
 
-        return users.stream().map(UserMapper::toUserDTO).collect(Collectors.toList());
+
     }
 
 }

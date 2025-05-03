@@ -1,0 +1,11 @@
+.notifiaction-dropdown {
+    position: absolute;
+    top: 10vh;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--card-color);
+    width: 200px;
+}

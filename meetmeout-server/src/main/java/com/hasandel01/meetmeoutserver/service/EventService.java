@@ -2,9 +2,8 @@ package com.hasandel01.meetmeoutserver.service;
 
 
 import com.hasandel01.meetmeoutserver.dto.EventDTO;
-import com.hasandel01.meetmeoutserver.dto.EventShortDTO;
 import com.hasandel01.meetmeoutserver.mappers.EventMapper;
-import com.hasandel01.meetmeoutserver.models.Event;
+import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.repository.EventRepository;
 import com.hasandel01.meetmeoutserver.repository.UserRepository;
@@ -29,9 +28,10 @@ public class EventService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final CloudStorageService cloudStorageService;
+    private final NotificationService notificationService;
 
     @Transactional
-    public Event createEvent(EventShortDTO event) {
+    public Event createEvent(EventDTO event) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -54,7 +54,7 @@ public class EventService {
                 .maximumCapacity(event.maximumCapacity())
                 .isPrivate(event.isPrivate())
                 .isDraft(event.isDraft())
-                .status(event.eventStatus())
+                .status(event.status())
                 .comments(new HashSet<>())
                 .likes(new HashSet<>())
                 .reviews(new HashSet<>())
@@ -64,10 +64,13 @@ public class EventService {
 
         user.getOrganizedEvents().add(newEvent);
         eventRepository.save(newEvent);
+
+        notificationService.sendEventCreatedNotificationToCompanions(user,newEvent);
+
         return newEvent;
     }
 
-    public Set<EventShortDTO> getOngoingEvents() {
+    public Set<EventDTO> getOngoingEvents() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         log.info("Getting ongoing events for {}", username);

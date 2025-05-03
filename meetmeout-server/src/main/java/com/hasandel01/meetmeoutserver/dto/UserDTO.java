@@ -1,5 +1,6 @@
 package com.hasandel01.meetmeoutserver.dto;
 
+import com.hasandel01.meetmeoutserver.models.Badge;
 import lombok.Builder;
 
 import java.util.Set;
@@ -13,7 +14,9 @@ public record UserDTO(
         String email,
         String phone,
         String profilePictureUrl,
-        String bio,
+        String about,
         Set<UserDTO> companions,
-        Set<EventDTO> events) {
+        Set<Long> participatedEventIds,
+        Set<Long> organizedEventIds,
+        Set<BadgeDTO> badges) {
 }

@@ -6,6 +6,11 @@ import axios from "axios";
 import {toast} from 'react-toastify';
 import { Forecast } from "../../../types/Forecast";
 import {User} from '../../../types/User';
+import styles from './EventDetails.module.css'
+import { faCalendar, faLocationDot} from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faShare, faComment } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 
 const EventDetails = () => {
 
@@ -13,6 +18,7 @@ const EventDetails = () => {
   const apiKey = "e15b0131b777a9e6ecf78e940f939984";
   const eventIdNumber = parseInt(eventId?.eventId || "0", 10);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const navigate = useNavigate();
     const [event, setEvent] = useState<Event>({
         id: 1,
@@ -98,14 +104,91 @@ const EventDetails = () => {
     }
   }
 
+  
+  const handleJoinEvent = async (eventId: number) => {
+
+    try {
+
+        const response = await axiosInstance.post(`/join-event/${eventId}`);
+
+        if(response.status === 200) {
+            toast.success("You successfully joined to the event!")
+        }
+        else {
+            toast.error("You couldn't join to the event.")
+        }
+
+    } catch(error) {
+        toast.error("You couldn't join to the event.")
+    }
+
+}
+
+const isDisabled = (event: Event) => {
+  return event.attendees.some(element => element.username === currentUser?.username)
+}
+
   return (
-    <div>
+    <div className={styles.eventContainer}>
+       <div className={styles.eventCardAndWeatherAPI}>
+          <div className={styles.eventCard}>
+              <div className={`${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
+                  <img src={event.imageUrl} alt={event.title} />
+                      <div className={styles.eventTitle}>
+                        <div className={styles.eventCategory}>
+                            {(() => {
+                               const category = getCategoryIconLabel(event.category);
+                                return (
+                                  <span style={{ color: category.color }}>
+                                     {category.icon} {category.label}
+                                  </span>
+                                );
+                            })()}
+                        </div>
+                        <h2>{event.title}</h2>
+                      </div>
+                      <div className={styles.eventTimeDate}>
+                            <span>
+                              <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
+                                <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.time}</p>
+                            </span>
+                      </div>
+                      <div className={styles.eventLocation}>
+                              <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
+                              <p>{event.addressName}</p>
+                      </div>
+                      <div className={styles.tags}>
+                              <p>{event.tags.join(" ")}</p>
+                      </div>
+                      {event.organizer && (
+                           <div className={styles.eventOrganizer}>
+                                 <img src={event.organizer.profilePictureUrl} alt={event.organizer.profilePictureUrl} className="event-organizer-image" />
+                                  <p>{event.organizer.firstName} {event.organizer.lastName}</p>
+                            </div>
+                      )}
+                      <div className={styles.eventActions}>
+                                    <button className="heart-button">
+                                        <FontAwesomeIcon icon={faHeart} className="heart-icon" />
+                                    </button>
+                                    <button className="share-button">
+                                        <FontAwesomeIcon icon={faShare} className="share-icon" />
+                                    </button>
+                                    <button className="comment-button">
+                                        <FontAwesomeIcon icon={faComment} className="comment-icon" />
+                                    </button>
+                                     <button disabled={isDisabled(event)}
+                                            onClick={() => handleJoinEvent(event.id)} 
+                                            className={styles.joinButton}>
+                                            Join Event 
+                                    </button>
+                      </div>
+              </div>
+              <div className={styles.weatherApi}>
+                  <img src="./logo_cut.png"></img>
+                  <p>{weather?.city.coord.lat}</p>
+            </div>
+      </div>
       <button onClick={handleLeaveEvent}>{(event.organizer?.username === currentUser?.username) ? "Delete Event" : "Leave Event" }</button>
-      <h3>{event.title}</h3>
-        <p>{event.description}</p>
-        <p>{event.tags.at(0)}</p>
-        <p>{weather?.city.coord.lat}</p>
-      
     </div>
   );
 }

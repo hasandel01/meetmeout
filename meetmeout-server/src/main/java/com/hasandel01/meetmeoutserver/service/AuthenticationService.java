@@ -1,7 +1,6 @@
 package com.hasandel01.meetmeoutserver.service;
 
 
-import com.hasandel01.meetmeoutserver.controller.AuthenticationController;
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.models.AuthenticationRequest;
@@ -12,19 +11,15 @@ import com.hasandel01.meetmeoutserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.cert.CertPathBuilder;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.logging.Logger;
 
 @Slf4j
 @Service
@@ -61,7 +56,7 @@ public class AuthenticationService {
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
                     .email(registerRequest.getEmail())
                     .profilePictureUrl(publicUrl)
-                    .bio("")
+                    .about("")
                     .verificationToken(verificationToken)
                     .emailVerified(false)
                     .build();
@@ -123,7 +118,7 @@ public class AuthenticationService {
                 .lastName(userDTO.lastName())
                 .email(userDTO.email())
                 .phone(userDTO.phone())
-                .bio(userDTO.bio())
+                .about(userDTO.about())
                 .profilePictureUrl(userDTO.profilePictureUrl())
                 .build();
     }

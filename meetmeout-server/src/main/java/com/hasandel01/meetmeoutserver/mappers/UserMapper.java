@@ -1,13 +1,19 @@
 package com.hasandel01.meetmeoutserver.mappers;
 
+import com.hasandel01.meetmeoutserver.dto.EventDTO;
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.models.User;
+import com.hasandel01.meetmeoutserver.service.CompanionService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Slf4j
 public class UserMapper {
 
     public static UserDTO toUserDTO(User user) {
@@ -21,7 +27,10 @@ public class UserMapper {
                 .email(user.getEmail())
                 .phone(user.getPhone())
                 .profilePictureUrl(user.getProfilePictureUrl())
-                .bio(user.getBio())
+                .about(user.getAbout())
+                .participatedEventIds(user.getParticipatedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
+                .organizedEventIds(user.getOrganizedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
+                .badges(user.getBadges().stream().map(BadgeMapper::toBadgeDTO).collect(Collectors.toSet()))
                 .companions(user.getCompanions() != null ?
                         user.getCompanions().stream()
                                 .map(UserMapper::toUserDTO)
@@ -47,7 +56,7 @@ public class UserMapper {
                 .email(userDTO.email())
                 .firstName(userDTO.firstName())
                 .lastName(userDTO.lastName())
-                .bio(userDTO.bio())
+                .about(userDTO.about())
                 .phone(userDTO.phone())
                 .profilePictureUrl(userDTO.profilePictureUrl())
                 .companions(userDTO.companions() != null ?

@@ -7,3 +7,66 @@
     width: 60px;
     height: 60px;
 }
+
+
+
+/** TO BE IMPLEMENTED **/
+
+/* COMPANION STYLES */
+
+.userCompanions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.companionsList {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.companionItem img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.companionItem h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+.companionItem p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+.companionItem:hover {
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.companionItem:hover img {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.companionItem:hover h3 {
+    color: #007bff;
+    transition: color 0.3s ease;
+}

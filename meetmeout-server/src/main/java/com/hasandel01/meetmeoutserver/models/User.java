@@ -40,7 +40,7 @@ public class User implements UserDetails {
 
     private String profilePictureUrl;
 
-    private String bio;
+    private String about;
 
     @Transient
     private Set<User> companions = new HashSet<>();

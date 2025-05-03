@@ -68,7 +68,7 @@ const UserCompanions = () => {
                                 <img src={companion.profilePictureUrl} alt="Companion" className="companion-picture" />
                                 <div className="companion-details">
                                     <h4>{companion.firstName} {companion.lastName}</h4>
-                                    <p>{companion.bio}</p>
+                                    <p>{companion.about}</p>
                                     <p>Email: {companion.email}</p>
                                     <p>Phone: {companion.phone}</p>
                                 </div>

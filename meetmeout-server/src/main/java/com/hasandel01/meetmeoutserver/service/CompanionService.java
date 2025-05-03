@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.service;
 
 import com.hasandel01.meetmeoutserver.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.mappers.EventMapper;
 import com.hasandel01.meetmeoutserver.mappers.FriendRequestMapper;
 import com.hasandel01.meetmeoutserver.mappers.UserMapper;
@@ -52,10 +53,11 @@ public class CompanionService {
                         .lastName(friend.getLastName())
                         .email(friend.getEmail())
                         .companions(UserMapper.toUserDTOSet(friend.getCompanions()))
-                        .events(EventMapper.toEventsDto(friend.getParticipatedEvents().stream().toList()))
+                        .participatedEventIds(friend.getParticipatedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
+                        .organizedEventIds(friend.getOrganizedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
                         .profilePictureUrl(friend.getProfilePictureUrl())
                         .phone(friend.getPhone())
-                        .bio(friend.getBio())
+                        .about(friend.getAbout())
                         .build())
                 .collect(Collectors.toList());
     }

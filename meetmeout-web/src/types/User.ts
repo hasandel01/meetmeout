@@ -1,3 +1,5 @@
+import { Badge } from "./Badge";
+
 export interface User {
     id: number;
     username: string;
@@ -6,7 +8,9 @@ export interface User {
     email: string;
     phone: string;
     profilePictureUrl: string;
-    bio: string;
+    about: string;
     companions: User[]; 
-    activity: string[]; 
+    participatedEventIds: number[];
+    organizedEventIds: number[];
+    badges: Badge[];
 }

@@ -1,15 +1,24 @@
 package com.hasandel01.meetmeoutserver.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Badge {
 
     @Id
@@ -22,6 +31,9 @@ public class Badge {
 
     private String iconUrl;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "badges")
     private Set<User> holders = new HashSet<>();
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 }

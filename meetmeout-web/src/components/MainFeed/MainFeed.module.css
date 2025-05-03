@@ -1,4 +1,20 @@
-.event-card {
+body{
+    background-color: var(--error-color);
+}
+
+
+.onGoingEventsContainer{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: red;
+    overflow: auto;
+    justify-items: center;
+    align-items: start;
+}
+
+.eventCard {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -9,38 +25,39 @@
     margin: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
+    cursor: pointer;
 }
 
-.event-card img {
+.eventCard img {
     width: 20%;
     height: auto;
     border-radius: 8px;
     margin-bottom: 8px;
 }
 
-.event-card h2 {
+.eventCard h2 {
     font-size: 14px;
-    margin: 8px 0;
     color: #333;
+    margin-bottom: 2px;
 }
 
-.event-card p {
+.eventCard p {
     font-size: 12px;
     color: #666;
     text-align: center;
+    margin-bottom: 2px;
 }
 
-.event-card:hover {
+.eventCard:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-
 /** EventStatus **/
 
-.event-status {
+.eventStatus {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -51,54 +68,53 @@
     color: #00796b;
 }
 
-.event-status.completed {
+.eventStatus.completed {
     background-color: #ffecb3;
     color: #f57c00;
 }
-.event-status.cancelled {
+.eventStatus.cancelled {
     background-color: #ffcdd2;
     color: #d32f2f;
 }
 
-.event-status.ongoing {
+.eventStatus.ongoing {
     background-color: #bbdefb;
     color: #1976d2;
 }
 
-.event-status.draft {
+.eventStatus.draft {
     background-color: #e1bee7;
     color: #8e24aa;
 }
 
-.event-status.full {
+.eventStatus.full {
     background-color: #ffe0b2;
     color: #f57c00;
 }
 
-.event-time-date {
+.eventTimeDate {
     display: flex;
     flex-direction: row;
-    
     font-size: 12px;
     margin-top: 4px;
 }
 
-.event-time-date span {
+.eventTimeDate span {
     display: flex;
     flex-direction: row;
     margin-top: 2px;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 
-.event-actions {
+.eventActions {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 8px;
 }
 
-.event-actions button {
+.eventActions button {
     background-color: #1976d2;
     color: white;
     border: none;
@@ -110,11 +126,11 @@
     transition: background-color 0.2s;
 }
 
-.event-actions button:hover {
+.eventActions button:hover {
     background-color: #1565c0;
 }
 
-.event-category {
+.eventCategory {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,7 +141,7 @@
     color: #00796b;
 }
 
-.join-button {
+.joinButton {
     background-color: #4caf50;
     color: white;
     border: none;
@@ -138,22 +154,21 @@
     transition: background-color 0.2s;
 }
 
-.join-button:hover {
+.joinButton:hover {
     background-color: #388e3c;
 }
 
-.event-participants {
+.eventParticipants {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 12px;
     color: #666;
     font-style: italic;
-
 }
 
 
-.event-organizer {
+.eventOrganizer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -163,14 +178,15 @@
     margin-top: 4px;
 }
 
-.event-organizer img {
-    width: 60px;
-    height: 60px;
+.eventOrganizer img {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    margin-top: 20px;
     margin-right: 4px;
 }
 
-.event-organizer p {
+.eventOrganizer p {
     font-size: 12px;
     color: #666;
     text-align: center;

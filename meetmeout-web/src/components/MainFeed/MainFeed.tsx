@@ -1,17 +1,16 @@
+import styles from "./MainFeed.module.css";
 import { useEffect } from "react";
-import axiosInstance from "../axios/axios";
+import axiosInstance from "../../axios/axios";
 import { useState } from "react";
-import { Event } from "../types/Event";
-import "../styles/OngoingEvents.css";
+import { Event } from "../../types/Event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock, faCalendar, faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faShare, faComment } from "@fortawesome/free-solid-svg-icons";
-import { getCategoryIconLabel } from "../mapper/CategoryMap";
+import { getCategoryIconLabel } from "../../mapper/CategoryMap";
 import { useNavigate } from "react-router-dom";
 
-const OngoingEvents = () => {
-
-
+const MainFeed = () => {
+ 
     const [events, setEvents] = useState<Event[] | null>([]);
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const navigate = useNavigate();
@@ -24,7 +23,6 @@ const OngoingEvents = () => {
             },
         });
         setEvents(response.data);
-        console.log("Ongoing events:", response.data);
         return response.data;
     };
 
@@ -39,20 +37,20 @@ const OngoingEvents = () => {
     };
 
     return (
-        <div className="ongoing-events">
+        <div className={styles.onGoingEventsContainer}>
             <h3>Ongoing Events!</h3>
                 {events && events.length > 0 ? (
                     events.map((event) => (
                         event.isPrivate === false && event.isDraft === false && 
                         (
                             <div key={event.id} onClick={() => goToEventDetails(event.id)}>
-                                <div className="event-card">
+                                <div className={styles.eventCard}>
                                     <img src={event.imageUrl} alt={event.title} />
-                                    <div className={`event-status ${event.status}`}> {event.status}</div>
+                                    <div className={`${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
                                     <h2>{event.title}</h2>
                                     <p>{event.description}</p>
                                     <p>{event.tags.join(", ")}</p>
-                                    <div className="event-time-date">
+                                    <div className={styles.eventTimeDate}>
                                         <span>
                                             <FontAwesomeIcon icon={faCalendar} className="event-icon" />
                                             <p > {new Date(event.date).toLocaleDateString("en-US", options)}</p>
@@ -63,7 +61,7 @@ const OngoingEvents = () => {
                                         </span>
                                     </div>
                                     <p>{event.addressName}</p>
-                                    <div className="event-category">
+                                    <div className={styles.eventCategory}>
                                             {(() => {
                                                 const category = getCategoryIconLabel(event.category);
                                                 return (
@@ -73,15 +71,17 @@ const OngoingEvents = () => {
                                                 );
                                             })()}
                                         </div>                    
-                                    <div className="event-organizer">
-                                            <img src={event.organizer.profilePictureUrl} alt={event.organizer.profilePictureUrl} className="event-organizer-image" />
-                                            <p>{event.organizer.firstName} {event.organizer.lastName}</p>
-                                    </div>
-                                <div className="event-participants">
+                                        {event.organizer && (
+                                            <div className={styles.eventOrganizer}>
+                                                <img src={event.organizer.profilePictureUrl} alt={event.organizer.profilePictureUrl} className="event-organizer-image" />
+                                                <p>{event.organizer.firstName} {event.organizer.lastName}</p>
+                                            </div>
+                                        )}
+                                <div className={styles.eventParticipants}>
                                     <FontAwesomeIcon icon={faUserGroup} className="event-icon" />
                                     <p>{event.attendees.length}/{event.maximumCapacity}</p>
                                 </div>
-                                <div className="event-actions">
+                                <div className={styles.eventActions}>
                                     <button className="heart-button">
                                         <FontAwesomeIcon icon={faHeart} className="heart-icon" />
                                     </button>
@@ -91,7 +91,7 @@ const OngoingEvents = () => {
                                     <button className="comment-button">
                                         <FontAwesomeIcon icon={faComment} className="comment-icon" />
                                     </button>
-                                     <button className="join-button">Join Event</button>
+                                     <button className={styles.joinButton}>Join Event</button>
                                 </div>
                                 </div>
                             </div>            
@@ -105,7 +105,6 @@ const OngoingEvents = () => {
 
         </div>
     )
-
 }
 
-export default OngoingEvents;
+export default MainFeed;

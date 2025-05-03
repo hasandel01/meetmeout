@@ -1,0 +1,104 @@
+.formContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 30vw;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border-radius: 5%;
+}
+
+.mmoLogo {
+    width: 15vw;
+    height: 15vh;
+    position: relative;
+}
+
+
+.formContainer form input {
+    width: 90%;
+    outline: none;
+    border: none;
+    border-bottom: #333 solid 1px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    padding: 5px;
+}
+
+.formContainer form input:focus {
+    border-bottom: var(--primary-color-dark) solid 2px;
+}
+
+.formContainer form button {
+    background-color: var(--button-color);
+    border-radius: var(--button-border-radius);
+    padding: var(--button-padding);
+    color: white;
+    border: none;
+    font-size: 16px;   
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.formContainer form button:hover {
+    background-color: var(--button-hover-color);
+}
+
+.errorMessage {
+    color: var(--error-color);
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.formContainer h1 {
+    font-size: 18px;
+    color: var(--text-color);
+    margin-bottom: 0px;
+}
+
+.formContainer p {
+    font-size: 12px;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.link {
+    color: var(--link-color);
+    text-decoration: none;
+    font-size: 14px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.link:hover {
+    text-decoration: underline;
+    color: var(--link-hover-color);
+}
+
+
+@media (max-width: 768px) {
+    .formContainer {
+        width: 90vw;
+        height: auto;
+        padding: 2rem;
+        box-shadow: none;
+    }
+
+    .formContainer form input,
+    .formContainer form button {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .formContainer h1 {
+        font-size: 24px;
+    }
+
+    .formContainer p {
+        font-size: 14px;
+    }
+}
+
+

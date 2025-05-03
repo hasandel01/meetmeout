@@ -23,14 +23,13 @@ import java.util.Set;
 public class EventController {
 
     private final EventService eventService;
-    private final CloudStorageService cloudStorageService;
 
 
     @PostMapping("/create-event")
-    public ResponseEntity<Event> createEvent(@RequestBody EventDTO event) {
+    public ResponseEntity<Event> createEvent(@ModelAttribute EventDTO eventDTO) {
 
         try {
-            return new ResponseEntity<>(eventService.createEvent(event), HttpStatus.CREATED);
+            return new ResponseEntity<>(eventService.createEvent(eventDTO), HttpStatus.CREATED);
         } catch (UsernameNotFoundException e ) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {

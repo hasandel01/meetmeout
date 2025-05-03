@@ -1,11 +1,9 @@
 package com.hasandel01.meetmeoutserver.service;
 
 import com.hasandel01.meetmeoutserver.dto.NotificationDTO;
-import com.hasandel01.meetmeoutserver.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.enums.NotificationType;
 import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.mappers.NotificationMapper;
-import com.hasandel01.meetmeoutserver.models.FriendRequest;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.models.Notification;
 import com.hasandel01.meetmeoutserver.repository.FriendRequestRepository;
@@ -18,7 +16,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 

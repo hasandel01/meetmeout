@@ -5,6 +5,7 @@ import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.models.User;
 import lombok.Builder;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,5 +30,6 @@ public record EventDTO(
         EventStatus status,
         Set<UserDTO> attendees,
         UserDTO organizer,
-        String addressName) {
+        String addressName,
+        MultipartFile eventImage) {
 }

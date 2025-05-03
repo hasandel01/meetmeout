@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import axiosInstance from '../axios/axios';
-import '../styles/Form.css';
+import styles from'./Form.module.css';
 import { useNavigate } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 interface UserDetailsFormProps {
     email: string;
@@ -16,6 +18,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
 
@@ -25,7 +28,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
         try {
 
             if (password !== confirmPassword) {
-                alert('Passwords do not match!');
+                setError('Passwords do not match!');
                 return;
             }        
     
@@ -38,19 +41,16 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
             });
     
             if (response.status === 200) {
-                console.log('User registered successfully!');
+                toast.success('User registered successfully!');
                 localStorage.setItem('token', response.data.token);
-                alert('User registered successfully!');
-
                 navigate('/login');
 
             } else {
-                console.error('Error registering user:', response.data);
+                toast.error('Error registering user!');
             }
 
         } catch (error) {
-            console.error('Error registering user:', error);
-            alert("Error registering user. Please try again later.");
+            toast.error('Error registering user!');
         }
   
     }
@@ -64,10 +64,12 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                         <input type="text" value={firstName} placeholder="First Name" required onChange={(e) => setFirstName(e.target.value)} />
                         <input type="text" value={lastName} placeholder="Last Name" required onChange={(e) => setLastName(e.target.value)} />
                         <input type="password" value={password} placeholder="Password" required onChange={(e) => setPassword(e.target.value)} />
-                        <input type="password" placeholder="Confirm Password" required onChange={(e) => setConfirmPassword(e.target.value)} />
+                        <input type="password" value={confirmPassword} placeholder="Confirm Password" required onChange={(e) => setConfirmPassword(e.target.value)} />
+                        {error && <label className={styles.errorMessage}> {error} </label>}
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>
                         <button type="submit" className="register-button" > Sign Up </button>
                     </form> 
+
     </div>
     );
 

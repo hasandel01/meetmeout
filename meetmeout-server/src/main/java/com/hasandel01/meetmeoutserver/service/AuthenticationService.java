@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.security.cert.CertPathBuilder;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 @Service
@@ -35,6 +36,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
+    private final EmailSenderService emailSenderService;
 
     @Value("${profile.pictureUrl}")
     private String publicUrl;
@@ -48,6 +50,8 @@ public class AuthenticationService {
                     registerRequest.getEmail() + " is already registered.");
         } else {
 
+            String verificationToken = UUID.randomUUID().toString();
+
             user = User.builder()
                     .username(registerRequest.getUsername())
                     .firstName(registerRequest.getFirstName())
@@ -56,8 +60,12 @@ public class AuthenticationService {
                     .email(registerRequest.getEmail())
                     .profilePictureUrl(publicUrl)
                     .bio("")
+                    .verificationToken(verificationToken)
+                    .emailVerified(false)
                     .build();
 
+            emailSenderService.sendEmail(user.getEmail(), "Please verify your email",
+                    "Click the link to verify your account: http://localhost:5173/verify?token=" + verificationToken);
             userRepository.save(user);
         }
 
@@ -78,6 +86,18 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public Boolean checkUser(Map<String, String> payload) {
+
+        String email = payload.get("email");
+
+        if(email == null || email.isEmpty())
+            return false;
+
+        Optional<User> user = userRepository.findByEmail(email);
+
+        return user.isPresent();
     }
 
     public UserDTO update(UserDTO userDTO) {

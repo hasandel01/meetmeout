@@ -1,4 +1,4 @@
-const categoryMap: { [key: string]: string } = {
+export const categoryMap: { [key: string]: string } = {
     "OUTDOOR_NATURE": "Outdoor & Nature",
     "LIVE_MUSIC": "Live Music",
     "WELLNESS": "Wellness",
@@ -12,6 +12,7 @@ const categoryMap: { [key: string]: string } = {
     "FAMILY": "Family",
     "ADVENTURE": "Adventure",
 };
+
 
 
 const categoryIcons: Record<string, { label: string, icon: string, color: string }> = {

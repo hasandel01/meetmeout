@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
-import axiosInstance from "../axios/axios";
-import {User} from "../types/User";
+import axiosInstance from "../../../axios/axios";
+import {User} from "../../../types/User";
 import { useEffect, useState } from "react";
-import "../styles/UserCompanions.css";
-import AddCompanion from "./AddCompanion";
-import PendingFriendRequests from "./PendingFriendRequests";
+import styles from "./UserCompanions.module.css";
+import AddCompanion from "../AddCompanion";
+import PendingFriendRequests from "../PendingFriendRequests";
 
 const UserCompanions = () => {
 
@@ -63,7 +63,7 @@ const UserCompanions = () => {
 
 
     return (
-        <div className ="user-companions">
+        <div className ={styles.container}>
             {currentUser?.username === username &&(
              <>
             <AddCompanion></AddCompanion>

@@ -38,12 +38,14 @@ public class EventService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        String imageUrl = cloudStorageService.uploadEventPicture(event.eventImage());
+
         Event newEvent = Event.builder()
                 .title(event.title())
                 .description(event.description())
                 .category(event.category())
                 .tags(event.tags())
-                .imageUrl(event.imageUrl())
+                .imageUrl(imageUrl)
                 .date(event.date())
                 .time(event.time())
                 .location(event.location())

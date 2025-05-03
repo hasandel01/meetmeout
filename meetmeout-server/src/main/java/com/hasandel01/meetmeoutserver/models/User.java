@@ -56,6 +56,11 @@ public class User implements UserDetails {
     private Set<Event> organizedEvents = new HashSet<>();
 
     @ManyToMany
+    @JoinTable(
+            name="user_badges",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
+    )
     private Set<Badge> badges = new HashSet<>();
 
     @Override
@@ -87,5 +92,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
+    boolean emailVerified = false;
+
+    private String verificationToken;
 
 }

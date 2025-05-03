@@ -1,6 +1,6 @@
 import React, { use, useEffect, useState } from "react";
-import axiosInstance from "../axios/axios";
-import {FriendRequest} from "../types/FriendRequest";
+import axiosInstance from "../../axios/axios";
+import {FriendRequest} from "../../types/FriendRequest";
 
 const PendingFriendRequests = () => {
     

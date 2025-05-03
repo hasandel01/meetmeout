@@ -19,6 +19,6 @@ export interface Event {
     tags: string[];
     status: string;
     attendees: User[];
-    organizer: User;
+    organizer: User | null;
     addressName: string;
 }

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import axiosInstance from "../axios/axios";
-import { User } from "../types/User";
+import axiosInstance from "../../axios/axios";
+import { User } from "../../types/User";
 import { useState } from "react";
 
 const AddCompanion = () => {

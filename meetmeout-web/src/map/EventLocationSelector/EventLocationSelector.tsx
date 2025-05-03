@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from 'react-leaflet';
 import { useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
@@ -12,6 +12,8 @@ interface Props {
 const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress, setAddressName }) => {
   
   const [position, setPosition] = useState<[number, number]>([41.015, 28.97]);
+  const [address, setLocalAddress] = useState<string>('');
+  const [addressName, setLocalAddressName] = useState<string>('');
 
   
   const getAddressFromCoords = async (latitude: number, longitude: number) => {
@@ -20,6 +22,8 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress, se
         console.log("Address response:", response.data);
         setAddress(response.data.display_name);
         setAddressName(response.data.name);
+        setLocalAddress(response.data.display_name);
+        setLocalAddressName(response.data.name);
     }
     catch (error) {
         console.error("Error fetching address:", error);
@@ -39,11 +43,23 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress, se
       },
     });
 
-    return <Marker position={position} />;
+    return <Marker position={position}>
+              <Popup>
+                {addressName ? (
+                  <div>
+                    <strong>{addressName}</strong>
+                    <br />
+                    {address}
+                  </div>
+                ) : (
+                  "Selected Location"
+                )}
+              </Popup>
+            </Marker>;
   };
 
   return (
-    <div style={{ height: '400px', width: '100%' }}>
+    <div style={{ height: '300px', width: '300px' }}>
       <MapContainer
         center={position}
         zoom={13}

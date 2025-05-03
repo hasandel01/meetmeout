@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axiosInstance from '../axios/axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Form.css';
+import styles from './Form.module.css';
 import { Link } from 'react-router-dom';
 
 
@@ -36,16 +36,17 @@ const Login = ()  => {
     }
 
     return (
-        <div className="form-container">
-            <img alt='mmo-logo' src='/mmo_logo.PNG' className='mmo-logo'></img>
+        <div className={styles.formContainer}>
+            <img alt='mmo-logo' src='/mmo_logo.PNG' className={styles.mmoLogo}></img>
             <h1> Welcome Back Traveler! </h1>
+            <p> Join Events, find companions! </p>
             <form onSubmit={handleLogin}>
                 <input type='text' placeholder='Username' value={username} required onChange={(e) => setUsername(e.target.value)} />
                 <input type='password' placeholder='Password' value={password} required onChange={(e) => setPassword(e.target.value)} />
                 {error && <p className='error-message'>{error}</p>}
                 <button> Sign In </button>
             </form>
-            <Link to="/register" className="link"> Don't have an account? Sign up!</Link>
+            <Link to="/register" className={styles.link}> Don't have an account? Sign up!</Link>
         </div>
     );
 }

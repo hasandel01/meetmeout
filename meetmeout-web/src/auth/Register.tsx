@@ -2,15 +2,15 @@ import { useState } from 'react';
 import axiosInstance from '../axios/axios';
 import { Link } from 'react-router-dom';
 import UserDetailsForm from './UserDetailsForm';
-import '../styles/Form.css';
+import styles from './Form.module.css';
 
 
 const Register = () => {
 
     const [email, setEmail] = useState('');
-    const [userExists, setUserExists] = useState(true);
+    const [userExists, setUserExists] = useState(false);
     const [formSubmitted, setFormSubmitted] = useState(false);
-    const message = <p className='error-message'> User already exists! </p>;
+    const [showUserDetailsForm, setShowUserDetailsForm] = useState(false);
 
     const checkUser = async (e: React.FormEvent) => {
         
@@ -21,13 +21,14 @@ const Register = () => {
             const response = await axiosInstance.post('/auth/check-user', {email}
             );
     
-            console.log(response.status);
-            console.log(response.data);
-    
-            if (response.status === 200) 
+            if (response.data === true) {
                 setUserExists(true);
-            else if (response.status === 404)
+            }
+            else if (response.data === false) {
                 setUserExists(false);
+                setShowUserDetailsForm(true);
+            }
+
         } catch (error: any) {
 
             if(error.response && error.response.status === 404) {
@@ -40,8 +41,8 @@ const Register = () => {
     }
 
     return (
-        <div className="form-container">
-                <img alt='mmo-logo' src='/mmo_logo.PNG' className='mmo-logo'></img>
+        <div className={styles.formContainer}>
+                <img alt='mmoLogo' src='/mmo_logo.PNG' className={styles.mmoLogo}></img>
                 {(!formSubmitted || userExists) && (
                     <div className='email-container'>
                         <h1> Sign Up! </h1>
@@ -51,14 +52,15 @@ const Register = () => {
                                 placeholder="E-mail"
                                 value={email} required
                                 onChange={(e) => setEmail(e.target.value)} />
-                            {formSubmitted && userExists && message}
+                            {userExists &&
+                             <p className={styles.errorMessage}> User already exists! </p>                            }
                             <button> Continue </button>
                         </form>
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>
-                        <Link to="/login" className="link"> Already have an account? Log in!</Link>
+                        <Link to="/login" className={styles.link}> Already have an account? Log in!</Link>
                     </div>
                 )}
-                {!userExists && <UserDetailsForm email={email} />}
+                {showUserDetailsForm && <UserDetailsForm email={email} />}
             </div>
     );
 }

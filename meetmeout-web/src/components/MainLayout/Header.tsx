@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome, faPeopleGroup } from '@fortawesome/free-solid-svg-icons';
-import axiosInstance from '../axios/axios';
-import { User } from '../types/User';
+import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome } from '@fortawesome/free-solid-svg-icons';
+import axiosInstance from '../../axios/axios';
+import { User } from '../../types/User';
 import { useEffect } from 'react';
-import '../styles/Header.css';
-import { Event } from '../types/Event';
-import { Notification } from '../types/Notification';
+import { Event } from '../../types/Event';
+import { Notification } from '../../types/Notification';
 import SockJS from 'sockjs-client/dist/sockjs'; 
 import { Client } from '@stomp/stompjs';
+import styles from "./Header.module.css";
 
 const Header = () => {
 
@@ -56,7 +56,6 @@ const Header = () => {
               }
             );
             setUser(response.data);
-            console.log("User data fetched successfully:", response.data);          
         } catch(error) {
           console.error("Error fetching user data:", error);
         }
@@ -153,11 +152,11 @@ const Header = () => {
       
 
     return (
-        <header className="header"> 
-              <div className="logo-container" onClick={() => navigate("/main-feed")}>
+        <header> 
+              <div className={styles.logoContainer} onClick={() => navigate("/main-feed")}>
                   <img src="logo_cut.png" alt="Logo" />  
                 </div>
-                <div className="search-bar">
+                <div className={styles.searchBar}>
                   <FontAwesomeIcon icon={faSearch} style={
                           { color: "#888", marginRight: "10px" } 
                   }/>
@@ -169,7 +168,7 @@ const Header = () => {
                       onFocus={handleSearchFocus} />
                 </div>
                 {showSearchResults && (
-                  <div className="search-results">
+                  <div className={styles.searchResults}>
                   {users.length < 0 && events.length < 0 && <p>No results found</p>}
                    {users.length > 0 && <label>Users</label>}
                    <div className='user-results'>
@@ -206,31 +205,40 @@ const Header = () => {
                    </div>
                   </div>
                 )}
-                <div className="header-menu">
-                      <span onClick={() => navigate("/main-feed")}
-                          className={isActive("/main-feed") ? "nav-item active" : "nav-item"}>
-                        <FontAwesomeIcon icon={faHome} size="2x"/>
+                <div className={styles.headerMenu}>
+                <span
+                        onClick={() => navigate("/main-feed")}
+                        className={`${styles.navItem} ${isActive("/main-feed") ? styles.active : ''}`}
+                      >
+                        <FontAwesomeIcon icon={faHome} size="2x" />
                         <label> Home </label>
                       </span>
-                      <span onClick={() => navigate("/create-event")}
-                          className={isActive("/create-event") ? "nav-item active" : "nav-item"}>
-                        <FontAwesomeIcon icon={faCalendarPlus} size='2x'/>
+
+                      <span
+                        onClick={() => navigate("/create-event")}
+                        className={`${styles.navItem} ${isActive("/create-event") ? styles.active : ''}`}
+                      >
+                        <FontAwesomeIcon icon={faCalendarPlus} size="2x" />
                         <label> Create Event </label>
                       </span>
-                      <span onClick={() => navigate(`${user?.username}/companions`)}
-                          className={isActive(`${user?.username}/companions`) ? "nav-item active" : "nav-item"}>
+
+                      <span
+                        onClick={() => navigate(`${user?.username}/companions`)}
+                        className={`${styles.navItem} ${isActive(`${user?.username}/companions`) ? styles.active : ''}`}
+                      >
                         <FontAwesomeIcon icon={faUserGroup} size="2x" />
                         <label> Companions </label>
                       </span>
-                      <span>
-                        <FontAwesomeIcon icon={faBell} size="2x" onClick={handleNotifications}/>
+
+                      <span className={styles.navItem}>
+                        <FontAwesomeIcon icon={faBell} size="2x" onClick={handleNotifications} />
                         <label> Notifications </label>
                         {notifications.length > 0 && (
-                          <span className="notification-badge">{notifications.length}</span>
+                          <span className={styles.notificationBadge}>{notifications.length}</span>
                         )}
                       </span>
                       {showNotifications && (
-                                  <div className="notification-dropdown">
+                                  <div className={styles.notificationDropdown}>
                                   <h2>Notifications</h2>
                                   {notifications.length === 0 && <p>No notifications</p>}
                                   {notifications.map((notification, index) => (
@@ -242,11 +250,11 @@ const Header = () => {
                                   </div>    
                       )}
                 </div>
-                <div className="user-shortcut" onClick={triggerUserMenu}>
+                <div className={styles.userShortcut} onClick={triggerUserMenu}>
                       <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
                 </div>
                 {showMenu && (
-                    <div className="user-menu">
+                    <div className={styles.userMenu}>
                         <ul>
                         {user?.username && (
                             <li><a href={`/user-profile/${user.username}`}>Profile </a></li>)}

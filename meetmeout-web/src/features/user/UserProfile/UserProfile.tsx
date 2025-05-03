@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { User } from "../types/User";
-import axiosInstance from "../axios/axios";
-import "../styles/UserProfile.css";
+import { User } from "../../../types/User";
+import axiosInstance from "../../../axios/axios";
+import styles from "./UserProfile.module.css";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
@@ -104,18 +104,18 @@ const UserProfile = () => {
     };
 
     return (
-        <div className="user-profile">
-            <div className="user-profile-header">
-                <div className="user-profile-details">
-                    <div className="profile-picture-container">
-                        <div className="profile-picture">
+        <div className={styles.userProfile}>
+            <div className={styles.userProfileHeader}>
+                <div className={styles.userProfileDetails}>
+                    <div className={styles.userProfilePictureContainer}>
+                        <div className={styles.profilePicture}>
                             <img  src={user?.profilePictureUrl} alt= "User Profile" />
                             {currentUser && currentUser.username === username && (
-                                <div className="camera-overlay" onClick={updateProfilePicture} > <FontAwesomeIcon icon={faCamera} size="2x" /></div>
+                                <div className={styles.cameraOverlay} onClick={updateProfilePicture} > <FontAwesomeIcon icon={faCamera} size="2x" /></div>
                             )}
                         </div>
                     </div>
-                    <div className="user-info">
+                    <div className={styles.userInfo}>
                         <h3>{user?.firstName} {user?.lastName}</h3>
                     </div>
                     </div>
@@ -123,7 +123,7 @@ const UserProfile = () => {
                     <p> {user?.bio}</p>
                     <p>Email: {user?.email}</p>
                     <p>Phone: {user?.phone}</p>
-                    <a href={`/${user?.username}/companions`} className="companions-link">{user?.companions.length} Companions</a>
+                    <a href={`/${user?.username}/companions`} className={styles.companionsList}>{user?.companions.length} Companions</a>
                 </div>
                 <div className="user-badges">
                 </div>

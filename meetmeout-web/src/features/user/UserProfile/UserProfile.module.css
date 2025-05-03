@@ -1,4 +1,4 @@
-.user-profile {
+.userProfile {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -11,7 +11,7 @@
 }
 
 
-.user-profile-details {
+.userprofiledetails {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -22,7 +22,7 @@
 }
 
 
-.user-profile-details img {
+.userProfileDetails img {
     width: 120px;
     height: 120px;
     border-radius: 50%;
@@ -32,7 +32,7 @@
     transition: transform 0.3s ease;
 }
 
-.user-profile-details img:hover {
+.userProfileDetails img:hover {
     transform: scale(1.05);
     transition: transform 0.3s ease;
     cursor: pointer;
@@ -40,13 +40,13 @@
     transition: opacity 0.2s ease;
 }
 
-.user-info {
+.userInfo {
     margin-left: 10px;
 }
 
 /* PROFILE PICTURE STYLES */
 
-.profile-picture-container {
+.profilePictureContainer {
     position: relative;
     width: 100px;
     height: 100px;
@@ -56,7 +56,7 @@
     border-radius: 50%;
 }
 
-.profile-picture {
+.profilePicture {
     width: 100%;
     height: 100%;
     border-radius: 50%;
@@ -66,7 +66,7 @@
     transition: transform 0.3s ease;
 }
 
-.camera-overlay {
+.cameraOverlay {
     position: absolute;
     color: white;
     top: 0;
@@ -82,11 +82,11 @@
     transition: opacity 0.3s ease;
 }
 
-.profile-picture-container:hover .camera-overlay {
+.profilePictureContainer:hover .camera-overlay {
     opacity: 0.8;
 }
 
-.companions-link {
+.companionsLink {
     text-decoration: none;
     color: #007bff;
     font-size: 16px;
@@ -95,7 +95,7 @@
     transition: color 0.3s ease;
 }
 
-.companions-link:hover {
+.companionsLink:hover {
     color: #0056b3;
     text-decoration: underline;
 }
@@ -103,7 +103,7 @@
 
 /* COMPANION STYLES */
 
-.user-companions {
+.userCompanions {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -114,14 +114,11 @@
     margin-top: 20px;
 }
 
-.companions-list {
+.companionsList {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
-}
-
-.companions-list {
     display: flex;
     align-items: center;
     background-color: #fff;
@@ -132,33 +129,33 @@
     width: 100%;
 }
 
-.companion-item img {
+.companionItem img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
 }
-.companion-item h3 {
+.companionItem h3 {
     margin: 0;
     font-size: 18px;
     color: #333;
 }
-.companion-item p {
+.companionItem p {
     margin: 0;
     font-size: 14px;
     color: #666;
 }
-.companion-item:hover {
+.companionItem:hover {
     background-color: #f9f9f9;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
-.companion-item:hover img {
+.companionItem:hover img {
     transform: scale(1.05);
     transition: transform 0.3s ease;
 }
 
-.companion-item:hover h3 {
+.companionItem:hover h3 {
     color: #007bff;
     transition: color 0.3s ease;
 }

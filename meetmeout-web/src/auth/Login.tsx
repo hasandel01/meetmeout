@@ -1,0 +1,54 @@
+import React, { useState } from 'react';
+import axiosInstance from '../axios/axios';
+import { useNavigate } from 'react-router-dom';
+import '../styles/Form.css';
+import { Link } from 'react-router-dom';
+
+
+const Login = ()  => {
+
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const handleLogin = async (e: React.FormEvent) => {
+
+        try {
+
+            e.preventDefault();
+
+            const response = await axiosInstance.post('/auth/authenticate', {
+                username: username,
+                password: password,
+            });
+
+            const {token} = response.data;
+            console.log(token);
+            localStorage.setItem('token', token);
+            navigate('/');
+
+        } catch (err) {
+            console.error(err);
+            setError('Invalid email or password');
+        }
+
+    }
+
+    return (
+        <div className="form-container">
+            <img alt='mmo-logo' src='/mmo_logo.PNG' className='mmo-logo'></img>
+            <h1> Welcome Back Traveler! </h1>
+            <form onSubmit={handleLogin}>
+                <input type='text' placeholder='Username' value={username} required onChange={(e) => setUsername(e.target.value)} />
+                <input type='password' placeholder='Password' value={password} required onChange={(e) => setPassword(e.target.value)} />
+                {error && <p className='error-message'>{error}</p>}
+                <button> Sign In </button>
+            </form>
+            <Link to="/register" className="link"> Don't have an account? Sign up!</Link>
+        </div>
+    );
+}
+
+
+export default Login;

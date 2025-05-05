@@ -1,11 +1,10 @@
 package com.hasandel01.meetmeoutserver.repository;
 
-import com.hasandel01.meetmeoutserver.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.models.User;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User>
         findByUsernameContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase
-                (String username, String firstName, String lastName);
+                (String username, String firstName, String lastName, Pageable pageable);
 
     Optional<User> findByVerificationToken(String verificationToken);
 }

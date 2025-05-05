@@ -132,4 +132,84 @@ public class CompanionService {
         return FriendRequestMapper.toDTOList(friendRequests);
 
     }
+
+    public Boolean removeCompanion(String companionEmail) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+
+        User companion = userRepository.findByEmail(companionEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("Companion not found"));
+
+
+        Set<User> acceptedFriends = friendRequestRepository.findAcceptedFriends(user.getId());
+
+        log.info("Removing companion {} from {}", companionEmail, username);
+        log.info("Accepted friends {}", acceptedFriends);
+
+        friendRequestRepository.deleteAcceptedFriend(user.getId(),companion.getId());
+        return true;
+
+    }
+
+    public List<UserDTO> getPossibleFriends() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User currentUser = (User) userDetailsService.loadUserByUsername(username);
+
+        List<User> users = userRepository.findAll();
+
+        List<UserDTO> companions = getFriends(currentUser.getUsername());
+
+        List<FriendRequestDTO> friendRequests = getPendingFriendRequests();
+
+        List<UserDTO> senders = friendRequests.stream().map(
+                request -> UserMapper.toUserDTO(request.sender())
+        ).toList();
+
+        companions.addAll(senders);
+        companions.addAll(getUsersThatFriendRequestIsAlreadySent());
+
+        Set<String> companionUsernames =
+                companions.stream().map(UserDTO::username).collect(Collectors.toSet());
+
+        return users.stream()
+                .filter(user -> !user.getId().equals(currentUser.getId()))
+                .filter(user -> !companionUsernames.contains(user.getUsername()))
+                .map(UserMapper::toUserDTO)
+                .toList();
+    }
+
+    public List<UserDTO> getUsersThatFriendRequestIsAlreadySent() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = (User) userDetailsService.loadUserByUsername(username);
+
+       List<FriendRequest> requests = friendRequestRepository
+               .findBySenderAndStatus(currentUser, FriendRequest.Status.PENDING);
+
+       return requests.stream().map(
+               request -> UserMapper.toUserDTO(request.getReceiver())
+       ).toList();
+
+
+    }
+
+    public Boolean cancelSentRequest(String companionEmail) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+
+        User companion = userRepository.findByEmail(companionEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("Companion not found"));
+
+        friendRequestRepository.deleteFriendRequest(user.getId(), companion.getId());
+        return true;
+    }
 }

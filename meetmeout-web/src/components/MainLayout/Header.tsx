@@ -6,10 +6,10 @@ import axiosInstance from '../../axios/axios';
 import { User } from '../../types/User';
 import { useEffect } from 'react';
 import { Event } from '../../types/Event';
-import { Notification } from '../../types/Notification';
 import SockJS from 'sockjs-client/dist/sockjs'; 
 import { Client } from '@stomp/stompjs';
 import styles from "./Header.module.css";
+import { Notification } from '../../types/Notification';
 
 const Header = () => {
 
@@ -19,14 +19,12 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
     const isActive = (path: string) => location.pathname === path;
     const [showSearchResults, setShowSearchResults] = useState(false);
-    const [showNotifications, setShowNotifications] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
-    const page = 0;
-    const size = 20;
-
-
     const [users, setUsers] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+
+    const page = 0;
+    const size = 0;
 
     const triggerUserMenu = () => {
         setShowMenu(!showMenu);
@@ -34,7 +32,6 @@ const Header = () => {
   
     useEffect(() => {
         getMe();
-        getNotifications();
       }
     , []); 
   
@@ -66,6 +63,8 @@ const Header = () => {
             {
               params: {
                 query: query,
+                page: page,
+                size: size,
               }})
 
           setUsers(response.data.users);
@@ -85,14 +84,6 @@ const Header = () => {
 
       const handleSearchFocus = () => {
         setShowSearchResults(true);
-      }
-
-
-      const handleNotifications = async () => {
-        if (notifications.length === 0) {
-            await getNotifications();
-        }
-          setShowNotifications(!showNotifications);
       }
 
     useEffect(() => {
@@ -124,18 +115,6 @@ const Header = () => {
         };
     }, []);
 
-    const getNotifications = async () => {
-        try {
-            const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
-            setNotifications(response.data.content);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    }
-      
-    const goToNoticationUrl = (index: number) => {
-      navigate(`${notifications.at(index)?.url}`)
-    }      
 
     return (
         <header> 
@@ -155,18 +134,24 @@ const Header = () => {
                 </div>
                 {showSearchResults && (
                   <div className={styles.searchResults}>
-                  {users.length < 0 && events.length < 0 && <p>No results found</p>}
+                    {users.length === 0 && events.length === 0 && (
+                      <div style={{ textAlign: "center", padding: "20px", color: "#888" }}>
+                        <span style={{ fontSize: "24px" }}>🔍</span>
+                        <p style={{ margin: "8px 0 0 0", fontStyle: "italic" }}>
+                          No results found
+                        </p>
+                      </div>
+                    )}
                    {users.length > 0 && <label>Users</label>}
                    <div className='user-results'>
-                     {users.length === 0 && events.length === 0 && <p>No results found</p>}
                      {users.map((user) => (
                        <div key={user.id} className='user-result' onClick={() => navigate(`/user-profile/${user.username}`)}>
                            <ul>
                              <li className='user-result-item'>
                                <img src={user.profilePictureUrl} alt="User Profile" />
-                               <div className='user-result-info'>
+                               <div className={styles.userResultInfo}>
                                  <h2>{user.firstName} {user.lastName}</h2>
-                                 <p>{user.username}</p>
+                                 <p>@{user.username}</p>
                                </div>
                              </li>
                            </ul>
@@ -210,13 +195,14 @@ const Header = () => {
 
                       <span
                         onClick={() => navigate(`${user?.username}/companions`)}
-                        className={`${styles.navItem} ${isActive(`${user?.username}/companions`) ? styles.active : ''}`}
+                        className={`${styles.navItem} ${isActive(`/${user?.username}/companions`) ? styles.active : ''}`}
                       >
                         <FontAwesomeIcon icon={faUserGroup} size="2x" />
                         <label> Companions </label>
                       </span>
-
-                      <span className={styles.navItem} onClick={handleNotifications}>
+                      <span 
+                        onClick={() => navigate("/notifications")}
+                        className={`${styles.navItem} ${isActive(`/notifications`) ? styles.active : ''}`}>
                         <FontAwesomeIcon icon={faBell} size="2x"  />
                         <label> Notifications </label>
                         {notifications
@@ -225,20 +211,6 @@ const Header = () => {
                           <span className={styles.notificationBadge}>{notifications.length}</span>
                         )}
                       </span>
-                      {showNotifications && (
-                                  <div className={styles.notificationDropdown}>
-                                  {notifications.length < 1 && <p>No notifications</p>}
-                                  {notifications
-                                  .map((notification, index) => (
-                                      <ul key={index} onClick={() => goToNoticationUrl(index)}>
-                                          <li>
-                                            <h4>{notification.title}</h4>
-                                            <p>{notification.body}</p>
-                                          </li>
-                                      </ul>
-                                  ))}
-                                  </div>    
-                      )}
                 </div>
                 <div className={styles.userShortcut} onClick={triggerUserMenu}>
                       <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />

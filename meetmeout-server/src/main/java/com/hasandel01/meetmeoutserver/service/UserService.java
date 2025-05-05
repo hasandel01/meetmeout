@@ -1,6 +1,7 @@
 package com.hasandel01.meetmeoutserver.service;
 
 
+import com.hasandel01.meetmeoutserver.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.mappers.UserMapper;
@@ -58,26 +59,6 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
         return UserMapper.toUserDTO(user);
-    }
-
-    public List<UserDTO> getPossibleFriends() {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User currentUser = (User) userDetailsService.loadUserByUsername(username);
-
-        List<User> users = userRepository.findAll();
-
-        List<UserDTO> companions = companionService.getFriends(currentUser.getUsername());
-
-        Set<Long> companionIds = companions.stream().map(UserDTO::id).collect(Collectors.toSet());
-
-
-        return users.stream()
-                .filter(user -> !user.getId().equals(currentUser.getId()))
-                .filter(user -> !companionIds.contains(user.getId()))
-                .map(UserMapper::toUserDTO)
-                .toList();
     }
 
     public UserDTO updateMe(UserDTO userDTO) {

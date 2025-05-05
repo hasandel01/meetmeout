@@ -2,7 +2,9 @@ package com.hasandel01.meetmeoutserver.repository;
 
 import com.hasandel01.meetmeoutserver.models.FriendRequest;
 import com.hasandel01.meetmeoutserver.models.User;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +29,28 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
     Optional<FriendRequest> findBySenderAndReceiver(User sender, User receiver);
 
     Optional<List<FriendRequest>> findByReceiverAndStatus(User receiver, FriendRequest.Status status);
+
+    @Transactional
+    @Modifying
+    @Query("""
+    DELETE FROM FriendRequest as fr
+    WHERE (
+        (fr.sender.id = :userId AND fr.receiver.id = :companionId)
+        OR 
+        (fr.sender.id = :companionId AND fr.receiver.id = :userId)
+        )AND fr.status = 'ACCEPTED'
+    """)
+    void deleteAcceptedFriend(@Param("userId") Long userId,@Param("companionId") Long companionId);
+
+    List<FriendRequest> findBySenderAndStatus(User sender, FriendRequest.Status status);
+
+
+
+    @Transactional
+    @Modifying
+    @Query("""
+    DELETE FROM FriendRequest as fr 
+    WHERE fr.sender.id = :userId AND fr.receiver.id = :companionId
+    """)
+    void deleteFriendRequest(@Param("userId") Long userId,@Param("companionId") Long companionId);
 }

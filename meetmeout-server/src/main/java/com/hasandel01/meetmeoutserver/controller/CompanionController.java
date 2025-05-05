@@ -4,7 +4,6 @@ package com.hasandel01.meetmeoutserver.controller;
 import com.hasandel01.meetmeoutserver.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.mappers.UserMapper;
-import com.hasandel01.meetmeoutserver.models.FriendRequest;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.repository.UserRepository;
 import com.hasandel01.meetmeoutserver.service.CompanionService;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -103,6 +101,44 @@ public class CompanionController {
 
         return ResponseEntity.ok(companionService.getFriends(user.getUsername()));
 
+    }
+
+
+    @PostMapping("/remove-companion/{companionEmail}")
+    public ResponseEntity<Boolean> removeCompanion(@PathVariable String companionEmail) {
+        try {
+            return ResponseEntity.ok(companionService.removeCompanion(companionEmail));
+        }catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/get-possible-friends")
+    public ResponseEntity<List<UserDTO>> getPossibleFriends() {
+        try {
+            return ResponseEntity.ok(companionService.getPossibleFriends());
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/get-request-sent-users")
+    public ResponseEntity<List<UserDTO>> getRequestSentUsers() {
+        try {
+            return ResponseEntity.ok(companionService.getUsersThatFriendRequestIsAlreadySent());
+        } catch (RuntimeException e ) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @DeleteMapping("/cancel-companion-request/{companionEmail}")
+    public ResponseEntity<Boolean> cancelCompanionRequest(@PathVariable String companionEmail) {
+        try {
+            return ResponseEntity.ok(companionService.cancelSentRequest(companionEmail));
+        } catch (RuntimeException e){
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }

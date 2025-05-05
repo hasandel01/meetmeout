@@ -24,12 +24,9 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public Page<NotificationDTO> getNotifications(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "10") int size) {
+    public Page<NotificationDTO> getNotifications(Pageable pageable) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Pageable pageable = PageRequest.of(page, size);
-
         return notificationService.getNotificationsForUser(username,pageable);
 
     }

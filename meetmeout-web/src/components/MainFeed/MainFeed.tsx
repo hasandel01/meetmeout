@@ -4,7 +4,7 @@ import axiosInstance from "../../axios/axios";
 import { useState } from "react";
 import { Event } from "../../types/Event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faLocationDot} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faSort} from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faShare, faComment } from "@fortawesome/free-solid-svg-icons";
 import { getCategoryIconLabel } from "../../mapper/CategoryMap";
 import { useNavigate } from "react-router-dom";
@@ -89,18 +89,22 @@ const MainFeed = () => {
 
     return (
         <div className={styles.mainFeedContainer}>
-        <header>
-            <select onChange={(e) => searchQuery(e.target.value)}>
-                <option
-                    value="Most Recent">
-                    Most Recent
-                </option>
-                <option
-                    value="Least Recent">
-                    Least Recent
-                </option>
-            </select>
-        </header>
+            <header>
+                <div className={styles.sort}>
+                    <FontAwesomeIcon icon={faSort}>
+                    </FontAwesomeIcon>
+                    <select onChange={(e) => searchQuery(e.target.value)}>
+                        <option
+                            value="Most Recent">
+                            Most Recent
+                        </option>
+                        <option
+                            value="Least Recent">
+                            Least Recent
+                        </option>
+                    </select>
+                </div>
+            </header>
         <div className={styles.onGoingEventsContainer}>
                 {events && events.length > 0 ? (
                     events.map((event) => (

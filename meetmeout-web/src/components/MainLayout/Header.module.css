@@ -40,7 +40,7 @@ header .headerMenu {
 }
 
 header .headerMenu span {
-    color: var(--text-color-header);
+    color: var(--nav-item-color);
     font-size: 12px;
     margin-right: 10px;
     cursor: pointer;
@@ -53,8 +53,7 @@ header .headerMenu span {
 
 
 header .headerMenu span:hover {
-    border-bottom: 1px solid var(--text-color-header-dark);
-    color: var(--text-color-dark);
+    transform: translateY(-2px);
     transition: border-bottom 0.3s ease;
 }
 
@@ -76,8 +75,8 @@ header .headerMenu span:hover {
 }
   
 .navItem.active {
-    border-bottom: 2px solid var(--text-color-dark);
-    color: var(--text-color-dark);
+    border-bottom: 2px solid var(--nav-item-color);
+    color: var(--nav-item-color);
 }
   
 .logo {
@@ -111,23 +110,6 @@ header .userShortcut img {
     border: 2px solid var(--input-border);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
-}
-
-.searchBar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background-color: var(--input-background);
-}
-
-.searchBar input {
-    border: none;
-}
-
-.searchBar input:focus {
-    outline: none;
 }
 
 .userMenu {
@@ -184,18 +166,42 @@ header .userShortcut img {
     font-weight: bold;
 }
 
+/** SEARCH RESULTS */
+
+.searchBar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: var(--input-background);
+    border-radius: 8px;
+}
+
+.searchBar input {
+    border: none;
+    border-radius: 8px;
+    background-color: var(--input-background);
+  }
+  
+
+.searchBar input:focus {
+    outline: none;
+}
 
 .searchResults {
     position: absolute;
-    top: 8vh;
+    top: 50px;
+    max-height:  60vh;
+    max-width: 300px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--card-color);
-    left: 20vw;
-    width: 20vw;
+    left: 24vw;
     z-index: 1;
+    overflow-y: auto;
+    background-color: var(--card-color);
+    border-radius: 10px;
 }
 
 .searchResults ul {
@@ -205,89 +211,56 @@ header .userShortcut img {
 }
 
 .searchResults li {
-    padding: 5px;
+    padding: 10px;
+    gap: 12px;
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
     text-align: center;
     border-bottom: 1px solid var(--card-border);
     color: var(--text-color);
+}
+
+.searchResults li:hover {
+    background-color: var(--card-border);
+    color: var(--text-color);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .searchResults li h2 {
     font-size: 14px;
     font-weight: bold;
     color: var(--text-color);
+    margin: 0px;
 }
 
 .searchResults li p {
     font-size: 12px;
     color: var(--text-color);
+    margin: 0px;
 }
 
-.user-result-info {
+.userResultInfo {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    margin-left: 0px;
+    align-items: first baseline;
 }
+
 
 .searchResults li img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 16px;
     background-color: var(--input-background);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
 }
 
-.searchResults li:hover {
-    background-color: var(--secondary-color-light);
-    color: var(--text-color);
-    transition: background-color 0.3s ease;
-}
-
 .searchResults li:last-child {
     border-bottom: none;
 }
-
-
-.notificationDropdown {
-    position: fixed;
-    top: 8vh;
-    width: 25vh;
-    right: 35vh;
-    pad: 8px;
-    display: flex;
-    flex-direction: column;
-}
-
-.notificationDropdown ul {
-    list-style: none;
-    padding: 4px;
-    background-color: var(--card-color);
-    cursor: pointer;
-}
-
-.notificationDropdown li {
-    background-color: var(--input-background);
-}
-
-.notificationDropdown li:hover {
-    background-color: var(--secondary-color-light);
-}
-
-.notificationDropdown h4 {
-    font-size: 12px;
-}
-
-.notificationDropdown p {
-    font-size: 12px;
-}
-
 
 .notificationBadge {
     position: absolute;

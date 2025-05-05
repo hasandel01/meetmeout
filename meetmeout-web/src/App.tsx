@@ -6,13 +6,13 @@ import Register from './auth/Register'
 import UserProfile from './features/user/UserProfile/UserProfile'
 import UserCompanions from './features/user/UserCompanions/UserCompanions'
 import MainLayout from './components/MainLayout/MainLayout'
-import CreateEvent from './features/event/CreateEvent/CreateEvent'
+import CreateEventForm from './features/event/CreateEvent/CreateEventForm'
 import EventDetails from './features/event/EventDetails/EventDetails'
 import ProtectedRoute from './auth/ProtectedRoute'
 import VerifyEmail from './auth/VerifyEmail'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
+import Notifications from './features/notifications/Notifications'
 
 function App() {
 
@@ -61,7 +61,7 @@ function App() {
             <Route path="/create-event" 
             element={
               <ProtectedRoute>
-                <CreateEvent/>
+                <CreateEventForm/>
               </ProtectedRoute>
             } />
             <Route path="/event/:eventId" 
@@ -70,6 +70,12 @@ function App() {
                 <EventDetails/>
               </ProtectedRoute>
             } />
+              <Route path='/notifications'
+                element= {
+                  <ProtectedRoute>
+                    <Notifications/>                
+                    </ProtectedRoute>
+                }/>
             </Route>
         </Routes>  
     </Router>

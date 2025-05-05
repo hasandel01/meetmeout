@@ -9,6 +9,9 @@ import com.hasandel01.meetmeoutserver.models.GlobalSearchResponse;
 import com.hasandel01.meetmeoutserver.repository.EventRepository;
 import com.hasandel01.meetmeoutserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,20 +32,21 @@ public class SearchController {
 
 
     @GetMapping
-    public ResponseEntity<GlobalSearchResponse> search(@RequestParam("query") String query) {
-        Set<EventDTO> events = eventRepository.findByTitleContainingIgnoreCase(query)
+    public GlobalSearchResponse search(@RequestParam("query") String query, Pageable pageable) {
+
+        Set<EventDTO> events = eventRepository.findByTitleContainingIgnoreCase(query, pageable)
                 .stream()
                 .map(EventMapper::toEventDto)
                 .collect(Collectors.toSet());
 
         Set<UserDTO> users = userRepository
                 .findByUsernameContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase
-                        (query, query, query)
+                        (query, query, query, pageable)
                 .stream()
                 .map(UserMapper::toUserDTO)
                 .collect(Collectors.toSet());
 
-        return ResponseEntity.ok(new GlobalSearchResponse(events, users));
+        return new GlobalSearchResponse(events, users);
     }
 
 }

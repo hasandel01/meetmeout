@@ -59,7 +59,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddress, se
   };
 
   return (
-    <div style={{ height: '300px', width: '300px' }}>
+    <div style={{ height: '400px', width: '400px' }}>
       <MapContainer
         center={position}
         zoom={13}

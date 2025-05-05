@@ -1,6 +1,3 @@
-body {
-}
-
 .mainFeedContainer {
     position: relative;
     display: flex;
@@ -10,10 +7,26 @@ body {
 .mainFeedContainer header {
     position: relative;
     display: flex;
-    background-color: #1976d2;
+    flex-direction: row;
+    justify-content: end;
+    background-color: var(--background-color);
+    gap: 10px;
+
 }
 
-.onGoingEventsContainer{
+.mainFeedContainer header .sort {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px;
+    border: 2px solid var(--card-border);
+}
+
+.mainFeedContainer header .sort select {
+    border: none;
+}
+
+.onGoingEventsContainer {
     position: relative;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px,1fr));

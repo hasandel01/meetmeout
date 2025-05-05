@@ -50,6 +50,7 @@ const UserProfile = () => {
         getUserProfile();
         getMe();
         getCompanions();
+        
     }, []);
 
     const updateProfilePicture = async () => {
@@ -86,14 +87,13 @@ const UserProfile = () => {
     };
 
 
-
     const updateProfile = async () => {
         setShowUserUpdateForm(prev => !prev);
     }
 
     return (
         <div className={styles.userProfile}>
-            {user && showUserUpdateForm && <UserUpdateForm currentUser={user} />}
+            {user && showUserUpdateForm && <UserUpdateForm currentUser={user} onClose={() => setShowUserUpdateForm((prev) => !prev)} />}
             <div className={styles.userProfileHeader}>
                 <div className={styles.userProfileDetails}>
                     <FontAwesomeIcon 

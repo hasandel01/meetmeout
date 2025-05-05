@@ -1,55 +1,222 @@
 /* CREATE EVENT */
 
 .createEventFormContainer {
-    background-color: var(--primary-color);
     width: 100vw;
-    height: 90vh;
+    height: 80vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 10px;
-    overflow: auto;
+    overflow: hidden;
 }
 
-.createEventFormContainer form {
-    width: 60vw;
-    height: 80vh;
+.containerAlt {
+    position: relative;
+    background-color: var(--primary-color-light);
+    min-width: 500px;
+    min-height: 500px;
+    max-width: 500px;
+    max-height: 500px;
+    width: 30vw;
+    padding: 20px;
+    border-radius: 5%;
+}
+
+.containerAlt h4 {
+    color: var(--text-color);
+    margin: 0px;
+    font-size: 18px;
+}
+
+/** STEP 1 */
+
+.eventInfoAndDate {
     display: flex;
-    flex-direction: row;
-    gap: 10vw;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    text-align: left;
 }
 
-.createEventFormContainer form label {
+.eventInfoAndDate h4 {
+    margin: 0px;
     font-size: 14px;
-    text-align: center;
-    display: flex;
-    flex-direction: row;
 }
 
-.createEventFormContainer form button {
+.eventInfoAndDate hr {
+    margin: 0px;
+    color: var(--text-color);
+    border-radius: 1px;
     width: 100%;
 }
 
-.createEventFormContainer form label input {
-    width: 20px;
+.inputGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+/** STEP 2 */
+
+.eventLocationSelectorContainer p {
+    color: var(--text-color);
+}
+
+.eventLocationSelector {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+    margin: 0 auto 24px auto;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 3px solid var(--card-border);
+}
+  
+.coordinatesDisplay {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 1;
+}
+
+/** STEP 3 */
+
+.eventDetails {
+    display: flex;
+    flex-direction: column;
+    align-items: first baseline;
+    gap: 20px;
+    padding: 20px;
+    text-align: start;
+}
+
+.eventDetails h4 {
+    font-size: 14px;
+}
+
+.eventDetails input, select {
+    padding: 8px;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    align-items: left;
+}
+
+.capacityContainer  {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.categoryTags {
+    display: flex;
+    flex-direction: column;
+}
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
+}
+
+.eventType {
+    display: flex;
+    flex-direction: column;
+}
+
+.eventCheckBoxes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 40px;
+    align-items: center;
+}
+
+.eventCheckBoxes label {
+    align-items: center;
+    gap: 5px;
+}
+
+.eventType label {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color-dark); /* Modern tarayıcılarda renk kontrolü */
+    cursor: pointer;
+  }
+
+
+/*tag input*/
+
+.tagInputContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.tagInputContainer span {
+    font-size: 12px;
+}
+
+.tagInputContainer span label {
+    font-weight: bold;
+    color: var(--text-color);
+    display: inline-block;
+    margin-bottom: 5px;
+    background-color: #e0f7fa;
+    color: #00796b;
+    padding: 4px;
+    border-radius: 8px;  
+    cursor: pointer;
 }
 
 
-.eventImageUploadContainer{
+
+/** STEP 4 */
+
+.eventImageUploadContainer {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.eventImageUploadContainer h4 {
+    font-size: 14px;
 }
 
 .eventImageUpload {
     position: relative;
     display: flex;
-    width: 80px;
-    height: 80px;
+    margin-top: 30px;
+    width: 200px;
+    height: 200px;
     margin-bottom: 20px;
     overflow: hidden;
     cursor: pointer;
@@ -92,75 +259,75 @@
     transform: scale(1.05);
 }
 
-.eventLocationSelector {
-    width: 100%;
-    max-width: 300px;
-    height: 300px;
-    margin: 0 auto 24px auto;
-    overflow: hidden;
-    border-radius: 12px;
-    border: 1px solid var(--card-border);
+
+/** STEP 5 */
+
+.eventSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eventPreview {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.previewImage {
+  width: 200px;
+  height: 200px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.previewDetails p {
+  margin: 4px 0;
+}
+
+.warningText {
+  font-size: 14px;
+  color: var(--warning-color);
+  font-style: italic;
+}
+
+/** BUTTONS **/
+
+.buttons {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+    right: 10px;
+    bottom: 10px;
+}
+
+.buttons button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3 ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buttons button:hover {
+    background-color: var(--primary-color-dark);
+    color: white;
+}
+
+
+/** ERROR TEXT */
+
+
+.errorText {
+    font-size: 14px;
+    color: var(--error-color);
+    margin-top: 4px;
+    margin-left: 4px;
+    font-style: italic;
   }
   
-
-.coordinatesDisplay {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    z-index: 1;
-}
-
-
-.eventInputs {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
-}
-
-.eventInputs input,
-.eventInputs textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid var(--card-border);
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-}
-
-.eventType {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-
-
-/*TAG INPUT*/
-
-
-.tagInputContainer {
-
-}
-
-.tagInputContainer span {
-    font-size: 12px;
-}
-
-.tagInputContainer span label {
-    font-weight: bold;
-    color: var(--text-color);
-    display: inline-block;
-    margin-bottom: 5px;
-    background-color: #e0f7fa;
-    color: #00796b;
-    padding: 4px;
-    border-radius: 8px;  
-    cursor: pointer;
-}

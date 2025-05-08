@@ -10,7 +10,7 @@ import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-import SockJS from 'sockjs-client/dist/sockjs'; 
+import SockJS from 'sockjs-client';
 import { Client} from "@stomp/stompjs";
 import { Message } from "../../../types/Message";
 import { JoinRequest } from "../../../types/JoinRequest";

@@ -6,7 +6,7 @@ import axiosInstance from '../../axios/axios';
 import { User } from '../../types/User';
 import { useEffect } from 'react';
 import { Event } from '../../types/Event';
-import SockJS from 'sockjs-client/dist/sockjs'; 
+import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import styles from "./Header.module.css";
 import { Notification } from '../../types/Notification';

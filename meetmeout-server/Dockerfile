@@ -1,7 +1,5 @@
 FROM openjdk:23
 
-# Uygulama JAR dosyasını kapsayıcıya kopyala
-COPY out/artifacts/meetmeout_server_jar/meetmeout-server.jar app.jar
+COPY target/meetmeout-server-0.0.1-SNAPSHOT.jar app.jar
 
-# Uygulamanın çalıştırılması
 ENTRYPOINT ["java", "-jar", "/app.jar"]

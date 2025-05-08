@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./Notifications.module.css";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import axiosInstance from "../../axios/axios";
 import { Notification } from "../../types/Notification";
@@ -46,7 +46,7 @@ const Notifications = () => {
                                   {notifications.length < 1 && <h2>"You're all caught up!" ✨</h2>}
                                   <ul>
                                     {notifications
-                                    .map((notification, index) => (
+                                    .map((notification) => (
                                             <li className={notification.read ? `${styles.read}` : `${styles.notRead}`}
                                                 key={notification.id}
                                                 onClick={() => {

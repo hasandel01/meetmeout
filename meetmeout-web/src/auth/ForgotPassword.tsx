@@ -7,7 +7,6 @@ import axios from 'axios';
 const ForgotPassword: React.FC = () => {
     
     const [email, setEmail] = useState('');
-    const [message, setMessage] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -39,7 +38,6 @@ const ForgotPassword: React.FC = () => {
                 </div>
                 <button type="submit">Send Reset Link</button>
             </form>
-            {message && <p>{message}</p>}
         </div>
     );
 };

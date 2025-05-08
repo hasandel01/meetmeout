@@ -12,7 +12,6 @@ import { toast } from "react-toastify";
 import { User } from "../../types/User";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Tooltip } from "react-tooltip";
-import { JoinRequest } from "../../types/JoinRequest";
 
 const MainFeed = () => {
  

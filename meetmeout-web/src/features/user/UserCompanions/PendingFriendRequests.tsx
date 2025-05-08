@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../../../axios/axios";
 import {FriendRequest} from "../../../types/FriendRequest";
 import styles from "./UserCompanions.module.css" 

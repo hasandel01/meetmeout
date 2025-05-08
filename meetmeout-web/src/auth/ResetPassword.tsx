@@ -24,7 +24,7 @@ const ResetPassword = () => {
         
         try {
 
-            await axios.post(`http://192.168.1.42:8081/auth/reset-password`, 
+            await axios.post(`https://meetmeout.onrender.com/auth/reset-password`, 
                 {
                     resetPasswordToken: token,
                     password: newPassword

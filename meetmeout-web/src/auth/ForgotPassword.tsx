@@ -12,7 +12,7 @@ const ForgotPassword: React.FC = () => {
         e.preventDefault();
 
         try {
-            await axios.post(`http://192.168.1.42:8081/auth/send-password-reset-link/${email}`)
+            await axios.post(`https://meetmeout.onrender.com/auth/send-password-reset-link/${email}`)
             toast.success("Password reset link is sent.")
         } catch (error) {
             toast.success("User is not found in the system, please sign up!")

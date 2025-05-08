@@ -101,7 +101,7 @@ const Header = () => {
     useEffect(() => {
         
         const token = localStorage.getItem('accessToken');
-        const socket = new SockJS(`http://192.168.1.42:8081/ws?token=${token}`);
+        const socket = new SockJS(`https://meetmeout.onrender.com/ws?token=${token}`);
 
         const client = new Client({
             webSocketFactory: () => socket,

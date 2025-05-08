@@ -2,7 +2,7 @@ import axios from "axios";
 
 
 const axiosInstance = axios.create({
-    baseURL: "http://192.168.1.42:8081",
+    baseURL: "https://meetmeout.onrender.com",
     headers: {
         "Content-Type": "application/json",
     },
@@ -36,7 +36,7 @@ axiosInstance.interceptors.response.use(
         
             try {
                 const refreshToken = localStorage.getItem("refreshToken");
-                const response = await axios.post('http://192.168.1.42:8081/auth/refresh-token', {
+                const response = await axios.post('https://meetmeout.onrender.com/auth/refresh-token', {
                     refreshToken
                 })
 

@@ -82,16 +82,6 @@ public class CompanionService {
                 .sentAt(LocalDateTime.now())
                 .build();
 
-
-        Notification notification = Notification.builder()
-                .notificationType(NotificationType.FRIEND_REQUEST)
-                .sender(sender)
-                .receiver(receiver)
-                .title("A new friend request.")
-                .body(sender.getUsername() + " has sent you a companion request")
-                .url("")
-                .build();
-
         notificationService.sendFriendRequestNotification(sender, receiver);
         friendRequestRepository.save(friendRequest);
 

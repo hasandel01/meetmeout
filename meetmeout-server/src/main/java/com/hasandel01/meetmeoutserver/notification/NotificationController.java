@@ -30,7 +30,6 @@ public class NotificationController {
     @PutMapping("/change-notification-status/{notificationId}")
     public ResponseEntity<Void> updateNotificationStatusToRead(@PathVariable Long notificationId) {
         try {
-            log.info("Updating notification status to read {}", notificationId);
             return ResponseEntity.ok(notificationService.changeStatusToRead(notificationId));
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

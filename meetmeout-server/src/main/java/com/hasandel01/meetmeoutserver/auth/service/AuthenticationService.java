@@ -63,7 +63,7 @@ public class AuthenticationService {
                     .build();
 
             emailSenderService.sendEmail(user.getEmail(), "Please verify your email",
-                    "Click the link to verify your account: http://192.168.1.42:5173/verify?token=" + verificationToken);
+                    "Click the link to verify your account: https://meetmeout.vercel.app/verify?token=" + verificationToken);
             userRepository.save(user);
         }
 
@@ -132,7 +132,7 @@ public class AuthenticationService {
 
         userRepository.save(user);
         emailSenderService.sendEmail(user.getEmail(), "Password reset link",
-                "Click the link to reset your password: http://192.168.1.42:5173/reset-password?token=" + resetPasswordToken);
+                "Click the link to reset your password: https://meetmeout.vercel.app/reset-password?token=" + resetPasswordToken);
 
 
         return null;

@@ -76,7 +76,7 @@ public class UserService {
                 String verificationToken = UUID.randomUUID().toString();
 
                 emailSenderService.sendEmail(userDTO.email(), "Please verify your email",
-                        "Click the link to verify your account: http://localhost:5173/verify?token=" + verificationToken);
+                        "Click the link to verify your account: https://meetmeout.vercel.app/verify?token=" + verificationToken);
 
                 user.setEmail(userDTO.email());
                 user.setVerificationToken(verificationToken);

@@ -29,9 +29,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration corsConfiguration = new CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173",
-                            "http://192.168.1.42:5173",
-                            "http://192.168.1.42"));
+                    corsConfiguration.setAllowedOrigins(List.of("https://meetmeout.vercel.app/"));
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                     corsConfiguration.setAllowedHeaders(List.of("*"));
                     corsConfiguration.setAllowCredentials(true);

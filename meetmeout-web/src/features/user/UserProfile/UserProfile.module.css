@@ -151,7 +151,29 @@ hr {
     font-size: 12px;
 }
 
+@media (max-width: 768px) {
+    
+    .userProfile {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: var(--card-border);
+        overflow: hidden;
+        margin: 20px;
+        padding: 100px;
+    }
 
+    .updateIcon {
+        font-size: 28px;
+    }
+    
+    .updateIcon:hover {
+        background-color: #d4d3d3;
+    }
+}
 
 
 

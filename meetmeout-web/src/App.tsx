@@ -13,6 +13,8 @@ import VerifyEmail from './auth/VerifyEmail'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Notifications from './features/notifications/Notifications'
+import ForgotPassword from './auth/ForgotPassword'
+import ResetPassword from './auth/ResetPassword'
 
 function App() {
 
@@ -35,13 +37,15 @@ function App() {
             <Route path="/login" element={<Login/>}/>
             <Route path="/register" element={<Register/>}/>
             <Route path="/verify" element={<VerifyEmail/>}/>
+            <Route path="/forgot-password" element={<ForgotPassword/>}/>
+            <Route path="/reset-password" element={<ResetPassword/>}/>
 
             <Route path="/"
             element={
             <ProtectedRoute>
                 <MainLayout/>
             </ProtectedRoute>}>    
-            <Route path="/main-feed" element={
+            <Route path="/" element={
               <ProtectedRoute>
                 <MainFeed/>
               </ProtectedRoute>

@@ -1,14 +1,88 @@
 .eventContainer {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
+/** ATTENDEES */
+
+.attendees {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-color);
+    color:white;
+    align-items: center;
+    padding: 15px;
+}
+
+.attendees ul {
+    padding: 0px;
+    margin: 0px;
+    display: grid;
+    grid-template-columns: 2fr;
+    cursor: pointer;
+}
+
+.attendees li {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    list-style: none;
+}
+
+.attendees img {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+}
+
+.attendees img:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.organizerIcon {
+    position: absolute;
+    color: var(--secondary-color);
+}
+
+/**EVENT CARD SUMMARY**/
+
+.eventCardAndComment {
+    display: flex;
+    flex-direction: column;
+}
 
 .eventCardAndWeatherAPI {
     position: relative;
     display: flex;
     flex-direction: row;
 }
+
+.eventCard {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 16px;
+    padding: 16px;
+    margin: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: white;
+    cursor: pointer;
+    width: 600px;
+    height: 600px;
+    gap: 5px;
+}
+
+.firstColumn {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    align-items: center;
+}
+
 
 .weatherApi {
     position: relative;
@@ -22,41 +96,28 @@
     height: 200px;
 }
 
-
-.eventCard {
+.secondColumn {
+    position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
-    border-radius: 16px;
-    padding: 16px;
-    margin: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-    width: 300px;
-    height: 300px;
-    gap: 5px;
 }
 
 .eventCard img {
-    width: 25%;
-    border-radius: 50%;
+    width: 40%;
+    border-radius: 10%;
     object-fit: cover;
-    margin-bottom: 8px;
 }
 
 .eventCard h2 {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 2px;
+    font-size: 24px;
+    color: var(--text-color);
 }
 
 .eventCard p {
-    font-size: 12px;
-    color: #666;
-    text-align: center;
-    margin-bottom: 2px;
+    font-size: 14px;
+    color: var(--text-color);
 }
 
 .eventCard:hover {
@@ -64,18 +125,14 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-
 .eventTitle {
     display: inline-flex;
     flex-direction: row;
     align-items: center;
     padding: 4px 8px;
+    font-size: 24px;
     gap: 10px;
-}
-
-.eventTitle h2 {
-    font-size: 14px;
-    margin: 0;
+    margin: 0px;
 }
 
 .eventCategory {
@@ -84,7 +141,7 @@
     align-items: center;
     border-radius: 4px;
     padding: 4px 8px;
-    font-size: 12px;
+    font-size: 18px;
     border: #00796b solid 1px;
     color: #00796b;
 }
@@ -95,38 +152,42 @@
     display: flex;
     flex-direction: column;
     align-items: first baseline;
+    gap: 20px;
 }
 
 .eventTimeDate {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 30px;
 }
 
 .eventTimeDate span {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 5px;
+    gap: 20px;
 }
 
 .eventLocation {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 5px;
+    gap: 22px;
 }
 
 .icon {
-    font-size: 18px;
+    font-size: 30px;
     color: var(--primary-color-dark);
     margin: 0;
 }
 
-p {
-    margin: 0;
-    font-size: 12px;
+
+.tag {
+    background-color: rgb(189, 247, 189);
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 6px;
+    
 }
 
 .tags p {
@@ -138,6 +199,7 @@ p {
 
 .eventStatus {
     display: flex;
+    max-width: fit-content;
     justify-content: center;
     align-items: center;
     background-color: white;
@@ -156,7 +218,6 @@ p {
     background-color: #e99e2f;
     color: white;
 }
-
 
 /* TO BE IMPLEMENTED */
 
@@ -178,11 +239,14 @@ p {
 /* EVENT BUTTON */
 
 .eventActions {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 10px;
+    flex-direction: row;
+    align-items: left;
+    justify-content: end;
+    gap: 24px;
 }
 
 .buttonGroup {
@@ -221,11 +285,12 @@ p {
 }
 
 .joinButton {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
     background-color: #4caf50;
     color: white;
     border: none;
-    border-radius: 4px;
-    padding: 8px 16px;
     cursor: pointer;
     font-size: 12px;
     margin: 0 4px;
@@ -245,65 +310,113 @@ p {
     background-color: #388e3c;
 }
 
-.eventOrganizer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-style: italic;
-}
-
-.eventOrganizer img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 4px;
-}
-
-.eventOrganizer p {
+.deleteButton {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: #fadfdf;
+    border: 1px solid #9e1f1f;
+    color: #9e1f1f;
+    cursor: pointer;
     font-size: 12px;
-    color: #666;
-    text-align: center;
-    margin: 0;
+    margin: 0 4px;
+    margin-top: 10 px;
+    transition: background-color 0.2s;
+    align-items: center;
+    cursor: pointer;
+    transition: scale 0.5 ease;
 }
 
-/** ATTENDEES */
+.deleteButton:hover {
+    transform: scale(1.05);
+}
 
-.attendees {
+.deleteButton label {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+
+ /** COMMENT CONTAINER **/
+
+ .commentContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
-    grid-template-columns: 3fr;
-}
+    background-color: var(--card-border);
+    width: 600px;
+    padding: 12px;
+    margin: 0px 30px;
+    border-radius: 12px;
+ }
 
-.attendees ul {
+ .commentContainerAlt {
+    background-color: white;
+    border-radius: 12px;
+    padding: 12px;
+ }
+
+ .commentContainer ul {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+ }
+
+ .commentContainer li {
+    background-color: var(--card-color);
+ }
+
+ .commentElement {
     display: flex;
     flex-direction: row;
-    cursor: pointer;
-    gap: 20px;
-}
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--card-color);
+ }
 
-.attendees li {
+ .commentSender {
     position: relative;
-    list-style: none;
-}
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+ }
 
-.attendees img {
+ .timestamp {
+    color: #333;
+    font-size: 12px;
+ }
+
+ .commentElement img {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
+ }
+
+ .addComment {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.attendees img:hover {
-    transform: scale(1.1);
+.addComment input {
+    padding: 10px;
+    width: 80%;
 }
 
 /** CHAT MESSAGE */
 
 .chatContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background-color: white;
+    width: 40vw;
+    height: 60vh;
+    margin: 30px;
+    border-radius: 20px;
 }
 
 .chatMessage {
@@ -318,4 +431,20 @@ p {
     width: 50px;
     height: 50px;
     cursor: pointer;
+}
+
+.sendChatMessageContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    bottom: 20px;
+    justify-content: space-between;
+    justify-content: center;
+}
+
+.sendChatMessage {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }

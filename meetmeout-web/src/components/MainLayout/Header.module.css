@@ -301,28 +301,29 @@ header .userShortcut img {
 @media (max-width: 768px) {
 
     header {
-        position: relative;
+        position: fixed;
         top: 0;
         left: 0;
+        width: 100vw;
+        height: 60px;
         display: flex;
-        flex-direction: row;
-        justify-content: first baseline;
-        padding: 5px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
         background-color: var(--primary-color);
-        width: 100%;
+        z-index: 1000;
     }
     
     header .logoContainer {
         display: flex;
         flex-direction: row;
-        justify-content: center;
-        align-items: center;
         cursor: pointer;
+        margin-left: 0px;
     }
     
     header .logoContainer img {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         background-color: var(--input-background);
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -338,6 +339,7 @@ header .userShortcut img {
         padding: 10px;
         background-color: var(--input-background);
         border-radius: 8px;
+        margin-left: 0px;
     }
     
     .searchBar input {
@@ -366,28 +368,54 @@ header .userShortcut img {
         display: flex;
         flex-direction: column;
         align-items: first baseline;
-        gap: 14px;
+        gap: 30px;
       }
 
       .barMenu li img {
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
       }
     
-      .barMenu li div {
-        flex-direction: column;
-      }
+      .barMenuItem {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        align-items: center;
+    }
     
       .barMenu li label {
-        font-size: 10px;
-        margin: 0px;
-        padding: 0px;
+        font-size: 20px;
+        align-items: center;
     }
 
-    .userMenu {
-        position: fixed;
-        top: 40vh;
-        right: 20vw;
+    .searchBar {
+        flex: 1;
+        margin: 0 10px;
     }
+
+    .logoContainer img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .barMenuContainer {
+        margin-right: 30px;
+    }
+
+    .mainContent {
+        padding-top: 70px; /* Header yüksekliği + biraz boşluk */
+      }
       
+
+      .headerMenu span:active,
+.barMenu div:active,
+.userShortcut:active,
+.logoContainer:active,
+.searchBar:active {
+    transform: scale(0.95); /* küçük bir küçülme efekti */
+    opacity: 0.7;          /* hafif bir transparanlık */
+    transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
 }

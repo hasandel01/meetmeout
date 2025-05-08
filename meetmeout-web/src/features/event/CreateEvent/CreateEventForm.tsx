@@ -79,6 +79,7 @@ const CreateEventForm = () => {
                     return;
                 }
 
+         
 
                 const formData = new FormData();
                 formData.append("title", event.title);
@@ -100,6 +101,12 @@ const CreateEventForm = () => {
 
 
                 if (selectedImageFile) {
+                    
+                    if (selectedImageFile.size > 10 * 1024 * 1024) {
+                        toast.error("Image must be under 10MB.");
+                        return;
+                    }         
+                    
                     formData.append("eventImage", selectedImageFile);
                 }
     
@@ -234,11 +241,6 @@ const CreateEventForm = () => {
                     <div className={styles.eventLocationSelectorContainer}>
                         {errors.location && <p className={styles.errorText}>{errors.location}</p>}                        <div className={styles.eventLocationSelector}>
                             <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} setAddressName={setAddressName} />
-                            {coordinates && (
-                                <div className={styles.coordinatesDisplay}>
-                                    Latitude: {coordinates.latitude}, Longitude: {coordinates.longitude}
-                                </div>
-                            )}
                         </div>
                         
                     </div>

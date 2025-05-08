@@ -5,7 +5,7 @@ import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
 import {User} from '../../../types/User';
 import styles from './EventDetails.module.css'
-import { faCalendar, faLocationDot} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faRightFromBracket, faStar, faTrash} from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
@@ -14,6 +14,9 @@ import SockJS from 'sockjs-client/dist/sockjs';
 import { Client} from "@stomp/stompjs";
 import { Message } from "../../../types/Message";
 import { JoinRequest } from "../../../types/JoinRequest";
+import { Tooltip } from "react-tooltip";
+import axios from "axios";
+import formatTime from "../../../utils/formatTime";
 
 const EventDetails = () => {
 
@@ -100,8 +103,9 @@ const EventDetails = () => {
         
         console.log(response.data);
         setWeather(response.data);
-        */
-          
+
+          */
+
     }catch(error) {
       toast.error("Error getting weather info");
       console.log((error as any).message);
@@ -113,7 +117,7 @@ const EventDetails = () => {
     try {
 
           await axiosInstance.post(`/leave-event/${eventId.eventId}`);
-          navigate("/main-feed")
+          navigate("/")
     } catch(error) {
         toast.error("Error leaving event.")
     }
@@ -167,18 +171,28 @@ const EventDetails = () => {
   const handleAddComment = async (eventId: number) => {
 
     try {
-      await axiosInstance.post(`/add-comment/${eventId}`,
-        {
-            commentId: null,
-            comment: commentString,
-            userId: currentUser?.id,
-            username: currentUser?.username,
-            eventId: eventId,
-            updatedAt: new Date().toISOString()
-        }
+        const newComment = {
+          commentId: null,
+          comment: commentString,
+          userId: currentUser?.id,
+          username: currentUser?.username,
+          eventId: eventId,
+          updatedAt: new Date().toISOString()
+        };
 
-      )
+      await axiosInstance.post(`/add-comment/${eventId}`, newComment)
     
+      setEvent(prev => ({
+        ...prev,
+        comments: [...prev.comments, {
+          commentId: Math.random(),
+          eventId: prev.id,
+          comment: newComment.comment,
+          updatedAt: newComment.updatedAt,
+          sender: currentUser!
+        }]
+      }));
+
       toast.success("Comment is sent!")
     } catch(error) {
       toast.error("Error sending a comment.")
@@ -287,10 +301,60 @@ const EventDetails = () => {
 
   return (
     <div className={styles.eventContainer}>
+      <div className={styles.attendees} >
+        <h4>Attendees</h4>
+        <hr/>
+            <ul>
+               {event.attendees.map((attendee,index) => 
+                <li key={index} onClick={() => goToUserProfile(attendee.username)}>
+                       {event.organizer?.username === attendee.username &&
+                       <>
+                        <FontAwesomeIcon icon={faStar} className={styles.organizerIcon}
+                        data-tooltip-id="organizer-icon" data-tooltip-content="Organizer"></FontAwesomeIcon>
+                        <Tooltip id="organizer-icon"/>
+                       </>
+                        }
+                      <img src={attendee.profilePictureUrl}></img>
+                      <h5>{attendee.firstName}</h5>
+                </li>
+                )}
+            </ul>
+            <h4>Requesters</h4>
+                <hr/>
+                  <ul>
+                    {joinRequests.map((request, index) => 
+                      request.user ? (
+                        <li key={index} onClick={() => goToUserProfile(request.user.username)}>
+                          <img src={request.user.profilePictureUrl} />
+                          <h5>{request.user.firstName}</h5>
+                          <button onClick={() => handleAcceptJoinRequest(event.id, request.user.username)}>
+                            Accept
+                          </button>
+                        </li>
+                  ) : null
+                )}
+              </ul>
+      </div>
+      <div className={styles.eventCardAndComment}>
        <div className={styles.eventCardAndWeatherAPI}>
-          <div className={styles.eventCard}>
-              <div className={`${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
+          <div className={styles.eventCard}> 
+              <div className={styles.firstColumn}>
                   <img src={event.imageUrl} alt={event.title} />
+                  {weather && weather.current && (
+                          <div className={styles.weatherWidget}>
+                          <h4>Current Weather</h4>
+                            <div className={styles.weatherContent}>
+                                <img
+                                      src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} 
+                                      alt={weather.current.weather[0].description}
+                                ></img>
+                            </div>
+                          </div>
+                        )}
+              </div>
+              <div className={styles.secondColumn}>
+                    
+                    <div className={`${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
                       <div className={styles.eventTitle}>
                         <div className={styles.eventCategory}>
                             {(() => {
@@ -316,16 +380,15 @@ const EventDetails = () => {
                                   <p>{event.addressName}</p>
                           </div>
                           <div className={styles.tags}>
-                                  <p>{event.tags.join(" ")}</p>
+                            {event.tags.map((tag, index) => (
+                              <span key={index} className={styles.tag}>
+                                #{tag}
+                              </span>
+                            ))}
                           </div>
-                          {event.organizer && (
-                              <div className={styles.eventOrganizer}>
-                                    <img src={event.organizer.profilePictureUrl} alt={event.organizer.profilePictureUrl} className="event-organizer-image" />
-                                      <p>{event.organizer.firstName} {event.organizer.lastName}</p>
-                                </div>
-                          )}
-                      </div>
-                                <div className={styles.eventActions}>
+                      </div>         
+                    </div>
+                    <div className={styles.eventActions}>
                                     <div className={styles.buttonGroup}>
                                         <FontAwesomeIcon 
                                             icon={
@@ -345,25 +408,50 @@ const EventDetails = () => {
                                             className={styles.commentIcon} />
                                         <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
                                     </div>
-                                     <button disabled={isDisabled(event)}
-                                            onClick={() => handleJoinEvent(event.id)} 
-                                            className={styles.joinButton}>
-                                            Join Event 
-                                    </button>
-                                </div>
-                                <div className={styles.commentContainer}>
-                                    <ul> 
+                                </div>                     
+                                  {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
+                                  (<button className={styles.deleteButton} onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleLeaveEvent
+                                    }}>
+                                   {(event.organizer?.username === currentUser?.username )? (
+                                      <>
+                                      <FontAwesomeIcon icon={faTrash} size="2x" />
+                                      <label> Delete Event </label>
+                                      </>
+                                      )
+                                      : ( 
+                                      <>
+                                        <FontAwesomeIcon icon={faRightFromBracket} size="2x" />
+                                        <label> Leave Event </label>
+                                      </>
+                                      ) }
+                                      </button>) : (
+                                      <button disabled={isDisabled(event)}
+                                        onClick={() => handleJoinEvent(event.id)} 
+                                        className={styles.joinButton}>
+                                        Join Event 
+                                      </button>  )}
+                    </div>
+              </div>
+              <div className={styles.commentContainer}>
+                      <div className={styles.commentContainerAlt}>
+                                        <ul> 
                                         {event.comments
                                         .map((comment,index) => (
                                             <li key={index}>
-                                                <div>
-                                                    <h4> {comment.username} </h4>
-                                                    <p> {comment.comment} </p>
-                                                    <h5> {comment.updatedAt}</h5>
-                                                </div>
+                                                    <div className={styles.commentElement}>
+                                                      <div className={styles.commentSender}>
+                                                          <img src={comment.sender.profilePictureUrl}></img>
+                                                          <h5> {comment.sender.username} </h5>
+                                                      </div>
+                                                    <span className={styles.timestamp}>{formatTime(comment.updatedAt)}</span>
+                                                    </div>
+                                                    <strong> {comment.comment} </strong>
                                             </li>
                                         ))}
                                     </ul>
+                                    <hr/>
                                     <div className={styles.addComment}>
                                         <input
                                             type="text"
@@ -372,24 +460,14 @@ const EventDetails = () => {
                                             onChange={(e) => setCommentString(e.target.value)}
                                         ></input>
                                         <button onClick={() => handleAddComment(event.id)}>
-                                           Send comment
+                                           Send
                                         </button>
                                     </div>
-                                </div>
-                    </div>
-                      {weather && weather.current && (
-                        <div className={styles.weatherWidget}>
-                         <h4>Current Weather</h4>
-                          <div className={styles.weatherContent}>
-                              <img
-                                    src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} 
-                                    alt={weather.current.weather[0].description}
-                              ></img>
-                          </div>
                         </div>
-                      )}
-                    <div className={styles.chatContainer}>
-                      <h4>Event Chat</h4>
+                </div>
+      </div>
+      <div className={styles.chatContainer}>
+                        <h4>Event Chat</h4>
                               <ul className={styles.messageList}>
                                 {messages.map( (message, index) => (
                                   <li key={index} className={styles.chatMessage}>
@@ -398,53 +476,29 @@ const EventDetails = () => {
                                   </li>
                                 ))}
                               </ul>
-                          <input
-                            type="text"
-                            placeholder="Enter a message"
-                            value={newMessage?.message}
-                            onChange={(e) => {
-                                if (currentUser) {
-                                    setNewMessage({ user: currentUser, message: e.target.value });
-                                }
-                            }}
-                            required
-                            >
-                          </input>
-                          <button onClick={sendMessage}>
-                              Send Message
-                            </button>
-                      </div>
-        </div>
-      <div className={styles.attendees} >
-        <h4>Attendees</h4>
-        <hr/>
-            <ul>
-               {event.attendees.map((attendee,index) => 
-                <li key={index} onClick={() => goToUserProfile(attendee.username)}>
-                      <img src={attendee.profilePictureUrl}></img>
-                      <h5>{attendee.firstName}</h5>
-                </li>
-                )}
-            </ul>
-      </div>
-      <div className={styles.attendees} >
-        <h4>Requesters</h4>
-        <hr/>
-          <ul>
-            {joinRequests.map((request, index) => 
-              request.user ? (
-                <li key={index} onClick={() => goToUserProfile(request.user.username)}>
-                  <img src={request.user.profilePictureUrl} />
-                  <h5>{request.user.firstName}</h5>
-                  <button onClick={() => handleAcceptJoinRequest(event.id, request.user.username)}>
-                    Accept
-                  </button>
-                </li>
-          ) : null
-        )}
-      </ul>
-      </div>
-      <button onClick={handleLeaveEvent}>{(event.organizer?.username === currentUser?.username) ? "Delete Event" : "Leave Event" }</button>
+                          
+                          <div className={styles.sendChatMessageContainer}>
+                            <hr/>
+                              <div className={styles.sendChatMessage}>
+                              <input
+                                  type="text"
+                                  placeholder="Enter a message"
+                                  value={newMessage?.message}
+                                  onChange={(e) => {
+                                      if (currentUser) {
+                                          setNewMessage({ user: currentUser, message: e.target.value });
+                                      }
+                                  }}
+                                  required
+                                  >
+                                </input>
+                                <button onClick={sendMessage}>
+                                    Send
+                                  </button>
+                                </div>
+                          </div>
+                           
+    </div>      
     </div>
   );
 }

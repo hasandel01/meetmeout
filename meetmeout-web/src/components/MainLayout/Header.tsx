@@ -127,10 +127,35 @@ const Header = () => {
         };
     }, []);
 
+    useEffect(() => {
+      
+      const handleClickOutside = (event: MouseEvent) => {
+        const menu = document.querySelector(`.${styles.barMenu}`);
+        const button = document.querySelector(`.${styles.barMenuContainer}`);
+        if (
+          menu &&
+          !menu.contains(event.target as Node) &&
+          button &&
+          !button.contains(event.target as Node)
+        ) {
+          setShowBarMenu(false);
+        }
+
+      }
+
+      if (showBarMenu) {
+        document.addEventListener("mousedown", handleClickOutside);
+      }
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    },[showBarMenu])
+
 
     return (
         <header> 
-              <div className={styles.logoContainer} onClick={() => navigate("/main-feed")}>
+                <div className={styles.logoContainer} onClick={() => navigate("/")}>
                   <img src="logo_cut.png" alt="Logo" />  
                 </div>
                 <div className={styles.searchBar}>
@@ -197,32 +222,47 @@ const Header = () => {
                       <div className={styles.barMenu}>
                         <ul>
                           <li>
-                            <div  onClick={() => navigate(`/user-profile/${user?.username}`)}>
+                            <div  onClick={() => {
+                              navigate(`/user-profile/${user?.username}`)
+                              setShowBarMenu(false)
+                              }} className={styles.barMenuItem}>
                                 <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
                                 <label>Profile</label>
                             </div>
-                            <div onClick={() => navigate("/main-feed")}                            >
+                            <div onClick={() => {
+                              navigate("/")
+                              setShowBarMenu(false)
+                            }} className={styles.barMenuItem}>
                               <FontAwesomeIcon icon={faHome} size="2x" />
                               <label> Home </label>
                             </div>
-                            <div onClick={() => navigate("/create-event")}>
+                            <div onClick={() => {
+                              navigate("/create-event")
+                              setShowBarMenu(false)
+                            }} className={styles.barMenuItem}>
                               <FontAwesomeIcon icon={faCalendarPlus} size="2x" />
                               <label> Create Event </label>
                             </div>
-                            <div onClick={() => navigate(`${user?.username}/companions`)}>
+                            <div onClick={() => {
+                              navigate(`${user?.username}/companions`)
+                              setShowBarMenu(false)
+                            }} className={styles.barMenuItem}>
                               <FontAwesomeIcon icon={faUserGroup} size="2x" />
                               <label> Companions </label>
                             </div>
-                            <div onClick={() => navigate("/notifications")}>
+                            <div onClick={() => {
+                              navigate("/notifications")
+                              setShowBarMenu(false)
+                            }} className={styles.barMenuItem}>
                               <FontAwesomeIcon icon={faBell} size="2x" />
                               <label>Notifications</label>
                             </div>
-                            <div>
-                              <FontAwesomeIcon icon={faGear}></FontAwesomeIcon>
+                            <div className={styles.barMenuItem}>
+                              <FontAwesomeIcon icon={faGear} size= "2x"></FontAwesomeIcon >
                               <label>Settings</label>
                             </div>
-                            <div onClick={handleSignOut}>
-                              <FontAwesomeIcon icon={faRightFromBracket}></FontAwesomeIcon>
+                            <div onClick={handleSignOut} className={styles.barMenuItem}>
+                              <FontAwesomeIcon icon={faRightFromBracket} size='2x'></FontAwesomeIcon>
                               <label>Sign out</label>
                             </div>
                           </li>
@@ -236,8 +276,8 @@ const Header = () => {
                   <>
                   <div className={styles.headerMenu}>
                   <span
-                          onClick={() => navigate("/main-feed")}
-                          className={`${styles.navItem} ${isActive("/main-feed") ? styles.active : ''}`}
+                          onClick={() => navigate("/")}
+                          className={`${styles.navItem} ${isActive("/") ? styles.active : ''}`}
                         >
                           <FontAwesomeIcon icon={faHome} size="2x" />
                           <label> Home </label>

@@ -13,6 +13,7 @@ import { User } from "../../types/User";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Tooltip } from "react-tooltip";
 import { JoinRequest } from "../../types/JoinRequest";
+
 const MainFeed = () => {
  
     const [events, setEvents] = useState<Event[] | null>([]);
@@ -162,7 +163,7 @@ const MainFeed = () => {
 
     return (
         <div className={styles.mainFeedContainer}>
-            <header>
+            <div className={styles.mainFeedContainerHeader}>
                 <div className={styles.sort}>
                     <FontAwesomeIcon icon={faSort}>
                     </FontAwesomeIcon>
@@ -177,7 +178,7 @@ const MainFeed = () => {
                         </option>
                     </select>
                 </div>
-            </header>
+            </div>
         <div className={styles.onGoingEventsContainer}>
                 { loading ? (
                     <>                          
@@ -235,7 +236,7 @@ const MainFeed = () => {
                                                 </div>
                                         )}
                                     </div>
-                                <div className={styles.eventActions}>
+                                    <div className={styles.eventActions}>
                                     <div className={styles.buttonGroup} data-tooltip-id="event_like" data-tooltip-content="Like">
                                         <FontAwesomeIcon 
                                             icon={
@@ -261,7 +262,8 @@ const MainFeed = () => {
                                             className={styles.commentIcon} />
                                         <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
                                     </div>
-                                    {event.organizer?.username !== currentUser?.username &&
+                                </div>
+                                {event.organizer?.username !== currentUser?.username &&
                                     <button disabled={isDisabled(event)}
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -269,7 +271,7 @@ const MainFeed = () => {
                                         className={styles.joinButton}>
                                         {event.isPrivate ? (
                                             requestSentEvents.some(requestSentEvent => requestSentEvent.id === event.id) ?
-                                            "Already sent request!"
+                                            "Sent request!"
                                             :
                                             "Send Join Request!"
                                         )
@@ -278,8 +280,6 @@ const MainFeed = () => {
                                              
                                              : "Join" }
                                     </button> }
-                                     
-                                </div>
                                 </div>
                             </div>            
                         )

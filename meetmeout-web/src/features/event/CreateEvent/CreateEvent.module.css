@@ -331,3 +331,40 @@ input[type="checkbox"] {
     font-style: italic;
   }
   
+
+@media (max-width: 768px) {
+
+    body {
+        align-items: center;
+        justify-content: center;
+        margin: 0px;
+    }
+
+    .createEventFormContainer {
+        position: absolute;
+        margin-top: 0px;
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .containerAlt {
+        width: 90vw;
+        max-width: 100%;
+        min-width: auto;
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+
+    .inputGroup input {
+        width: 90%;
+        height: 30px;
+    }
+
+
+    
+}

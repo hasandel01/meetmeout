@@ -1,3 +1,5 @@
+import {User} from "./User"
+
 export interface Like {
     id: number;
     username: string;
@@ -7,9 +9,8 @@ export interface Like {
 export interface Comment {
     commentId: number;
     comment: string;
-    userId: number;
     eventId: number;
-    username: string;
+    sender: User;
     updatedAt: string;
 }
 

@@ -21,6 +21,7 @@ public class NotificationMapper {
 
     public static NotificationDTO toNotificationDTO(Notification notification) {
         return NotificationDTO.builder()
+                .id(notification.getId())
                 .notificationType(notification.getNotificationType())
                 .url(notification.getUrl())
                 .receiver(UserMapper.toUserDTO(notification.getReceiver()))

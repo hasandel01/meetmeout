@@ -30,9 +30,6 @@ public class CompanionController {
     @PostMapping("/add-a-companion/{receiverEmail}")
     public ResponseEntity<Boolean> addFriend(@PathVariable String receiverEmail) {
         try {
-
-            log.info(receiverEmail);
-
             companionService.sendFriendRequest(receiverEmail);
             return new ResponseEntity<>(true, HttpStatus.OK);
         }

@@ -13,11 +13,18 @@ const Notifications = () => {
     const page = 0;
     const size = 20;
 
-    const goToNoticationUrl = (index: number) => {
-        navigate(`${notifications.at(index)?.url}`)
+    const handleNotificationStatus = async (notificationId: number, url: string) => {
+        
+        try {
+            await axiosInstance.put(`/notifications/change-notification-status/${notificationId}`);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+
+        navigate(`${url}`)
       } 
 
-      const getNotifications = async () => {
+    const getNotifications = async () => {
         try {
             const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
             setNotifications(response.data.content);
@@ -25,7 +32,9 @@ const Notifications = () => {
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
-    }     
+    }
+
+
 
       useEffect(()=> {
         getNotifications();
@@ -35,15 +44,22 @@ const Notifications = () => {
         <div className={styles.notificationContainer}>
                 <div className={styles.notificationDropdown}>
                                   {notifications.length < 1 && <h2>"You're all caught up!" ✨</h2>}
-                                  {notifications
-                                  .map((notification, index) => (
-                                      <ul key={index} onClick={() => goToNoticationUrl(index)}>
-                                          <li>
-                                            <h4>{notification.title}</h4>
-                                            <p>{notification.body}</p>
-                                          </li>
-                                      </ul>
-                                    ))}
+                                  <ul>
+                                    {notifications
+                                    .map((notification, index) => (
+                                            <li className={notification.read ? `${styles.read}` : `${styles.notRead}`}
+                                                key={notification.id}
+                                                onClick={() => {
+                                                  handleNotificationStatus(notification.id, notification.url)
+                                                }}
+                                            >
+                                              <img src={notification.sender.profilePictureUrl} ></img>
+                                              <h4>{notification.title}</h4>
+                                              <p>{notification.body}</p>
+                                            </li>
+                                      ))}
+                                 </ul>
+
             </div>    
         </div>
     )

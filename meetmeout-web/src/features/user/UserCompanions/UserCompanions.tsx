@@ -60,7 +60,7 @@ const UserCompanions = () => {
         useEffect(() => {
             getCompanions();
             getMe();
-            getRequestSentUsers()
+            getRequestSentUsers();
         }, []);
 
 

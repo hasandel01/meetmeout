@@ -11,6 +11,7 @@ public record CommentDTO(
     String comment,
     Long userId,
     Long eventId,
+    String username,
     LocalDateTime updatedAt
 ) {
 }

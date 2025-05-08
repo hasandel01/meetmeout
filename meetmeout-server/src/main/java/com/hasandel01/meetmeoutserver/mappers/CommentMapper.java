@@ -9,6 +9,7 @@ public class CommentMapper {
         return CommentDTO.builder()
                 .comment(comment.getComment())
                 .commentId(comment.getId())
+                .username(comment.getSender().getUsername())
                 .updatedAt(comment.getUpdatedAt())
                 .userId(comment.getSender().getId())
                 .eventId(comment.getEvent().getId())

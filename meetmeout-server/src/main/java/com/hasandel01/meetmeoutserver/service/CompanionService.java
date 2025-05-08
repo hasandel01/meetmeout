@@ -3,13 +3,16 @@ package com.hasandel01.meetmeoutserver.service;
 
 import com.hasandel01.meetmeoutserver.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.enums.NotificationType;
 import com.hasandel01.meetmeoutserver.event.Event;
 import com.hasandel01.meetmeoutserver.mappers.EventMapper;
 import com.hasandel01.meetmeoutserver.mappers.FriendRequestMapper;
 import com.hasandel01.meetmeoutserver.mappers.UserMapper;
 import com.hasandel01.meetmeoutserver.models.FriendRequest;
+import com.hasandel01.meetmeoutserver.models.Notification;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.repository.FriendRequestRepository;
+import com.hasandel01.meetmeoutserver.repository.NotificationRepository;
 import com.hasandel01.meetmeoutserver.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +37,7 @@ public class CompanionService {
     private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
     private final FriendRequestRepository friendRequestRepository;
-
+    private final NotificationService notificationService;
 
     public List<UserDTO> getFriends(String username) {
 
@@ -85,6 +88,17 @@ public class CompanionService {
                 .sentAt(LocalDateTime.now())
                 .build();
 
+
+        Notification notification = Notification.builder()
+                .notificationType(NotificationType.FRIEND_REQUEST)
+                .sender(sender)
+                .receiver(receiver)
+                .title("A new friend request.")
+                .body(sender.getUsername() + " has sent you a companion request")
+                .url("")
+                .build();
+
+        notificationService.sendFriendRequestNotification(sender, receiver);
         friendRequestRepository.save(friendRequest);
 
     }
@@ -102,6 +116,8 @@ public class CompanionService {
         request.setStatus(FriendRequest.Status.ACCEPTED);
         friendRequestRepository.save(request);
 
+        notificationService.sendRequestAcceptedNotification(receiver, sender);
+
     }
 
     public void rejectRequest(String senderEmail) {
@@ -109,8 +125,6 @@ public class CompanionService {
         String receiverUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         User receiver = userRepository.findByEmail(receiverUsername).orElseThrow();
         User sender = userRepository.findByEmail(senderEmail).orElseThrow();
-
-        log.info("Rejecting request from {} to {}", senderEmail, receiverUsername);
 
         FriendRequest request = friendRequestRepository
                 .findBySenderAndReceiver(sender, receiver)
@@ -140,15 +154,8 @@ public class CompanionService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-
         User companion = userRepository.findByEmail(companionEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Companion not found"));
-
-
-        Set<User> acceptedFriends = friendRequestRepository.findAcceptedFriends(user.getId());
-
-        log.info("Removing companion {} from {}", companionEmail, username);
-        log.info("Accepted friends {}", acceptedFriends);
 
         friendRequestRepository.deleteAcceptedFriend(user.getId(),companion.getId());
         return true;

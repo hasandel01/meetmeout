@@ -1,7 +1,9 @@
 package com.hasandel01.meetmeoutserver.service;
 
 
+import com.hasandel01.meetmeoutserver.dto.CommentDTO;
 import com.hasandel01.meetmeoutserver.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.dto.JoinRequestDTO;
 import com.hasandel01.meetmeoutserver.dto.ReviewDTO;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.Comment;
@@ -9,6 +11,8 @@ import com.hasandel01.meetmeoutserver.event.Like;
 import com.hasandel01.meetmeoutserver.event.Review;
 import com.hasandel01.meetmeoutserver.mappers.EventMapper;
 import com.hasandel01.meetmeoutserver.event.Event;
+import com.hasandel01.meetmeoutserver.mappers.JoinRequestMapper;
+import com.hasandel01.meetmeoutserver.models.JoinEventRequest;
 import com.hasandel01.meetmeoutserver.models.User;
 import com.hasandel01.meetmeoutserver.repository.*;
 import jakarta.transaction.Transactional;
@@ -35,6 +39,7 @@ public class EventService {
     private final LikeRepository likeRepository;
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
+    private final JoinEventRequestRepository joinEventRequestRepository;
 
     @Transactional
     public Event createEvent(EventDTO event) {
@@ -125,7 +130,50 @@ public class EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
+        if(event.isPrivate()) {
+            return sendJoinEventRequest(event);
+        } else {
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+            user.getParticipatedEvents().add(event);
+            event.getAttendees().add(user);
+            eventRepository.save(event);
+            userRepository.save(user);
+        }
+
+        return null;
+    }
+
+    private Void sendJoinEventRequest(Event event) {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+
+        JoinEventRequest joinEventRequest = JoinEventRequest.builder()
+                .event(event)
+                .createdAt(LocalDateTime.now())
+                .sender(user)
+                .build();
+
+        joinEventRequestRepository.save(joinEventRequest);
+
+        notificationService.sendJoinRequestToOrganizer(event,user);
+
+        return null;
+    }
+
+    @Transactional
+    public Void acceptJoinRequest(long eventId, String username) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
@@ -135,8 +183,16 @@ public class EventService {
         eventRepository.save(event);
         userRepository.save(user);
 
+        notificationService.sendJoinRequestAcceptedNotification(event,user);
+
+        List<JoinEventRequest> joinEventRequest = joinEventRequestRepository.findByEventAndSender(event,user);
+
+        joinEventRequestRepository.deleteAll(joinEventRequest);
+
         return null;
     }
+
+
 
     public Void leaveEvent(long eventId) {
 
@@ -178,6 +234,7 @@ public class EventService {
         }else {
             Like newLike = Like.builder().user(user).event(event).build();
             likeRepository.save(newLike);
+            notificationService.likeNotification(user, event);
         }
 
         return null;
@@ -230,7 +287,7 @@ public class EventService {
     }
 
 
-    public Void addComment(@Valid long eventId, Comment commentDTO) {
+    public Void addComment(@Valid long eventId, CommentDTO commentDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -244,7 +301,7 @@ public class EventService {
         Comment comment = Comment.builder()
                 .event(event)
                 .sender(user)
-                .comment(commentDTO.getComment())
+                .comment(commentDTO.comment())
                 .sentAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
@@ -261,5 +318,42 @@ public class EventService {
         comment.ifPresent(commentRepository::delete);
 
         return null;
+    }
+
+
+    public List<JoinRequestDTO> getAllJoinRequests(long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        Optional<List<JoinEventRequest>> joinEventRequests = joinEventRequestRepository.findByEvent(event);
+
+        return joinEventRequests
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(JoinRequestMapper::toJoinRequestDTO)
+                .toList();
+
+    }
+
+    public List<EventDTO> getAllRequestSentEvents() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+
+        List<JoinEventRequest> joinEventRequest = joinEventRequestRepository.findBySender(user)
+                .orElse(Collections.emptyList());
+
+        List<EventDTO> eventDTOS = new ArrayList<>();
+
+        joinEventRequest.forEach(joinEventRequest1 -> {
+            eventDTOS.add(EventMapper.toEventDto(joinEventRequest1.getEvent()));
+        });
+
+        return eventDTOS;
+
     }
 }

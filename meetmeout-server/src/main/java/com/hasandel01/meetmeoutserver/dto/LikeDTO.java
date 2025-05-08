@@ -6,7 +6,7 @@ import lombok.Data;
 @Builder
 public record LikeDTO(
         long id,
-        long userId,
+        String username,
         long eventId)
 {
 }

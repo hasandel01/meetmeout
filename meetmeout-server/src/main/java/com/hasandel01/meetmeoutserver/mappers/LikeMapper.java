@@ -10,7 +10,7 @@ public class LikeMapper {
 
         return LikeDTO
                 .builder()
-                .userId(like.getUser().getId())
+                .username(like.getUser().getUsername())
                 .eventId(like.getEvent().getId())
                 .build();
     }

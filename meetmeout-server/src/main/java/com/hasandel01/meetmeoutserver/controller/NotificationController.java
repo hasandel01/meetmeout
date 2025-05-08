@@ -5,17 +5,18 @@ import com.hasandel01.meetmeoutserver.dto.NotificationDTO;
 import com.hasandel01.meetmeoutserver.models.Notification;
 import com.hasandel01.meetmeoutserver.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/notifications")
@@ -29,6 +30,17 @@ public class NotificationController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return notificationService.getNotificationsForUser(username,pageable);
 
+    }
+
+
+    @PutMapping("/change-notification-status/{notificationId}")
+    public ResponseEntity<Void> updateNotificationStatusToRead(@PathVariable Long notificationId) {
+        try {
+            log.info("Updating notification status to read {}", notificationId);
+            return ResponseEntity.ok(notificationService.changeStatusToRead(notificationId));
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 

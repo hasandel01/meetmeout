@@ -1,6 +1,6 @@
 export interface Like {
     id: number;
-    userId: number;
+    username: string;
     eventId: number;
 }
 
@@ -9,6 +9,7 @@ export interface Comment {
     comment: string;
     userId: number;
     eventId: number;
+    username: string;
     updatedAt: string;
 }
 

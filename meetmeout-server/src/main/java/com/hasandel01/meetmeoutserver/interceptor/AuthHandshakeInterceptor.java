@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Component
@@ -39,6 +40,7 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
                 if (token != null && jwtService.isTokenValid(token, userDetails)) {
                     String username = jwtService.getSubject(token);
                     attributes.put("username", username);
+                    attributes.put("principal", (Principal) () -> username);
                     return true;
                 }
             }

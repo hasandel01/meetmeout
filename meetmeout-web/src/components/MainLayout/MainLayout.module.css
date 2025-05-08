@@ -22,3 +22,11 @@ footer {
     text-align: center;
     justify-content: center;
 }
+
+@media (max-width: 768px) {
+    
+    .appWrapper {
+        max-width: 40vw;
+        overflow: scroll;
+    }
+}

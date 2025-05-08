@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import axiosInstance from '../../axios/axios';
 import { User } from '../../types/User';
 import { useEffect } from 'react';
@@ -10,6 +10,7 @@ import SockJS from 'sockjs-client/dist/sockjs';
 import { Client } from '@stomp/stompjs';
 import styles from "./Header.module.css";
 import { Notification } from '../../types/Notification';
+import useMediaQuery from "./hooks/useMediaQuery";
 
 const Header = () => {
 
@@ -22,7 +23,8 @@ const Header = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
-
+    const isMobile = useMediaQuery("(max-width: 768px)");
+    const [showBarMenu, setShowBarMenu] = useState(false);
     const page = 0;
     const size = 0;
 
@@ -32,6 +34,7 @@ const Header = () => {
   
     useEffect(() => {
         getMe();
+        getNotifications();
       }
     , []); 
   
@@ -52,6 +55,15 @@ const Header = () => {
         }
     
       }
+
+      const getNotifications = async () => {
+        try {
+            const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
+            setNotifications(response.data.content);
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    }     
 
       
       const globalSearch  = async (query: string) => {
@@ -89,7 +101,7 @@ const Header = () => {
     useEffect(() => {
         
         const token = localStorage.getItem('accessToken');
-        const socket = new SockJS(`http://localhost:8081/ws?token=${token}`);
+        const socket = new SockJS(`http://192.168.1.42:8081/ws?token=${token}`);
 
         const client = new Client({
             webSocketFactory: () => socket,
@@ -176,55 +188,106 @@ const Header = () => {
                    </div>
                   </div>
                 )}
-                <div className={styles.headerMenu}>
-                <span
-                        onClick={() => navigate("/main-feed")}
-                        className={`${styles.navItem} ${isActive("/main-feed") ? styles.active : ''}`}
-                      >
-                        <FontAwesomeIcon icon={faHome} size="2x" />
-                        <label> Home </label>
-                      </span>
-
-                      <span
-                        onClick={() => navigate("/create-event")}
-                        className={`${styles.navItem} ${isActive("/create-event") ? styles.active : ''}`}
-                      >
-                        <FontAwesomeIcon icon={faCalendarPlus} size="2x" />
-                        <label> Create Event </label>
-                      </span>
-
-                      <span
-                        onClick={() => navigate(`${user?.username}/companions`)}
-                        className={`${styles.navItem} ${isActive(`/${user?.username}/companions`) ? styles.active : ''}`}
-                      >
-                        <FontAwesomeIcon icon={faUserGroup} size="2x" />
-                        <label> Companions </label>
-                      </span>
-                      <span 
-                        onClick={() => navigate("/notifications")}
-                        className={`${styles.navItem} ${isActive(`/notifications`) ? styles.active : ''}`}>
-                        <FontAwesomeIcon icon={faBell} size="2x"  />
-                        <label> Notifications </label>
-                        {notifications
-                        .filter((notification) => {notification.read === false})
-                        .length > 0 && (
-                          <span className={styles.notificationBadge}>{notifications.length}</span>
-                        )}
-                      </span>
-                </div>
-                <div className={styles.userShortcut} onClick={triggerUserMenu}>
-                      <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
-                </div>
-                {showMenu && (
-                    <div className={styles.userMenu}>
+                {isMobile ? (
+                    <div className={styles.barMenuContainer}>
+                      <FontAwesomeIcon icon={faBars} size='2x'
+                      onClick={() => setShowBarMenu(prev => !prev)}>
+                      </FontAwesomeIcon>
+                      {showBarMenu &&
+                      <div className={styles.barMenu}>
                         <ul>
-                        {user?.username && (
-                            <li><a href={`/user-profile/${user.username}`}>Profile </a></li>)}
-                            <li><a href="/settings">Settings</a></li>
-                            <li><label onClick={handleSignOut}>Sign out</label></li>
+                          <li>
+                            <div  onClick={() => navigate(`/user-profile/${user?.username}`)}>
+                                <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
+                                <label>Profile</label>
+                            </div>
+                            <div onClick={() => navigate("/main-feed")}                            >
+                              <FontAwesomeIcon icon={faHome} size="2x" />
+                              <label> Home </label>
+                            </div>
+                            <div onClick={() => navigate("/create-event")}>
+                              <FontAwesomeIcon icon={faCalendarPlus} size="2x" />
+                              <label> Create Event </label>
+                            </div>
+                            <div onClick={() => navigate(`${user?.username}/companions`)}>
+                              <FontAwesomeIcon icon={faUserGroup} size="2x" />
+                              <label> Companions </label>
+                            </div>
+                            <div onClick={() => navigate("/notifications")}>
+                              <FontAwesomeIcon icon={faBell} size="2x" />
+                              <label>Notifications</label>
+                            </div>
+                            <div>
+                              <FontAwesomeIcon icon={faGear}></FontAwesomeIcon>
+                              <label>Settings</label>
+                            </div>
+                            <div onClick={handleSignOut}>
+                              <FontAwesomeIcon icon={faRightFromBracket}></FontAwesomeIcon>
+                              <label>Sign out</label>
+                            </div>
+                          </li>
                         </ul>
                       </div>
-                            )}
+                      }
+                      
+                    </div>
+                ) : 
+                (
+                  <>
+                  <div className={styles.headerMenu}>
+                  <span
+                          onClick={() => navigate("/main-feed")}
+                          className={`${styles.navItem} ${isActive("/main-feed") ? styles.active : ''}`}
+                        >
+                          <FontAwesomeIcon icon={faHome} size="2x" />
+                          <label> Home </label>
+                        </span>
+  
+                        <span
+                          onClick={() => navigate("/create-event")}
+                          className={`${styles.navItem} ${isActive("/create-event") ? styles.active : ''}`}
+                        >
+                          <FontAwesomeIcon icon={faCalendarPlus} size="2x" />
+                          <label> Create Event </label>
+                        </span>
+  
+                        <span
+                          onClick={() => navigate(`${user?.username}/companions`)}
+                          className={`${styles.navItem} ${isActive(`/${user?.username}/companions`) ? styles.active : ''}`}
+                        >
+                          <FontAwesomeIcon icon={faUserGroup} size="2x" />
+                          <label> Companions </label>
+                        </span>
+                        <span 
+                              onClick={() => navigate("/notifications")}
+                              className={`${styles.navItem} ${isActive("/notifications") ? styles.active : ''}`}
+                            >
+                              <div className={notifications.filter(n => !n.read).length > 0 ? styles.iconWrapperHas : styles.iconWrapper}>
+                              {notifications.filter(n => !n.read).length > 0 && (
+                                  <span className={styles.notificationBadge}>
+                                    {notifications.filter(n => !n.read).length}
+                                  </span>
+                                )}
+                                <FontAwesomeIcon icon={faBell} size="2x" />
+                              </div>
+                              <label>Notifications</label>
+                          </span>
+                  </div>
+                  <div className={styles.userShortcut} onClick={triggerUserMenu}>
+                        <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
+                  </div>
+                  {showMenu && (
+                      <div className={styles.userMenu}>
+                          <ul>
+                          {user?.username && (
+                              <li><a href={`/user-profile/${user.username}`}>Profile </a></li>)}
+                              <li><a href="/settings">Settings</a></li>
+                              <li><label onClick={handleSignOut}>Sign out</label></li>
+                          </ul>
+                        </div>
+                    )}
+                  </>
+                )}
             </header>
     );
 }

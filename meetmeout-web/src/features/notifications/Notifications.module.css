@@ -1,0 +1,71 @@
+.notificationContainer {
+    display: flex;
+    justify-content: center;       /* Ortaya hizalama */
+    margin-top: 60px;
+    padding: 20px;
+  }
+  
+  .notificationDropdown {
+    background-color: var(--card-color); /* veya beyaz */
+    border-radius: 12px;
+    padding: 20px 24px;
+    width: 100%;
+    max-width: 600px;              /* Genişlik sınırlama */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .notificationDropdown h2 {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  
+  .notificationDropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px 0;
+    cursor: pointer;
+    transition: all 0.2s ease;  
+    border-radius: 8px;
+  }
+  
+  .notificationDropdown li:hover {
+    background-color: var(--input-background); 
+    transform: scale(1.01);                    
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
+  }
+  
+  
+  .notificationDropdown li {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .notificationDropdown li img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--input-border);
+  }
+  
+  .notificationDropdown li h4 {
+    font-size: 16px;
+    margin: 0;
+    color: var(--text-color);
+  }
+  
+  .notificationDropdown li p {
+    font-size: 14px;
+    margin: 2px 0 0 0;
+    color: var(--text-color-light);
+  }
+
+
+.notRead {
+  background-color: var(--primary-color-light);
+}
+  

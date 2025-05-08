@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record NotificationDTO(
+        Long id,
         UserDTO sender,
         UserDTO receiver,
         String title,

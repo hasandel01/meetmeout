@@ -1,7 +1,9 @@
 package com.hasandel01.meetmeoutserver.controller;
 
 
+import com.hasandel01.meetmeoutserver.dto.CommentDTO;
 import com.hasandel01.meetmeoutserver.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.dto.JoinRequestDTO;
 import com.hasandel01.meetmeoutserver.dto.ReviewDTO;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.Comment;
@@ -85,6 +87,15 @@ public class EventController {
         }
     }
 
+    @PostMapping("/accept-join-request/{eventId}/{username}")
+    public ResponseEntity<Void> acceptJoinRequest(@PathVariable long eventId, @PathVariable String username) {
+        try {
+            return ResponseEntity.ok(eventService.acceptJoinRequest(eventId,username));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 
     @PostMapping("/leave-event/{eventId}")
     public ResponseEntity<Void> leaveEvent(@PathVariable long eventId) {
@@ -125,7 +136,7 @@ public class EventController {
 
 
     @PostMapping("/add-comment/{eventId}")
-    public ResponseEntity<Void> addComment(@Valid @PathVariable long eventId, @RequestBody Comment comment) {
+    public ResponseEntity<Void> addComment(@Valid @PathVariable long eventId, @RequestBody CommentDTO comment) {
         try {
             return ResponseEntity.ok(eventService.addComment(eventId, comment));
         }catch (RuntimeException e) {
@@ -138,6 +149,26 @@ public class EventController {
     public ResponseEntity<Void> deleteComment(@PathVariable long commentId) {
         try {
             return ResponseEntity.ok(eventService.deleteComment(commentId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @GetMapping("/get-join-requests/{eventId}")
+    public ResponseEntity<List<JoinRequestDTO>> getAllJoinRequestsForEvent(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.getAllJoinRequests(eventId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @GetMapping("/get-request-sent-events")
+    public ResponseEntity<List<EventDTO>> getAllRequestSentEvents() {
+        try {
+            return ResponseEntity.ok(eventService.getAllRequestSentEvents());
         }catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();
         }

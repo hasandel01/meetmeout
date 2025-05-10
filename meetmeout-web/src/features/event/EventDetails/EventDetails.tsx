@@ -460,7 +460,7 @@ const EventDetails = () => {
                                             <div className={styles.secondButtonGroup}>
                                               <button className={styles.inviteButton} onClick={(e) => {
                                                 e.stopPropagation()
-                                                showUsersToInvite(event.id)
+                                                showUsersToInvite()
                                               }}>
                                                   Send Invite
                                               </button>

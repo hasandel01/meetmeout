@@ -5,19 +5,23 @@ import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.model.Event;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
+import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -27,7 +31,7 @@ public class EventController {
 
 
     @PostMapping("/create-event")
-    public ResponseEntity<EventDTO> createEvent(@ModelAttribute EventDTO eventDTO) {
+    public ResponseEntity<Long> createEvent(@Validated @ModelAttribute EventDTO eventDTO) {
 
         try {
             return new ResponseEntity<>(eventService.createEvent(eventDTO), HttpStatus.CREATED);
@@ -36,8 +40,6 @@ public class EventController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-
     }
 
     @GetMapping("/get-events")
@@ -168,6 +170,26 @@ public class EventController {
             return ResponseEntity.internalServerError().build();
         }
     }
-    
+
+
+    @PostMapping("/send-invitation/{eventId}")
+    public ResponseEntity<Void> sendInvitation(@RequestBody List<UserDTO> users, @PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.sendInvitationToUsers(users,eventId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @PostMapping("/verify-access-to-event/{eventId}")
+    public ResponseEntity<Void> verifyAccessTokenForEvent(@PathVariable long eventId,
+    @RequestBody Map<String,String> payload) {
+        try {
+            return ResponseEntity.ok(eventService.verifyAccessTokenForEvent(eventId,payload));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 
 }

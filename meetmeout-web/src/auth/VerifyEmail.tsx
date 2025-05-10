@@ -1,11 +1,14 @@
-import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState} from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axiosInstance from "../axios/axios";
+import styles from "./Form.module.css"
 
 
 const VerifyEmail = () => {
 
     const [searchParams] = useSearchParams();
+    const [message, setMessage] = useState('Loading...');
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = searchParams.get('token');
@@ -15,9 +18,10 @@ const VerifyEmail = () => {
                 try {
                     const response = await axiosInstance.post(`/auth/verify-email?token=${token}`);
                     if (response.status === 200) {
-                        console.log('Email verified successfully!');
+                        setMessage("Your e-mail is verified. Redirecting to the login page...")
+                        setTimeout(() => navigate("/login"), 3000)
                     } else {
-                        console.error('Error verifying email:', response.data);
+                        setMessage("Error verifying e-mail")
                     }
                 } catch (error) {
                     console.error('Error verifying email:', error);
@@ -30,12 +34,9 @@ const VerifyEmail = () => {
     , [searchParams]);
 
 
-
-
     return (
-        <div>
-        <h1>Verify Email</h1>
-        <p>Please check your email for a verification link.</p>
+        <div className={styles.verifyContainer}>
+            {message}
         </div>
     );
 

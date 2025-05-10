@@ -310,10 +310,15 @@
     background-color: #388e3c;
 }
 
-.deleteButton {
+.secondButtonGroup {
     position: absolute;
+    display: flex;
+    flex-direction: row;
     right: 20px;
     bottom: 20px;
+}
+
+.deleteButton {
     background-color: #fadfdf;
     border: 1px solid #9e1f1f;
     color: #9e1f1f;
@@ -327,16 +332,15 @@
     transition: scale 0.5 ease;
 }
 
-.deleteButton:hover {
+.inviteButton {
+    background-color: #d2ebee;
+    border: 1px solid #0f4b7c;
+    color: #0f4b7c;
+}
+
+.secondButtonGroup button:hover {
     transform: scale(1.05);
 }
-
-.deleteButton label {
-    margin: 0px;
-    padding: 0px;
-}
-
-
 
  /** COMMENT CONTAINER **/
 
@@ -447,4 +451,43 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+/** INVITE MODAL */
+
+
+.inviteModalContainer {
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    width: 10vw;
+    height: 10vh;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.inviteModalContainer ul {
+    list-style: none;
+
+}
+
+.inviteModalContainer li {
+    display: flex;
+    flex-direction: row;
+}
+
+.inviteModalContainer li.selected {
+    background-color:  rebeccapurple;
+}
+
+.inviteModalContainer img {
+    width: 60px;
+    height: 60px;
+}
+
+.liSelected {
+    background-color: #d32f2f;
 }

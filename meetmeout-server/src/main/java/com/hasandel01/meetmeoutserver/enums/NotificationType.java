@@ -9,4 +9,6 @@ public enum NotificationType {
     EVENT_COMMENT,
     EVENT_LIKE,
     EVENT_REVIEW,
+    EVENT_INVITE,
+    EVENT_INVITE_RESPONSE
 }

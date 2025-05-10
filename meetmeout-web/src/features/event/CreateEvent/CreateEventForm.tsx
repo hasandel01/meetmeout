@@ -45,7 +45,9 @@ const CreateEventForm = () => {
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
     const [address, setAddress] = useState<string | null>(null);
     const [addressName, setAddressName] = useState<string | null>(null);
-    const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+
+
+    const [selectedImageFile, setSelectedImageFile] = useState<File | null>();
     
     const [event, setEvent] = useState<Event>({
         id: 1,
@@ -54,7 +56,7 @@ const CreateEventForm = () => {
         date: '',
         time: '',
         location: '',
-        imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1745237659/default_event_artbhy.png",
+        imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png",
         tags: [],
         isPrivate: false,
         isDraft: false,
@@ -93,6 +95,7 @@ const CreateEventForm = () => {
                 event.tags.forEach((tag) => {
                     formData.append("tags",tag);
                 });
+
                 formData.append("latitude", coordinates?.latitude.toString() || '');
                 formData.append("longitude", coordinates?.longitude.toString() || '');
                 formData.append("isPrivate", event.isPrivate.toString());
@@ -112,17 +115,15 @@ const CreateEventForm = () => {
                     formData.append("eventImage", selectedImageFile);
                 }
     
-                const response = await axiosInstance.post("/create-event", formData,
-                {
-                  headers: {
-                    "Content-Type": "multipart/form-data",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  }
-                });
+                    const response = await axiosInstance.post("/create-event", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                    });
 
                     toast.success("Event created successfully!");
-                    setEvent(response.data)
-                    navigate(`/event/${event.id}`)            
+                    setEvent((prev) => prev.id = response.data)
+                    setTimeout(() => navigate(`/event/${event.id}`), 100);            
     
             }
             catch (error) {
@@ -166,7 +167,26 @@ const CreateEventForm = () => {
     
     useEffect(() => {
 
-    }, [event.imageUrl])
+    const fetchDefaultImageAndConvertItToFile = async () => {
+
+            try {
+
+                const response = await fetch("https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png");
+                const blob = await response.blob();
+                const file = new File([blob],"default_event.png",{type: blob.type})
+                setSelectedImageFile(file)
+            }
+            catch(error) {
+                toast.error("Error fetching default image.")
+            }
+        }
+
+            if (!selectedImageFile) {
+                fetchDefaultImageAndConvertItToFile();
+            }
+
+   
+    }, [])
 
 
     const todayDate = new Date();
@@ -214,6 +234,7 @@ const CreateEventForm = () => {
                                 type="text" 
                                 placeholder="Event Description" 
                                 value={event.description}
+                                className={styles.descriptionText}
                                 onChange={(e) => setEvent( {...event, description: e.target.value } )} 
                                 />
                             {errors.description && <p className={styles.errorText}>{errors.description}</p>}
@@ -243,7 +264,7 @@ const CreateEventForm = () => {
             case 2:
                 return (
                     <div className={styles.eventLocationSelectorContainer}>
-                        {errors.location && <p className={styles.errorText}>{errors.location}</p>}                        <div className={styles.eventLocationSelector}>
+                        {errors.location && <p className={styles.errorText}>{errors.location}</p>}  <div className={styles.eventLocationSelector}>
                             <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} setAddressName={setAddressName} />
                         </div>
                         
@@ -342,7 +363,7 @@ const CreateEventForm = () => {
                             <p><strong>Longitude:</strong> {coordinates?.longitude}</p>
                             <p><strong>Capacity:</strong> {event.maximumCapacity}</p>
                             <p><strong>Category:</strong> {getCategoryIconLabel(event.category).label}</p>
-                            <p><strong>Tags:</strong> {event.tags.join(', ') || "None"}</p>
+                            <p><strong>Tags:</strong> {Array.isArray(event.tags) ? event.tags.join(', ') : "None"}</p>
                             <p><strong>Private:</strong> {event.isPrivate ? "Yes" : "No"}</p>
                             <p><strong>Draft:</strong> {event.isDraft ? "Yes" : "No"}</p>
                         </div>

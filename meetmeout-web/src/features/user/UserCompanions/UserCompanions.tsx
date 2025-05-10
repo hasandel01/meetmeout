@@ -7,12 +7,13 @@ import AddCompanion from "./AddCompanion";
 import PendingFriendRequests from "./PendingFriendRequests";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useUserContext } from "../../../context/UserContext";
 
 const UserCompanions = () => {
 
     const { username } = useParams<{ username: string }>();
 
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const {currentUser} = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [requestSentUsers, setRequestSentUsers] = useState<User[]>([]);
     const navigate = useNavigate();
@@ -39,27 +40,15 @@ const UserCompanions = () => {
             try {
                 const response = await axiosInstance.get(`/${username}/companions`);
                 console.log("Companion profile fetched successfully:", response.data);
-                setCompanions(response.data );
+                setCompanions(response.data);
             }
             catch (error) {
                 console.error("Error fetching companion profile:", error);
             }
         };
 
-        const getMe = async () => {
-            try {
-                const response = await axiosInstance.get(`/me`);
-                console.log("Current user fetched successfully:", response.data);
-                setCurrentUser(response.data);
-            }
-            catch (error) {
-                console.error("Error fetching current user:", error);
-            }
-        };
-
         useEffect(() => {
             getCompanions();
-            getMe();
             getRequestSentUsers();
         }, []);
 

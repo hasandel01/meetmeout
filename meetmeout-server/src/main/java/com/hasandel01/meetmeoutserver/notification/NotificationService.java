@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.notification;
 
 import com.hasandel01.meetmeoutserver.enums.NotificationType;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.event.model.Invite;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.companion.FriendRequestRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -153,6 +155,27 @@ public class NotificationService {
                 .url("/event/" + event.getId())
                 .sender(event.getOrganizer())
                 .receiver(receiver)
+                .read(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+
+    }
+
+    public void sendUserInvitationNotification(Invite invite) {
+
+
+        log.info(String.valueOf(invite.getInvited()));
+
+        Notification notification = Notification
+                .builder()
+                .notificationType(NotificationType.EVENT_INVITE)
+                .title("You have an invitation to event " + invite.getEvent().getTitle())
+                .body(invite.getInviter().getUsername() + " invited you to join the event!")
+                .url("/event/" + invite.getEvent().getId() + "?token=" + invite.getInviteToken())
+                .sender(invite.getInviter())
+                .receiver(invite.getInvited())
                 .read(false)
                 .createdAt(LocalDateTime.now())
                 .build();

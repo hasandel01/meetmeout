@@ -9,18 +9,19 @@ import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { getCategoryIconLabel } from "../../mapper/CategoryMap";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { User } from "../../types/User";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Tooltip } from "react-tooltip";
+import { useUserContext } from "../../context/UserContext";
 
 const MainFeed = () => {
  
     const [events, setEvents] = useState<Event[] | null>([]);
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const navigate = useNavigate();
-    const [currentUser, setCurrentUser] = useState<User | null>();
+    const {currentUser} = useUserContext();
     const [loading, setLoading] = useState(true);
     const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
+    const [myEvents, setMyEvents] = useState(false);
 
     const getEvents = async () => {
 
@@ -38,7 +39,6 @@ const MainFeed = () => {
 
     useEffect(() => {
         getEvents();
-        getMe();
         getRequestSentEvents();
     }, []);
 
@@ -78,19 +78,6 @@ const MainFeed = () => {
             toast.error("You couldn't join to the event.")
         }
 
-    }
-
-
-    const getMe = async () => {
-    
-        try {
-    
-            const response = await axiosInstance.get("/me");
-            setCurrentUser(response.data);
-        } catch(error) {
-          console.error("Error fetching user data:", error);
-        }
-    
     }
 
     const isDisabled = (event: Event) => {
@@ -158,11 +145,27 @@ const MainFeed = () => {
             toast.error("Error getting request sent  events.")
         }
     } 
+
+    const filterSelection = () => {
+        
+        if(!myEvents)
+            return events?.filter(event => event.isPrivate == false)
+        else
+            return events?.filter(event => event.attendees.some(attendee => attendee.username == currentUser?.username))
+    }
       
 
     return (
         <div className={styles.mainFeedContainer}>
             <div className={styles.mainFeedContainerHeader}>
+                <div className={styles.selections}>
+                    <button onClick={() => setMyEvents(false)}>
+                        All Available Events                    
+                    </button>
+                    <button onClick={() => setMyEvents(true)}>
+                        MyEvents
+                    </button>
+                </div>
                 <div className={styles.sort}>
                     <FontAwesomeIcon icon={faSort}>
                     </FontAwesomeIcon>
@@ -187,7 +190,8 @@ const MainFeed = () => {
                     </>
 
                 ) : events && events.length > 0 ? (
-                    events.map((event) => (
+                    filterSelection()
+                    ?.map((event) => (
                         event.isDraft === false && 
                         (
                             <div key={event.id} onClick={() => goToEventDetails(event.id)}>

@@ -6,12 +6,13 @@ import { faCamera, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
+import { useUserContext } from "../../../context/UserContext";
 
 const UserProfile = () => {
 
     const { username } = useParams<{ username: string }>();
     const [user, setUser] = useState<User | null>(null);
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const {currentUser} = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [showUserUpdateForm, setShowUserUpdateForm] = useState(false);
 
@@ -35,22 +36,9 @@ const UserProfile = () => {
         }
     };
 
-    const getMe = async () => {
-        try {
-            const response = await axiosInstance.get(`/me`);
-            setCurrentUser(response.data);
-            console.log(response.data)
-        }
-        catch (error) {
-            console.error("Error fetching current user:", error);
-        }
-    }
-
     useEffect(() => {
         getUserProfile();
-        getMe();
         getCompanions();
-        
     }, []);
 
     const updateProfilePicture = async () => {

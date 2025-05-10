@@ -11,12 +11,13 @@ import { Client } from '@stomp/stompjs';
 import styles from "./Header.module.css";
 import useMediaQuery from "./hooks/useMediaQuery";
 import { useNotificationContext } from '../../context/NotificationContext';
+import { useUserContext } from '../../context/UserContext';
 
 const Header = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const [user, setUser] = useState<User | null>(null);
+    const {currentUser} = useUserContext();
     const [showMenu, setShowMenu] = useState(false);
     const isActive = (path: string) => location.pathname === path;
     const [showSearchResults, setShowSearchResults] = useState(false);
@@ -31,31 +32,12 @@ const Header = () => {
     const triggerUserMenu = () => {
         setShowMenu(!showMenu);
       }  
-  
-    useEffect(() => {
-        getMe();
-      }
-    , []); 
-  
-  
+
       const handleSignOut = () => {
         localStorage.removeItem("accessToken");
         navigate("/login");
     }
     
-      const getMe = async () => {
-    
-        try {
-    
-            const response = await axiosInstance.get("/me");
-            setUser(response.data);
-        } catch(error) {
-          console.error("Error fetching user data:", error);
-        }
-    
-      }
-
-
     const globalSearch  = async (query: string) => {
 
 
@@ -213,10 +195,10 @@ const Header = () => {
                         <ul>
                           <li>
                             <div  onClick={() => {
-                              navigate(`/user-profile/${user?.username}`)
+                              navigate(`/user-profile/${currentUser?.username}`)
                               setShowBarMenu(false)
                               }} className={styles.barMenuItem}>
-                                <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
+                                <img onClick={triggerUserMenu} src={currentUser?.profilePictureUrl} alt="User Profile" />
                                 <label>Profile</label>
                             </div>
                             <div onClick={() => {
@@ -234,7 +216,7 @@ const Header = () => {
                               <label> Create Event </label>
                             </div>
                             <div onClick={() => {
-                              navigate(`${user?.username}/companions`)
+                              navigate(`${currentUser?.username}/companions`)
                               setShowBarMenu(false)
                             }} className={styles.barMenuItem}>
                               <FontAwesomeIcon icon={faUserGroup} size="2x" />
@@ -282,8 +264,8 @@ const Header = () => {
                         </span>
   
                         <span
-                          onClick={() => navigate(`${user?.username}/companions`)}
-                          className={`${styles.navItem} ${isActive(`/${user?.username}/companions`) ? styles.active : ''}`}
+                          onClick={() => navigate(`${currentUser?.username}/companions`)}
+                          className={`${styles.navItem} ${isActive(`/${currentUser?.username}/companions`) ? styles.active : ''}`}
                         >
                           <FontAwesomeIcon icon={faUserGroup} size="2x" />
                           <label> Companions </label>
@@ -304,13 +286,13 @@ const Header = () => {
                           </span>
                   </div>
                   <div className={styles.userShortcut} onClick={triggerUserMenu}>
-                        <img onClick={triggerUserMenu} src={user?.profilePictureUrl} alt="User Profile" />
+                        <img onClick={triggerUserMenu} src={currentUser?.profilePictureUrl} alt="User Profile" />
                   </div>
                   {showMenu && (
                       <div className={styles.userMenu}>
                           <ul>
-                          {user?.username && (
-                              <li><a href={`/user-profile/${user.username}`}>Profile </a></li>)}
+                          {currentUser?.username && (
+                              <li><a href={`/user-profile/${currentUser.username}`}>Profile </a></li>)}
                               <li><a href="/settings">Settings</a></li>
                               <li><label onClick={handleSignOut}>Sign out</label></li>
                           </ul>

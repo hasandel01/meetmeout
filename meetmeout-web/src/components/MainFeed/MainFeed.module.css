@@ -14,8 +14,23 @@ html, body {
     position: relative;
     display: flex;
     flex-direction: row;
-    justify-content: end;
+    justify-content: space-between;
     padding: 10px;
+}
+
+.selections {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.selections button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.selections button:hover {
+    transform: scale(1.05);
 }
 
 .mainFeedContainer header .sort {

@@ -16,6 +16,7 @@ import Notifications from './features/notifications/Notifications'
 import ForgotPassword from './auth/ForgotPassword'
 import ResetPassword from './auth/ResetPassword'
 import { NotificationProvider } from './context/NotificationContext'
+import { UserContextProvider } from './context/UserContext'
 
 function App() {
 
@@ -44,9 +45,11 @@ function App() {
             <Route path="/"
             element={
             <ProtectedRoute>
-              <NotificationProvider>
-                <MainLayout/>
-              </NotificationProvider>
+              <UserContextProvider>
+                <NotificationProvider>
+                  <MainLayout/>
+                </NotificationProvider>
+              </UserContextProvider>
             </ProtectedRoute>}>    
             <Route path="/" element={
               <ProtectedRoute>

@@ -1,19 +1,13 @@
 package com.hasandel01.meetmeoutserver.event.service;
 
 
-import com.hasandel01.meetmeoutserver.event.dto.CommentDTO;
-import com.hasandel01.meetmeoutserver.event.dto.EventDTO;
-import com.hasandel01.meetmeoutserver.event.dto.JoinRequestDTO;
-import com.hasandel01.meetmeoutserver.event.dto.ReviewDTO;
+import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
-import com.hasandel01.meetmeoutserver.event.model.Comment;
-import com.hasandel01.meetmeoutserver.event.model.Like;
-import com.hasandel01.meetmeoutserver.event.model.Review;
+import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
 import com.hasandel01.meetmeoutserver.event.mapper.EventMapper;
-import com.hasandel01.meetmeoutserver.event.model.Event;
 import com.hasandel01.meetmeoutserver.event.mapper.JoinRequestMapper;
-import com.hasandel01.meetmeoutserver.event.model.JoinEventRequest;
+import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.common.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.notification.NotificationService;
@@ -21,6 +15,8 @@ import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -41,9 +38,10 @@ public class EventService {
     private final ReviewRepository reviewRepository;
     private final CommentRepository commentRepository;
     private final JoinEventRequestRepository joinEventRequestRepository;
+    private final InviteRepository inviteRepository;
 
     @Transactional
-    public EventDTO createEvent(EventDTO event) {
+    public Long createEvent(EventDTO event) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -81,11 +79,11 @@ public class EventService {
                 .build();
 
         user.getOrganizedEvents().add(newEvent);
-        eventRepository.save(newEvent);
+        newEvent = eventRepository.save(newEvent);
 
         notificationService.sendEventCreatedNotificationToCompanions(user,newEvent);
 
-        return event;
+        return newEvent.getId();
     }
 
     public Set<EventDTO> getEvents(EventStatus status) {
@@ -349,5 +347,78 @@ public class EventService {
 
         return eventDTOS;
 
+    }
+
+    public Void sendInvitationToUsers(List<UserDTO> users, long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        List<Long> userIds = users.stream().map(UserDTO::id).toList();
+
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User sender = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+            for(User user: userRepository.findAllById(userIds)) {
+
+                    String token = UUID.randomUUID().toString();
+
+                    Invite invite = Invite.builder()
+                            .invited(user)
+                            .inviter(sender)
+                            .inviteToken(token)
+                            .event(event)
+                            .isAccepted(false)
+                            .build();
+
+                    inviteRepository.save(invite);
+
+                    notificationService.sendUserInvitationNotification(invite);
+            }
+
+        return null;
+    }
+
+    public Void verifyAccessTokenForEvent(long eventId, Map<String, String> payload) {
+
+      Event event = eventRepository.findById(eventId)
+              .orElseThrow(() -> new RuntimeException("Event not found"));
+
+
+      if(!event.isPrivate())
+        return null;
+
+      String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+      User user = userRepository.findByUsername(username)
+              .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+      if(event.getAttendees().contains(user)) {
+          return null;
+      } else {
+
+          List<Invite> invites = inviteRepository.findByEvent(event)
+                  .orElseThrow(() -> new RuntimeException(
+                          "User is not invited to this event, yet tries to access it"));
+
+          String token = payload.get("token");
+
+          Optional<Invite> invite = invites.stream()
+                  .filter(invite1 -> invite1.getInviteToken().equals(token))
+                  .findFirst();
+
+          log.info("Invite token: " + token);
+          log.info("Invite: " + invite.toString());
+
+          if(invite.isPresent()) {
+              return null;
+          }
+          else {
+              throw new RuntimeException("Invalid access token");
+          }
+      }
     }
 }

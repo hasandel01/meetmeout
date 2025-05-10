@@ -334,29 +334,24 @@ input[type="checkbox"] {
 
 @media (max-width: 768px) {
 
-    body {
-        align-items: center;
-        justify-content: center;
-        margin: 0px;
-    }
 
     .createEventFormContainer {
-        position: absolute;
-        margin-top: 0px;
+        position: relative;
         display: flex;
         flex-direction: column;
         width: 100vw;
-        height: 100vh;
         align-items: center;
         justify-content: center;
     }
 
     .containerAlt {
-        width: 90vw;
-        max-width: 100%;
-        min-width: auto;
-        padding: 16px;
+        position: absolute;
+        min-width: 300px;
+        min-height: none;
+        max-width: none;
+        max-height: none;
         border-radius: 16px;
+        padding: 10px;
       }
 
 

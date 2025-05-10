@@ -1,10 +1,7 @@
 package com.hasandel01.meetmeoutserver.event.controller;
 
 
-import com.hasandel01.meetmeoutserver.event.dto.CommentDTO;
-import com.hasandel01.meetmeoutserver.event.dto.EventDTO;
-import com.hasandel01.meetmeoutserver.event.dto.JoinRequestDTO;
-import com.hasandel01.meetmeoutserver.event.dto.ReviewDTO;
+import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.model.Event;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
@@ -30,7 +27,7 @@ public class EventController {
 
 
     @PostMapping("/create-event")
-    public ResponseEntity<Event> createEvent(@ModelAttribute EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> createEvent(@ModelAttribute EventDTO eventDTO) {
 
         try {
             return new ResponseEntity<>(eventService.createEvent(eventDTO), HttpStatus.CREATED);
@@ -171,5 +168,6 @@ public class EventController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    
 
 }

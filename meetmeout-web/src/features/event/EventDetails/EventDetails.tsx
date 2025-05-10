@@ -230,8 +230,9 @@ const EventDetails = () => {
   useEffect(() => {
 
     const token = localStorage.getItem("accessToken");
-    const socket = new SockJS(`https://meetmeout.onrender.com/ws?token=${token}`)
-  
+        const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL
+        const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
+          
     const client = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
@@ -279,7 +280,6 @@ const EventDetails = () => {
 
     try {
         const response = await axiosInstance.get(`/get-join-requests/${eventId}`)
-              console.log(response.data)
               setJoinRequests(response.data)
      } catch(error) {
       toast.error("Error getting requesters!")

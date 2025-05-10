@@ -9,8 +9,8 @@ import { Event } from '../../types/Event';
 import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import styles from "./Header.module.css";
-import { Notification } from '../../types/Notification';
 import useMediaQuery from "./hooks/useMediaQuery";
+import { useNotificationContext } from '../../context/NotificationContext';
 
 const Header = () => {
 
@@ -20,13 +20,13 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
     const isActive = (path: string) => location.pathname === path;
     const [showSearchResults, setShowSearchResults] = useState(false);
-    const [notifications, setNotifications] = useState<Notification[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
     const isMobile = useMediaQuery("(max-width: 768px)");
     const [showBarMenu, setShowBarMenu] = useState(false);
     const page = 0;
     const size = 0;
+    const {notifications} = useNotificationContext();
 
     const triggerUserMenu = () => {
         setShowMenu(!showMenu);
@@ -34,7 +34,6 @@ const Header = () => {
   
     useEffect(() => {
         getMe();
-        getNotifications();
       }
     , []); 
   
@@ -56,17 +55,8 @@ const Header = () => {
     
       }
 
-      const getNotifications = async () => {
-        try {
-            const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
-            setNotifications(response.data.content);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    }     
 
-      
-      const globalSearch  = async (query: string) => {
+    const globalSearch  = async (query: string) => {
 
 
         try {
@@ -101,7 +91,8 @@ const Header = () => {
     useEffect(() => {
         
         const token = localStorage.getItem('accessToken');
-        const socket = new SockJS(`https://meetmeout.onrender.com/ws?token=${token}`);
+        const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL
+        const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
 
         const client = new Client({
             webSocketFactory: () => socket,
@@ -113,7 +104,6 @@ const Header = () => {
                     if (message.body) {
                         const notification = JSON.parse(message.body);
                         console.log('Received notification:', notification);
-                        setNotifications((prevNotifications) => [...prevNotifications, notification]);
                     }
                 });
                 
@@ -156,7 +146,7 @@ const Header = () => {
     return (
         <header> 
                 <div className={styles.logoContainer} onClick={() => navigate("/")}>
-                  <img src="logo_cut.png" alt="Logo" />  
+                  <img src="/logo_cut.png" alt="Logo" />  
                 </div>
                 <div className={styles.searchBar}>
                   <FontAwesomeIcon icon={faSearch} style={

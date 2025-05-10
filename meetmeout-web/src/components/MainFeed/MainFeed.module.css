@@ -293,26 +293,7 @@ p {
 
 
 @media (max-width: 768px) {
-    
-    .onGoingEventsContainer {
-        position: relative;
-        display: grid;
-        grid-template-columns: 1fr;
-        overflow-x: hidden;
-        justify-items: center;
-        align-items: center;
-    }
 
-    .mainFeedContainer {
-        margin-top: 3300px;
-    }
-
-    .mainFeedContainer header {
-        position: relative;
-        display: flex;
-        flex-direction: row;
-        z-index: 0;
-    }
 
     .eventCard {
         position: relative;

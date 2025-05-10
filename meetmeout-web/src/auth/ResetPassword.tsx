@@ -5,6 +5,7 @@ import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import authAxios from "./axios/authAxiosConfig";
 
 const ResetPassword = () => {
 
@@ -24,7 +25,7 @@ const ResetPassword = () => {
         
         try {
 
-            await axios.post(`https://meetmeout.onrender.com/auth/reset-password`, 
+            await authAxios.post(`/auth/reset-password`, 
                 {
                     resetPasswordToken: token,
                     password: newPassword

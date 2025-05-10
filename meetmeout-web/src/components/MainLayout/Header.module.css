@@ -300,17 +300,10 @@ header .userShortcut img {
 
 @media (max-width: 768px) {
 
-    header {
-        position: fixed;
+      header {
+        position: sticky;
         top: 0;
-        left: 0;
-        width: 100vw;
-        height: 60px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 8px 10px;
-        background-color: var(--primary-color);
+        width: 100%;
         z-index: 1000;
     }
     

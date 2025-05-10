@@ -3,7 +3,7 @@ import styles from "./Form.module.css"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import authAxios from './axios/authAxiosConfig';
 const ForgotPassword: React.FC = () => {
     
     const [email, setEmail] = useState('');
@@ -12,7 +12,7 @@ const ForgotPassword: React.FC = () => {
         e.preventDefault();
 
         try {
-            await axios.post(`https://meetmeout.onrender.com/auth/send-password-reset-link/${email}`)
+            await authAxios.post(`/auth/send-password-reset-link/${email}`)
             toast.success("Password reset link is sent.")
         } catch (error) {
             toast.success("User is not found in the system, please sign up!")

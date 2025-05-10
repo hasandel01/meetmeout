@@ -39,6 +39,9 @@ public class AuthenticationService {
     @Value("${profile.pictureUrl}")
     private String publicUrl;
 
+    @Value("${app.frontend.url}")
+    private String baseUrl;
+
     public AuthenticationResponse register(RegisterRequest registerRequest) {
 
         User user = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);
@@ -63,7 +66,7 @@ public class AuthenticationService {
                     .build();
 
             emailSenderService.sendEmail(user.getEmail(), "Please verify your email",
-                    "Click the link to verify your account: https://meetmeout.vercel.app/verify?token=" + verificationToken);
+                    "Click the link to verify your account: " + baseUrl + verificationToken);
             userRepository.save(user);
         }
 
@@ -132,7 +135,7 @@ public class AuthenticationService {
 
         userRepository.save(user);
         emailSenderService.sendEmail(user.getEmail(), "Password reset link",
-                "Click the link to reset your password: https://meetmeout.vercel.app/reset-password?token=" + resetPasswordToken);
+                "Click the link to reset your password: " + baseUrl + resetPasswordToken);
 
 
         return null;
@@ -146,11 +149,8 @@ public class AuthenticationService {
         User user = userRepository.findByResetPasswordToken(resetPasswordToken)
                 .orElseThrow(() -> new RuntimeException("Invalid token. User not found!"));
 
-        log.info("Password: {}", password);
-
         user.setPassword(passwordEncoder.encode(password));
         user.setResetPasswordToken("");
-        log.info("Password: {}", password);
         userRepository.save(user);
         return null;
 

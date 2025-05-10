@@ -1,22 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./Notifications.module.css";
-import { useEffect } from "react";
-import { useState } from "react";
 import axiosInstance from "../../axios/axios";
-import { Notification } from "../../types/Notification";
+import { useNotificationContext } from "../../context/NotificationContext";
 
 
 const Notifications = () => {
 
     const navigate = useNavigate();
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-    const page = 0;
-    const size = 20;
+    const { notifications, fetchNotifications } = useNotificationContext();
 
     const handleNotificationStatus = async (notificationId: number, url: string) => {
         
         try {
             await axiosInstance.put(`/notifications/change-notification-status/${notificationId}`);
+            await fetchNotifications();
         } catch (error) {
             console.error('Error fetching notifications:', error);
         }
@@ -24,21 +21,6 @@ const Notifications = () => {
         navigate(`${url}`)
       } 
 
-    const getNotifications = async () => {
-        try {
-            const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
-            setNotifications(response.data.content);
-            console.log(response.data)
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    }
-
-
-
-      useEffect(()=> {
-        getNotifications();
-      },[])
       
     return (
         <div className={styles.notificationContainer}>

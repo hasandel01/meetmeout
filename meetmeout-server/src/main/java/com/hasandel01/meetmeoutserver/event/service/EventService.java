@@ -43,7 +43,7 @@ public class EventService {
     private final JoinEventRequestRepository joinEventRequestRepository;
 
     @Transactional
-    public Event createEvent(EventDTO event) {
+    public EventDTO createEvent(EventDTO event) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -85,7 +85,7 @@ public class EventService {
 
         notificationService.sendEventCreatedNotificationToCompanions(user,newEvent);
 
-        return newEvent;
+        return event;
     }
 
     public Set<EventDTO> getEvents(EventStatus status) {

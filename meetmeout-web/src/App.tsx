@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import Notifications from './features/notifications/Notifications'
 import ForgotPassword from './auth/ForgotPassword'
 import ResetPassword from './auth/ResetPassword'
+import { NotificationProvider } from './context/NotificationContext'
 
 function App() {
 
@@ -43,7 +44,9 @@ function App() {
             <Route path="/"
             element={
             <ProtectedRoute>
+              <NotificationProvider>
                 <MainLayout/>
+              </NotificationProvider>
             </ProtectedRoute>}>    
             <Route path="/" element={
               <ProtectedRoute>

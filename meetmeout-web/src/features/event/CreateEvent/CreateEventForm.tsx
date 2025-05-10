@@ -8,11 +8,13 @@ import styles from "./CreateEvent.module.css";
 import { toast } from 'react-toastify';
 import {categoryMap, getCategoryIconLabel} from "../../../mapper/CategoryMap"
 import TagInput from './TagInput';
+import { useNavigate } from 'react-router-dom';
 
 const CreateEventForm = () => {
     
     const [step, setStep] = useState(1);
     const [errors, setErrors] = useState<any>({});
+    const navigate = useNavigate();
 
     const validateStep = (currentStep: number) => {
         const newErrors: any = {};
@@ -110,7 +112,7 @@ const CreateEventForm = () => {
                     formData.append("eventImage", selectedImageFile);
                 }
     
-                await axiosInstance.post("/create-event", formData,
+                const response = await axiosInstance.post("/create-event", formData,
                 {
                   headers: {
                     "Content-Type": "multipart/form-data",
@@ -118,7 +120,9 @@ const CreateEventForm = () => {
                   }
                 });
 
-                    toast.success("Event created successfully!");                
+                    toast.success("Event created successfully!");
+                    setEvent(response.data)
+                    navigate(`/event/${event.id}`)            
     
             }
             catch (error) {

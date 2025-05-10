@@ -260,7 +260,7 @@ const EventDetails = () => {
 
   }
   
-  const showUsersToInvite = (eventId: number) => {
+  const showUsersToInvite = () => {
     setShowInviteModal(prev => !prev)
     
   }

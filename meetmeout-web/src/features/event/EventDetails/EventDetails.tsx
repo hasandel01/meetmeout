@@ -61,7 +61,8 @@ const EventDetails = () => {
         latitude: 0,
         likes: [],
         comments: [],
-        reviews: []
+        reviews: [],
+        createdAt: ''
     });
     
     const [weather, setWeather] = useState<any | null>(null);
@@ -343,11 +344,6 @@ const EventDetails = () => {
      }
   }
 
-
-  const userIsNotInvited = () => {
-
-
-  }
 
   return (
     <div className={styles.eventContainer}>

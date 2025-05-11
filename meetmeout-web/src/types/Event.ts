@@ -24,5 +24,5 @@ export interface Event {
     likes: Like[];
     comments: Comment[];
     reviews: Review[];
-
+    createdAt: string;
 }

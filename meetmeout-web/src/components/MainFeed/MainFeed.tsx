@@ -24,6 +24,8 @@ const MainFeed = () => {
     const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
     const [myEvents, setMyEvents] = useState(false);
     const [invitations, setInvitations] = useState<Invitation[]>([]);
+    const [lng, setLng] = useState<number | undefined>(40.9409);
+    const [lat, setLat] = useState<number | undefined>(29.1656);
 
     const getEvents = async () => {
 
@@ -50,7 +52,6 @@ const MainFeed = () => {
         try {
             const response = await axiosInstance.get("/get-invitations")
             setInvitations(response.data)
-            console.log(response.data)
         }catch(error ){
             toast.error("Getting invitations")
         }
@@ -59,20 +60,79 @@ const MainFeed = () => {
     const goToEventDetails = (eventId: number) => {
         navigate(`/event/${eventId}`);
     };
+
+
+    useEffect(() => {
+
+    },[])
     
     const searchQuery = (searchString: string) => {
 
             if(!events) return;
-    
+
+        if(searchString === "Soonest" || searchString === "Latest" ) {
+            
             const sortedEvents = [...events]?.sort((a, b) => {
                 const dateA = new Date(`${a.date}T${a.time}`);
                 const dateB = new Date(`${b.date}T${b.time}`);
-                return searchString === 'Most Recent' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime(); 
+                return searchString === 'Soonest' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime(); 
             })
 
             setEvents(sortedEvents);
+        }
+        else if(searchString === "Recently Added" ) {
+
+            const sortedEvents = [...events]?.sort((a,b) => {
+                const timeA = new Date(a.createdAt);
+                const timeB = new Date(b.createdAt);
+                return timeB.getTime() - timeA.getTime();
+            })
+
+            setEvents(sortedEvents);
+        } else if(searchString === "Most Liked") {
+
+            const sortedEvents = [...events]?.sort( (a,b) => {
+                return b.likes.length - a.likes.length;
+            })
+
+            setEvents(sortedEvents)
+
+        } else if(searchString === "Most Attended") {
+            
+            const sortedEvents = [...events]?.sort( (a,b) => {
+                return b.attendees.length - a.attendees.length;
+            })
+            setEvents(sortedEvents)
+        } else if(searchString === "Nearest") {
+              
+            const sortedEvents = [...events]?.sort((a, b) => {
+                return calculateDistance(a) - calculateDistance(b);
+            });
+
+            setEvents(sortedEvents);
+        }
+    
         
     }
+
+    const calculateDistance = (event: Event): number => {
+        if (lat === undefined || lng === undefined || !event.latitude || !event.longitude) {
+            return Number.MAX_SAFE_INTEGER; 
+        }
+            
+        const R = 6371; // World's radius in km
+        const toRad = (value: number) => value * Math.PI / 180;
+
+        const dLat = toRad(event.latitude - lat);
+        const dLon = toRad(event.longitude- lng);
+
+          const distance =    
+                        2 * R * Math.asin(
+                        Math.sqrt(  (Math.sin( dLat / 2) * Math.sin( dLat / 2)) +
+                                    (Math.cos(toRad(event.latitude)) * Math.cos(toRad(lat)) * Math.sin( dLon / 2) * Math.sin( dLon / 2)) ))
+
+        return distance;
+    };
 
     const handleJoinEvent = async (eventId: number) => {
 
@@ -184,12 +244,31 @@ const MainFeed = () => {
                     </FontAwesomeIcon>
                     <select onChange={(e) => searchQuery(e.target.value)}>
                         <option
-                            value="Most Recent">
-                            Most Recent
+                            value="Soonest">
+                            Soonest
                         </option>
                         <option
-                            value="Least Recent">
-                            Least Recent
+                            value="Latest">
+                            Latest
+                        </option>
+                        <option
+                            value="Most Liked"
+                            >
+                            Most Liked
+                        </option>
+                        <option
+                            value="Recently Added"
+                        >
+                            Recently Added
+                        </option>
+                        <option
+                            value="Most Attended"
+                        >
+                            Most Attended
+                        </option>
+                        <option 
+                            value ="Nearest">
+                            Nearest
                         </option>
                     </select>
                 </div>
@@ -245,8 +324,8 @@ const MainFeed = () => {
                                         <div className={styles.tags}>
                                             <ul>
                                                 {event.tags?.slice(0, 2).map((tag, index) => (
-                                                    <li>
-                                                        <span key={index}>
+                                                    <li key={index}>
+                                                        <span>
                                                             #{tag} 
                                                         </span>
                                                         {index === 1 ? " ..." : ""}

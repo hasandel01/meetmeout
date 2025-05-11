@@ -102,8 +102,8 @@
     display: flex;
     flex-direction: column;
     align-items: first baseline;
-    gap: 20px;
-    padding: 20px;
+    gap: 15px;
+    padding: 10px;
     text-align: start;
 }
 
@@ -129,12 +129,12 @@
 .categoryTags {
     display: flex;
     flex-direction: column;
+    max-width: 400px;
 }
 
 .tags {
     display: flex;
     flex-direction: row;
-    margin-top: 30px;
 }
 
 .eventType {
@@ -146,7 +146,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    gap: 40px;
+    gap: 20px;
     align-items: center;
 }
 
@@ -175,26 +175,59 @@ input[type="checkbox"] {
 .tagInputContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 5px;
 }
 
 .tagInputContainer span {
     font-size: 12px;
 }
 
-.tagInputContainer span label {
-    font-weight: bold;
-    color: var(--text-color);
-    display: inline-block;
-    margin-bottom: 5px;
-    background-color: #e0f7fa;
-    color: #00796b;
-    padding: 4px;
-    border-radius: 8px;  
-    cursor: pointer;
+.tagInputContainer input {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 120px;         /* Yukarıdan yazıyı aşağı kaydırır */
+    width: 425px;
 }
 
+.tagInputContainer input::placeholder {
+    display: flex;
+    flex-wrap: wrap;
+    color: var(--placeholder-color);
+    font-style: italic;
+}
+
+.tagShow {
+    position: absolute;
+    flex-direction: column;
+    margin-top: 30px;
+    padding: 2px 4px;
+    gap: 5px;
+    width: 80%;
+}
+
+.tagShow hr {
+    color: black;
+    margin: 0px;
+}
+
+.tagInputContainer ul {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px;
+    gap: 3px;
+}
+
+.tagInputContainer li label {
+    cursor: pointer;
+    background-color: gainsboro;
+    border: 1px solid grey;
+    border-radius: 6px; 
+    padding: 2px 4px;
+    font-size: 12px;
+}
 
 
 /** STEP 4 */

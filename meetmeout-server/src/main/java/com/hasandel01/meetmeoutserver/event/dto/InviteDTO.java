@@ -1,15 +1,13 @@
 package com.hasandel01.meetmeoutserver.event.dto;
 
-import com.hasandel01.meetmeoutserver.enums.InviteStatus;
+import lombok.Builder;
 
-import java.time.LocalDateTime;
-
+@Builder
 public record InviteDTO(
         Long id,
         Long eventId,
         Long senderId,
         Long receiverId,
-        InviteStatus status,
-        LocalDateTime createdAt
+        boolean status
 ) {
 }

@@ -66,7 +66,7 @@ html, body {
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
     width: 400px;
-    height: 400px;
+    height: 420px;
     gap: 10px;
 }
 
@@ -162,9 +162,31 @@ p {
     font-size: 12px;
 }
 
-.tags p {
-    color: var(--primary-color-dark);
-    font-weight: bolder;
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    width: 260px;
+    height: 50px;
+}
+
+.tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    gap: 5px;
+}
+
+.tags span {
+    background-color: #cfeed0;
+    border: 1px solid green;
+    border-radius: 6px;
+    padding: 1px 2px;
+    font-size: 12px;
+    color: green;
+    font-weight: bold;
 }
 
 /** EventStatus **/

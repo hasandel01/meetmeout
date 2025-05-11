@@ -343,6 +343,12 @@ const EventDetails = () => {
      }
   }
 
+
+  const userIsNotInvited = () => {
+
+
+  }
+
   return (
     <div className={styles.eventContainer}>
       {isUserAllowed ? (
@@ -468,7 +474,10 @@ const EventDetails = () => {
                                               <div className={styles.inviteModalContainer}>
                                                   <ul> 
                                                     {companions
-                                                    .filter(companion => !event.attendees.some(attendee => attendee.username === companion.username))
+                                                    .filter( companion => !(
+                                                          event.attendees.some(attendee => attendee.username === companion.username) || 
+                                                          joinRequests.some(joinRequest => joinRequest.user.username === companion.username)  
+                                                        ))
                                                     .map( (companion, index) => (
                                                       <li key={index} className={invitedUsers.some(invitedUser => invitedUser === companion) ? styles.liSelected : ""}
                                                                     onClick={() => {

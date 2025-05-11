@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.event.service;
 
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.event.mapper.InviteMapper;
 import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
 import com.hasandel01.meetmeoutserver.event.mapper.EventMapper;
@@ -122,13 +123,17 @@ public class EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        if(event.isPrivate()) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        Invite invite = inviteRepository.findByInvitedAndEvent(user,event)
+                .orElse(null);
+
+        if(event.isPrivate() && invite == null) {
             return sendJoinEventRequest(event);
         } else {
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User Not Found"));
 
             user.getParticipatedEvents().add(event);
             event.getAttendees().add(user);
@@ -410,9 +415,6 @@ public class EventService {
                   .filter(invite1 -> invite1.getInviteToken().equals(token))
                   .findFirst();
 
-          log.info("Invite token: " + token);
-          log.info("Invite: " + invite.toString());
-
           if(invite.isPresent()) {
               return null;
           }
@@ -420,5 +422,22 @@ public class EventService {
               throw new RuntimeException("Invalid access token");
           }
       }
+    }
+
+    public List<InviteDTO> getInvitations() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
+
+        List<Invite> invites = inviteRepository.findByInvited(user)
+                .orElse(Collections.emptyList());
+
+        log.info("invites: {}", invites);
+
+
+        return invites.stream().map(InviteMapper::toInviteDTO).toList();
+
     }
 }

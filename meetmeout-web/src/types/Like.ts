@@ -22,3 +22,12 @@ export interface Review {
     updatedAt: string;
     rating: number;
 }
+
+
+export interface Invitation {
+    id: number,
+    eventId: number,
+    senderId: number,
+    receiverId: number,
+    status: boolean
+}

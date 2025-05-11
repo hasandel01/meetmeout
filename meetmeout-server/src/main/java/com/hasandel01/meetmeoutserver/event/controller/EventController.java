@@ -192,4 +192,13 @@ public class EventController {
         }
     }
 
+    @GetMapping("/get-invitations")
+    public ResponseEntity<List<InviteDTO>> getInvitations() {
+        try {
+            return ResponseEntity.ok(eventService.getInvitations());
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
 }

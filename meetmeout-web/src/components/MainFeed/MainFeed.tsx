@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Tooltip } from "react-tooltip";
 import { useUserContext } from "../../context/UserContext";
+import { Invitation } from "../../types/Like";
 
 const MainFeed = () => {
  
@@ -22,6 +23,7 @@ const MainFeed = () => {
     const [loading, setLoading] = useState(true);
     const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
     const [myEvents, setMyEvents] = useState(false);
+    const [invitations, setInvitations] = useState<Invitation[]>([]);
 
     const getEvents = async () => {
 
@@ -40,8 +42,19 @@ const MainFeed = () => {
     useEffect(() => {
         getEvents();
         getRequestSentEvents();
+        getInvitations()
     }, []);
 
+
+    const getInvitations = async () => {
+        try {
+            const response = await axiosInstance.get("/get-invitations")
+            setInvitations(response.data)
+            console.log(response.data)
+        }catch(error ){
+            toast.error("Getting invitations")
+        }
+    }
 
     const goToEventDetails = (eventId: number) => {
         navigate(`/event/${eventId}`);
@@ -81,7 +94,7 @@ const MainFeed = () => {
     }
 
     const isDisabled = (event: Event) => {
-        return event.attendees.some(element => element.username === currentUser?.username) || requestSentEvents.some(requestSentEvents => requestSentEvents.id === event.id)
+        return requestSentEvents.some(requestSentEvents => requestSentEvents.id === event.id) || invitations.some(invitation => invitation.eventId === event.id)
     }
 
     const handleLike = async (eventId: number) => {
@@ -149,7 +162,7 @@ const MainFeed = () => {
     const filterSelection = () => {
         
         if(!myEvents)
-            return events?.filter(event => event.isPrivate == false)
+            return events
         else
             return events?.filter(event => event.attendees.some(attendee => attendee.username == currentUser?.username))
     }
@@ -230,7 +243,16 @@ const MainFeed = () => {
                                             <p>{event.addressName}</p>
                                         </div>
                                         <div className={styles.tags}>
-                                        <p>{event.tags.join(" ")}</p>
+                                            <ul>
+                                                {event.tags?.slice(0, 2).map((tag, index) => (
+                                                    <li>
+                                                        <span key={index}>
+                                                            #{tag} 
+                                                        </span>
+                                                        {index === 1 ? " ..." : ""}
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
                                         {event.organizer && (
                                                 <div className={styles.eventOrganizer}>
@@ -266,22 +288,20 @@ const MainFeed = () => {
                                         <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
                                     </div>
                                 </div>
-                                {event.organizer?.username !== currentUser?.username &&
-                                    <button disabled={isDisabled(event)}
+                                { ( !(event.organizer?.username === currentUser?.username ||
+                                    event.attendees.some(element => element.username === currentUser?.username)) && event.status !== 'FULL' )&&
+                                    <button
+                                        disabled={isDisabled(event)}
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleJoinEvent(event.id)}} 
                                         className={styles.joinButton}>
                                         {event.isPrivate ? (
-                                            requestSentEvents.some(requestSentEvent => requestSentEvent.id === event.id) ?
-                                            "Sent request!"
-                                            :
-                                            "Send Join Request!"
-                                        )
-                                             
-                                             
-                                             
-                                             : "Join" }
+                                            invitations.some(invitation => invitation.eventId === event.id) ? "You are already invited!"
+                                            : (
+                                                requestSentEvents.some(requestSentEvent => requestSentEvent.id === event.id) ? 
+                                                "Request sent!" :  "Send Join Request!" )
+                                        ): "Join" }
                                     </button> }
                                 </div>
                             </div>            

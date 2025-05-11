@@ -304,9 +304,9 @@ const CreateEventForm = () => {
                                             })}
                                         </select>
                                         {errors.category && <p className={styles.errorText}>{errors.category}</p>}
-                                        <div className={styles.tags}>
-                                            <TagInput tags={event.tags} setTags={(newTags) => setEvent({...event, tags: newTags})} />
-                                        </div>
+                                </div>
+                                <div className={styles.tags}>
+                                    <TagInput tags={event.tags} setTags={(newTags) => setEvent({...event, tags: newTags})} />
                                 </div>
                                 <div className={styles.eventType}>
                                 <h4>Preferences</h4>

@@ -21,49 +21,38 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
 
 
       useEffect(() => {
-        if (eventId !== 0) {
-            getMessagesForEvent();
-        }
-      },[eventId])
-      
-      useEffect(() => {
-      
-          const token = localStorage.getItem("accessToken");
-              const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL
-              const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
-                
-          const client = new Client({
-            webSocketFactory: () => socket,
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
-            onConnect: () => {
+                console.log("Trying to connect WebSocket...");
+                const token = localStorage.getItem("accessToken");
+                const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
 
+                console.log("WebSocket URL:", `${baseUrl}/ws?token=${token}`);
 
-                toast.info("Connected to the WebSocketServer!");
-      
-                client.subscribe(`/topic/chat/event/${eventId}` , (msg) => {
-                  try{
-                    const newMessage = JSON.parse(msg.body)
-                    console.log(newMessage)
-                    setMessages (prev => [...prev, newMessage]);
-                  } catch(error){
-                    console.error(error);
-                  }
-                })  
-            },
-        
-          })  
-          
-          clientRef.current = client;
-          client.activate();
-      
-          return () => {
-            client.deactivate();
-          }
-      
-      
-        }, [eventId])
+                const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
+                const client = new Client({
+                    webSocketFactory: () => socket,
+                    reconnectDelay: 5000,
+                    onConnect: () => {
+                    toast.success("Connected to the WebSocketServer!");
+                    },
+                    onStompError: (frame) => {
+                    console.error("STOMP Error", frame);
+                    },
+                    onWebSocketError: (event) => {
+                    console.error("WebSocket Error", event);
+                    },
+                    onDisconnect: () => {
+                    console.warn("Disconnected from WebSocket");
+                    },
+                });
+
+                clientRef.current = client;
+                client.activate();
+
+                return () => {
+                    client.deactivate();
+                };
+                }, [eventId]);
+
       
 
     const sendMessage = () => {

@@ -3,41 +3,50 @@ html, body {
     overflow-x: hidden;
 }
 
-
 .mainFeedContainer {
     position: relative;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
-.mainFeedContainerHeader {
+.mainFeedContainerFilter {
     position: relative;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     padding: 10px;
+    background-color: var(--background-color);
+}
+
+.mainFeedContainerFilter h4 {
+    border-bottom: 1px solid var(--primary-color-dark);
 }
 
 .selections {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 20px;
 }
 
-.selections button {
-    background-color: var(--primary-color);
-    color: white;
+.selections label {
+    padding: 10px;
+    display: flex;
+    background-color: var(--background-color);
+    font-weight: bold;
 }
 
-.selections button:hover {
-    transform: scale(1.05);
+.selections label:hover {
+    cursor: pointer;
+    background-color: var(--primary-color-light);
 }
 
-.mainFeedContainer header .sort {
+.sort {
     display: flex;
     flex-direction: row;
     padding: 15px;
-    border: 2px solid var(--card-border);
+}
+
+.sort select {
+    cursor: pointer;
 }
 
 .mainFeedContainer header .sort select {
@@ -45,13 +54,13 @@ html, body {
 }
 
 .onGoingEventsContainer {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px,1fr));
-    overflow: hidden;
-    justify-items: center;
-    align-items: start;
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 10px;
+  align-items: start;
 }
+
 
 .eventCard {
     position: relative;
@@ -60,12 +69,12 @@ html, body {
     justify-content: flex-start;
     align-items: center;
     border-radius: 18px;
-    margin: 40px 0px;
+    margin: 20px 20px;
     background-color: var(--card-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
-    width: 400px;
+    width: 380px;
     height: 420px;
     gap: 10px;
 }

@@ -5,5 +5,7 @@ import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 
 import java.util.Set;
 
-public record GlobalSearchResponse(Set<EventDTO> events, Set<UserDTO> users) {
+public record GlobalSearchResponse(Set<EventDTO> events,
+                                   Set<UserDTO> users
+                                   ) {
 }

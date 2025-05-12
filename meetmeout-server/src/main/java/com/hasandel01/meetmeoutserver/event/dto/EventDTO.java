@@ -8,6 +8,7 @@ import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
@@ -34,5 +35,6 @@ public record EventDTO(
         MultipartFile eventImage,
         Set<LikeDTO> likes,
         Set<CommentDTO> comments,
-        Set<ReviewDTO> reviews) {
+        Set<ReviewDTO> reviews,
+        LocalDateTime createdAt) {
 }

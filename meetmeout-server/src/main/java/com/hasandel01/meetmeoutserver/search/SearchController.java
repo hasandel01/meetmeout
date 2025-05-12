@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,22 @@ public class SearchController {
                 .stream()
                 .map(UserMapper::toUserDTO)
                 .collect(Collectors.toSet());
+
+        Set<EventDTO> eventsByTag = eventRepository.findByTags(query, pageable)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(EventMapper::toEventDto)
+                .collect(Collectors.toSet());
+
+        Set<EventDTO> eventsByCategory = eventRepository.findByCategory(query, pageable)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(EventMapper::toEventDto)
+                .collect(Collectors.toSet());
+
+
+        events.addAll(eventsByTag);
+        events.addAll(eventsByCategory);
 
         return new GlobalSearchResponse(events, users);
     }

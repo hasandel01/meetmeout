@@ -3,17 +3,18 @@
   text-align: center;
 }
 
-/* 🌈 Color Palette for the App */
 :root {
+
+  --primary-color: #15b37e;               
+  --primary-color-dark: #025c42;
+  --primary-color-light: #D1FAE5;
+
+
   /* 🌤️ Backgrounds & Surfaces */
-  --background-color: #f9fafb;
+  --background-color: #e8faf4;
   --card-color: #ffffff;
   --card-border: #e5e7eb;
 
-  /* 🌲 Primary Colors (from logo) */
-  --primary-color: #10b981;               
-  --primary-color-dark: #047857;
-  --primary-color-light: #D1FAE5;
 
   --nav-item-color: #ffffff;
 

@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../../../axios/axios";
 import {FriendRequest} from "../../../types/FriendRequest";
 import styles from "./UserCompanions.module.css" 
-import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useProfileContext } from "../../../context/ProfileContext";
 
 const PendingFriendRequests = () => {
     
     const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
-    const navigate = useNavigate();
+    const {goToUserProfile} = useProfileContext();
 
     const getPendingRequests = async () => {
         try {
@@ -24,17 +24,6 @@ const PendingFriendRequests = () => {
         getPendingRequests();
     }
     , []);
-
-
-    const goToUserProfile = (username: string) => {
-        try {
-            navigate(`/user-profile/${username}`);
-        }
-        catch (error) {
-            console.error("Error fetching user profile:", error);
-        }
-    };
-
 
     const handleAcceptRequest = async (senderEmail: string) => {
         try {

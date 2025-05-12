@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axiosInstance from "../../../axios/axios";
 import {User} from "../../../types/User";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import PendingFriendRequests from "./PendingFriendRequests";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUserContext } from "../../../context/UserContext";
+import { useProfileContext } from "../../../context/ProfileContext";
 
 const UserCompanions = () => {
 
@@ -16,16 +17,8 @@ const UserCompanions = () => {
     const {currentUser} = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [requestSentUsers, setRequestSentUsers] = useState<User[]>([]);
-    const navigate = useNavigate();
+    const {goToUserProfile} = useProfileContext();
 
-        const goToUserProfile = (username: string) => {
-            try {
-                navigate(`/user-profile/${username}`);
-            }
-            catch (error) {
-                console.error("Error fetching user profile:", error);
-            }
-        };
 
         const getRequestSentUsers = async () => {
             try {

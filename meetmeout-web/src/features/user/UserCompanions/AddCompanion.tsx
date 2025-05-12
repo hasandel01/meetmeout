@@ -6,11 +6,12 @@ import styles from "./UserCompanions.module.css"
 import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useProfileContext } from "../../../context/ProfileContext";
 
 const AddCompanion = () => {
 
     const [users, setUsers] = useState<User[] | null>(null);
-    const navigate = useNavigate();
+    const {goToUserProfile} = useProfileContext();
 
     const getAllUsers = async () => {
         try {
@@ -19,7 +20,6 @@ const AddCompanion = () => {
         } catch (error) {
         }
     };
-
 
     const handleAddCompanion = async (receiverEmail: string) => {
         try {
@@ -35,22 +35,11 @@ const AddCompanion = () => {
         }
     }
 
-
     useEffect(() => {
         getAllUsers();
     }
     , []);
         
-
-    const goToUserProfile = (username: string) => {
-        try {
-            navigate(`/user-profile/${username}`);
-        }
-        catch (error) {
-            console.error("Error fetching user profile:", error);
-        }
-    };
-
     return (
         <div className={styles.containerAlt}>
             <h3>{users && users.length > 0 ? "Suggestions" : ""}</h3>

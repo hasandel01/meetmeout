@@ -22,53 +22,52 @@ const MainFeed = () => {
     const {currentUser} = useUserContext();
     const [loading, setLoading] = useState(true);
     const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
-    const [myEvents, setMyEvents] = useState(false);
     const [invitations, setInvitations] = useState<Invitation[]>([]);
-    const [lng, setLng] = useState<number | undefined>(40.9409);
-    const [lat, setLat] = useState<number | undefined>(29.1656);
-
-    const getEvents = async () => {
-
-        try {
-            const response = await axiosInstance.get("/get-events");
-            setEvents(response.data);
-        }
-        catch(error) {
-            toast.error("Error catching events!")
-        } finally {
-            setLoading(false);
-        }
-
-    };
+    const [lng, setLng] = useState<number | undefined>(0);
+    const [lat, setLat] = useState<number | undefined>(0);
+    const [globalFilter, setGlobalFilter] = useState('All Events');
 
     useEffect(() => {
-        getEvents();
-        getRequestSentEvents();
-        getInvitations()
+        Promise.all([
+            getEvents(), 
+            getInvitations(),
+            getRequestSentEvents()]
+        ).finally(() => setLoading(false))
     }, []);
 
-
-    const getInvitations = async () => {
-        try {
-            const response = await axiosInstance.get("/get-invitations")
-            setInvitations(response.data)
-        }catch(error ){
-            toast.error("Getting invitations")
-        }
-    }
-
-    const goToEventDetails = (eventId: number) => {
-        navigate(`/event/${eventId}`);
+    const getEvents = async () => {
+        return axiosInstance.get("/get-events")
+        .then(res => setEvents(res.data))
+        .catch(() => toast.error("Error getting events."));
     };
 
+    const getInvitations = async () => {
+        return axiosInstance.get("/get-invitations")
+            .then(res => setInvitations(res.data))
+            .catch(() => toast.error("Error getting invitations"));
+    };
+
+    const getRequestSentEvents = async () => {
+        return axiosInstance.get("/get-request-sent-events")
+            .then(res => setRequestSentEvents(res.data))
+            .catch(() => toast.error("Error getting request sent events."));
+    };
 
     useEffect(() => {
-
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    setLat(pos.coords.latitude);
+                    setLng(pos.coords.longitude);
+                } 
+            )
+        }
     },[])
+
     
     const searchQuery = (searchString: string) => {
 
-            if(!events) return;
+        if(!events) return;
 
         if(searchString === "Soonest" || searchString === "Latest" ) {
             
@@ -115,24 +114,29 @@ const MainFeed = () => {
         
     }
 
-    const calculateDistance = (event: Event): number => {
-        if (lat === undefined || lng === undefined || !event.latitude || !event.longitude) {
-            return Number.MAX_SAFE_INTEGER; 
-        }
-            
-        const R = 6371; // World's radius in km
-        const toRad = (value: number) => value * Math.PI / 180;
+        const calculateDistance = (event: Event): number => {
+            if (lat === undefined || lng === undefined || !event.latitude || !event.longitude) {
+                return Number.MAX_SAFE_INTEGER; 
+            }
 
-        const dLat = toRad(event.latitude - lat);
-        const dLon = toRad(event.longitude- lng);
+            const R = 6371;
+            const toRad = (value: number) => value * Math.PI / 180;
 
-          const distance =    
-                        2 * R * Math.asin(
-                        Math.sqrt(  (Math.sin( dLat / 2) * Math.sin( dLat / 2)) +
-                                    (Math.cos(toRad(event.latitude)) * Math.cos(toRad(lat)) * Math.sin( dLon / 2) * Math.sin( dLon / 2)) ))
+            const dLat = toRad(event.latitude - lat);
+            const dLon = toRad(event.longitude - lng);
 
-        return distance;
-    };
+            const lat1 = toRad(lat);
+            const lat2 = toRad(event.latitude);
+
+            const a =
+                Math.sin(dLat / 2) ** 2 +
+                Math.cos(lat1) * Math.cos(lat2) *
+                Math.sin(dLon / 2) ** 2;
+
+            const c = 2 * Math.asin(Math.sqrt(a));
+            return R * c;
+        };
+
 
     const handleJoinEvent = async (eventId: number) => {
 
@@ -207,41 +211,34 @@ const MainFeed = () => {
           toast.error("Like işlemi başarısız oldu");
         }
       };
-      
 
-    const getRequestSentEvents = async () => {
 
-        try {
-            const response = await axiosInstance.get(`/get-request-sent-events`)
-            setRequestSentEvents(response.data)
-        } catch(error) {
-            toast.error("Error getting request sent  events.")
-        }
-    } 
-
-    const filterSelection = () => {
-        
-        if(!myEvents)
+    const globalFilterFunction = () => {
+    
+        if(globalFilter === 'My Drafts')
+            return events?.filter(event => event.isDraft)
+        else if(globalFilter === 'My Events')
+            return events?.filter(event => event.attendees.some(attendee => attendee.username === currentUser?.username))
+        else if(globalFilter === 'All Events')
             return events
-        else
-            return events?.filter(event => event.attendees.some(attendee => attendee.username == currentUser?.username))
     }
       
-
     return (
         <div className={styles.mainFeedContainer}>
-            <div className={styles.mainFeedContainerHeader}>
+            <div className={styles.mainFeedContainerFilter}>
                 <div className={styles.selections}>
-                    <button onClick={() => setMyEvents(false)}>
+                    <label onClick={() => setGlobalFilter("All Events")}>
                         All Available Events                    
-                    </button>
-                    <button onClick={() => setMyEvents(true)}>
-                        MyEvents
-                    </button>
+                    </label>
+                    <label onClick={() => setGlobalFilter("My Events")}>
+                        My Events
+                    </label>
+                    <label onClick={() => setGlobalFilter("My Drafts")}>
+                        My Drafts
+                    </label>
                 </div>
+                <h4> Filters </h4>
                 <div className={styles.sort}>
-                    <FontAwesomeIcon icon={faSort}>
-                    </FontAwesomeIcon>
                     <select onChange={(e) => searchQuery(e.target.value)}>
                         <option
                             value="Soonest">
@@ -282,11 +279,11 @@ const MainFeed = () => {
                     </>
 
                 ) : events && events.length > 0 ? (
-                    filterSelection()
+                    globalFilterFunction()
                     ?.map((event) => (
                         event.isDraft === false && 
                         (
-                            <div key={event.id} onClick={() => goToEventDetails(event.id)}>
+                            <div key={event.id} onClick={() => navigate(`/event/${event.id}`)}>
                                 <div className={styles.eventCard}>
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
@@ -320,6 +317,10 @@ const MainFeed = () => {
                                         <div className={styles.eventLocation}>
                                             <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                                             <p>{event.addressName}</p>
+                                            { lng === 0 || lat === 0 ? "" : <>
+                                                <p>( {calculateDistance(event).toFixed(1)} km away )</p>
+                                            </>
+                                            }
                                         </div>
                                         <div className={styles.tags}>
                                             <ul>

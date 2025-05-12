@@ -17,6 +17,8 @@ import ForgotPassword from './auth/ForgotPassword'
 import ResetPassword from './auth/ResetPassword'
 import { NotificationProvider } from './context/NotificationContext'
 import { UserContextProvider } from './context/UserContext'
+import MyCalendar from './features/calendar/MyCalendar'
+import { ProfileContextProvider } from './context/ProfileContext'
 
 function App() {
 
@@ -47,7 +49,9 @@ function App() {
             <ProtectedRoute>
               <UserContextProvider>
                 <NotificationProvider>
-                  <MainLayout/>
+                  <ProfileContextProvider>
+                    <MainLayout/>
+                  </ProfileContextProvider>
                 </NotificationProvider>
               </UserContextProvider>
             </ProtectedRoute>}>    
@@ -85,6 +89,12 @@ function App() {
                   <ProtectedRoute>
                     <Notifications/>                
                     </ProtectedRoute>
+                }/>
+                <Route path='/my-calendar'
+                element = {
+                  <ProtectedRoute>
+                      <MyCalendar/>
+                  </ProtectedRoute>
                 }/>
             </Route>
         </Routes>  

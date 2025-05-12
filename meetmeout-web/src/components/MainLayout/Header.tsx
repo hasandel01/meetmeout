@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
 import axiosInstance from '../../axios/axios';
 import { User } from '../../types/User';
 import { useEffect } from 'react';
@@ -20,13 +20,16 @@ const Header = () => {
     const {currentUser} = useUserContext();
     const [showMenu, setShowMenu] = useState(false);
     const isActive = (path: string) => location.pathname === path;
+
+    /** SEARCH RESULTS */
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+
     const isMobile = useMediaQuery("(max-width: 768px)");
     const [showBarMenu, setShowBarMenu] = useState(false);
     const page = 0;
-    const size = 0;
+    const size = 3;
     const {notifications} = useNotificationContext();
 
     const triggerUserMenu = () => {
@@ -40,7 +43,6 @@ const Header = () => {
     
     const globalSearch  = async (query: string) => {
 
-
         try {
 
           const response = await axiosInstance.get("/search",
@@ -52,7 +54,8 @@ const Header = () => {
               }})
 
           setUsers(response.data.users);
-          setEvents(response.data.events);
+          setEvents(response.data.events)
+
           console.log("Search results fetched successfully:", response.data);
 
         } catch (error) {
@@ -131,60 +134,58 @@ const Header = () => {
                   <img src="/logo_cut.png" alt="Logo" />  
                 </div>
                 <div className={styles.searchBar}>
-                  <FontAwesomeIcon icon={faSearch} style={
-                          { color: "#888", marginRight: "10px" } 
-                  }/>
-                  <input 
-                      type="text" 
-                      placeholder="Search..."
-                      onChange={(e) => globalSearch(e.target.value)}
-                      onBlur={handleSearchBlur}
-                      onFocus={handleSearchFocus} />
-                </div>
-                {showSearchResults && (
-                  <div className={styles.searchResults}>
-                    {users.length === 0 && events.length === 0 && (
-                      <div style={{ textAlign: "center", padding: "20px", color: "#888" }}>
-                        <span style={{ fontSize: "24px" }}>🔍</span>
-                        <p style={{ margin: "8px 0 0 0", fontStyle: "italic" }}>
-                          No results found
-                        </p>
-                      </div>
+                    <FontAwesomeIcon icon={faSearch} style={
+                            { color: "#888", marginRight: "5px" } 
+                    }/>
+                    <input 
+                        type="text" 
+                        placeholder="Event, user, tags, category..."
+                        onChange={(e) => globalSearch(e.target.value)}
+                        onBlur={handleSearchBlur}
+                        onFocus={handleSearchFocus} />
+                      {showSearchResults && (
+                      <div className={styles.searchResults}>
+                        {users.length === 0 && events.length === 0 && (
+                          <div style={{ display: "flex", flexDirection: "row", textAlign: "center", padding: "20px", color: "#888", overflow: "hidden"}}>
+                            <span style={{ fontSize: "20px" }}>🔍</span>
+                            <p style={{ margin: "8px 0 0 0", fontStyle: "italic" }}>
+                              No results found
+                            </p>
+                          </div>
+                        )}
+                        {users.length > 0 && <label>Users</label>}
+                          {users.map((user) => (
+                            <div key={user.id} className='user-result' onClick={() => navigate(`/user-profile/${user.username}`)}>
+                                <ul>
+                                  <li className='user-result-item'>
+                                    <img src={user.profilePictureUrl} alt="User Profile" />
+                                    <div className={styles.userResultInfo}>
+                                      <h2>{user.firstName} {user.lastName}</h2>
+                                      <p>@{user.username}</p>
+                                    </div>
+                                  </li>
+                                </ul>
+                            </div>
+                          ))}
+                          {events.length > 0 && <label>Events</label>}
+                          {events
+                            .filter((event: Event) => event.id !== null && event.id !== undefined)
+                            .map((event: Event) => (
+                            <div key={event.id} className='event-result' onClick={() => navigate(`/event/${event.id}`)}>
+                                <ul>
+                                  <li className='event-result-item'>
+                                    <img src={event.imageUrl} alt="Event" />
+                                    <div className='event-result-info'>
+                                      <h2>{event.title}</h2>
+                                      <p>{event.description}</p>
+                                    </div>
+                                  </li>
+                                </ul>
+                            </div>
+                            ))}
+                          </div>
                     )}
-                   {users.length > 0 && <label>Users</label>}
-                   <div className='user-results'>
-                     {users.map((user) => (
-                       <div key={user.id} className='user-result' onClick={() => navigate(`/user-profile/${user.username}`)}>
-                           <ul>
-                             <li className='user-result-item'>
-                               <img src={user.profilePictureUrl} alt="User Profile" />
-                               <div className={styles.userResultInfo}>
-                                 <h2>{user.firstName} {user.lastName}</h2>
-                                 <p>@{user.username}</p>
-                               </div>
-                             </li>
-                           </ul>
-                       </div>
-                     ))}
-                   </div>
-                   <div className='event-results'>
-                     {events.length > 0 && <label>Events</label>}
-                     {events.map((event) => (
-                       <div key={event.id} className='event-result' onClick={() => navigate(`/event/${event.id}`)}>
-                           <ul>
-                             <li className='event-result-item'>
-                               <img src={event.imageUrl} alt="Event" />
-                               <div className='event-result-info'>
-                                 <h2>{event.title}</h2>
-                                 <p>{event.description}</p>
-                               </div>
-                             </li>
-                           </ul>
-                       </div>
-                     ))}
-                   </div>
                   </div>
-                )}
                 {isMobile ? (
                     <div className={styles.barMenuContainer}>
                       <FontAwesomeIcon icon={faBars} size='2x'
@@ -270,15 +271,22 @@ const Header = () => {
                           <FontAwesomeIcon icon={faUserGroup} size="2x" />
                           <label> Companions </label>
                         </span>
+                        <span
+                          onClick={() => navigate(`/my-calendar`)}
+                          className={`${styles.navItem} ${isActive(`/my-calendar`) ? styles.active : ''}`}
+                          >
+                            <FontAwesomeIcon icon={faCalendarDays} size='2x'></FontAwesomeIcon>
+                            <label>Calendar</label>
+                        </span>
                         <span 
                               onClick={() => navigate("/notifications")}
                               className={`${styles.navItem} ${isActive("/notifications") ? styles.active : ''}`}
                             >
                               <div className={notifications.filter(n => !n.read).length > 0 ? styles.iconWrapperHas : styles.iconWrapper}>
                               {notifications.filter(n => !n.read).length > 0 && (
-                                  <span className={styles.notificationBadge}>
+                                  <div className={styles.notificationBadge}>
                                     {notifications.filter(n => !n.read).length}
-                                  </span>
+                                  </div>
                                 )}
                                 <FontAwesomeIcon icon={faBell} size="2x" />
                               </div>

@@ -1,9 +1,10 @@
-export interface Forecast {
-    city: City;
-    cod: string;
-    message: number;
-    cnt: number;
-    list: ForecastDay[];
+export interface Weather {
+    current: ForecastDay;
+    daily: ForecastDay[];
+    lat: number;
+    lon: number;
+    timezone: string;
+    timezone_offset: string;
   }
   
   export interface City {
@@ -20,17 +21,21 @@ export interface Forecast {
   }
   
   export interface ForecastDay {
-    dt: number;
-    temp: Temperature;
-    feels_like: FeelsLike;
-    pressure: number;
-    humidity: number;
-    weather: Weather[];
-    speed: number;
-    deg: number;
-    gust: number;
     clouds: number;
-    pop: number;
+    dew_point: number;
+    dt: number;
+    feels_like: FeelsLike;
+    humidity: number;
+    pressure: number;
+    sunrise: number;
+    sunset: number;
+    temp: Temperature;
+    visibility: number;
+    weather: Weather[];
+    wind_deg: number;
+    wind_speed: number;
+    uvi: number
+    summary: string
   }
   
   export interface Temperature {

@@ -434,9 +434,6 @@ public class EventService {
         List<Invite> invites = inviteRepository.findByInvited(user)
                 .orElse(Collections.emptyList());
 
-        log.info("invites: {}", invites);
-
-
         return invites.stream().map(InviteMapper::toInviteDTO).toList();
 
     }

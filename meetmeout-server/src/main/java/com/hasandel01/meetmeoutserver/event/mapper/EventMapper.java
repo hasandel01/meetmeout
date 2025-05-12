@@ -36,6 +36,7 @@ public class EventMapper {
                 .likes(event.getLikes().stream().map(LikeMapper::toLikeDTO).collect(Collectors.toSet()))
                 .comments(event.getComments().stream().map(CommentMapper::toCommentDTO).collect(Collectors.toSet()))
                 .reviews(event.getReviews().stream().map(ReviewMapper::toReviewDTO).collect(Collectors.toSet()))
+                .createdAt(event.getCreatedAt())
                 .build();
     }
 

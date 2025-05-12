@@ -18,8 +18,8 @@ footer {
     height: 20%;
     padding: 20px;
     width: 100%;
-    background-color: var(--primary-color);
-    color: var(--nav-item-color);
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
     align-items: center;
     text-align: center;
     justify-content: center;

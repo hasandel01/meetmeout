@@ -1,6 +1,6 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axiosInstance from "../../../axios/axios";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
 import {User} from '../../../types/User';
@@ -10,14 +10,16 @@ import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-import SockJS from 'sockjs-client';
-import { Client} from "@stomp/stompjs";
-import { Message } from "../../../types/Message";
 import { JoinRequest } from "../../../types/JoinRequest";
 import { Tooltip } from "react-tooltip";
 import formatTime from "../../../utils/formatTime";
 import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
+import { Weather } from "../../../types/Forecast";
+import AttendeeContainerModal from "./AttendeeContainerModal/AttendeeContainerModal";
+import RequesterContainerModal from "./RequesterContainerModal/RequesterContainerModal";
+import { useProfileContext } from "../../../context/ProfileContext";
+import Chat from "./Chat/Chat";
 
 const EventDetails = () => {
 
@@ -31,14 +33,14 @@ const EventDetails = () => {
   const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const navigate = useNavigate();
   const [commentString, setCommentString] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState<Message>();
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
   const [invitedUsers, setInvitedUsers] = useState<User[]>([])
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [companions, setCompanions] = useState<User[]>([]);
+  const [showAllAttendees, setShowAllAttendees] = useState(false);
+  const [showAllRequests, setShowAllRequests] = useState(false);
+  const {goToUserProfile} = useProfileContext();
 
-  const clientRef = useRef<Client | null>(null);
 
     const [event, setEvent] = useState<Event>({
         id: 0,
@@ -47,7 +49,7 @@ const EventDetails = () => {
         date: '',
         time: '',
         location: '',
-        imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1745237659/default_event_artbhy.png",
+        imageUrl: "",
         tags: [],
         isPrivate: false,
         isDraft: false,
@@ -65,23 +67,17 @@ const EventDetails = () => {
         createdAt: ''
     });
     
-    const [weather, setWeather] = useState<any | null>(null);
+    const [weather, setWeather] = useState<Weather | null>(null);
 
 
     useEffect(() => {
       if (eventIdNumber > 0) {
+        verifyTokenToAccessDetails();
         getEvent();
       }
     }, [eventIdNumber]);
 
     useEffect(() => {
-      
-      if(eventIdNumber > 0) {
-        verifyTokenToAccessDetails();
-        getEvent();
-        getCompanions();
-      }
-
       if(event.latitude && event.longitude) {
         getWeather();
       }
@@ -113,6 +109,7 @@ const EventDetails = () => {
 
     try {
 
+      
 
       const response = await 
         axios
@@ -121,7 +118,7 @@ const EventDetails = () => {
 
         console.log(response.data);
         setWeather(response.data);
-
+  
 
     }catch(error) {
       toast.error("Error getting weather info");
@@ -148,7 +145,6 @@ const EventDetails = () => {
       await axiosInstance.post(`/verify-access-to-event/${eventIdNumber}`, {
         token: token
         });
-      toast.success("Token is verified you are authorized to see the event details.")
       setIsUserAllowed(true);
     } catch(error) {
       toast.error("Error verifying token")
@@ -179,26 +175,47 @@ const EventDetails = () => {
     return event.attendees.some(element => element.username === currentUser?.username)
   }
 
-  const handleLike = async () => {
 
-    try {
-        const response = await axiosInstance.post(`/like-event/${eventId.eventId}`);
-          setMessages(prev => [...prev, response.data])
-    } catch(error) {
-      toast.error("Error liking the event.")
-    }
+    const handleLike = async () => {
+      if (!currentUser) return;
 
-  }
+      const alreadyLiked = event.likes.some(like => like.username === currentUser.username);
 
-  const goToUserProfile = (username: string) => {
-    try {
-        navigate(`/user-profile/${username}`);
-    }
-    catch (error) {
-        console.error("Error fetching user profile:", error);
-    }
+      // Optimistic UI update
+      const updatedLikes = alreadyLiked
+        ? event.likes.filter(like => like.username !== currentUser.username)
+        : [...event.likes, {
+            id: 0, 
+            username: currentUser.username,
+            eventId: event.id
+          }];
 
-  };
+      setEvent(prev => ({
+        ...prev,
+        likes: updatedLikes
+      }));
+
+      try {
+        await axiosInstance.post(`/like-event/${event.id}`);
+      } catch (error) {
+
+        const rolledBackLikes = alreadyLiked
+          ? [...event.likes, {
+              id: 0,
+              username: currentUser.username,
+              eventId: event.id
+            }]
+          : event.likes.filter(like => like.username !== currentUser.username);
+
+        setEvent(prev => ({
+          ...prev,
+          likes: rolledBackLikes
+        }));
+
+        toast.error("Like işlemi başarısız oldu");
+      }
+    };
+
 
   const handleAddComment = async (eventId: number) => {
 
@@ -231,86 +248,17 @@ const EventDetails = () => {
     }
   }
 
-
-  const sendMessage = () => {
-  
-    if (!clientRef.current || !clientRef.current.connected) {
-      return;
-    }
-
-    
-    clientRef.current.publish({
-      destination: `/app/chat/event/${event.id}`,
-      body: JSON.stringify(newMessage)
-    });
-
-    
-  };
-
-
-  const getMessagesForEvent = async () => {
-
-
-    try {
-      const response = await axiosInstance.get(`/get-chat-messages/${event.id}`)
-        setMessages(prev => [...prev, ...response.data]);
-        toast.success("Event messages are in hand!")
-    } catch(error) {
-      toast.error("Error getting event messages")
-    }
-
-  }
   
   const showUsersToInvite = () => {
     setShowInviteModal(prev => !prev)
     
   }
  
-  useEffect(() => {
-
-    const token = localStorage.getItem("accessToken");
-        const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL
-        const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
-          
-    const client = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-      onConnect: () => {
-  
-          toast.info("Connected to the WebSocketServer!");
-
-          client.subscribe(`/topic/chat/event/${event.id}` , (msg) => {
-            try{
-              const newMessage = JSON.parse(msg.body)
-              console.log(newMessage)
-              setMessages (prev => [...prev, newMessage]);
-            } catch(error){
-              console.error(error);
-            }
-          })  
-      },
-  
-    })  
-    
-    clientRef.current = client;
-    client.activate();
-
-
-
-    return () => {
-      client.deactivate();
-    }
-
-
-  }, [event.id])
-
 
   useEffect(() => {
   if (event.id !== 0) {
-    getMessagesForEvent();
     getAllJoinRequests(event.id);
+    getCompanions();
   }
 }, [event.id]);
 
@@ -344,6 +292,28 @@ const EventDetails = () => {
      }
   }
 
+  const isMoreThan8DaysLater = (eventDateStr : string): boolean => {
+
+    const today= new Date();
+    const eventDate = new Date(eventDateStr);
+
+    const diffInTime = eventDate.getTime() - today.getTime();
+    const diffInDays = diffInTime / (1000 * 60 * 60 *24);
+
+    return diffInDays > 7;
+
+  } 
+
+  const returnDayDifference = ():number => {
+
+    const today = new Date();
+    const eventDate = new Date(event.date);
+
+    const diffInMs = eventDate.getDate() - today.getDate();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+    return diffInDays;
+  }
+
 
   return (
     <div className={styles.eventContainer}>
@@ -351,9 +321,8 @@ const EventDetails = () => {
         <>
           <div className={styles.attendees} >
                   <h4>Attendees</h4>
-                  <hr/>
                       <ul>
-                        {event.attendees.map((attendee,index) => 
+                        {event.attendees.slice(0,4).map((attendee,index) => 
                           <li key={index} onClick={() => goToUserProfile(attendee.username)}>
                                 {event.organizer?.username === attendee.username &&
                                 <>
@@ -366,12 +335,19 @@ const EventDetails = () => {
                                 <h5>{attendee.firstName}</h5>
                           </li>
                           )}
+                          {event.attendees.length > 4 &&
+                            <div className={styles.andMoreAvatar}
+                                onClick={() => setShowAllAttendees(true)}>
+                              <strong> + {event.attendees.length - 4} </strong>
+                            </div>
+                          }
                       </ul>
+                      {showAllAttendees && <AttendeeContainerModal attendees={event.attendees} onClose={() => setShowAllAttendees(false)}></AttendeeContainerModal>}
+                      {event.organizer?.username === currentUser?.username &&
+                      <>
                       <h4>Requesters</h4>
-                          <hr/>
                             <ul>
-                              {joinRequests.map((request, index) => 
-                                request.user ? (
+                              {joinRequests.slice(0.4).map((request, index) => 
                                   <li key={index} onClick={() => goToUserProfile(request.user.username)}>
                                     <img src={request.user.profilePictureUrl} />
                                     <h5>{request.user.firstName}</h5>
@@ -379,23 +355,47 @@ const EventDetails = () => {
                                       Accept
                                     </button>
                                   </li>
-                            ) : null
-                          )}
+                              )}
+                              {joinRequests.length > 4 && 
+                              <div className={styles.andMoreAvatar}
+                                   onClick={() => setShowAllRequests(true)}
+                                >
+                                  <strong>+ {joinRequests.length - 4} more</strong>
+                              </div>}
                         </ul>
+                        {showAllRequests && 
+                        <RequesterContainerModal requests={joinRequests} 
+                                                onClose={() => setShowAllRequests(false)}></RequesterContainerModal>}
+                        </>
+                      }                      
                 </div>
                 <div className={styles.eventCardAndComment}>
-                <div className={styles.eventCardAndWeatherAPI}>
+                  <div className={styles.eventCardAndWeatherAPI}>
                     <div className={styles.eventCard}> 
                         <div className={styles.firstColumn}>
                             <img src={event.imageUrl} alt={event.title} />
                             {weather && weather.current && (
                                     <div className={styles.weatherWidget}>
-                                    <h4>Current Weather</h4>
+                                    <h4>How is the weather on the day of the event?</h4>
                                       <div className={styles.weatherContent}>
-                                          <img
-                                                src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} 
-                                                alt={weather.current.weather[0].description}
-                                          ></img>
+                                        {!isMoreThan8DaysLater(event.date) ? (
+                                          <div className={styles.weatherInfo}>
+                                            <img
+                                                  src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} 
+                                                  alt={weather.daily.at(returnDayDifference())?.summary}
+                                            ></img>
+                                            <div>
+                                                  <p>{weather.daily.at(returnDayDifference())?.temp.max.toFixed(0)}</p>
+                                                  <p>{weather.daily.at(returnDayDifference())?.temp.min.toFixed(0)}</p>
+                                            </div>
+                                            <p>{weather.daily.at(returnDayDifference())?.summary}</p>
+                                          </div>
+                                        ) : (
+                                          <div>
+                                              We can't provide you weather forecast for this time period. Weather forecast will be shown 8 days before the event date.
+                                            </div>
+                                        )}
+
                                       </div>
                                     </div>
                                   )}
@@ -522,6 +522,11 @@ const EventDetails = () => {
                                 <div className={styles.commentContainerAlt}>
                                                   <ul> 
                                                   {event.comments
+                                                  .sort((a,b) => {
+                                                    const timeA = new Date(a.updatedAt)
+                                                    const timeB = new Date(b.updatedAt);
+                                                    return timeA.getTime() - timeB.getTime()
+                                                  })
                                                   .map((comment,index) => (
                                                       <li key={index}>
                                                               <div className={styles.commentElement}>
@@ -550,39 +555,7 @@ const EventDetails = () => {
                                   </div>
                           </div>
                 </div>
-                <div className={styles.chatContainer}>
-                                  <h4>Event Chat</h4>
-                                        <ul className={styles.messageList}>
-                                          {messages.map( (message, index) => (
-                                            <li key={index} className={styles.chatMessage}>
-                                                <img src={message.user.profilePictureUrl}></img>
-                                                <h5>{message.message}</h5>
-                                            </li>
-                                          ))}
-                                        </ul>
-                                    
-                                    <div className={styles.sendChatMessageContainer}>
-                                      <hr/>
-                                        <div className={styles.sendChatMessage}>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter a message"
-                                            value={newMessage?.message}
-                                            onChange={(e) => {
-                                                if (currentUser) {
-                                                    setNewMessage({ user: currentUser, message: e.target.value });
-                                                }
-                                            }}
-                                            required
-                                            >
-                                          </input>
-                                          <button onClick={sendMessage}>
-                                              Send
-                                            </button>
-                                          </div>
-                                    </div>
-                                    
-              </div>     
+                <Chat eventId={event.id}></Chat>   
         </> 
       )
       : (

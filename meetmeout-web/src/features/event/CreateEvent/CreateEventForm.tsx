@@ -70,7 +70,8 @@ const CreateEventForm = () => {
         latitude: 0,
         likes: [],
         comments: [],
-        reviews: []
+        reviews: [],
+        createdAt: ''
     });
 
 

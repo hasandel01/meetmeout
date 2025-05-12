@@ -3,7 +3,6 @@ import axiosInstance from "../../../axios/axios";
 import { User } from "../../../types/User";
 import { useState } from "react";
 import styles from "./UserCompanions.module.css" 
-import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useProfileContext } from "../../../context/ProfileContext";

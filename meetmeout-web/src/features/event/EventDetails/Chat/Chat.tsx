@@ -21,37 +21,45 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
 
 
       useEffect(() => {
-                console.log("Trying to connect WebSocket...");
-                const token = localStorage.getItem("accessToken");
-                const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
+        if (eventId !== 0) {
+            getMessagesForEvent();
+        }
+      },[eventId])
 
-                console.log("WebSocket URL:", `${baseUrl}/ws?token=${token}`);
 
-                const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
-                const client = new Client({
-                    webSocketFactory: () => socket,
-                    reconnectDelay: 5000,
-                    onConnect: () => {
-                    toast.success("Connected to the WebSocketServer!");
-                    },
-                    onStompError: (frame) => {
-                    console.error("STOMP Error", frame);
-                    },
-                    onWebSocketError: (event) => {
-                    console.error("WebSocket Error", event);
-                    },
-                    onDisconnect: () => {
-                    console.warn("Disconnected from WebSocket");
-                    },
-                });
+      
+      useEffect(() => {
+            console.log("Trying to connect WebSocket...");
+            const token = localStorage.getItem("accessToken");
+            const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
 
-                clientRef.current = client;
-                client.activate();
+            console.log("WebSocket URL:", `${baseUrl}/ws?token=${token}`);
 
-                return () => {
-                    client.deactivate();
-                };
-                }, [eventId]);
+            const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
+            const client = new Client({
+                webSocketFactory: () => socket,
+                reconnectDelay: 5000,
+                onConnect: () => {
+                toast.success("Connected to the WebSocketServer!");
+                },
+                onStompError: (frame) => {
+                console.error("STOMP Error", frame);
+                },
+                onWebSocketError: (event) => {
+                console.error("WebSocket Error", event);
+                },
+                onDisconnect: () => {
+                console.warn("Disconnected from WebSocket");
+                },
+            });
+
+            clientRef.current = client;
+            client.activate();
+
+            return () => {
+                client.deactivate();
+            };
+            }, [eventId]);
 
       
 

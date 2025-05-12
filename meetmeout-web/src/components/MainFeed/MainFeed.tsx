@@ -4,7 +4,7 @@ import axiosInstance from "../../axios/axios";
 import { useState } from "react";
 import { Event } from "../../types/Event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faLocationDot} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faLock} from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { getCategoryIconLabel } from "../../mapper/CategoryMap";
 import { useNavigate } from "react-router-dom";

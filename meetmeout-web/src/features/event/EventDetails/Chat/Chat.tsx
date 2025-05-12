@@ -3,7 +3,7 @@ import { Message } from "../../../../types/Message";
 import styles from "./Chat.module.css"
 import { useUserContext } from "../../../../context/UserContext";
 import SockJS from 'sockjs-client';
-import { Client} from "@stomp/stompjs";
+import { Client, IMessage} from "@stomp/stompjs";
 import {toast} from 'react-toastify';
 import axiosInstance from "../../../../axios/axios";
 
@@ -27,38 +27,43 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
       },[eventId])
 
 
-      
       useEffect(() => {
-            console.log("Trying to connect WebSocket...");
-            const token = localStorage.getItem("accessToken");
-            const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
+                const token = localStorage.getItem("accessToken");
+                const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
 
-            console.log("WebSocket URL:", `${baseUrl}/ws?token=${token}`);
+                const socket = new SockJS(`${baseUrl}/ws`);
 
-            const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
-            const client = new Client({
+                const client = new Client({
                 webSocketFactory: () => socket,
+                connectHeaders: {
+                    Authorization: `Bearer ${token}`,
+                },
+                debug: (str) => console.log("[WebSocket DEBUG]", str),
                 reconnectDelay: 5000,
                 onConnect: () => {
-                toast.success("Connected to the WebSocketServer!");
+                    toast.success("WebSocket connected ✅");
+
+                    client.subscribe(`/topic/chat/event/${eventId}`, (message: IMessage) => {
+                    const payload = JSON.parse(message.body);
+                    setMessages((prev) => [...prev, payload.message]);
+                    });
                 },
                 onStompError: (frame) => {
-                console.error("STOMP Error", frame);
+                    console.error("STOMP error:", frame);
+                    toast.error("WebSocket STOMP error ❌");
                 },
                 onWebSocketError: (event) => {
-                console.error("WebSocket Error", event);
+                    console.error("WebSocket error:", event);
+                    toast.error("WebSocket connection error ⚠️");
                 },
-                onDisconnect: () => {
-                console.warn("Disconnected from WebSocket");
-                },
-            });
+                });
 
-            clientRef.current = client;
-            client.activate();
+                clientRef.current = client;
+                client.activate();
 
-            return () => {
+                return () => {
                 client.deactivate();
-            };
+                };
             }, [eventId]);
 
       

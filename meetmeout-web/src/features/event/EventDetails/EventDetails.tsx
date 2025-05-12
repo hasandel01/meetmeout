@@ -109,7 +109,7 @@ const EventDetails = () => {
 
     try {
 
-      
+    
 
       const response = await 
         axios
@@ -118,7 +118,7 @@ const EventDetails = () => {
 
         console.log(response.data);
         setWeather(response.data);
-  
+    
 
     }catch(error) {
       toast.error("Error getting weather info");

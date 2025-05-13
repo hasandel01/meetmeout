@@ -5,6 +5,11 @@ import { toast } from "react-toastify";
 import { Event } from "../../types/Event";
 import { format } from 'date-fns';
 import styles from "./MyCalendar.module.css";
+import FullCalendar from '@fullcalendar/react';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+
 
 const MyCalendar = () => {
 
@@ -20,19 +25,27 @@ const MyCalendar = () => {
         getMyEvents()
     },[])
 
+
+    const formattedEvents = events?.map(ev => ({
+        title: ev.title,
+        start: `${ev.date}T${ev.startTime}`,
+        end: `${ev.date}T${ev.endTime}`,
+        extendedProps: {
+            imageUrl: ev.imageUrl
+        },
+    })) || [];
+
     return (
         <div>
-            <Calendar
-                tileContent={({date}) => {
-                    const event = events?.find(ev => ev?.date === format(date, "yyyy-MM-dd"));
-                    return event ? 
-                    <div className={styles.eventOnCalendarContainer}>
-                        <img src={event.imageUrl} alt="event-image"></img>
-                        <p>{event.title}</p>
-                        <p>{event.startTime} {event.endTime}</p>
-                    </div> : null;
-                }}
-            ></Calendar>
+            <FullCalendar
+            plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
+            initialView="timeGridWeek"
+            slotMinTime="06:00:00"
+            slotMaxTime="24:00:00"
+            events={formattedEvents}
+            height="auto"
+            >
+            </FullCalendar>
         </div>
     )
 } 

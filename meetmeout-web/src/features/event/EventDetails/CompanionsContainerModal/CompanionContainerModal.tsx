@@ -27,7 +27,6 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
   const getCompanions = async () => {
             try {
                 const response = await axiosInstance.get(`/${currentUser?.username}/companions`);
-                console.log("Companion profile fetched successfully:", response.data);
                 setCompanions(response.data);
             }
             catch (error) {

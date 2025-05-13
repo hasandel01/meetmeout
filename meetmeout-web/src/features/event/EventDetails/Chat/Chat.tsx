@@ -2,10 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { Message } from "../../../../types/Message";
 import styles from "./Chat.module.css"
 import { useUserContext } from "../../../../context/UserContext";
-import SockJS from 'sockjs-client';
-import { Client} from "@stomp/stompjs";
+
 import {toast} from 'react-toastify';
 import axiosInstance from "../../../../axios/axios";
+import { useWebSocketContext } from "../../../../context/WebSocketContext";
 
 interface ChatProps {
     eventId: number
@@ -15,9 +15,12 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
 
       const {currentUser} = useUserContext();
       const [messages, setMessages] = useState<Message[]>([]);
-      const [newMessage, setNewMessage] = useState<Message>();
+        const [newMessage, setNewMessage] = useState<Message>({
+        user: currentUser!,
+        message: ""
+        });
 
-      const clientRef = useRef<Client | null>(null);
+     const {clientRef} = useWebSocketContext(); 
 
 
       useEffect(() => {
@@ -27,47 +30,6 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
       },[eventId])
 
 
-      
-       useEffect(() => {
-            const token = localStorage.getItem("accessToken");
-            const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL;
-
-            const socket = new SockJS(`${baseUrl}/ws`);
-
-            const client = new Client({
-            webSocketFactory: () => socket,
-            connectHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-            debug: (str) => console.log("[WebSocket DEBUG]", str),
-            reconnectDelay: 5000,
-            onConnect: () => {
-                toast.success("WebSocket connected ✅");
-
-                client.subscribe(`/topic/chat/event/${eventId}`, (message: Message) => {
-                const payload = JSON.parse(message.body);
-                setMessages((prev) => [...prev, payload.message]);
-                });
-            },
-            onStompError: (frame) => {
-                console.error("STOMP error:", frame);
-                toast.error("WebSocket STOMP error ❌");
-            },
-            onWebSocketError: (event) => {
-                console.error("WebSocket error:", event);
-                toast.error("WebSocket connection error ⚠️");
-            },
-            });
-
-            clientRef.current = client;
-            client.activate();
-
-            return () => {
-            client.deactivate();
-            };
-        }, [eventId]);
-
-      
 
     const sendMessage = () => {
   
@@ -75,10 +37,17 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
         return;
         }
         
+        if(newMessage.message.trim() === "") {
+            toast.warn("Cannot send an empty message!")
+            return
+        }
+        
         clientRef.current.publish({
         destination: `/app/chat/event/${eventId}`,
         body: JSON.stringify(newMessage)
         });
+
+        setNewMessage({ user: currentUser!, message: "" });
 
     }
 
@@ -95,7 +64,7 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
 
     return (
             <div className={styles.chatContainer}>
-                <h4>Event Chat</h4>
+                <label>Event Chat</label>
                     <ul className={styles.messageList}>
                         {messages.map( (message, index) => (
                             <li key={index} className={styles.chatMessage}>
@@ -105,7 +74,6 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
                         ))}
                     </ul>
                     <div className={styles.sendChatMessageContainer}>
-                        <hr/>
                         <div className={styles.sendChatMessage}>
                             <input
                                 type="text"

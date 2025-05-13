@@ -53,6 +53,17 @@ public class EventController {
         }
     }
 
+    @GetMapping("/get-my-events")
+    public ResponseEntity<Set<EventDTO>> getAllMyEvents() {
+        try {
+            return ResponseEntity.ok(eventService.getMyEvents());
+        } catch (UsernameNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @PostMapping("/update/event-picture/{eventId}")
     public ResponseEntity<Void> updateEventPicture(@PathVariable long eventId, @RequestParam MultipartFile file) {

@@ -20,6 +20,7 @@ import AttendeeContainerModal from "./AttendeeContainerModal/AttendeeContainerMo
 import RequesterContainerModal from "./RequesterContainerModal/RequesterContainerModal";
 import { useProfileContext } from "../../../context/ProfileContext";
 import Chat from "./Chat/Chat";
+import CompanionsContainerModal from "./CompanionsContainerModal/CompanionContainerModal";
 
 const EventDetails = () => {
 
@@ -34,9 +35,7 @@ const EventDetails = () => {
   const navigate = useNavigate();
   const [commentString, setCommentString] = useState('');
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
-  const [invitedUsers, setInvitedUsers] = useState<User[]>([])
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [companions, setCompanions] = useState<User[]>([]);
   const [showAllAttendees, setShowAllAttendees] = useState(false);
   const [showAllRequests, setShowAllRequests] = useState(false);
   const {goToUserProfile} = useProfileContext();
@@ -47,7 +46,8 @@ const EventDetails = () => {
         title: '',
         description: '',
         date: '',
-        time: '',
+        startTime: '',
+        endTime: '',
         location: '',
         imageUrl: "",
         tags: [],
@@ -94,16 +94,6 @@ const EventDetails = () => {
     }
   }
 
-    const getCompanions = async () => {
-            try {
-                const response = await axiosInstance.get(`/${currentUser?.username}/companions`);
-                console.log("Companion profile fetched successfully:", response.data);
-                setCompanions(response.data);
-            }
-            catch (error) {
-                console.error("Error fetching companion profile:", error);
-            }
-  };
 
   const getWeather = async () => {
 
@@ -251,14 +241,12 @@ const EventDetails = () => {
   
   const showUsersToInvite = () => {
     setShowInviteModal(prev => !prev)
-    
   }
  
 
   useEffect(() => {
   if (event.id !== 0) {
     getAllJoinRequests(event.id);
-    getCompanions();
   }
 }, [event.id]);
 
@@ -272,24 +260,6 @@ const EventDetails = () => {
       toast.error("Error getting requesters!")
      }
 
-  }
-
-
-  const handleAcceptJoinRequest = async (eventId: number, username: string) => {
-    try {
-        await axiosInstance.post(`/accept-join-request/${eventId}/${username}`)
-    } catch(error)  {
-      toast.error("Error accepting join request!")
-    }
-  }
-
-  const sendInvitationLink = async (eventId: number) => {
-     try {
-      await axiosInstance.post(`/send-invitation/${eventId}`, invitedUsers);
-        toast.success(invitedUsers.length === 1 ? "Invitation is sent" : "Invitations are sent")
-     } catch(error) {
-        toast.error("Error while sending invitation.")
-     }
   }
 
   const isMoreThan8DaysLater = (eventDateStr : string): boolean => {
@@ -346,14 +316,11 @@ const EventDetails = () => {
                       {event.organizer?.username === currentUser?.username &&
                       <>
                       <h4>Requesters</h4>
-                            <ul>
+                            <ul onClick={() => setShowAllRequests(true)}>
                               {joinRequests.slice(0.4).map((request, index) => 
-                                  <li key={index} onClick={() => goToUserProfile(request.user.username)}>
+                                  <li key={index}>
                                     <img src={request.user.profilePictureUrl} />
                                     <h5>{request.user.firstName}</h5>
-                                    <button onClick={() => handleAcceptJoinRequest(event.id, request.user.username)}>
-                                      Accept
-                                    </button>
                                   </li>
                               )}
                               {joinRequests.length > 4 && 
@@ -419,7 +386,7 @@ const EventDetails = () => {
                                     <div className={styles.eventTimeDate}>
                                           <span>
                                             <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                                              <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.time}</p>
+                                              <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime} - {event.endTime}</p>
                                           </span>
                                     </div>
                                     <div className={styles.eventLocation}>
@@ -466,30 +433,10 @@ const EventDetails = () => {
                                               }}>
                                                   Send Invite
                                               </button>
-                                              {showInviteModal && 
-                                              <div className={styles.inviteModalContainer}>
-                                                  <ul> 
-                                                    {companions
-                                                    .filter( companion => !(
-                                                          event.attendees.some(attendee => attendee.username === companion.username) || 
-                                                          joinRequests.some(joinRequest => joinRequest.user.username === companion.username)  
-                                                        ))
-                                                    .map( (companion, index) => (
-                                                      <li key={index} className={invitedUsers.some(invitedUser => invitedUser === companion) ? styles.liSelected : ""}
-                                                                    onClick={() => {
-                                                                          if(!invitedUsers.some(invitedUser => invitedUser === companion))
-                                                                              setInvitedUsers((prev) => [...prev, companion])  
-                                                                          else 
-                                                                              setInvitedUsers((prev) => prev.filter(user => user.username !== companion.username))
-                                                                    }} >
-                                                            <img src={companion.profilePictureUrl}></img>
-                                                            <h4>{companion.firstName} {companion.lastName}</h4>
-                                                            <button onClick={() => sendInvitationLink(event.id)}>Send</button>
-                                                      </li>
-                                                    ))}
-                                                  </ul>
-                                              </div>
-                                              }
+                                              {showInviteModal && <CompanionsContainerModal
+                                                      joinRequests={joinRequests}
+                                                      event = {event}
+                                                      onClose={() => setShowInviteModal(false)}></CompanionsContainerModal>}
                                               <button className={styles.deleteButton} onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleLeaveEvent()

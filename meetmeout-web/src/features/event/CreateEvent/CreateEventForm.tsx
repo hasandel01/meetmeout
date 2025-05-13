@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { faCamera } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axiosInstance from '../../../axios/axios';
 import { Event } from '../../../types/Event';
@@ -9,20 +9,40 @@ import { toast } from 'react-toastify';
 import {categoryMap, getCategoryIconLabel} from "../../../mapper/CategoryMap"
 import TagInput from './TagInput';
 import { useNavigate } from 'react-router-dom';
+import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder } from "@fortawesome/free-solid-svg-icons";
 
 const CreateEventForm = () => {
     
     const [step, setStep] = useState(1);
     const [errors, setErrors] = useState<any>({});
     const navigate = useNavigate();
+        const newErrors: any = {};
 
     const validateStep = (currentStep: number) => {
-        const newErrors: any = {};
     
         if (currentStep === 1) {
           if(!event.title.trim()) newErrors.title = "Title is required.";
-          if(!event.date.trim()) newErrors.date = "Date is required.";
-          if(!event.time.trim()) newErrors.time = "Time is required.";
+          if(!event.date.trim()) {
+            newErrors.date = "Date is required.";
+          } else {
+             const today = Date.now();
+             const inputDate = new Date(event.date); 
+          
+                if(today > inputDate.getTime())
+                    newErrors.date = "Date shouldn't be past time."
+            }
+
+
+          if(!event.startTime.trim()) newErrors.startTime = "Start time is required.";
+          if(!event.endTime.trim()) newErrors.endTime = "End time is required.";
+        
+            const start = new Date(`1970-01-01T${event.startTime}`);
+            const end = new Date(`1970-01-01T${event.endTime}`);
+
+            if(end <= start) 
+                newErrors.endTime = "End time should be later than the start time."
+
+
         } else if (currentStep === 2) {
           if (!coordinates) newErrors.location = "Please select a location on the map.";
         } else if (currentStep === 3) {
@@ -40,6 +60,7 @@ const CreateEventForm = () => {
         setStep((prev) => prev + 1);
       };
 
+
     const handleBack = () => setStep((prev) => prev - 1);
 
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
@@ -54,7 +75,8 @@ const CreateEventForm = () => {
         title: '',
         description: '',
         date: '',
-        time: '',
+        startTime: '',
+        endTime: '',
         location: '',
         imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png",
         tags: [],
@@ -84,14 +106,14 @@ const CreateEventForm = () => {
                     return;
                 }
 
-         
 
                 const formData = new FormData();
                 formData.append("title", event.title);
                 formData.append("description", event.description);
                 formData.append("category", event.category);
                 formData.append("date", event.date);
-                formData.append("time", event.time);
+                formData.append("startTime", event.startTime);
+                formData.append("endTime", event.endTime);
                 formData.append("location", address || '');
                 event.tags.forEach((tag) => {
                     formData.append("tags",tag);
@@ -216,6 +238,7 @@ const CreateEventForm = () => {
     }
 
 
+
     const renderStep = () => {
         switch(step) {
             case 1:
@@ -231,11 +254,11 @@ const CreateEventForm = () => {
                                 onChange={(e) => setEvent({...event, title: e.target.value} )} 
                                 required/>
                             {errors.title && <p className={styles.errorText}>{errors.title}</p>}
-                            <input 
-                                type="text" 
-                                placeholder="Event Description" 
+                            <textarea
+                                maxLength={500}
+                                rows={6}
+                                placeholder="Event Description (500 character max)" 
                                 value={event.description}
-                                className={styles.descriptionText}
                                 onChange={(e) => setEvent( {...event, description: e.target.value } )} 
                                 />
                             {errors.description && <p className={styles.errorText}>{errors.description}</p>}
@@ -251,14 +274,31 @@ const CreateEventForm = () => {
                                 min={getTodayFormatted()}
                                 required />
                             {errors.date && <p className={styles.errorText}>{errors.date}</p>}
-                            <input 
-                                type='time' 
-                                placeholder="Event Time"
-                                value={event.time}
-                                onChange={(e) => setEvent( {...event, time: e.target.value} )}
-                                min={isToday ? getTimeFormatted(): undefined}
-                                required />
-                            {errors.time && <p className={styles.errorText}>{errors.time}</p>}
+                        <div className={styles.timeInputs}>
+                               <div className={styles.timeInput}>
+                                    <label>Start Time: </label>
+                                    <input 
+                                        type='time' 
+                                        placeholder="Event Start Time"
+                                        value={event.startTime}
+                                        onChange={(e) => setEvent( {...event, startTime: e.target.value} )}
+                                        min={isToday ? getTimeFormatted(): undefined}
+                                        required />
+                                </div> 
+                                <div className={styles.timeInput}>
+                                    <label>End Time: </label>
+                                    <input 
+                                    type='time' 
+                                    placeholder="Event End Time"
+                                    value={event.endTime}
+                                    onChange={(e) => setEvent( {...event, endTime: e.target.value} )}
+                                    min={event.startTime ? event.startTime : getTimeFormatted()}
+                                    required />
+                                </div>   
+                                {errors.startTime && <p className={styles.errorText}>{errors.startTime}</p>}
+                                {errors.endTime && <p className={styles.errorText}>{errors.endTime}</p>}
+            
+                            </div>
                         </div>
                     </div>    
                 )
@@ -348,25 +388,35 @@ const CreateEventForm = () => {
             case 5:
                 return (
                     <div className={styles.eventSummary}>
-                    <h4>Review Your Event</h4>
-                    <hr />
-        
+                    <h4>Review Your Event</h4> 
+                        {event.isPrivate ?
+                            (
+                                <>
+                                <FontAwesomeIcon icon={faLock} size='2x' /> 
+                                </>
+                            ) : (
+                                <>
+                                <FontAwesomeIcon icon={faUnlock} size='2x'/>
+                                </>
+                    )}       
                     <div className={styles.eventPreview}>
-                        <img src={event.imageUrl} alt="Event" className={styles.previewImage} />
-        
+                        <div className={styles.eventPreviewHeader}>
+                            <img src={event.imageUrl} alt="Event" className={styles.previewImage} />
+                            <div className={styles.eventPriewInfo}>
+                                <h3>{event.title}</h3>
+                                <p>{event.description}</p>
+                            </div>
+                        </div>
+
                         <div className={styles.previewDetails}>
-                            <p><strong>Title:</strong> {event.title}</p>
-                            <p><strong>Description:</strong> {event.description}</p>
-                            <p><strong>Date:</strong> {event.date}</p>
-                            <p><strong>Time:</strong> {event.time}</p>
-                            <p><strong>Location:</strong> {addressName}</p>
-                            <p><strong>Latitude:</strong> {coordinates?.latitude}</p>
-                            <p><strong>Longitude:</strong> {coordinates?.longitude}</p>
-                            <p><strong>Capacity:</strong> {event.maximumCapacity}</p>
-                            <p><strong>Category:</strong> {getCategoryIconLabel(event.category).label}</p>
-                            <p><strong>Tags:</strong> {Array.isArray(event.tags) ? event.tags.join(', ') : "None"}</p>
-                            <p><strong>Private:</strong> {event.isPrivate ? "Yes" : "No"}</p>
-                            <p><strong>Draft:</strong> {event.isDraft ? "Yes" : "No"}</p>
+                            <FontAwesomeIcon icon={faCalendarAlt} /> {event.date}
+                            <FontAwesomeIcon icon={faClock}  /> {event.startTime} - {event.endTime}
+                            <FontAwesomeIcon icon={faMapMarkerAlt}  /> {addressName}
+                            <FontAwesomeIcon icon={faFolder}  />  {getCategoryIconLabel(event.category).label}
+                            <FontAwesomeIcon icon={faTag}  />  {Array.isArray(event.tags) ? event.tags.join(', ') : "None"}
+                            <>
+                            <FontAwesomeIcon icon={faUsers} /> {event.maximumCapacity}
+                            </>
                         </div>
                     </div>
         

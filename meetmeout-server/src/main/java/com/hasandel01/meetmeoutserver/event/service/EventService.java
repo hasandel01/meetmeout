@@ -26,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -61,7 +63,8 @@ public class EventService {
                 .tags(event.tags())
                 .imageUrl(imageUrl)
                 .date(event.date())
-                .time(event.time())
+                .startTime(event.startTime())
+                .endTime(event.endTime())
                 .location(event.location())
                 .longitude(event.longitude())
                 .latitude(event.latitude())
@@ -437,4 +440,17 @@ public class EventService {
         return invites.stream().map(InviteMapper::toInviteDTO).toList();
 
     }
+
+    public Set<EventDTO> getMyEvents() {
+
+            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new UsernameNotFoundException(username));
+
+            return user.getParticipatedEvents().stream().map(EventMapper::toEventDto).collect(Collectors.toSet());
+    }
+
+
+
 }

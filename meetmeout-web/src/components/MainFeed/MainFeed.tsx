@@ -13,6 +13,9 @@ import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Tooltip } from "react-tooltip";
 import { useUserContext } from "../../context/UserContext";
 import { Invitation } from "../../types/Like";
+import MainFeedMap from "./MainFeedMap/MainFeedMap";
+import { MapContainer } from "react-leaflet";
+import { TileLayer } from "react-leaflet";
 
 const MainFeed = () => {
  
@@ -64,6 +67,14 @@ const MainFeed = () => {
         }
     },[])
 
+
+
+    const isEventFull =(event: Event):boolean =>  {
+
+        return event.maximumCapacity <= event.attendees.length;
+
+    } 
+
     
     const searchQuery = (searchString: string) => {
 
@@ -72,8 +83,8 @@ const MainFeed = () => {
         if(searchString === "Soonest" || searchString === "Latest" ) {
             
             const sortedEvents = [...events]?.sort((a, b) => {
-                const dateA = new Date(`${a.date}T${a.time}`);
-                const dateB = new Date(`${b.date}T${b.time}`);
+                const dateA = new Date(`${a.date}T${a.startTime}`);
+                const dateB = new Date(`${b.date}T${b.startTime}`);
                 return searchString === 'Soonest' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime(); 
             })
 
@@ -145,7 +156,7 @@ const MainFeed = () => {
             const response = await axiosInstance.post(`/join-event/${eventId}`);
 
             if(response.status === 200) {
-                toast.success("You successfully joined to the event!")
+                navigate(`/event/${eventId}`)
             }
             else {
                 toast.error("You couldn't join to the event.")
@@ -218,9 +229,9 @@ const MainFeed = () => {
         if(globalFilter === 'My Drafts')
             return events?.filter(event => event.isDraft)
         else if(globalFilter === 'My Events')
-            return events?.filter(event => event.attendees.some(attendee => attendee.username === currentUser?.username))
+            return events?.filter(event => event.attendees.some(attendee => attendee.username === currentUser?.username) && !event.isDraft)
         else if(globalFilter === 'All Events')
-            return events
+            return events?.filter(event => !event.isDraft)
     }
       
     return (
@@ -237,7 +248,6 @@ const MainFeed = () => {
                         My Drafts
                     </label>
                 </div>
-                <h4> Filters </h4>
                 <div className={styles.sort}>
                     <select onChange={(e) => searchQuery(e.target.value)}>
                         <option
@@ -270,7 +280,21 @@ const MainFeed = () => {
                     </select>
                 </div>
             </div>
+        <div className={styles.mapContainer}>
+                <MapContainer
+                center={[ 41.0082, 28.9784]}
+                zoom={13}
+                style={{ height: "400px", width: "90%", marginBottom: "20px", borderRadius: "20px"}}
+                >
+                <TileLayer
+                    attribution='&copy; OpenStreetMap contributors'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <MainFeedMap events={globalFilterFunction() || []} coords={{ lat: lat ?? 41.0082, lng: lng ?? 28.9784 }} />
+                </MapContainer>
+        </div>
         <div className={styles.onGoingEventsContainer}>
+
                 { loading ? (
                     <>                          
                     <div className={styles.skeletonCard}></div>
@@ -281,10 +305,9 @@ const MainFeed = () => {
                 ) : events && events.length > 0 ? (
                     globalFilterFunction()
                     ?.map((event) => (
-                        event.isDraft === false && 
                         (
-                            <div key={event.id} onClick={() => navigate(`/event/${event.id}`)}>
-                                <div className={styles.eventCard}>
+                            <div key={event.id} onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>
+                                <div className={isEventFull(event) ? `${styles.eventCard} ${styles.full}` : `${styles.eventCard}`}>
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
                                             icon={faLock}
@@ -292,7 +315,7 @@ const MainFeed = () => {
                                             data-tooltip-id="private_event_tooltip" data-tooltip-content="Private Event" />
                                             <Tooltip id="private_event_tooltip"/>
                                     </>}
-                                    <div className={`${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
+                                    <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
                                     <img src={event.imageUrl} alt={event.title} />
                                     <div className={styles.eventTitle}>
                                         <div className={styles.eventCategory}>
@@ -311,7 +334,7 @@ const MainFeed = () => {
                                         <div className={styles.eventTimeDate}>
                                             <span>
                                                 <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                                                <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.time}</p>
+                                                <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime}-{event.endTime}</p>
                                             </span>
                                         </div>
                                         <div className={styles.eventLocation}>

@@ -7,7 +7,8 @@ export interface Event {
     title: string;
     description: string;
     date: string;
-    time: string;
+    startTime: string;
+    endTime: string;
     location: string;
     imageUrl: string;
     latitude: number;

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 interface UserDetailsFormProps {
     email: string;
 }
@@ -55,16 +56,63 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
     }
 
     return (
-    <div className='register-container'>
+    <div className={styles.formContainer}>
                     <h1> Please provide information </h1>
                     <p> Please fill in the following details to create your account. </p>
                     <form className="register-form" onSubmit={handleRegister}>
-                        <input type="text" value={username} placeholder="Username" required onChange={(e) => setUsername(e.target.value)} />
-                        <input type="text" value={firstName} placeholder="First Name" required onChange={(e) => setFirstName(e.target.value)} />
-                        <input type="text" value={lastName} placeholder="Last Name" required onChange={(e) => setLastName(e.target.value)} />
-                        <input type="password" value={password} placeholder="Password" required onChange={(e) => setPassword(e.target.value)} />
-                        <input type="password" value={confirmPassword} placeholder="Confirm Password" required onChange={(e) => setConfirmPassword(e.target.value)} />
-                        {error && <label className={styles.errorMessage}> {error} </label>}
+                        <div className={styles.inputGroup}>
+                                <label htmlFor="username">Username</label>
+                                <input
+                                    id="username"
+                                    type="text"
+                                    className={styles.compactInput}
+                                    value={username}
+                                    required
+                                    onChange={(e) => setUsername(e.target.value)}
+                                />
+
+                                <label htmlFor="firstName">First Name</label>
+                                <input
+                                    id="firstName"
+                                    type="text"
+                                    className={styles.compactInput}
+                                    value={firstName}
+                                    required
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                />
+
+                                <label htmlFor="lastName">Last Name</label>
+                                <input
+                                    id="lastName"
+                                    type="text"
+                                    className={styles.compactInput}
+                                    value={lastName}
+                                    required
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+
+                                <label htmlFor="password">Password</label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    className={styles.compactInput}
+                                    value={password}
+                                    required
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+
+                                <label htmlFor="confirmPassword">Confirm Password</label>
+                                <input
+                                    id="confirmPassword"
+                                    type="password"
+                                    className={styles.compactInput}
+                                    value={confirmPassword}
+                                    required
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                />
+
+                                {error && <p className={styles.compactError}>{error}</p>}
+                                </div>
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>
                         <button type="submit" className="register-button" > Sign Up </button>
                     </form> 

@@ -4,6 +4,7 @@ import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.dto.EventDTO;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.user.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -35,4 +36,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     
     """)
     Optional<List<Event>> findByCategory(@Param("query") String query, Pageable pageable);
+
+    List<Event> findByAttendees(Set<User> attendees);
 }

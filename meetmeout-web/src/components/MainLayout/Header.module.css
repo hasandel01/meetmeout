@@ -261,7 +261,7 @@ header .userShortcut img {
     justify-content: center;
     background-color: var(--card-color);
     width: 200px;
-    z-index: 1;
+    z-index: 999;
     border: 1px solid var(--primary-color-dark);
     border-radius: 6px;
 }

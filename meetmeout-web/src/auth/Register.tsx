@@ -44,7 +44,9 @@ const Register = () => {
 
     return (
         <div className={styles.formContainer}>
-                <img alt='mmoLogo' src='/mmo_logo.PNG' className={styles.mmoLogo}></img>
+            {!showUserDetailsForm &&
+            <>
+            <img alt='mmoLogo' src='/mmo_logo.PNG' className={styles.mmoLogo}></img>
                 {(!formSubmitted || userExists) && (
                     <>
                         <h1> Sign Up! </h1>
@@ -69,6 +71,7 @@ const Register = () => {
                         <Link to="/login" className={styles.link}> Already have an account? Log in!</Link>
                     </>
                 )}
+                </>}
                 {showUserDetailsForm && <UserDetailsForm email={email} />}
             </div>
     );

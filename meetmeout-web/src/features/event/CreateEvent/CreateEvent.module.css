@@ -2,7 +2,7 @@
 
 .createEventFormContainer {
     width: 100vw;
-    height: 80vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -12,13 +12,10 @@
 
 .containerAlt {
     position: relative;
-    background-color: var(--primary-color-light);
-    min-width: 500px;
-    min-height: 500px;
-    max-width: 500px;
-    max-height: 500px;
-    width: 30vw;
-    padding: 20px;
+    background-color: var(--background-color);
+    min-width: 600px;
+    min-height: 600px;
+    padding: 30px;
     border-radius: 5%;
 }
 
@@ -57,14 +54,47 @@
     margin-bottom: 24px;
 }
 
-.inputGroup input,
-.inputGroup textarea {
-    width: 100%;
+.inputGroup input {
+    width: 96%;
     padding: 10px;
     border-radius: 10px;
     border: 1px solid var(--card-border);
     font-size: 14px;
     transition: border-color 0.3s ease;
+}
+
+.inputGroup p {
+    margin: 0px;
+    color: red;
+}
+
+.inputGroup textarea {
+  width: 100%;
+  height: 120px; /* veya rows kullanıyorsan gerekmez */
+  padding: 10px 12px 30px 12px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: none;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+
+.timeInput {
+    display: flex;
+    flex-direction: row;
+    padding: 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.timeInput label {
+    margin: 0px;
+}
+
+.timeInput input {
+    width: 60%;
 }
 
 
@@ -76,12 +106,12 @@
 
 .eventLocationSelector {
     width: 100%;
-    max-width: 400px;
-    height: 400px;
-    margin: 0 auto 24px auto;
+    max-width: 600px;
+    height: 500px;
+    margin: 4px;
     overflow: hidden;
     border-radius: 12px;
-    border: 3px solid var(--card-border);
+    border: 3px solid var(--primary-color-dark);
 }
   
 .coordinatesDisplay {
@@ -294,25 +324,180 @@ input[type="checkbox"] {
 }
 
 
+.eventTitle {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 10px;
+}
+
+.eventTitle h2 {
+    font-size: 14px;
+    margin: 0;
+}
+
+.eventCategory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: #00796b solid 1px;
+    color: #00796b;
+}
+
+/* EVENT TIME, DATE & LOCATION */
+
+
+.eventDetailsInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: first baseline;
+    gap: 10px;
+}
+
+.eventTimeDate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.eventTimeDate span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.eventLocation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon {
+    font-size: 18px;
+    color: var(--primary-color-dark);
+    margin: 0;
+}
+
+p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    width: 260px;
+    height: 50px;
+}
+
+.tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    gap: 5px;
+}
+
+.tags span {
+    background-color: #cfeed0;
+    border: 1px solid green;
+    border-radius: 6px;
+    padding: 1px 2px;
+    font-size: 12px;
+    color: green;
+    font-weight: bold;
+}
+
+/** EventStatus **/
+
+.eventStatus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    padding: 2px 4px;
+    font-size: 12px;
+    color: var(--error-color);
+    margin-top: 10px;
+}
+
+.eventStatus.ONGOING {
+    background-color: rgb(83, 201, 83);
+    color: white;
+}
+
+.eventStatus.FULL {
+    background-color: #e99e2f;
+    color: white;
+}
+
+/* TO BE IMPLEMENTED */
+
+.eventStatus.completed {
+    background-color: #ffecb3;
+    color: #f57c00;
+}
+.eventStatus.cancelled {
+    background-color: #ffcdd2;
+    color: #d32f2f;
+}
+
+.eventStatus.draft {
+    background-color: #e1bee7;
+    color: #8e24aa;
+}
+
 /** STEP 5 */
 
 .eventSummary {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 18px;
+    margin: 20px 60px;
+    background-color: var(--card-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    width: 380px;
+    height: 420px;
+    gap: 10px;
 }
 
 .eventPreview {
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 5px;
   align-items: flex-start;
 }
 
+.eventPreviewHeader {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.eventPreviewInfo {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid var(--primary-color-dark);
+}
+
 .previewImage {
-  width: 200px;
-  height: 200px;
-  border-radius: 12px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
   object-fit: cover;
 }
 
@@ -320,9 +505,29 @@ input[type="checkbox"] {
   margin: 4px 0;
 }
 
+
+.previewDetails {
+    margin-top: 6px;
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 4px;
+    font-weight: bold;
+}
+
+.previewDetails h2 {
+    font-size: 14px;
+    color: #333;
+}
+
+.previewDetails p {
+    font-size: 14px;
+    align-items: center;
+    gap: 10px;
+}
+
 .warningText {
   font-size: 14px;
-  color: var(--warning-color);
+  color: red;
   font-style: italic;
 }
 

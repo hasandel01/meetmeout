@@ -6,8 +6,6 @@ import axiosInstance from '../../axios/axios';
 import { User } from '../../types/User';
 import { useEffect } from 'react';
 import { Event } from '../../types/Event';
-import SockJS from 'sockjs-client';
-import { Client } from '@stomp/stompjs';
 import styles from "./Header.module.css";
 import useMediaQuery from "./hooks/useMediaQuery";
 import { useNotificationContext } from '../../context/NotificationContext';
@@ -73,34 +71,6 @@ const Header = () => {
         setShowSearchResults(true);
       }
 
-    useEffect(() => {
-        
-        const token = localStorage.getItem('accessToken');
-        const baseUrl = import.meta.env.VITE_SOCKET_BASE_URL
-        const socket = new SockJS(`${baseUrl}/ws?token=${token}`);
-
-        const client = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-
-                console.log('Connected to WebSocket server');
-                
-                client.subscribe('/user/queue/notifications', (message) => {
-                    if (message.body) {
-                        const notification = JSON.parse(message.body);
-                        console.log('Received notification:', notification);
-                    }
-                });
-                
-            },
-        });
-
-        client.activate();
-        
-        return () => {
-            client.deactivate();
-        };
-    }, []);
 
     useEffect(() => {
       

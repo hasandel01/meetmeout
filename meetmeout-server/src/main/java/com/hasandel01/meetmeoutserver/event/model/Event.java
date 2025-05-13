@@ -41,7 +41,8 @@ public class Event {
     private String imageUrl;
 
     private LocalDate date;
-    private LocalTime time;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String location;
     private String addressName;
     private double latitude;

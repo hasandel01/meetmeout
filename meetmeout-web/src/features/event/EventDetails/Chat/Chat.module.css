@@ -1,0 +1,44 @@
+.chatContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--card-color);
+    border: 3px solid var(--primary-color-dark);
+    max-height: 500px;
+    min-height: 500px;
+    min-width: 400px;
+    padding: 30px;
+    margin: 30px;
+    border-radius: 10px;
+}
+
+
+.messageList {
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 4px;
+    min-height: 400px;
+}
+
+.chatMessage {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.sendChatMessageContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.sendChatMessageContainer input {
+    padding: 10px;
+    width: 300px;
+    border: 1px solid var(--primary-color-dark);
+}
+
+
+.sendChatMessageContainer button {
+    background-color: var(--primary-color);
+    color: white;
+}

@@ -26,7 +26,6 @@ public class EventChatController {
 
     @MessageMapping("/chat/event/{eventId}")
     public void sendMessage(@DestinationVariable Long eventId, EventChatMessageDTO message, Principal principal) {
-        log.info("Received message: {}", message);
         EventChatMessageDTO savedMessage = eventChatService.save(message,eventId, principal);
         simpMessagingTemplate.convertAndSend("/topic/chat/event/" + eventId, savedMessage);
     }

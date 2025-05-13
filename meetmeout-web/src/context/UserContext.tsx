@@ -12,7 +12,7 @@ const UserContext = createContext<UserContextType|undefined>(undefined);
 
 export const UserContextProvider = ({children}: {children: React.ReactNode}) => {
 
-    const [currentUser, setCurrentUser] = useState<User>();
+    const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
 
     const getMe = async () => {
         
@@ -25,7 +25,8 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
     }
 
     useEffect(() => {
-        getMe();
+        if(currentUser === undefined)
+            getMe();
     })
 
     return (

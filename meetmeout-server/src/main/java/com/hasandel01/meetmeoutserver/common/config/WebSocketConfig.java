@@ -1,8 +1,8 @@
 package com.hasandel01.meetmeoutserver.common.config;
 
 
-import com.hasandel01.meetmeoutserver.auth.interceptor.AuthChannelInterceptor;
-import com.hasandel01.meetmeoutserver.auth.interceptor.AuthHandshakeInterceptor;
+import com.hasandel01.meetmeoutserver.common.config.interceptor.AuthChannelInterceptor;
+import com.hasandel01.meetmeoutserver.common.config.interceptor.AuthHandshakeInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
@@ -18,6 +18,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final AuthHandshakeInterceptor authHandshakeInterceptor;
     private final AuthChannelInterceptor authChannelInterceptor;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
             registry.addEndpoint("/ws")

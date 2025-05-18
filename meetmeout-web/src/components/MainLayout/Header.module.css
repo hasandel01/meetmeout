@@ -8,7 +8,7 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 5px;;
+    padding: 10px;
     background-color: var(--background-color);
     width: 100%;
     border-bottom: 1px solid var(--primary-color-dark);
@@ -50,19 +50,26 @@ header .logoContainer img:hover {
     padding: 5px 25px;
     background-color: var(--input-background);
     border-radius: 10px;
+    border: 2px solid var(--primary-color-dark);
 }
 
 .searchBar input {
     border: none;
     border-radius: 8px;
     background-color: var(--input-background);
-  }
+}
   
 
 .searchBar input:focus {
     outline: none;
     border: none;
     box-shadow: none;
+}
+
+.searchIcon {
+    padding-right: 16px;
+    color: var(--primary-color-dark);
+    border-right: 1px solid var(--primary-color-dark);
 }
 
 .searchResults {
@@ -72,7 +79,7 @@ header .logoContainer img:hover {
     width: 100%;
     display: flex;
     flex-direction: column;
-    z-index: 1;
+    z-index: 999;
     overflow-y: visible;
     background-color: var(--card-color);
     border-radius: 6px;
@@ -96,7 +103,7 @@ header .logoContainer img:hover {
 }
 
 .searchResults li:hover {
-    background-color: var(--background-color);
+    background-color: var(--primary-color-light);
     color: var(--text-color);
     transition: background-color 0.3s ease;
     cursor: pointer;
@@ -285,7 +292,7 @@ header .userShortcut img {
 }
 
 .userMenu li:hover {
-    background-color: var(--background-color);
+    background-color: var(--primary-color-light);
     color: var(--text-color);
     transition: background-color 0.3s ease;
 }

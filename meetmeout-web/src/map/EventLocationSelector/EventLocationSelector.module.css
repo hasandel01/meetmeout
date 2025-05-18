@@ -1,0 +1,45 @@
+.mapInputContainer {
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.searchResults {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    left: 90px;
+    top: 160px;
+    width: 600px;
+    background-color: var(--background-color);
+    z-index: 999;
+    border: 1px solid var(--primary-color-dark);
+}
+
+.searchResults ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0px;
+    padding: 10px;
+    width: 90%;
+}
+
+
+.searchResults li {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.searchResults li:hover {
+    background-color: var(--primary-color-light);
+    cursor: pointer;
+
+}

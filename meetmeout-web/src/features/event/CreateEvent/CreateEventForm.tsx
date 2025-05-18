@@ -10,12 +10,16 @@ import {categoryMap, getCategoryIconLabel} from "../../../mapper/CategoryMap"
 import TagInput from './TagInput';
 import { useNavigate } from 'react-router-dom';
 import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder } from "@fortawesome/free-solid-svg-icons";
+import confetti from "canvas-confetti";
+import { RouteType } from '../../../types/RouteType';
 
 const CreateEventForm = () => {
     
     const [step, setStep] = useState(1);
     const [errors, setErrors] = useState<any>({});
     const navigate = useNavigate();
+    const [routeType, setRouteType] = useState<RouteType>();
+
         const newErrors: any = {};
 
     const validateStep = (currentStep: number) => {
@@ -25,10 +29,9 @@ const CreateEventForm = () => {
           if(!event.date.trim()) {
             newErrors.date = "Date is required.";
           } else {
-             const today = Date.now();
-             const inputDate = new Date(event.date); 
-          
-                if(today > inputDate.getTime())
+             const now = Date.now();
+             const inputDate = new Date(`${event.date}T${event.startTime}`); 
+                if(now > inputDate.getTime())
                     newErrors.date = "Date shouldn't be past time."
             }
 
@@ -66,6 +69,7 @@ const CreateEventForm = () => {
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
     const [address, setAddress] = useState<string | null>(null);
     const [addressName, setAddressName] = useState<string | null>(null);
+    const [endCoordinates, setEndCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
 
 
     const [selectedImageFile, setSelectedImageFile] = useState<File | null>();
@@ -93,11 +97,24 @@ const CreateEventForm = () => {
         likes: [],
         comments: [],
         reviews: [],
-        createdAt: ''
+        createdAt: '',
+        isThereRoute: false,
+        isCapacityRequired: false,
+        isFeeRequired: false,
+        fee: 0,
+        endLatitude: 0,
+        endLongitude: 0
     });
 
+    const showConfetti = () => {
+        confetti({
+            particleCount: 200,
+            spread: 80,
+            origin: {y:0.6},
+        })
+    }
 
-    const createAnEvent = async () => {
+    const createAnEvent = async (isDraft: boolean) => {
     
             try {
 
@@ -106,6 +123,9 @@ const CreateEventForm = () => {
                     return;
                 }
 
+                setEvent(prev => ({...prev, isDraft: isDraft}))
+
+                console.log(isDraft) 
 
                 const formData = new FormData();
                 formData.append("title", event.title);
@@ -121,9 +141,15 @@ const CreateEventForm = () => {
 
                 formData.append("latitude", coordinates?.latitude.toString() || '');
                 formData.append("longitude", coordinates?.longitude.toString() || '');
+                formData.append("isThereRoute", event.isThereRoute.toString() || '');
+                formData.append("endLatitude", event.endLatitude.toString() || '');
+                formData.append("endLongitude", event.endLongitude.toString() || '');
                 formData.append("isPrivate", event.isPrivate.toString());
-                formData.append("isDraft", event.isDraft.toString());
+                formData.append("isDraft", isDraft.toString());
+                formData.append("isCapacityRequired", event.isCapacityRequired.toString() || '');
                 formData.append("maximumCapacity", event.maximumCapacity.toString());
+                formData.append("isFeeRequired", event.isFeeRequired.toString() || '');
+                formData.append("fee", event.fee.toString() || '');
                 formData.append("status", event.status);
                 formData.append("addressName", addressName || '');
 
@@ -144,7 +170,13 @@ const CreateEventForm = () => {
                     }
                     });
 
-                    toast.success("Event created successfully!");
+                    if(!isDraft) {
+                        toast.success("Event created successfully!");
+                        showConfetti();
+                    } else {
+                        toast.info("Your draft is saved successfully!");
+                    }
+
                     setEvent((prev) => prev.id = response.data)
                     setTimeout(() => navigate(`/event/${event.id}`), 100);            
     
@@ -155,10 +187,9 @@ const CreateEventForm = () => {
           
         }
 
-    const handleCreateEvent = (event: React.FormEvent) => {
-        event.preventDefault();
-        createAnEvent();
-    
+    const handleCreateEvent = (event: React.FormEvent, isDraft: boolean) => {
+        event.preventDefault(); 
+        createAnEvent(isDraft);
     };
 
     const updateEventPicture = async () => {
@@ -223,7 +254,7 @@ const CreateEventForm = () => {
     
 
     const getTodayFormatted = () => {
-        const today = new Date();
+        const today = new Date(Date.now());
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
@@ -247,18 +278,19 @@ const CreateEventForm = () => {
                         <div className={styles.inputGroup}>
                             <h4>Event Information</h4>
                             <hr/>
-                            <input 
-                                type="text" 
+                            <textarea 
+                                maxLength={50}
                                 placeholder="Event Title"
                                 value={event.title}
+                                className={styles.inputTitle}
                                 onChange={(e) => setEvent({...event, title: e.target.value} )} 
                                 required/>
                             {errors.title && <p className={styles.errorText}>{errors.title}</p>}
                             <textarea
                                 maxLength={500}
-                                rows={6}
-                                placeholder="Event Description (500 character max)" 
+                                placeholder="Event Description (500 characters max)" 
                                 value={event.description}
+                                className={styles.inputDescription}
                                 onChange={(e) => setEvent( {...event, description: e.target.value } )} 
                                 />
                             {errors.description && <p className={styles.errorText}>{errors.description}</p>}
@@ -276,7 +308,7 @@ const CreateEventForm = () => {
                             {errors.date && <p className={styles.errorText}>{errors.date}</p>}
                         <div className={styles.timeInputs}>
                                <div className={styles.timeInput}>
-                                    <label>Start Time: </label>
+                                    <label>Start Time </label>
                                     <input 
                                         type='time' 
                                         placeholder="Event Start Time"
@@ -286,7 +318,7 @@ const CreateEventForm = () => {
                                         required />
                                 </div> 
                                 <div className={styles.timeInput}>
-                                    <label>End Time: </label>
+                                    <label>End Time </label>
                                     <input 
                                     type='time' 
                                     placeholder="Event End Time"
@@ -305,73 +337,158 @@ const CreateEventForm = () => {
             case 2:
                 return (
                     <div className={styles.eventLocationSelectorContainer}>
-                        {errors.location && <p className={styles.errorText}>{errors.location}</p>}  <div className={styles.eventLocationSelector}>
-                            <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} setAddressName={setAddressName} />
+                        <label>
+                        <input
+                            type='checkbox'
+                            value="thereIsRoute"
+                            checked={event.isThereRoute}
+                            onChange={(e) => setEvent({...event, isThereRoute: e.target.checked})}   
+                        />Will there be a route?
+                        {event.isThereRoute && 
+                            <div className={styles.radioButtonsContainer}>
+                                <label>
+                                    <input
+                                        type='radio'
+                                        value={"driving-car"}
+                                        checked = {routeType === RouteType.CAR}
+                                        onChange={() => {setRouteType(RouteType.CAR)}}
+                                    >
+                                    </input>
+                                    Car
+                                </label>
+                                <label>
+                                    <input
+                                        type='radio'
+                                        value={"foot-walking"}
+                                        checked = {routeType === RouteType.WALKING}
+                                        onChange={() => setRouteType(RouteType.WALKING)}
+                                    >
+                                    </input>
+                                    Walking
+                                </label>
+                                <label>
+                                    <input
+                                        type='radio'
+                                        value={"cycling-regular"}
+                                        checked = {routeType === RouteType.CYCLING}
+                                        onChange={() => setRouteType(RouteType.CYCLING)}
+                                    >
+                                    </input>
+                                    Cycling
+                                </label>
+                                <label>
+                                    <input
+                                        type='radio'
+                                        value={"foot-hiking"}
+                                        checked = {routeType === RouteType.HIKING}
+                                        onChange={() => setRouteType(RouteType.HIKING)}
+                                    >
+                                    </input>
+                                    Hiking
+                                </label>
+                            </div>
+                        }
+                        </label>    
+                        {errors.location && <p className={styles.errorText}>{errors.location}</p>}  
+                        <div className={styles.eventLocationSelector}>
+                            <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} route={routeType ?? RouteType.CAR} 
+                            setAddressName={setAddressName} isThereRoute={event.isThereRoute} setEndCoordinates={setEndCoordinates}/>
                         </div>
-                        
                     </div>
                 )
             case 3:
                 return (
+                    <>
                     <div className={styles.eventDetails}>
                         <div className={styles.capacityContainer}>
-                            <h4>Maximum capacity</h4>
-                            <hr/>
+                            <label>
                                 <input
-                                        type="number" 
-                                        min={1}
-                                        placeholder="Maximum Capacity"
-                                        value={event.maximumCapacity}
-                                        onChange={(e) => setEvent( {...event, maximumCapacity: parseInt(e.target.value, 10)})}
-                                        required />
+                                type='checkbox'
+                                value="capacity-requirement"
+                                checked={event.isCapacityRequired}
+                                onChange={(e) => setEvent({...event, isCapacityRequired: e.target.checked})}
+                                >
+                                </input>
+                                Will there be a capacity constraint?
+                            </label>
+                            {event.isCapacityRequired && 
+                            <>
+                            <h4>Maximum capacity</h4>
+                                <hr />
+                                <input
+                                    type="number"
+                                    min={1}
+                                    placeholder="Maximum Capacity"
+                                    value={event.maximumCapacity}
+                                    onChange={(e) => setEvent({ ...event, maximumCapacity: parseInt(e.target.value, 10) })}
+                                    required />
                                 {errors.maximumCapacity && <p className={styles.errorText}>{errors.maximumCapacity}</p>}
+                            </>
+                            }
+                        </div>
+                        <div className={styles.feeContainer}>
+                            <label>
+                                <input
+                                type='checkbox'
+                                value="fee-requirement"
+                                checked={event.isFeeRequired}
+                                onChange={(e) => setEvent({...event, isFeeRequired: e.target.checked})}
+                                >
+                                </input>
+                                Will there be fee?
+                            </label>
+                            {event.isFeeRequired && 
+                            <>
+                            <h4>Fee</h4>
+                                <hr />
+                                <input
+                                    type="number"
+                                    min={1}
+                                    placeholder="Fee"
+                                    value={event.fee}
+                                    onChange={(e) => setEvent({ ...event, fee: parseInt(e.target.value, 10) })}
+                                    required />
+                                {errors.maximumCapacity && <p className={styles.errorText}>{errors.maximumCapacity}</p>}
+                            </>
+                            }
+                               
                         </div>
                         <div className={styles.categoryTags}>
-                                <h4>Select Category and Enter tags to let everyone know!</h4>
-                                <hr/>
-                                        <select
-                                            value={event.category}
-                                            onChange={(e) => setEvent({...event, category: e.target.value})}
-                                              required
-                                        >
-                                            <option value="">Select Category</option>
-                                            {Object.keys(categoryMap).map((key) => {
-                                                const {icon, label} = getCategoryIconLabel(key);
-                                                return (
-                                                    <option key={key} value={key}>
-                                                        {icon} {label}
-                                                    </option>
-                                                );
-                                            })}
-                                        </select>
-                                        {errors.category && <p className={styles.errorText}>{errors.category}</p>}
-                                </div>
-                                <div className={styles.tags}>
-                                    <TagInput tags={event.tags} setTags={(newTags) => setEvent({...event, tags: newTags})} />
-                                </div>
-                                <div className={styles.eventType}>
-                                <h4>Preferences</h4>
-                                <hr/>
-                                    <div className={styles.eventCheckBoxes}> 
-                                        <label>
-                                                <input
-                                                    type="checkbox"
-                                                    value="private"
-                                                    checked={event.isPrivate}
-                                                    onChange={(e) => setEvent( {...event, isPrivate: e.target.checked})}
-                                                    /> Private Event
-                                            </label>
-                                            <label>
-                                                <input 
-                                                    type="checkbox" 
-                                                    name="isDraft"
-                                                    checked={event.isDraft} 
-                                                    onChange={(e) => setEvent({...event, isDraft: e.target.checked})}/>
-                                                    Save as a Draft
-                                            </label>
-                                    </div>
-                                </div>
-                    </div>
+                            <h4>Select Category and Enter tags to let everyone know!</h4>
+                            <hr />
+                            <select
+                                value={event.category}
+                                onChange={(e) => setEvent({ ...event, category: e.target.value })}
+                                required
+                            >
+                                <option value="">Select Category</option>
+                                {Object.keys(categoryMap).map((key) => {
+                                    const { icon, label } = getCategoryIconLabel(key);
+                                    return (
+                                        <option key={key} value={key}>
+                                            {icon} {label}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                            {errors.category && <p className={styles.errorText}>{errors.category}</p>}
+                        </div>
+                        <div className={styles.tags}>
+                            <TagInput tags={event.tags} setTags={(newTags) => setEvent({ ...event, tags: newTags })} />
+                        </div>
+                    </div><div className={styles.eventType}>
+                            <h4>Preferences</h4>
+                            <hr />
+                            <div className={styles.eventCheckBoxes}>
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        value="private"
+                                        checked={event.isPrivate}
+                                        onChange={(e) => setEvent({ ...event, isPrivate: e.target.checked })} /> Private Event
+                                </label>
+                            </div>
+                        </div></>
                 )
             case 4:
                 return (
@@ -432,12 +549,39 @@ const CreateEventForm = () => {
     return (
         <div className={styles.createEventFormContainer}>
             <div className={styles.containerAlt}>
-                <h4>Create an Event</h4>
+                <div className={styles.stepContainer}>
+                    <div className={styles.step}>
+                        <div className={step >= 1 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
+                        <span>Information</span>
+                    </div>
+                    <div className={styles.step}>
+                        <div className={step >= 2 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}>  </div>
+                        <span>Location</span>
+                    </div>
+                    <div className={styles.step}>
+                        <div className={step >= 3 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
+                        <span>Rules</span>
+                    </div>
+                    <div className={styles.step}>
+                        <div className={step >= 4 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
+                        <span>Image</span>
+                    </div>
+                    <div className={styles.step}>
+                        <div className={step >= 5 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
+                        <span>Summary</span>
+                    </div>
+                </div>
+
                 {renderStep()}
                 <div  className={styles.buttons}>
                     {step > 1 && <button onClick={() =>handleBack()}> Back</button>}
                     {step < 5 && <button onClick={() => handleNext()}> Next</button>}
-                    {step === 5 && <button onClick={handleCreateEvent}> Submit</button>}
+                    {step === 5 && 
+                    <>
+                    <button className={styles.draftButton} onClick={(e) => handleCreateEvent(e, true)}>Save as Draft</button>
+                    <button onClick={(e) => handleCreateEvent(e, false)}>Submit</button>
+                    </>
+                    }
                 </div>
             </div>   
         </div>

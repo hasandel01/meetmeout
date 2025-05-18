@@ -5,6 +5,7 @@ import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,7 +28,10 @@ public class Event {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Long id;
 
+    @Length(max = 50)
     private String title;
+
+    @Length(max = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -45,8 +49,14 @@ public class Event {
     private LocalTime endTime;
     private String location;
     private String addressName;
+
+    private boolean isThereRoute;
+
     private double latitude;
     private double longitude;
+
+    private double endLatitude;
+    private double endLongitude;
 
     @ManyToOne
     @JoinColumn(name = "organizer_id")
@@ -64,7 +74,11 @@ public class Event {
     @EqualsAndHashCode.Exclude
     private Set<User> attendees = new HashSet<>();
 
+    private boolean isCapacityRequired;
     private int maximumCapacity;
+
+    private boolean isFeeRequired;
+    private double fee;
 
     private boolean isPrivate;
     private boolean isDraft;
@@ -93,5 +107,6 @@ public class Event {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    private Set<String> eventPhotoUrls = new HashSet<>();
 
 }

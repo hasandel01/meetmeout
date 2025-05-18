@@ -26,4 +26,10 @@ export interface Event {
     comments: Comment[];
     reviews: Review[];
     createdAt: string;
+    isFeeRequired: boolean;
+    fee: number;
+    isCapacityRequired: boolean;
+    isThereRoute: boolean;
+    endLatitude: number;
+    endLongitude: number;
 }

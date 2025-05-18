@@ -28,6 +28,7 @@ public record EventDTO(
         double longitude,
         boolean isPrivate,
         boolean isDraft,
+        boolean isCapacityRequired,
         int maximumCapacity,
         EventStatus status,
         Set<UserDTO> attendees,
@@ -37,5 +38,11 @@ public record EventDTO(
         Set<LikeDTO> likes,
         Set<CommentDTO> comments,
         Set<ReviewDTO> reviews,
-        LocalDateTime createdAt) {
+        boolean isThereRoute,
+        double endLatitude,
+        double endLongitude,
+        boolean isFeeRequired,
+        double fee,
+        LocalDateTime createdAt,
+        Set<String> eventPhotoUrls) {
 }

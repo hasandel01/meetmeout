@@ -66,7 +66,7 @@ public class AuthenticationService {
                     .build();
 
             emailSenderService.sendEmail(user.getEmail(), "Please verify your email",
-                    "Click the link to verify your account: " + baseUrl + verificationToken);
+                    "Click the link to verify your account: " + baseUrl + "/verify?token=" + verificationToken);
             userRepository.save(user);
         }
 
@@ -135,7 +135,7 @@ public class AuthenticationService {
 
         userRepository.save(user);
         emailSenderService.sendEmail(user.getEmail(), "Password reset link",
-                "Click the link to reset your password: " + baseUrl + resetPasswordToken);
+                "Click the link to reset your password: " + baseUrl + "/verify?token=" + resetPasswordToken);
 
 
         return null;

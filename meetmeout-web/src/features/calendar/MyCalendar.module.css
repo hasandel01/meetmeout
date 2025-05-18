@@ -1,7 +1,11 @@
 .eventOnCalendarContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    background-color: white;
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 10px;
+    min-height: 80vh;
+    max-width: 1200px;
 }
 
 .eventOnCalendarContainer img {

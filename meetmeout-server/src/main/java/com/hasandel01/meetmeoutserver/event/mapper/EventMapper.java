@@ -29,7 +29,11 @@ public class EventMapper {
                 .tags(event.getTags())
                 .longitude(event.getLongitude())
                 .latitude(event.getLatitude())
+                .isThereRoute(event.isThereRoute())
+                .endLatitude(event.getEndLatitude())
+                .endLongitude(event.getEndLongitude())
                 .status(event.getStatus())
+                .isCapacityRequired(event.isCapacityRequired())
                 .maximumCapacity(event.getMaximumCapacity())
                 .attendees(event.getAttendees().stream().map(UserMapper::toUserDTO).collect(Collectors.toSet()))
                 .organizer(UserMapper.toUserDTO(event.getOrganizer()))
@@ -38,6 +42,9 @@ public class EventMapper {
                 .comments(event.getComments().stream().map(CommentMapper::toCommentDTO).collect(Collectors.toSet()))
                 .reviews(event.getReviews().stream().map(ReviewMapper::toReviewDTO).collect(Collectors.toSet()))
                 .createdAt(event.getCreatedAt())
+                .isFeeRequired(event.isFeeRequired())
+                .fee(event.getFee())
+                .eventPhotoUrls(event.getEventPhotoUrls())
                 .build();
     }
 

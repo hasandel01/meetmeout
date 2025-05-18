@@ -64,7 +64,6 @@ const Register = () => {
                                 {userExists &&
                                     <label className={styles.errorMessage}> User already exists! </label> }  
                             </div>
- 
                             <button type='submit'> Continue </button>
                         </form>
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>

@@ -36,14 +36,14 @@ const MyCalendar = () => {
     })) || [];
 
     return (
-        <div>
+        <div className={styles.eventOnCalendarContainer}>
             <FullCalendar
             plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
             slotMinTime="06:00:00"
             slotMaxTime="24:00:00"
             events={formattedEvents}
-            height="auto"
+            height="1200px" 
             >
             </FullCalendar>
         </div>

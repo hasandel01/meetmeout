@@ -19,7 +19,6 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
     const isActive = (path: string) => location.pathname === path;
 
-    /** SEARCH RESULTS */
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [users, setUsers] = useState<User[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
@@ -104,9 +103,7 @@ const Header = () => {
                   <img src="/logo_cut.png" alt="Logo" />  
                 </div>
                 <div className={styles.searchBar}>
-                    <FontAwesomeIcon icon={faSearch} style={
-                            { color: "#888", marginRight: "5px" } 
-                    }/>
+                    <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
                     <input 
                         type="text" 
                         placeholder="Event, user, tags, category..."

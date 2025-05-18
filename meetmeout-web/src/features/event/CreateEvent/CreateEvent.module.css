@@ -1,28 +1,71 @@
 /* CREATE EVENT */
 
 .createEventFormContainer {
-    width: 100vw;
-    height: 100vh;
+    width: 90vw;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: auto;
+    padding: 30px;
 }
 
 .containerAlt {
     position: relative;
     background-color: var(--background-color);
-    min-width: 600px;
-    min-height: 600px;
-    padding: 30px;
-    border-radius: 5%;
+    min-width: 700px;
+    min-height: 800px;
+    padding: 10px;
+    border-radius: 3%;
+    border: 2px solid var(--primary-color-dark)
 }
 
 .containerAlt h4 {
-    color: var(--text-color);
+    color: var(--primary-color-dark);
     margin: 0px;
     font-size: 18px;
+}
+
+.stepContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+.step {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stepCircle {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-color-dark);
+}
+
+.stepCircleActive {
+    display: flex;
+    flex-direction: column;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--primary-color-dark);
+    background-color: var(--primary-color);
+}
+
+
+.step span {
+    font-weight: bold;
+    color: var(--primary-color-dark);
 }
 
 /** STEP 1 */
@@ -31,7 +74,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 20px;
+    padding: 30px;
     text-align: left;
 }
 
@@ -42,9 +85,9 @@
 
 .eventInfoAndDate hr {
     margin: 0px;
-    color: var(--text-color);
-    border-radius: 1px;
+    color: var(--primary-color-dark);
     width: 100%;
+    height: 2px;
 }
 
 .inputGroup {
@@ -55,42 +98,61 @@
 }
 
 .inputGroup input {
-    width: 96%;
+    width: 97%;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 6px;
     border: 1px solid var(--card-border);
     font-size: 14px;
     transition: border-color 0.3s ease;
+    border: 1px solid var(--primary-color-dark);
 }
+
+
 
 .inputGroup p {
     margin: 0px;
     color: red;
 }
 
-.inputGroup textarea {
+.inputDescription {
   width: 100%;
-  height: 120px; /* veya rows kullanıyorsan gerekmez */
-  padding: 10px 12px 30px 12px;
-  font-size: 0.95rem;
+  height: 160px;
+  max-height: 160px;
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: none;
-  overflow-y: auto;
+  overflow-y: hidden;
   box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  border: 1px solid var(--primary-color-dark);
+}
+
+.inputTitle {
+    width: 100%;
+    height: 60px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: none;
+    overflow-y: hidden;
+    box-sizing: border-box;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    border: 1px solid var(--primary-color-dark);
 }
 
 
 .timeInput {
     display: flex;
     flex-direction: row;
-    padding: 8px;
+    padding: 5px;
     justify-content: space-between;
     align-items: center;
 }
 
 .timeInput label {
     margin: 0px;
+    color: var(--primary-color-dark);
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .timeInput input {
@@ -100,6 +162,23 @@
 
 /** STEP 2 */
 
+.eventLocationSelectorContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 40px;
+}
+
+
+.radioButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 20px;
+    gap: 30px;
+}
+
 .eventLocationSelectorContainer p {
     color: var(--text-color);
 }
@@ -108,10 +187,9 @@
     width: 100%;
     max-width: 600px;
     height: 500px;
-    margin: 4px;
+    padding: 40px 40px;
     overflow: hidden;
     border-radius: 12px;
-    border: 3px solid var(--primary-color-dark);
 }
   
 .coordinatesDisplay {
@@ -170,6 +248,7 @@
 .eventType {
     display: flex;
     flex-direction: column;
+    margin-top: 100px;
 }
 
 .eventCheckBoxes {
@@ -238,6 +317,7 @@ input[type="checkbox"] {
 .tagShow hr {
     color: black;
     margin: 0px;
+    max-width: 50%;
 }
 
 .tagInputContainer ul {
@@ -469,14 +549,14 @@ p {
     background-color: var(--card-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
+    width: 70vw;
     cursor: pointer;
-    width: 380px;
-    height: 420px;
     gap: 10px;
 }
 
 .eventPreview {
   display: flex;
+  margin-left: 10px;
   flex-direction: column;
   gap: 5px;
   align-items: flex-start;
@@ -551,11 +631,17 @@ p {
     font-weight: 500;
     transition: all 0.3 ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--primary-color-dark);
 }
 
 .buttons button:hover {
     background-color: var(--primary-color-dark);
     color: white;
+}
+
+
+.buttons .draftButton:hover {
+    background-color: rgb(14, 12, 145);
 }
 
 

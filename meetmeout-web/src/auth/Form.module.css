@@ -7,6 +7,7 @@ body {
 .formContainer {
     display: flex;
     flex-direction: column;
+    width: 100%;
     justify-content: center;
     align-items: center;
     height: 90vh;
@@ -40,6 +41,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    width: 70%;
+    justify-content: center;
 }
 
 
@@ -60,6 +63,7 @@ body {
 .inputElement {
     display: flex;
     flex-direction: row;
+    width: 95%;
     border: 1px solid var(--primary-color-dark);
     padding: 4px 10px;
     align-items: center;
@@ -68,14 +72,19 @@ body {
     transition: box-shadow 0.3s ease;
 }
 
+
 .inputElement:focus-within {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Mesela #047857 */
-  }
+}
 
-  .formContainer form input:not(.compactInput) {
+.formContainer form input:not(.compactInput) {
   outline: none;
   border: none;
   box-shadow: none;
+}
+
+.inputElement input {
+    width: 90%;
 }
 
 
@@ -171,7 +180,7 @@ body {
 
 .compactInput {
   width: 100%;
-  max-width: 300px;
+  max-width: 400px;
   padding: 10px;
   font-size: 1rem;
   border: 1px solid var(--primary-color-dark);

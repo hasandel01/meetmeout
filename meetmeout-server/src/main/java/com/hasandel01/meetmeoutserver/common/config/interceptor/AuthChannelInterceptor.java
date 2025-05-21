@@ -25,7 +25,10 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
+        System.out.println("👉 Channel Interceptor çağrıldı!");
+
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String authHeader = accessor.getFirstNativeHeader("Authorization");

@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faLocationDot, faLock} from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { getCategoryIconLabel } from "../../mapper/CategoryMap";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Tooltip } from "react-tooltip";
@@ -16,6 +16,11 @@ import { Invitation } from "../../types/Like";
 import MainFeedMap from "./MainFeedMap/MainFeedMap";
 import { MapContainer } from "react-leaflet";
 import { TileLayer } from "react-leaflet";
+import MapPanner from "./MainFeedMap/MainFeedMapPanner/MainFeedMapPanner";
+
+const isStartDateAndEndDateSame = (event: Event): boolean => {
+    return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
+};
 
 const MainFeed = () => {
  
@@ -29,6 +34,18 @@ const MainFeed = () => {
     const [lng, setLng] = useState<number | undefined>(0);
     const [lat, setLat] = useState<number | undefined>(0);
     const [globalFilter, setGlobalFilter] = useState('All Events');
+      const [showPastEvents, setShowPastEvents] = useState(false);
+
+
+    const location = useLocation();
+    const flyTo = location.state?.flyTo;
+
+    if(flyTo) {
+        sessionStorage.setItem("flyTo", JSON.stringify({
+        lat: flyTo.latitude,
+        lng: flyTo.longitude
+        }));
+    }
 
     useEffect(() => {
         Promise.all([
@@ -83,8 +100,8 @@ const MainFeed = () => {
         if(searchString === "Soonest" || searchString === "Latest" ) {
             
             const sortedEvents = [...events]?.sort((a, b) => {
-                const dateA = new Date(`${a.date}T${a.startTime}`);
-                const dateB = new Date(`${b.date}T${b.startTime}`);
+                const dateA = new Date(`${a.startDate}T${a.startTime}`);
+                const dateB = new Date(`${b.startDate}T${b.startTime}`);
                 return searchString === 'Soonest' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime(); 
             })
 
@@ -247,6 +264,17 @@ const MainFeed = () => {
                     <label onClick={() => setGlobalFilter("My Drafts")}>
                         My Drafts
                     </label>
+                    <label className={styles.toggleWrapper}>
+                        <input
+                            type="checkbox"
+                            checked={showPastEvents}
+                            onChange={(e) => setShowPastEvents(e.target.checked)}
+                        />
+                        <span className={styles.slider}></span>
+                        <span className={styles.labelText}>
+                            {showPastEvents ? "Showing past events" : "Hide past events"}
+                        </span>
+                    </label>
                 </div>
                 <div className={styles.sort}>
                     <select onChange={(e) => searchQuery(e.target.value)}>
@@ -282,15 +310,16 @@ const MainFeed = () => {
             </div>
         <div className={styles.mapContainer}>
                 <MapContainer
-                center={[ 41.0082, 28.9784]}
+                center={[41.0082, 28.9784]}
                 zoom={13}
-                style={{ height: "400px", width: "90%", marginBottom: "20px", borderRadius: "20px"}}
+                style={{ height: "500px", width: "90%", marginBottom: "20px", borderRadius: "20px"}}
                 >
                 <TileLayer
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <MainFeedMap events={globalFilterFunction() || []} coords={{ lat: lat ?? 41.0082, lng: lng ?? 28.9784 }} />
+                {flyTo && <MapPanner coords={flyTo} />}
                 </MapContainer>
         </div>
         <div className={styles.onGoingEventsContainer}>
@@ -304,6 +333,7 @@ const MainFeed = () => {
 
                 ) : events && events.length > 0 ? (
                     globalFilterFunction()
+                    ?.filter((event)=> showPastEvents || event.status !== "ENDED")
                     ?.map((event) => (
                         (
                             <div key={event.id} onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>
@@ -334,7 +364,11 @@ const MainFeed = () => {
                                         <div className={styles.eventTimeDate}>
                                             <span>
                                                 <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                                                <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime}-{event.endTime}</p>
+                                                <p > {new Date(event.startDate).toLocaleDateString("en-US", options)}
+                                                {!isStartDateAndEndDateSame(event) &&
+                                                    <> - {new Date(event.endDate).toLocaleDateString("en-US", options)}</>
+                                                }
+                                                <strong> &bull; </strong> {event.startTime} - {event.endTime}</p>
                                             </span>
                                         </div>
                                         <div className={styles.eventLocation}>

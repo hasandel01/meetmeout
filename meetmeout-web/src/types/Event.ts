@@ -6,10 +6,10 @@ export interface Event {
     id: number;
     title: string;
     description: string;
-    date: string;
+    startDate: string;
+    endDate: string;
     startTime: string;
     endTime: string;
-    location: string;
     imageUrl: string;
     latitude: number;
     longitude: number;
@@ -22,6 +22,7 @@ export interface Event {
     attendees: User[];
     organizer: User | null;
     addressName: string;
+    endAddressName: string;
     likes: Like[];
     comments: Comment[];
     reviews: Review[];
@@ -32,4 +33,6 @@ export interface Event {
     isThereRoute: boolean;
     endLatitude: number;
     endLongitude: number;
+    feeDescription: string;
+    routeType: string;
 }

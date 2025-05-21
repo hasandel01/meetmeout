@@ -34,6 +34,11 @@ public class Event {
     @Length(max = 500)
     private String description;
 
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private LocalTime startTime;
+    private LocalTime endTime;
+
     @Enumerated(EnumType.STRING)
     private Categories category;
 
@@ -44,19 +49,15 @@ public class Event {
 
     private String imageUrl;
 
-    private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private String location;
-    private String addressName;
-
     private boolean isThereRoute;
 
     private double latitude;
     private double longitude;
+    private String addressName;
 
     private double endLatitude;
     private double endLongitude;
+    private String endAddressName;
 
     @ManyToOne
     @JoinColumn(name = "organizer_id")
@@ -79,6 +80,9 @@ public class Event {
 
     private boolean isFeeRequired;
     private double fee;
+
+    @Length(max = 400)
+    private String feeDescription;
 
     private boolean isPrivate;
     private boolean isDraft;
@@ -108,5 +112,8 @@ public class Event {
     private LocalDateTime updatedAt;
 
     private Set<String> eventPhotoUrls = new HashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    private RouteType routeType;
 
 }

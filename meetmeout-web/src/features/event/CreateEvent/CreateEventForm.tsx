@@ -9,16 +9,22 @@ import { toast } from 'react-toastify';
 import {categoryMap, getCategoryIconLabel} from "../../../mapper/CategoryMap"
 import TagInput from './TagInput';
 import { useNavigate } from 'react-router-dom';
-import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder, faMoneyBill, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
 import { RouteType } from '../../../types/RouteType';
+import { add } from 'date-fns';
+
+
+const isStartDateAndEndDateSame = (event: Event): boolean => {
+    return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
+};
 
 const CreateEventForm = () => {
     
     const [step, setStep] = useState(1);
     const [errors, setErrors] = useState<any>({});
     const navigate = useNavigate();
-    const [routeType, setRouteType] = useState<RouteType>();
+    const [routeType, setRouteType] = useState<RouteType>(RouteType.CAR);
 
         const newErrors: any = {};
 
@@ -26,26 +32,34 @@ const CreateEventForm = () => {
     
         if (currentStep === 1) {
           if(!event.title.trim()) newErrors.title = "Title is required.";
-          if(!event.date.trim()) {
-            newErrors.date = "Date is required.";
-          } else {
-             const now = Date.now();
-             const inputDate = new Date(`${event.date}T${event.startTime}`); 
-                if(now > inputDate.getTime())
-                    newErrors.date = "Date shouldn't be past time."
-            }
+          if(!event.startDate.trim()) newErrors.date = "Start date is required.";
+          if(!event.startTime.trim()) newErrors.date = "End date is required."
+          if (!event.endDate.trim()) newErrors.date = "End date is required.";
+          if (!event.endTime.trim()) newErrors.endTime = "End time is required.";
+
+            if (
+                event.startDate.trim() &&
+                event.endDate.trim() &&
+                event.startTime.trim() &&
+                event.endTime.trim()
+            ) {
+                const now = Date.now();
+                const start = new Date(`${event.startDate}T${event.startTime}`); 
+                    
+                if(now > start.getTime())
+                        newErrors.date = "Date shouldn't be past time."
+
+                const end = new Date(`${event.endDate}T${event.endTime}`)
+
+                if(end <= start)
+                    newErrors.endTime = "End time should be later than start time." 
+                }
+
 
 
           if(!event.startTime.trim()) newErrors.startTime = "Start time is required.";
           if(!event.endTime.trim()) newErrors.endTime = "End time is required.";
         
-            const start = new Date(`1970-01-01T${event.startTime}`);
-            const end = new Date(`1970-01-01T${event.endTime}`);
-
-            if(end <= start) 
-                newErrors.endTime = "End time should be later than the start time."
-
-
         } else if (currentStep === 2) {
           if (!coordinates) newErrors.location = "Please select a location on the map.";
         } else if (currentStep === 3) {
@@ -67,9 +81,8 @@ const CreateEventForm = () => {
     const handleBack = () => setStep((prev) => prev - 1);
 
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
-    const [address, setAddress] = useState<string | null>(null);
     const [addressName, setAddressName] = useState<string | null>(null);
-    const [endCoordinates, setEndCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
+    const [endAddressName, setEndAddressName] = useState<string | null>(null);
 
 
     const [selectedImageFile, setSelectedImageFile] = useState<File | null>();
@@ -78,10 +91,10 @@ const CreateEventForm = () => {
         id: 1,
         title: '',
         description: '',
-        date: '',
+        startDate: '',
+        endDate: '',
         startTime: '',
         endTime: '',
-        location: '',
         imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png",
         tags: [],
         isPrivate: false,
@@ -91,6 +104,7 @@ const CreateEventForm = () => {
         attendees: [],
         organizer: null,
         addressName: '',
+        endAddressName: '',
         category: '',
         longitude: 0,
         latitude: 0,
@@ -103,7 +117,9 @@ const CreateEventForm = () => {
         isFeeRequired: false,
         fee: 0,
         endLatitude: 0,
-        endLongitude: 0
+        endLongitude: 0,
+        feeDescription: '',
+        routeType: RouteType.CAR,
     });
 
     const showConfetti = () => {
@@ -125,20 +141,22 @@ const CreateEventForm = () => {
 
                 setEvent(prev => ({...prev, isDraft: isDraft}))
 
-                console.log(isDraft) 
+                if(!event.isCapacityRequired)
+                    event.maximumCapacity = 2147483647;
 
                 const formData = new FormData();
                 formData.append("title", event.title);
                 formData.append("description", event.description);
                 formData.append("category", event.category);
-                formData.append("date", event.date);
+                formData.append("startDate", event.startDate);
+                formData.append("endDate", event.endDate)
                 formData.append("startTime", event.startTime);
                 formData.append("endTime", event.endTime);
-                formData.append("location", address || '');
                 event.tags.forEach((tag) => {
                     formData.append("tags",tag);
                 });
 
+        
                 formData.append("latitude", coordinates?.latitude.toString() || '');
                 formData.append("longitude", coordinates?.longitude.toString() || '');
                 formData.append("isThereRoute", event.isThereRoute.toString() || '');
@@ -146,12 +164,15 @@ const CreateEventForm = () => {
                 formData.append("endLongitude", event.endLongitude.toString() || '');
                 formData.append("isPrivate", event.isPrivate.toString());
                 formData.append("isDraft", isDraft.toString());
+                formData.append("feeDescription", event.feeDescription.toString() || '');
                 formData.append("isCapacityRequired", event.isCapacityRequired.toString() || '');
                 formData.append("maximumCapacity", event.maximumCapacity.toString());
                 formData.append("isFeeRequired", event.isFeeRequired.toString() || '');
                 formData.append("fee", event.fee.toString() || '');
                 formData.append("status", event.status);
                 formData.append("addressName", addressName || '');
+                formData.append("endAddressName", endAddressName || '');
+                formData.append("routeType", routeType);
 
 
                 if (selectedImageFile) {
@@ -244,7 +265,7 @@ const CreateEventForm = () => {
 
 
     const todayDate = new Date();
-    const selectedDate = new Date(event.date);
+    const selectedDate = new Date(event.startDate);
 
     const isToday = 
     todayDate.getFullYear() === selectedDate.getFullYear() &&
@@ -297,28 +318,33 @@ const CreateEventForm = () => {
                         </div>
                         <div className={styles.inputGroup}>
                             <h4>Event Time</h4>
-                            <hr/>
-                            <input 
-                                type="date"
-                                placeholder="Event Date"
-                                value={event.date}
-                                onChange={(e) => setEvent( {...event, date: e.target.value} )}
-                                min={getTodayFormatted()}
-                                required />
-                            {errors.date && <p className={styles.errorText}>{errors.date}</p>}
-                        <div className={styles.timeInputs}>
-                               <div className={styles.timeInput}>
-                                    <label>Start Time </label>
-                                    <input 
-                                        type='time' 
-                                        placeholder="Event Start Time"
-                                        value={event.startTime}
-                                        onChange={(e) => setEvent( {...event, startTime: e.target.value} )}
-                                        min={isToday ? getTimeFormatted(): undefined}
-                                        required />
-                                </div> 
-                                <div className={styles.timeInput}>
-                                    <label>End Time </label>
+                            <hr/> 
+                            <div className={styles.timeInput}>
+                                <h5>Start</h5>
+                                <input 
+                                    type="date"
+                                    placeholder="Event Start Date"
+                                    value={event.startDate}
+                                    onChange={(e) => setEvent( {...event, startDate: e.target.value} )}
+                                    min={getTodayFormatted()}
+                                    required />
+                                <input 
+                                    type='time' 
+                                    placeholder="Event Start Time"
+                                    value={event.startTime}
+                                    onChange={(e) => setEvent( {...event, startTime: e.target.value} )}
+                                    min={isToday ? getTimeFormatted(): undefined}
+                                    required />
+                            </div>
+                            <div className={styles.timeInput}>
+                            <h5>End</h5>
+                                <input 
+                                    type="date"
+                                    placeholder="Event Start Date"
+                                    value={event.endDate}
+                                    onChange={(e) => setEvent( {...event, endDate: e.target.value} )}
+                                    min={getTodayFormatted()}
+                                    required />
                                     <input 
                                     type='time' 
                                     placeholder="Event End Time"
@@ -326,156 +352,178 @@ const CreateEventForm = () => {
                                     onChange={(e) => setEvent( {...event, endTime: e.target.value} )}
                                     min={event.startTime ? event.startTime : getTimeFormatted()}
                                     required />
-                                </div>   
-                                {errors.startTime && <p className={styles.errorText}>{errors.startTime}</p>}
-                                {errors.endTime && <p className={styles.errorText}>{errors.endTime}</p>}
-            
                             </div>
-                        </div>
+                        </div> 
+                        {errors.date && <p className={styles.errorText}>{errors.date}</p>}
+                        {errors.startTime && <p className={styles.errorText}>{errors.startTime}</p>}
+                        {errors.endTime && <p className={styles.errorText}>{errors.endTime}</p>}
                     </div>    
                 )
             case 2:
                 return (
                     <div className={styles.eventLocationSelectorContainer}>
-                        <label>
-                        <input
-                            type='checkbox'
-                            value="thereIsRoute"
-                            checked={event.isThereRoute}
-                            onChange={(e) => setEvent({...event, isThereRoute: e.target.checked})}   
-                        />Will there be a route?
-                        {event.isThereRoute && 
-                            <div className={styles.radioButtonsContainer}>
-                                <label>
-                                    <input
-                                        type='radio'
-                                        value={"driving-car"}
-                                        checked = {routeType === RouteType.CAR}
-                                        onChange={() => {setRouteType(RouteType.CAR)}}
-                                    >
-                                    </input>
-                                    Car
-                                </label>
-                                <label>
-                                    <input
-                                        type='radio'
-                                        value={"foot-walking"}
-                                        checked = {routeType === RouteType.WALKING}
-                                        onChange={() => setRouteType(RouteType.WALKING)}
-                                    >
-                                    </input>
-                                    Walking
-                                </label>
-                                <label>
-                                    <input
-                                        type='radio'
-                                        value={"cycling-regular"}
-                                        checked = {routeType === RouteType.CYCLING}
-                                        onChange={() => setRouteType(RouteType.CYCLING)}
-                                    >
-                                    </input>
-                                    Cycling
-                                </label>
-                                <label>
-                                    <input
-                                        type='radio'
-                                        value={"foot-hiking"}
-                                        checked = {routeType === RouteType.HIKING}
-                                        onChange={() => setRouteType(RouteType.HIKING)}
-                                    >
-                                    </input>
-                                    Hiking
-                                </label>
-                            </div>
-                        }
-                        </label>    
-                        {errors.location && <p className={styles.errorText}>{errors.location}</p>}  
-                        <div className={styles.eventLocationSelector}>
-                            <EventLocationSelector setCoordinates={setCoordinates} setAddress={setAddress} route={routeType ?? RouteType.CAR} 
-                            setAddressName={setAddressName} isThereRoute={event.isThereRoute} setEndCoordinates={setEndCoordinates}/>
+                        <strong>Please specify whether your event takes place at a single location or follows a route from one point to another.</strong>
+                        <div className={styles.routeSelection}>
+                            <label>
+                                <input
+                                    type='checkbox'
+                                    value="thereIsRoute"
+                                    checked={event.isThereRoute}
+                                    onChange={(e) => setEvent({...event, isThereRoute: e.target.checked})}   
+                                />Event has a route?
+                                {event.isThereRoute && <p>Then choose two points on the map</p>}
+                            </label>  
+                                {event.isThereRoute && 
+                                    <div className={styles.radioButtonsContainer}>
+                                        <label>
+                                            <input
+                                                type='radio'
+                                                value={"driving-car"}
+                                                checked = {routeType === RouteType.CAR}
+                                                onChange={() => {setRouteType(RouteType.CAR)}}
+                                            >
+                                            </input>
+                                            Car
+                                        </label>
+                                        <label>
+                                            <input
+                                                type='radio'
+                                                value={"foot-walking"}
+                                                checked = {routeType === RouteType.WALKING}
+                                                onChange={() => setRouteType(RouteType.WALKING)}
+                                            >
+                                            </input>
+                                            Walking
+                                        </label>
+                                        <label>
+                                            <input
+                                                type='radio'
+                                                value={"cycling-regular"}
+                                                checked = {routeType === RouteType.CYCLING}
+                                                onChange={() => setRouteType(RouteType.CYCLING)}
+                                            >
+                                            </input>
+                                            Cycling
+                                        </label>
+                                        <label>
+                                            <input
+                                                type='radio'
+                                                value={"foot-hiking"}
+                                                checked = {routeType === RouteType.HIKING}
+                                                onChange={() => setRouteType(RouteType.HIKING)}
+                                            >
+                                            </input>
+                                            Hiking
+                                        </label>
+                                    </div>
+                                }
+  
                         </div>
+                        <div className={styles.eventLocationSelector}>
+                            <EventLocationSelector setCoordinates={setCoordinates} route={routeType ?? RouteType.CAR} 
+                            setAddressName={setAddressName} setEndAddressName={setEndAddressName} isThereRoute={event.isThereRoute} setEndCoordinates={coords => {
+                                setEvent({
+                                    ...event,
+                                    endLatitude: coords.latitude,
+                                    endLongitude: coords.longitude
+                                });
+                            }}/>
+                        </div>
+                        {errors.location && <p className={styles.errorText}>{errors.location}</p>}  
                     </div>
                 )
             case 3:
                 return (
                     <>
                     <div className={styles.eventDetails}>
-                        <div className={styles.capacityContainer}>
-                            <label>
-                                <input
-                                type='checkbox'
-                                value="capacity-requirement"
-                                checked={event.isCapacityRequired}
-                                onChange={(e) => setEvent({...event, isCapacityRequired: e.target.checked})}
-                                >
-                                </input>
-                                Will there be a capacity constraint?
-                            </label>
-                            {event.isCapacityRequired && 
-                            <>
-                            <h4>Maximum capacity</h4>
+                        <h4>Event Rules</h4>
+                        <hr />
+                        <div className={styles.eventRules}>
+                            <div className={styles.capacityContainer}>
+                                <label>
+                                    <input
+                                    type='checkbox'
+                                    value="capacity-requirement"
+                                    checked={event.isCapacityRequired}
+                                    onChange={(e) => setEvent({...event, isCapacityRequired: e.target.checked})}
+                                    >
+                                    </input>
+                                    Capacity constraint?
+                                </label>
+                                    <div className={`${event.isCapacityRequired ? `${styles.capacityInput}` :  styles.disabledGroup}`}>
+                                    <h4>Maximum capacity</h4>
+                                    <hr />
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        placeholder="Maximum Capacity"
+                                        value={event.maximumCapacity}
+                                        onChange={(e) => setEvent({ ...event, maximumCapacity: parseInt(e.target.value, 10) })}
+                                        disabled={!event.isCapacityRequired}
+                                    />
+                                    {errors.maximumCapacity && <p className={styles.errorText}>{errors.maximumCapacity}</p>}
+                                </div>
+                            </div>
+                            <div className={styles.feeContainer}>
+                                <label>
+                                    <input
+                                    type='checkbox'
+                                    value="fee-requirement"
+                                    checked={event.isFeeRequired}
+                                    onChange={(e) => setEvent({...event, isFeeRequired: e.target.checked})}
+                                    >
+                                    </input>
+                                    Fee required?
+                                </label>
+                                <div className={`${event.isFeeRequired ? styles.feeInput : styles.disabledGroup}`}>
+                                    <h4>Fee</h4>
+                                    <hr />
+                                    <input
+                                        type="number"
+                                        min={1}
+                                        placeholder="Fee"
+                                        value={event.fee}
+                                        onChange={(e) => setEvent({ ...event, fee: parseInt(e.target.value, 10) })}
+                                        disabled={!event.isFeeRequired}
+                                    />
+                                    <textarea
+                                        rows={3}
+                                        maxLength={400}
+                                        placeholder='Inform the people on expenses...'
+                                        value={event.feeDescription}
+                                        onChange={(e) => setEvent({...event, feeDescription: e.target.value})}
+                                        disabled={!event.isFeeRequired}
+                                    />
+                                    </div>
+                            </div>
+                        </div>
+                        <h4>Select Category anda Enter tags to let everyone know!</h4>
+                        <hr />
+                        <div className={styles.eventCategoryAndTags}>
+                            <div className={styles.categoryTags}>
+                                <h4>Category</h4>
                                 <hr />
-                                <input
-                                    type="number"
-                                    min={1}
-                                    placeholder="Maximum Capacity"
-                                    value={event.maximumCapacity}
-                                    onChange={(e) => setEvent({ ...event, maximumCapacity: parseInt(e.target.value, 10) })}
-                                    required />
-                                {errors.maximumCapacity && <p className={styles.errorText}>{errors.maximumCapacity}</p>}
-                            </>
-                            }
-                        </div>
-                        <div className={styles.feeContainer}>
-                            <label>
-                                <input
-                                type='checkbox'
-                                value="fee-requirement"
-                                checked={event.isFeeRequired}
-                                onChange={(e) => setEvent({...event, isFeeRequired: e.target.checked})}
+                                <select
+                                    value={event.category}
+                                    onChange={(e) => setEvent({ ...event, category: e.target.value })}
+                                    required
                                 >
-                                </input>
-                                Will there be fee?
-                            </label>
-                            {event.isFeeRequired && 
-                            <>
-                            <h4>Fee</h4>
-                                <hr />
-                                <input
-                                    type="number"
-                                    min={1}
-                                    placeholder="Fee"
-                                    value={event.fee}
-                                    onChange={(e) => setEvent({ ...event, fee: parseInt(e.target.value, 10) })}
-                                    required />
-                                {errors.maximumCapacity && <p className={styles.errorText}>{errors.maximumCapacity}</p>}
-                            </>
-                            }
-                               
-                        </div>
-                        <div className={styles.categoryTags}>
-                            <h4>Select Category and Enter tags to let everyone know!</h4>
-                            <hr />
-                            <select
-                                value={event.category}
-                                onChange={(e) => setEvent({ ...event, category: e.target.value })}
-                                required
-                            >
-                                <option value="">Select Category</option>
-                                {Object.keys(categoryMap).map((key) => {
-                                    const { icon, label } = getCategoryIconLabel(key);
-                                    return (
-                                        <option key={key} value={key}>
-                                            {icon} {label}
-                                        </option>
-                                    );
-                                })}
-                            </select>
-                            {errors.category && <p className={styles.errorText}>{errors.category}</p>}
-                        </div>
-                        <div className={styles.tags}>
-                            <TagInput tags={event.tags} setTags={(newTags) => setEvent({ ...event, tags: newTags })} />
-                        </div>
+                                    <option value="">Select Category</option>
+                                    {Object.keys(categoryMap).map((key) => {
+                                        const { icon, label } = getCategoryIconLabel(key);
+                                        return (
+                                            <option key={key} value={key}>
+                                                {icon} {label}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                                {errors.category && <p className={styles.errorText}>{errors.category}</p>}
+                            </div>
+                            <div className={styles.tags}>
+                                <TagInput tags={event.tags} setTags={(newTags) => setEvent({ ...event, tags: newTags })} />
+                            </div>
+                            </div>
                     </div><div className={styles.eventType}>
                             <h4>Preferences</h4>
                             <hr />
@@ -488,12 +536,18 @@ const CreateEventForm = () => {
                                         onChange={(e) => setEvent({ ...event, isPrivate: e.target.checked })} /> Private Event
                                 </label>
                             </div>
+                            {event.isPrivate &&
+                                <p className={styles.warningText}>
+                                    This event is private. Only invited and accepted users can see it.
+                                </p>
+                            }
                         </div></>
                 )
             case 4:
                 return (
                     <div className={styles.eventImageUploadContainer}>
                         <h4>Upload an image to represent your event!</h4>
+                        <p> If you don't upload the default image will be used to represent the event!</p>
                         <div className={styles.eventImageUpload}>
                             <img src={event.imageUrl} alt="Event-Pic" />
                             <div className={styles.cameraOverlay} onClick={updateEventPicture}>
@@ -503,45 +557,68 @@ const CreateEventForm = () => {
                     </div>
                 )
             case 5:
-                return (
+            return (
                     <div className={styles.eventSummary}>
-                    <h4>Review Your Event</h4> 
-                        {event.isPrivate ?
-                            (
-                                <>
-                                <FontAwesomeIcon icon={faLock} size='2x' /> 
-                                </>
-                            ) : (
-                                <>
-                                <FontAwesomeIcon icon={faUnlock} size='2x'/>
-                                </>
-                    )}       
-                    <div className={styles.eventPreview}>
-                        <div className={styles.eventPreviewHeader}>
-                            <img src={event.imageUrl} alt="Event" className={styles.previewImage} />
-                            <div className={styles.eventPriewInfo}>
-                                <h3>{event.title}</h3>
-                                <p>{event.description}</p>
-                            </div>
-                        </div>
-
-                        <div className={styles.previewDetails}>
-                            <FontAwesomeIcon icon={faCalendarAlt} /> {event.date}
-                            <FontAwesomeIcon icon={faClock}  /> {event.startTime} - {event.endTime}
-                            <FontAwesomeIcon icon={faMapMarkerAlt}  /> {addressName}
-                            <FontAwesomeIcon icon={faFolder}  />  {getCategoryIconLabel(event.category).label}
-                            <FontAwesomeIcon icon={faTag}  />  {Array.isArray(event.tags) ? event.tags.join(', ') : "None"}
-                            <>
-                            <FontAwesomeIcon icon={faUsers} /> {event.maximumCapacity}
-                            </>
-                        </div>
-                    </div>
-        
+                    <h4>Review Your Event</h4>
                     <p className={styles.warningText}>
                         Please double-check all the details before submitting your event.
                     </p>
+                    <hr/>
+                    <div className={styles.eventPreviewContainer}>
+                        <div>
+                            <FontAwesomeIcon
+                            icon={event.isPrivate ? faLock : faUnlock}
+                            size="2x"
+                            title={event.isPrivate ? "Private Event" : "Public Event"}
+                            />
+                        </div>
+                        <div className={styles.eventPreview}>
+                            <div className={styles.eventPreviewHeader}>
+                                <img src={event.imageUrl} alt="Event" className={styles.previewImage} />
+                                <div className={styles.eventPreviewInfo}>
+                                    <h3>{event.title}</h3>
+                                    <div className={styles.eventDescription}>{event.description}</div>
+                                </div>
+                                </div>
+                            </div>
+                            <div className={styles.previewDetails}>
+                            <p>
+                                <FontAwesomeIcon icon={faCalendarAlt} /> {event.startDate} 
+                                {!isStartDateAndEndDateSame(event) && <> – {event.endDate} </>}
+                            </p>
+                            <p>
+                                <FontAwesomeIcon icon={faMapMarkerAlt} /> {addressName} - {endAddressName}
+                            </p>
+                            <p>
+                                <FontAwesomeIcon icon={faClock} /> {event.startTime} – {event.endTime}
+                            </p>
+                            <p>
+                                <FontAwesomeIcon icon={faFolder} /> {getCategoryIconLabel(event.category).label}
+                            </p>
+                            <p>
+                                <FontAwesomeIcon icon={faTag} /> {Array.isArray(event.tags) ? event.tags.join(', ') : "None"}
+                            </p>
+                            {event.isCapacityRequired && (
+                                <p>
+                                <FontAwesomeIcon icon={faUsers} /> Max Capacity: {event.maximumCapacity}
+                                </p>
+                            )}
+                            {event.isFeeRequired && (
+                                <>
+                                <p>
+                                    <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {event.fee} ₺
+                                </p>
+                                {event.feeDescription && (
+                                    <p style={{ fontStyle: "italic", color: "#666" }}>
+                                    <FontAwesomeIcon icon={faInfoCircle} /> {event.feeDescription}
+                                    </p>
+                                )}
+                                </>
+                            )}
+                            </div>
+                    </div>
                 </div>
-                )
+                );
             default: return null
         }
     }

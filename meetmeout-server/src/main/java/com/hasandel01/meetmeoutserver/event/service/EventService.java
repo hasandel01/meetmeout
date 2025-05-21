@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.event.service;
 
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.event.mapper.CommentMapper;
 import com.hasandel01.meetmeoutserver.event.mapper.InviteMapper;
 import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
@@ -59,15 +60,24 @@ public class EventService {
         Event newEvent = Event.builder()
                 .title(event.title())
                 .description(event.description())
+                .startDate(event.startDate())
+                .endDate(event.endDate())
+                .startTime(event.startTime())
+                .endTime(event.endTime())
+                .longitude(event.longitude())
+                .latitude(event.latitude())
+                .endLatitude(event.endLatitude())
+                .endLongitude(event.endLongitude())
+                .addressName(event.addressName())
+                .endAddressName(event.endAddressName())
                 .category(event.category())
                 .tags(event.tags())
                 .imageUrl(imageUrl)
-                .date(event.date())
-                .startTime(event.startTime())
-                .endTime(event.endTime())
-                .location(event.location())
-                .longitude(event.longitude())
-                .latitude(event.latitude())
+                .eventPhotoUrls(event.eventPhotoUrls())
+                .fee(event.fee())
+                .feeDescription(event.feeDescription())
+                .isFeeRequired(event.isFeeRequired())
+                .isCapacityRequired(event.isCapacityRequired())
                 .organizer(user)
                 .attendees(attendees)
                 .maximumCapacity(event.maximumCapacity())
@@ -77,9 +87,9 @@ public class EventService {
                 .comments(new HashSet<>())
                 .likes(new HashSet<>())
                 .reviews(new HashSet<>())
-                .addressName(event.addressName())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .routeType(event.routeType())
                 .build();
 
         user.getOrganizedEvents().add(newEvent);
@@ -287,7 +297,7 @@ public class EventService {
     }
 
 
-    public Void addComment(@Valid long eventId, CommentDTO commentDTO) {
+    public CommentDTO addComment(@Valid long eventId, CommentDTO commentDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -308,7 +318,7 @@ public class EventService {
 
         commentRepository.save(comment);
 
-        return null;
+        return CommentMapper.toCommentDTO(comment);
     }
 
     public Void deleteComment(long commentId) {
@@ -452,5 +462,17 @@ public class EventService {
     }
 
 
+    public Void updateComment(long commentId, CommentDTO comment) {
 
+        Comment comment1 = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        comment1.setComment(comment.comment());
+        comment1.setUpdatedAt(LocalDateTime.now());
+
+        commentRepository.save(comment1);
+
+        return null;
+
+    }
 }

@@ -2,7 +2,7 @@ import { useMap } from "react-leaflet";
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import L from "leaflet";
-import { RouteType } from "../types/RouteType";
+import { ORS_ROUTE_MAP, RouteType } from "../types/RouteType";
 
 interface RouteProps {
   start: [number, number];
@@ -14,6 +14,8 @@ interface RouteProps {
 const RouteDrawer: React.FC<RouteProps> = ({ start, end, routeType, isThereRoute }) => {
   const map = useMap();
   const routeLayerRef = useRef<L.GeoJSON | null>(null)
+
+  const orsType = ORS_ROUTE_MAP[routeType];
 
   useEffect(() => {
     const getRoute = async () => {
@@ -30,10 +32,15 @@ const RouteDrawer: React.FC<RouteProps> = ({ start, end, routeType, isThereRoute
       }
 
 
+      if (end[0] === 0 && end[1] === 0) {
+        return;
+      }
+
+
       try {
         const response = await axios({
           method: "post",
-          url: `https://api.openrouteservice.org/v2/directions/${routeType}/geojson`,
+          url: `https://api.openrouteservice.org/v2/directions/${orsType}/geojson`,
           headers: {
             Authorization: "5b3ce3597851110001cf6248925c3fd514f949f398497969fac4a052",
             "Content-Type": "application/json"

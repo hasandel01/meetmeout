@@ -12,6 +12,7 @@ export interface Comment {
     eventId: number;
     sender: User;
     updatedAt: string;
+    sentAt: string;
 }
 
 

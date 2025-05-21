@@ -3,9 +3,8 @@ import axiosInstance from "../../../axios/axios";
 import { useEffect, useState } from "react";
 import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
-import {User} from '../../../types/User';
 import styles from './EventDetails.module.css'
-import { faCalendar, faLocationDot, faRightFromBracket, faStar, faTrash} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faPenToSquare, faRightFromBracket, faStar, faTrash} from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
@@ -40,32 +39,56 @@ const EventDetails = () => {
   const [showAllRequests, setShowAllRequests] = useState(false);
   const {goToUserProfile} = useProfileContext();
 
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editedCommentText, setEditedCommentText] = useState<string>('');
 
-    const [event, setEvent] = useState<Event>({
-        id: 0,
-        title: '',
-        description: '',
-        date: '',
-        startTime: '',
-        endTime: '',
-        location: '',
-        imageUrl: "",
-        tags: [],
-        isPrivate: false,
-        isDraft: false,
-        maximumCapacity: 1,
-        status: 'ONGOING',
-        attendees: [],
-        organizer: null,
-        addressName: '',
-        category: '',
-        longitude: 0,
-        latitude: 0,
-        likes: [],
-        comments: [],
-        reviews: [],
-        createdAt: ''
-    });
+  const handleLocationClick = () => {
+    navigate("/", {
+      state: {
+        flyTo: {
+          lat: event.latitude,
+          lng: event.longitude,
+        }
+      }
+    })
+  }
+
+
+
+      const [event, setEvent] = useState<Event>({
+             id: 0,
+             title: '',
+             description: '',
+             startDate: '',
+             endDate: '',
+             startTime: '',
+             endTime: '',
+             imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png",
+             tags: [],
+             isPrivate: false,
+             isDraft: false,
+             maximumCapacity: 1,
+             status: 'ONGOING',
+             attendees: [],
+             organizer: null,
+             addressName: '',
+             endAddressName: '',
+             category: '',
+             longitude: 0,
+             latitude: 0,
+             likes: [],
+             comments: [],
+             reviews: [],
+             createdAt: '',
+             isThereRoute: false,
+             isCapacityRequired: false,
+             isFeeRequired: false,
+             fee: 0,
+             endLatitude: 0,
+             endLongitude: 0,
+             feeDescription: '',
+             routeType: '',
+         });
     
     const [weather, setWeather] = useState<Weather | null>(null);
 
@@ -89,6 +112,7 @@ const EventDetails = () => {
     try {
         const response = await axiosInstance.get(`/get-event/${eventIdNumber}`);
         setEvent(response.data);
+        console.log(response.data);
     } catch(error) {
       toast.error("Error fetching event data.");
     }
@@ -169,7 +193,6 @@ const EventDetails = () => {
 
       const alreadyLiked = event.likes.some(like => like.username === currentUser.username);
 
-      // Optimistic UI update
       const updatedLikes = alreadyLiked
         ? event.likes.filter(like => like.username !== currentUser.username)
         : [...event.likes, {
@@ -211,28 +234,20 @@ const EventDetails = () => {
         const newComment = {
           commentId: null,
           comment: commentString,
-          userId: currentUser?.id,
-          username: currentUser?.username,
           eventId: eventId,
-          updatedAt: new Date().toISOString()
+          sender: currentUser,
+          sentAt: '',
+          updatedAt: '',
         };
 
-      await axiosInstance.post(`/add-comment/${eventId}`, newComment)
+      const response = await axiosInstance.post(`/add-comment/${eventId}`, newComment)
     
       setEvent(prev => ({
         ...prev,
-        comments: [...prev.comments, {
-          commentId: Math.random(),
-          eventId: prev.id,
-          comment: newComment.comment,
-          updatedAt: newComment.updatedAt,
-          sender: currentUser!
-        }]
+        comments: [...prev.comments, response.data]
       }));
-
-      toast.success("Comment is sent!")
+      setCommentString('');
     } catch(error) {
-      toast.error("Error sending a comment.")
     }
   }
 
@@ -275,13 +290,63 @@ const EventDetails = () => {
   const returnDayDifference = ():number => {
 
     const today = new Date();
-    const eventDate = new Date(event.date);
+    const eventDate = new Date(event.startDate);
 
     const diffInMs = eventDate.getDate() - today.getDate();
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
     return diffInDays;
   }
 
+
+  const handleDeleteComment = async (commentId: number) => {  
+
+    console.log(commentId)
+
+      try {
+        await axiosInstance.delete(`/delete-comment/${commentId}`);
+        setEvent(prev => ({
+          ...prev,
+          comments: prev.comments.filter(comment => comment.commentId !== commentId)
+        }));
+        toast.success("Comment deleted successfully!");
+      } catch (error) {
+        toast.error("Error deleting comment.");
+      }
+    }
+
+    const handleEditComment = (comment: any) => {
+      setEditingCommentId(comment.commentId);
+      setEditedCommentText(comment.comment);
+    };
+
+    const saveEditedComment = async (commentId: number) => {
+      await handleUpdateComment(commentId, editedCommentText);
+      setEditingCommentId(null);
+      setEditedCommentText('');
+    };
+
+    const handleUpdateComment = async (commentId: number, updatedComment: string) => {
+      try {
+        await axiosInstance.put(`/update-comment/${commentId}`, { 
+          commentId: commentId,
+          comment: updatedComment,
+          eventId: event.id,
+          sender: currentUser,
+          updatedAt: ''
+        });
+
+        setEvent(prev => ({
+          ...prev,
+          comments: prev.comments.map(comment =>
+            comment.commentId === commentId ? { ...comment, comment: updatedComment } : comment
+          )
+        }));
+
+        toast.success("Comment updated successfully!");
+      } catch (error) {
+        toast.error("Error updating comment.");
+      }
+    }
 
   return (
     <div className={styles.eventContainer}>
@@ -343,7 +408,7 @@ const EventDetails = () => {
                                     <div className={styles.weatherWidget}>
                                     <h4>How is the weather on the day of the event?</h4>
                                       <div className={styles.weatherContent}>
-                                        {!isMoreThan8DaysLater(event.date) ? (
+                                        {!isMoreThan8DaysLater(event.startDate) ? (
                                           <div className={styles.weatherInfo}>
                                             <img
                                                   src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} 
@@ -384,10 +449,10 @@ const EventDetails = () => {
                                     <div className={styles.eventTimeDate}>
                                           <span>
                                             <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                                              <p > {new Date(event.date).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime} - {event.endTime}</p>
+                                              <p > {new Date(event.startDate).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime} - {event.endTime}</p>
                                           </span>
                                     </div>
-                                    <div className={styles.eventLocation}>
+                                    <div className={styles.eventLocation} onClick={handleLocationClick}>
                                             <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                                             <p>{event.addressName}</p>
                                     </div>
@@ -467,22 +532,55 @@ const EventDetails = () => {
                                 <div className={styles.commentContainerAlt}>
                                                   <ul> 
                                                   {event.comments
-                                                  .sort((a,b) => {
-                                                    const timeA = new Date(a.updatedAt)
-                                                    const timeB = new Date(b.updatedAt);
+                                                   .sort((a,b) => {
+                                                    const timeA = new Date(a.sentAt)
+                                                    const timeB = new Date(b.sentAt);
                                                     return timeA.getTime() - timeB.getTime()
                                                   })
                                                   .map((comment,index) => (
-                                                      <li key={index}>
-                                                              <div className={styles.commentElement}>
-                                                                <div className={styles.commentSender}>
-                                                                    <img src={comment.sender.profilePictureUrl}></img>
-                                                                    <h5> {comment.sender.username} </h5>
-                                                                </div>
-                                                              <span className={styles.timestamp}>{formatTime(comment.updatedAt)}</span>
+                                                      <li className={styles.commentItem}>
+                                                            <div className={styles.commentHeader}>
+                                                              <div className={styles.senderInfo}>
+                                                                <img src={comment.sender.profilePictureUrl} alt="User Avatar" />
+                                                                <span className={styles.username}>{comment.sender.username}</span>
                                                               </div>
-                                                              <strong> {comment.comment} </strong>
-                                                      </li>
+                                                              <span> {comment.sentAt !== comment.updatedAt ? "edited" : ""}</span>
+                                                              <span className={styles.timestamp}>{formatTime(comment.updatedAt)}</span>
+                                                            </div>
+
+                                                            {editingCommentId === comment.commentId ? (
+                                                              <div className={styles.editArea}>
+                                                                <input
+                                                                  type="text"
+                                                                  value={editedCommentText}
+                                                                  onChange={(e) => setEditedCommentText(e.target.value)}
+                                                                />
+                                                                <div className={styles.editButtons}>
+                                                                  <button onClick={() => saveEditedComment(comment.commentId)}>Save</button>
+                                                                  <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+                                                                </div>
+                                                              </div>
+                                                            ) : (
+                                                              <p className={styles.commentText}>{comment.comment}</p>
+                                                            )}
+
+                                                            {comment.sender.username === currentUser?.username && (
+                                                              <div className={styles.commentActions}>
+                                                                <FontAwesomeIcon
+                                                                  icon={faPenToSquare}
+                                                                  className={styles.actionIcon}
+                                                                  onClick={() => handleEditComment(comment)}
+                                                                  title="Edit"
+                                                                />
+                                                                <FontAwesomeIcon
+                                                                  icon={faTrash}
+                                                                  className={styles.actionIcon}
+                                                                  onClick={() => handleDeleteComment(comment.commentId)}
+                                                                  title="Delete"
+                                                                />
+                                                              </div>
+                                                            )}
+                                                          </li>
                                                   ))}
                                               </ul>
                                               <hr/>
@@ -492,10 +590,12 @@ const EventDetails = () => {
                                                       placeholder="Add a comment..."
                                                       value={commentString}
                                                       onChange={(e) => setCommentString(e.target.value)}
+                                                      onKeyDown={(e) => {
+                                                        if(e.key === 'Enter') {
+                                                          handleAddComment(event.id);
+                                                        }   
+                                                      }}
                                                   ></input>
-                                                  <button onClick={() => handleAddComment(event.id)}>
-                                                    Send
-                                                  </button>
                                               </div>
                                   </div>
                           </div>

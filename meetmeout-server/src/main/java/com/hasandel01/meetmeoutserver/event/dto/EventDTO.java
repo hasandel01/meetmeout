@@ -1,10 +1,12 @@
 package com.hasandel01.meetmeoutserver.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.hasandel01.meetmeoutserver.event.model.RouteType;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import lombok.Builder;
+import org.springframework.cglib.core.Local;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -18,10 +20,10 @@ public record EventDTO(
         String title,
         String description,
         Categories category,
-        LocalDate date,
+        LocalDate startDate,
+        LocalDate endDate,
         @JsonFormat(pattern = "HH:mm") LocalTime startTime,
         @JsonFormat(pattern = "HH:mm") LocalTime endTime,
-        String location,
         String imageUrl,
         Set<String> tags,
         double latitude,
@@ -44,5 +46,8 @@ public record EventDTO(
         boolean isFeeRequired,
         double fee,
         LocalDateTime createdAt,
-        Set<String> eventPhotoUrls) {
+        Set<String> eventPhotoUrls,
+        String feeDescription,
+        String endAddressName,
+        RouteType routeType) {
 }

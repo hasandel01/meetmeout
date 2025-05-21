@@ -101,10 +101,11 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    border-radius: 16px;
     padding: 1px;
-    margin: 30px;
+    margin-left: 30px;
+    margin-top: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--primary-color-dark);
     transition: transform 0.2s, box-shadow 0.2s;
     background-color: white;
     width: 750px;
@@ -391,7 +392,6 @@
     background-color: var(--card-border);
     width: 750px;
     margin: 0px 30px;
-    border-radius: 12px;
     border: 1px solid var(--primary-color-dark);
  }
 
@@ -411,42 +411,105 @@
     background-color: var(--card-color);
  }
 
- .commentElement {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    background-color: var(--card-color);
- }
-
- .commentSender {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
- }
-
- .timestamp {
-    color: #333;
-    font-size: 12px;
- }
-
- .commentElement img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
- }
-
- .addComment {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+ .commentItem {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background-color: #fff;
+  position: relative;
 }
 
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.senderInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.senderInfo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: gray;
+}
+
+.commentText {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.commentActions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.actionIcon {
+  color: #444;
+  cursor: pointer;
+}
+
+.actionIcon:hover {
+  color: #007bff;
+}
+
+.editArea input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.editButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.editButtons button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+.addComment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    border: 1px solid var(--primary-color-dark);
+}
 .addComment input {
+    width: 100%;
     padding: 10px;
-    width: 80%;
+    border-radius: 8px;
+    border: 1px solid var(--primary-color-dark);
+    outline: none;
+    box-shadow: none;
+    border: none;
 }
 
 /** CHAT MESSAGE */

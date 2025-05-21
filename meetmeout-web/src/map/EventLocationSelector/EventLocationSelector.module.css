@@ -11,7 +11,7 @@
     position: absolute;
     display: flex;
     flex-direction: column;
-    left: 90px;
+    left: 300px;
     top: 160px;
     width: 600px;
     background-color: var(--background-color);
@@ -42,4 +42,22 @@
     background-color: var(--primary-color-light);
     cursor: pointer;
 
+}
+
+@keyframes bounceWave {
+  0%   { transform: scale(1) rotate(0deg); }
+  50%  { transform: scale(1.1) rotate(3deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.massive-finish-marker-wrapper {
+  animation: bounceWave 1.6s infinite ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flag-img {
+  width: 36px;
+  height: 36px;
 }

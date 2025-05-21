@@ -133,7 +133,7 @@ public class EventController {
         }
     }
 
-    @PostMapping("/delete-review/{eventId}")
+    @DeleteMapping("/delete-review/{eventId}")
     public ResponseEntity<Void> deleteReview(@PathVariable long eventId) {
         try {
             return ResponseEntity.ok(eventService.deleteReviewFromEvent(eventId));
@@ -144,7 +144,7 @@ public class EventController {
 
 
     @PostMapping("/add-comment/{eventId}")
-    public ResponseEntity<Void> addComment(@Valid @PathVariable long eventId, @RequestBody CommentDTO comment) {
+    public ResponseEntity<CommentDTO> addComment(@Valid @PathVariable long eventId, @RequestBody CommentDTO comment) {
         try {
             return ResponseEntity.ok(eventService.addComment(eventId, comment));
         }catch (RuntimeException e) {
@@ -153,10 +153,19 @@ public class EventController {
     }
 
 
-    @PostMapping("/delete-comment/{commentId}")
+    @DeleteMapping("/delete-comment/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable long commentId) {
         try {
             return ResponseEntity.ok(eventService.deleteComment(commentId));
+        }catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/update-comment/{commentId}")
+    public ResponseEntity<Void> updateComment(@PathVariable long commentId, @RequestBody CommentDTO comment) {
+        try {
+            return ResponseEntity.ok(eventService.updateComment(commentId, comment));
         }catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();
         }

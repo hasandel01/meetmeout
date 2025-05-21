@@ -27,20 +27,29 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) {
 
-        var headers = request.getHeaders();
-        String authHeader = headers.getFirst("Authorization");
+        System.out.println("👉 Interceptor çağrıldı! URI: " + request.getURI());
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+
+        String token = null;
+
+        if (request.getURI().getQuery() != null) {
+            String query = request.getURI().getQuery();
+            for (String param : query.split("&")) {
+                if (param.startsWith("token=")) {
+                    token = param.split("=")[1];
+                    break;
+                }
+            }
+        }
+
+        if (token != null) {
             String username = jwtService.getSubject(token);
-
             if (username != null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 if (jwtService.isTokenValid(token, userDetails)) {
                     Principal principal = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
-
-                    attributes.put("principal", principal); // 👈 makes it available to CustomHandshakeHandler
+                    attributes.put("principal", principal);
                     System.out.println("✅ WebSocket HTTP handshake authenticated for " + username);
                     return true;
                 }
@@ -48,7 +57,7 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         }
 
         System.out.println("❌ WebSocket HTTP handshake failed auth");
-        return false; // Reject handshake
+        return false;
     }
 
     @Override

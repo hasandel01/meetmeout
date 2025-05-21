@@ -11,6 +11,7 @@ public class CommentMapper {
                 .comment(comment.getComment())
                 .commentId(comment.getId())
                 .sender(UserMapper.toUserDTO(comment.getSender()))
+                .sentAt(comment.getSentAt())
                 .updatedAt(comment.getUpdatedAt())
                 .eventId(comment.getEvent().getId())
                 .build();

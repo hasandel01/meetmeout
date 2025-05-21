@@ -39,6 +39,56 @@ html, body {
     background-color: var(--primary-color-light);
 }
 
+/* ShowPastToggle.module.css */
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--primary-color-dark);
+  margin-bottom: 10px;
+}
+
+.toggleWrapper input[type="checkbox"] {
+  display: none;
+}
+
+.slider {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+input[type="checkbox"]:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input[type="checkbox"]:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.labelText {
+  font-weight: 500;
+}
+
+
 .sort {
     display: flex;
     flex-direction: row;
@@ -236,25 +286,16 @@ p {
     color: white;
 }
 
+.eventStatus.ENDED {
+    background-color: #8d8c8a;
+    color: white;
+}
+
+
 .eventStatusDraft {
     color: var(--card-color)
 }
 
-/* TO BE IMPLEMENTED */
-
-.eventStatus.completed {
-    background-color: #ffecb3;
-    color: #f57c00;
-}
-.eventStatus.cancelled {
-    background-color: #ffcdd2;
-    color: #d32f2f;
-}
-
-.eventStatus.draft {
-    background-color: #e1bee7;
-    color: #8e24aa;
-}
 
 /* EVENT BUTTON */
 

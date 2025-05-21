@@ -28,8 +28,8 @@ const MyCalendar = () => {
 
     const formattedEvents = events?.map(ev => ({
         title: ev.title,
-        start: `${ev.date}T${ev.startTime}`,
-        end: `${ev.date}T${ev.endTime}`,
+        start: `${ev.startDate}T${ev.startTime}`,
+        end: `${ev.endDate}T${ev.endTime}`,
         extendedProps: {
             imageUrl: ev.imageUrl
         },

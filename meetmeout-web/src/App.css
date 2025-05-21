@@ -41,7 +41,7 @@
   --header-color: #D6EBE2;
   --text-color:  #2C2C2E; 
   --warning-color: #FFB347; 
-  --error-color: #FF6F61;
+  --error-color: #ff1500;
 
   --button-color: #58C4C8;         
   --button-hover-color: #4AB5B9;
@@ -64,3 +64,41 @@ body {
 }
 
 
+@keyframes redRingPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(255, 77, 79, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0);
+  }
+}
+
+.massive-finish-marker-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 77, 79, 0.7);
+  border-radius: 50%;
+  animation: redRingPulse 1.4s infinite;
+}
+
+.massive-finish-marker {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent; 
+  box-shadow: none;        
+}
+
+.massive-finish-marker img {
+  width: 36px;
+  height: 36px;
+  margin-left: 10px;
+  z-index: 1;
+}

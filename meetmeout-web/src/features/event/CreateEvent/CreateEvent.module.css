@@ -14,8 +14,8 @@
     position: relative;
     background-color: var(--background-color);
     min-width: 700px;
-    min-height: 800px;
-    padding: 10px;
+    min-height: 900px;
+    padding: 20px;
     border-radius: 3%;
     border: 2px solid var(--primary-color-dark)
 }
@@ -93,12 +93,12 @@
 .inputGroup {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 10px;
     margin-bottom: 24px;
 }
 
 .inputGroup input {
-    width: 97%;
+    width: 60%;
     padding: 10px;
     border-radius: 6px;
     border: 1px solid var(--card-border);
@@ -107,12 +107,6 @@
     border: 1px solid var(--primary-color-dark);
 }
 
-
-
-.inputGroup p {
-    margin: 0px;
-    color: red;
-}
 
 .inputDescription {
   width: 100%;
@@ -143,7 +137,7 @@
 .timeInput {
     display: flex;
     flex-direction: row;
-    padding: 5px;
+    padding: 10px;
     justify-content: space-between;
     align-items: center;
 }
@@ -156,7 +150,7 @@
 }
 
 .timeInput input {
-    width: 60%;
+    width: 30%;
 }
 
 
@@ -166,22 +160,25 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
     padding: 40px;
+}
+
+.routeSelection {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-top: 40px;
 }
 
 
 .radioButtonsContainer {
     display: flex;
     flex-direction: row;
-    padding: 10px 20px;
+    padding: 0px 30px;
     gap: 30px;
 }
 
-.eventLocationSelectorContainer p {
-    color: var(--text-color);
-}
 
 .eventLocationSelector {
     width: 100%;
@@ -210,7 +207,6 @@
     display: flex;
     flex-direction: column;
     align-items: first baseline;
-    gap: 15px;
     padding: 10px;
     text-align: start;
 }
@@ -228,27 +224,94 @@
     align-items: left;
 }
 
+
+.eventRules {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+    border-radius: 10px;
+    gap: 160px;
+    margin-bottom: 20px;
+    font-size: 14px;}
+
 .capacityContainer  {
     display: flex;
     flex-direction: column;
     align-items: left;
 }
 
-.categoryTags {
+.feeContainer {
     display: flex;
     flex-direction: column;
-    max-width: 400px;
+    align-items: left;
 }
 
-.tags {
+.capacityInput{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+
+.feeInput {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.feeInput textarea {
+    resize: none;
+    overflow-y: hidden;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    border: 1px solid var(--primary-color-dark);
+}
+
+.disabledGroup {
+  opacity: 0.5;
+  pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.disabledGroup textarea {
+    resize: none;
+    overflow-y: hidden;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    border: 1px solid var(--primary-color-dark);
+}
+
+.eventCategoryAndTags {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+    gap: 150px;
+}
+
+.categoryTags {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .eventType {
     display: flex;
     flex-direction: column;
-    margin-top: 100px;
 }
 
 .eventCheckBoxes {
@@ -274,17 +337,32 @@
 input[type="checkbox"] {
     width: 16px;
     height: 16px;
-    accent-color: var(--primary-color-dark); /* Modern tarayıcılarda renk kontrolü */
+    accent-color: var(--primary-color-dark);
     cursor: pointer;
   }
 
 
+
 /*tag input*/
 
-.tagInputContainer {
+.tags {
+    position: relative;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: row;
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 10px;
+    min-width:  280px;
+    min-height: 150px;
+    overflow: hidden;
+}
+
+.tagInputContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     gap: 5px;
+    border-radius: 10px;
+    width: 80%;
 }
 
 .tagInputContainer span {
@@ -294,8 +372,10 @@ input[type="checkbox"] {
 .tagInputContainer input {
     display: flex;
     flex-direction: row;
-    padding-bottom: 120px;         /* Yukarıdan yazıyı aşağı kaydırır */
-    width: 425px;
+    padding-bottom: 140px;
+    width: 120%;
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 10px;
 }
 
 .tagInputContainer input::placeholder {
@@ -311,14 +391,13 @@ input[type="checkbox"] {
     margin-top: 30px;
     padding: 2px 4px;
     gap: 5px;
-    width: 80%;
 }
 
 .tagShow hr {
-    color: black;
+    color: var(--primary-color-dark);
     margin: 0px;
-    max-width: 50%;
-}
+    width: 80%;
+    height: 1px;}
 
 .tagInputContainer ul {
     list-style: none;
@@ -347,20 +426,25 @@ input[type="checkbox"] {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px;
-    margin-bottom: 20px;
+    padding: 40px;
+    gap:20px;
 }
 
 .eventImageUploadContainer h4 {
-    font-size: 14px;
+    font-size: 18px;
+}
+
+.eventImageUploadContainer p {
+    color: var(--primary-color-dark);
+    width: 100%;
 }
 
 .eventImageUpload {
     position: relative;
     display: flex;
     margin-top: 30px;
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
     margin-bottom: 20px;
     overflow: hidden;
     cursor: pointer;
@@ -422,7 +506,6 @@ input[type="checkbox"] {
     justify-content: center;
     align-items: center;
     border-radius: 4px;
-    padding: 4px 8px;
     font-size: 12px;
     border: #00796b solid 1px;
     color: #00796b;
@@ -542,21 +625,15 @@ p {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
     border-radius: 18px;
     margin: 20px 60px;
-    background-color: var(--card-color);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
     width: 70vw;
-    cursor: pointer;
     gap: 10px;
 }
 
 .eventPreview {
   display: flex;
-  margin-left: 10px;
   flex-direction: column;
   gap: 5px;
   align-items: flex-start;
@@ -566,13 +643,19 @@ p {
     display: flex;
     flex-direction: row;
     gap: 10px;
+    max-width: 800px;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .eventPreviewInfo {
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid var(--primary-color-dark);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 80%;
+  height: 200px;
 }
+
 
 .previewImage {
   width: 100px;
@@ -585,10 +668,28 @@ p {
   margin: 4px 0;
 }
 
+.eventDescription {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-size: 14px;
+  line-height: 1.4;
+  color: #444;
+
+  max-width: 100%;
+  width: 100%;
+  min-width: 0;
+}
+
+
 
 .previewDetails {
     margin-top: 6px;
     display: grid;
+    justify-items: first baseline;
     grid-template-columns: repeat(2,1fr);
     gap: 4px;
     font-weight: bold;
@@ -600,7 +701,7 @@ p {
 }
 
 .previewDetails p {
-    font-size: 14px;
+    font-size: 16px;
     align-items: center;
     gap: 10px;
 }
@@ -608,7 +709,7 @@ p {
 .warningText {
   font-size: 14px;
   color: red;
-  font-style: italic;
+  font-weight: bold;
 }
 
 /** BUTTONS **/
@@ -653,7 +754,7 @@ p {
     color: var(--error-color);
     margin-top: 4px;
     margin-left: 4px;
-    font-style: italic;
+    font-weight: bold;
   }
   
 

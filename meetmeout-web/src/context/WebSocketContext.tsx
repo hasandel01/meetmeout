@@ -1,7 +1,6 @@
 import { Client } from '@stomp/stompjs';
 import { createContext, useContext, useRef, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import SockJS from 'sockjs-client';
 
 interface WebSocketContextType {
   clientRef: React.RefObject<Client | null>;
@@ -14,27 +13,27 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-
-    const socket = new SockJS(`${import.meta.env.VITE_SOCKET_BASE_URL}/ws`);
+    const url = `wss://192.168.1.33:8443/ws?token=${token}`;
 
     const client = new Client({
-      webSocketFactory: () => socket,
-        connectHeaders: {
-        Authorization: `Bearer ${token}`
-        },
-      debug: (msg) => console.log('STOMP DEBUG:', msg),
+      webSocketFactory: () => new WebSocket(url), // 🧠 native WebSocket 
+      debug: (msg) => console.log('🐛 STOMP DEBUG:', msg),
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('✅ WebSocket connected!');
-        toast.success('WebSocket connected ✅');
+        console.log('✅ STOMP CONNECTED via Native WebSocket!');
       },
       onStompError: (frame) => {
-        console.error('❌ STOMP error:', frame.body);
-        toast.error('STOMP error');
+        console.error('❌ STOMP ERROR:', frame.body);
+        toast.error('STOMP bağlantı hatası!');
+      },
+      onWebSocketError: (event) => {
+        console.error('❌ WebSocket bağlantı hatası:', event);
+        toast.error('WebSocket bağlantı hatası!');
       },
     });
 
     clientRef.current = client;
+    console.log('🚀 client.activate() çağrıldı (Native WebSocket)');
     client.activate();
 
     return () => {
@@ -51,7 +50,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
 export const useWebSocketContext = () => {
   const context = useContext(WebSocketContext);
-  if (!context)
+  if (!context) {
     throw new Error('useWebSocketContext must be used inside WebSocketProvider');
+  }
   return context;
 };

@@ -17,7 +17,8 @@ export interface Comment {
 
 
 export interface Review {
-    reviewerId: number;
+    reviewId: number;
+    reviewer: User;
     title: string;
     content: string;
     updatedAt: string;

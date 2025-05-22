@@ -35,4 +35,5 @@ export interface Event {
     endLongitude: number;
     feeDescription: string;
     routeType: string;
+    eventPhotoUrls: string[];
 }

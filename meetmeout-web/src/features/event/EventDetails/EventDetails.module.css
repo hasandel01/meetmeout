@@ -3,6 +3,22 @@
     flex-direction: row;
 }
 
+/** REVIEW **/
+
+.reviewPopup {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 30vw;
+    height: 30vh;
+    top: 0;
+    left: 20%;
+    background-color: rgba(0, 0, 0, 0.2);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
 /** ATTENDEES */
 
 .attendees {
@@ -96,6 +112,20 @@
     flex-direction: row;
 }
 
+.eventHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 10px 10px;
+    background-color: var(--background-color);
+    margin-top: 40px;
+    margin-left: 30px;
+    height: 50px;
+    width: 50vw;
+    border: 1px solid var(--primary-color-dark);
+}
+
 .eventCard {
     position: relative;
     display: flex;
@@ -103,12 +133,11 @@
     justify-content: flex-start;
     padding: 1px;
     margin-left: 30px;
-    margin-top: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--primary-color-dark);
     transition: transform 0.2s, box-shadow 0.2s;
     background-color: white;
-    width: 750px;
+    width: 50vw;
     height: 600px;
 }
 
@@ -295,7 +324,6 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background-color: #ffffff;
     padding: 6px 10px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -353,35 +381,43 @@
 }
 
 .secondButtonGroup {
-    position: absolute;
     display: flex;
     flex-direction: row;
-    right: 20px;
-    bottom: 20px;
-}
-
-.deleteButton {
-    background-color: #fadfdf;
-    border: 1px solid #9e1f1f;
-    color: #9e1f1f;
-    cursor: pointer;
-    font-size: 12px;
-    margin: 0 4px;
-    margin-top: 10 px;
-    transition: background-color 0.2s;
-    align-items: center;
-    cursor: pointer;
-    transition: scale 0.5 ease;
+    gap: 10px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.2s;
 }
 
 .inviteButton {
-    background-color: #d2ebee;
-    border: 1px solid #0f4b7c;
-    color: #0f4b7c;
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background-color 0.2s, transform 0.2s;
 }
 
-.secondButtonGroup button:hover {
-    transform: scale(1.05);
+.inviteButton:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+    font-weight: bolder;
+}
+
+.editButton {
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+
+.editButton:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+    font-weight: bolder;
 }
 
  /** COMMENT CONTAINER **/
@@ -390,7 +426,7 @@
     position: relative;
     flex-direction: column;
     background-color: var(--card-border);
-    width: 750px;
+    width: 50vw;
     margin: 0px 30px;
     border: 1px solid var(--primary-color-dark);
  }

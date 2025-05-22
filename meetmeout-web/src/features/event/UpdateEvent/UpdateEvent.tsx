@@ -2,35 +2,79 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../axios/axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Event } from '../../../types/Event';
+import { RouteType } from '../../../types/RouteType';
+import styles from './UpdateEvent.module.css';
+
 
 const UpdateEvent = () => {
   const { eventId } = useParams(); 
 
-  const [formData, setFormData] = useState({
-    name: '',
-    date: '',
-    location: '',
-    description: '',
-  });
 
   useEffect(() => {
-
     const fetchEvent = async () => {
       try {
         const response = await axiosInstance.get(`/events/${eventId}`);
-        const { title, date, location, description } = response.data;
-        setFormData({
-          name: title,
-          date,
-          location,
-          description,
-        });
+        setFormData(response.data);
       } catch (error) {
         toast.error('Failed to fetch event data.');
       }
     };
 
     if (eventId) fetchEvent();
+  }, [eventId]);
+
+  
+
+  const [formData, setFormData] = useState<Event>({
+            id: 1,
+            title: '',
+            description: '',
+            startDate: '',
+            endDate: '',
+            startTime: '',
+            endTime: '',
+            imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png",
+            tags: [],
+            isPrivate: false,
+            isDraft: false,
+            maximumCapacity: 1,
+            status: 'ONGOING',
+            attendees: [],
+            organizer: null,
+            addressName: '',
+            endAddressName: '',
+            category: '',
+            longitude: 0,
+            latitude: 0,
+            likes: [],
+            comments: [],
+            reviews: [],
+            createdAt: '',
+            isThereRoute: false,
+            isCapacityRequired: false,
+            isFeeRequired: false,
+            fee: 0,
+            endLatitude: 0,
+            endLongitude: 0,
+            feeDescription: '',
+            routeType: RouteType.CAR,
+            eventPhotoUrls: []
+  });
+
+  useEffect(() => {
+
+    const updateEvent = async () => {
+      try {
+        const response = await axiosInstance.put(`/events/${eventId}`, formData);
+
+        setFormData(response.data);
+      } catch (error) {
+        toast.error('Failed to fetch event data.');
+      }
+    };
+
+    if (eventId) updateEvent();
   }, [eventId]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -42,10 +86,7 @@ const UpdateEvent = () => {
     e.preventDefault();
     try {
       const response = await axiosInstance.put(`/events/${eventId}`, {
-        title: formData.name,
-        date: formData.date,
-        location: formData.location,
-        description: formData.description,
+        formData
       });
 
       toast.success('Event updated successfully!');
@@ -56,55 +97,93 @@ const UpdateEvent = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form  className={styles.form} submit={handleSubmit}>
       <h2>Update Event</h2>
+      
+        <input
+          type="file"
+          id="imageUrl"
+          name="imageUrl"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setFormData((prev) => ({ ...prev, imageUrl: reader.result as string }));
+              };
+              reader.readAsDataURL(file);
+            }
+          }}
+        />
 
-      <div>
-        <label htmlFor="name">Event Name:</label>
         <input
           type="text"
           id="name"
           name="name"
-          value={formData.name}
+          placeholder='Event Title'
+          value={formData.title}
           onChange={handleChange}
           required
         />
-      </div>
+        
+        <textarea
+          id="description"
+          name="description"
+          placeholder='Event Description'
+          value={formData.description}
+          onChange={handleChange}
+          required
+          />
 
-      <div>
-        <label htmlFor="date">Date:</label>
         <input
           type="date"
           id="date"
           name="date"
-          value={formData.date}
+          value={formData.startDate}
           onChange={handleChange}
           required
         />
-      </div>
 
-      <div>
-        <label htmlFor="location">Location:</label>
         <input
           type="text"
           id="location"
           name="location"
-          value={formData.location}
+          value={formData.endDate}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="time"
+          id="startTime"
+          name="startTime"
+          value={formData.startTime}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="time"
+          id="endTime"
+          name="endTime"
+          value={formData.endTime}
+          onChange={handleChange}
+          required 
+        />
+        
+      <div>
+        <label htmlFor="location"> Change Location</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          value={formData.addressName}
           onChange={handleChange}
           required
         />
       </div>
 
-      <div>
-        <label htmlFor="description">Description:</label>
-        <textarea
-          id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-      </div>
 
       <button type="submit">Update Event</button>
     </form>

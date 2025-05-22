@@ -3,12 +3,9 @@ package com.hasandel01.meetmeoutserver.event.service;
 
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
-import com.hasandel01.meetmeoutserver.event.mapper.CommentMapper;
-import com.hasandel01.meetmeoutserver.event.mapper.InviteMapper;
+import com.hasandel01.meetmeoutserver.event.mapper.*;
 import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
-import com.hasandel01.meetmeoutserver.event.mapper.EventMapper;
-import com.hasandel01.meetmeoutserver.event.mapper.JoinRequestMapper;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.common.service.CloudStorageService;
@@ -22,9 +19,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -108,7 +108,7 @@ public class EventService {
         }
     }
 
-    public Void updateEventPicture(long eventId, MultipartFile file) throws RuntimeException , IOException {
+    public String updateEventPicture(long eventId, MultipartFile file) throws RuntimeException , IOException {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
@@ -119,7 +119,7 @@ public class EventService {
 
         eventRepository.save(event);
 
-        return null;
+        return imageUrl;
     }
 
     public EventDTO getEventById(long eventId) {
@@ -204,6 +204,7 @@ public class EventService {
 
 
 
+    @Transactional
     public Void leaveEvent(long eventId) {
 
         Event event = eventRepository.findById(eventId)
@@ -221,6 +222,10 @@ public class EventService {
 
         if(user.equals(event.getOrganizer())) {
             user.getOrganizedEvents().remove(event);
+            event.getAttendees().clear();
+            List<JoinEventRequest> joinEventRequests = joinEventRequestRepository.findByEvent(event)
+                            .orElseThrow(() -> new RuntimeException("Event not found"));
+            joinEventRequestRepository.deleteAll(joinEventRequests);
             eventRepository.delete(event);
         }
         return null;
@@ -250,7 +255,7 @@ public class EventService {
         return null;
     }
 
-    public Void addReviewToEvent(@Valid long eventId, ReviewDTO reviewDTO) {
+    public ReviewDTO addReviewToEvent(@Valid long eventId, ReviewDTO reviewDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -259,8 +264,7 @@ public class EventService {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
-
-
+        
         Review review = Review.builder()
                 .reviewer(user)
                 .event(event)
@@ -271,27 +275,25 @@ public class EventService {
                 .rating(reviewDTO.rating())
                 .build();
 
+        return ReviewMapper.toReviewDTO(reviewRepository.save(review));
 
-        reviewRepository.save(review);
-
-        return null;
     }
 
-    public Void deleteReviewFromEvent(long eventId) {
+    public Void deleteReviewFromEvent(long reviewId) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User Not Found"));
 
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
 
+        Review review = reviewRepository.findById(reviewId)
+                        .orElseThrow(() -> new RuntimeException("Review not found"));
 
-        Optional<Review> review = reviewRepository.findByReviewerAndEvent(user,event);
-
-
-        review.ifPresent(reviewRepository::delete);
+        if(user.getUsername().equals(review.getReviewer().getUsername()))
+            reviewRepository.delete(review);
+        else
+            throw new RuntimeException("You are not the reviewer of this review");
 
         return null;
     }
@@ -474,5 +476,81 @@ public class EventService {
 
         return null;
 
+    }
+
+
+    @Transactional
+    public Set<String> uploadPhotos(@Valid MultipartFile[] files, long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        Set<String> photoUrls = cloudStorageService.uploadEventPictures(files);
+        event.setEventPhotoUrls(photoUrls);
+
+        eventRepository.save(event);
+
+        return cloudStorageService.uploadEventPictures(files);
+
+    }
+
+    public EventDTO updateEvent(long eventId, EventDTO eventDTO) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        String url = cloudStorageService.uploadEventPicture(eventDTO.eventImage());
+
+        event.setTitle(eventDTO.title());
+        event.setDescription(eventDTO.description());
+        event.setStartDate(eventDTO.startDate());
+        event.setEndDate(eventDTO.endDate());
+        event.setStartTime(eventDTO.startTime());
+        event.setEndTime(eventDTO.endTime());
+        event.setLongitude(eventDTO.longitude());
+        event.setLatitude(eventDTO.latitude());
+        event.setEndLatitude(eventDTO.endLatitude());
+        event.setEndLongitude(eventDTO.endLongitude());
+        event.setAddressName(eventDTO.addressName());
+        event.setEndAddressName(eventDTO.endAddressName());
+        event.setImageUrl(url);
+        event.setCapacityRequired(eventDTO.isCapacityRequired());
+        event.setMaximumCapacity(eventDTO.maximumCapacity());
+        event.setFee(eventDTO.fee());
+        event.setFeeDescription(eventDTO.feeDescription());
+        event.setFeeRequired(eventDTO.isFeeRequired());
+        event.setThereRoute(eventDTO.isThereRoute());
+        event.setRouteType(eventDTO.routeType());
+
+        event.setPrivate(eventDTO.isPrivate());
+        event.setDraft(eventDTO.isDraft());
+
+        return EventMapper.toEventDto(eventRepository.save(event));
+    }
+
+    public ReviewDTO updateReview(long reviewId, ReviewDTO newReview) {
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+
+
+        review.setTitle(newReview.title());
+        review.setContent(newReview.content());
+        review.setRating(newReview.rating());
+
+        reviewRepository.save(review);
+
+        return ReviewMapper.toReviewDTO(review);
+    }
+
+    public Double getAverageRating(long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        List<Review> reviewList = reviewRepository.findByEvent(event);
+
+        return !reviewList.isEmpty() ?
+            reviewList.stream().mapToDouble(Review::getRating).sum()/ reviewList.size() : 0;
     }
 }

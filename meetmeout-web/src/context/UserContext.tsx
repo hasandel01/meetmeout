@@ -27,7 +27,7 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
     useEffect(() => {
         if(currentUser === undefined)
             getMe();
-    })
+    },[currentUser])
 
     return (
         <UserContext.Provider value={{currentUser, getMe}}>

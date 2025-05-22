@@ -120,6 +120,7 @@ const CreateEventForm = () => {
         endLongitude: 0,
         feeDescription: '',
         routeType: RouteType.CAR,
+        eventPhotoUrls: []
     });
 
     const showConfetti = () => {
@@ -656,7 +657,7 @@ const CreateEventForm = () => {
                     {step === 5 && 
                     <>
                     <button className={styles.draftButton} onClick={(e) => handleCreateEvent(e, true)}>Save as Draft</button>
-                    <button onClick={(e) => handleCreateEvent(e, false)}>Submit</button>
+                    <button onClick={(e) => handleCreateEvent(e, false)}>Create</button>
                     </>
                     }
                 </div>

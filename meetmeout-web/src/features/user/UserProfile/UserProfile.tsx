@@ -8,11 +8,12 @@ import { useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
 import { useUserContext } from "../../../context/UserContext";
 
+
 const UserProfile = () => {
 
     const { username } = useParams<{ username: string }>();
     const [user, setUser] = useState<User | null>(null);
-    const {currentUser} = useUserContext();
+    const { currentUser, getMe } = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [showUserUpdateForm, setShowUserUpdateForm] = useState(false);
 
@@ -59,11 +60,18 @@ const UserProfile = () => {
                               }
                             }
                         );
-                        
-                        console.log("Profile picture updated successfully:", response.data);
+
+                        setUser((prevUser) => {
+                            if (!prevUser) return prevUser;
+                            return {
+                                ...prevUser,
+                                profilePictureUrl: response.data.profilePictureUrl
+                            };
+                        });
+
+                        await getMe();
                         getUserProfile();
                     } catch (error) {
-                        console.error("Error updating profile picture:", error);
                     }
                 }
             }

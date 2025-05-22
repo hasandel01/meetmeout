@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Event } from "../../types/Event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faLocationDot, faLock} from "@fortawesome/free-solid-svg-icons";
-import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faHeart, faComment, faStar } from "@fortawesome/free-solid-svg-icons";
 import { getCategoryIconLabel } from "../../mapper/CategoryMap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -22,6 +22,40 @@ const isStartDateAndEndDateSame = (event: Event): boolean => {
     return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
 };
 
+const EventRatingStars = ({ eventId }: { eventId: number }) => {
+    const [average, setAverage] = useState<number>(0);
+
+    useEffect(() => {
+        const fetchAverageRating = async () => {
+            try {
+                const response = await axiosInstance.get(`/average-rating/${eventId}`);
+                if (response.status === 200) {
+                    setAverage(response.data);
+                } else {
+                    toast.error("Error getting average rating");
+                }
+            } catch (error) {
+                toast.error("Error getting average rating");
+            }
+        };
+
+        fetchAverageRating();
+    }, [eventId]);
+
+    return (
+        <div className={styles.eventRatings}>
+            {[1, 2, 3, 4, 5].map((star) => (
+                <FontAwesomeIcon
+                    key={star}
+                    icon={faStar}
+                    className={styles.starIcon}
+                    style={{ color: average >= star ? "gold" : "gray" }}
+                />
+            ))}
+        </div>
+    );
+};
+
 const MainFeed = () => {
  
     const [events, setEvents] = useState<Event[] | null>([]);
@@ -34,7 +68,7 @@ const MainFeed = () => {
     const [lng, setLng] = useState<number | undefined>(0);
     const [lat, setLat] = useState<number | undefined>(0);
     const [globalFilter, setGlobalFilter] = useState('All Events');
-      const [showPastEvents, setShowPastEvents] = useState(false);
+    const [showPastEvents, setShowPastEvents] = useState(false);
 
 
     const location = useLocation();
@@ -240,6 +274,23 @@ const MainFeed = () => {
         }
       };
 
+    const getAverageRating = async (eventId: number): Promise<number> => {
+        
+        try {
+            const response = await axiosInstance.get(`/average-rating/${eventId}`);
+
+            if(response.status === 200) {
+                return response.data;
+            }
+            else {
+                toast.error("Error getting average rating");
+                return 0;
+            }
+        } catch(error) {
+            toast.error("Error getting average rating");
+            return 0;
+        }
+    }
 
     const globalFilterFunction = () => {
     
@@ -318,7 +369,7 @@ const MainFeed = () => {
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MainFeedMap events={globalFilterFunction() || []} coords={{ lat: lat ?? 41.0082, lng: lng ?? 28.9784 }} />
+                <MainFeedMap events={globalFilterFunction()?.filter((event)=> showPastEvents || event.status !== "ENDED") || []} coords={{ lat: lat ?? 41.0082, lng: lng ?? 28.9784 }} />
                 {flyTo && <MapPanner coords={flyTo} />}
                 </MapContainer>
         </div>
@@ -337,7 +388,13 @@ const MainFeed = () => {
                     ?.map((event) => (
                         (
                             <div key={event.id} onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>
-                                <div className={isEventFull(event) ? `${styles.eventCard} ${styles.full}` : `${styles.eventCard}`}>
+                                <div className={event.status !== "ENDED" ? (
+                                                isEventFull(event) ? `${styles.eventCard} ${styles.full}` : `${styles.eventCard}`
+                                    ): (
+                                        event.attendees.some(attendee => attendee.username === currentUser?.username) ? 
+                                                `${styles.eventCard} ${styles.joinedEnded}` : 
+                                                `${styles.eventCard} ${styles.ended}`
+                                    )}>                                   
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
                                             icon={faLock}
@@ -398,6 +455,23 @@ const MainFeed = () => {
                                                 </div>
                                         )}
                                     </div>
+                                    {event.status === "ENDED" && (
+                                    <div className={styles.eventRatings}>
+                                        <EventRatingStars eventId={event.id} />
+                                        <div className={styles.averageRating}>
+                                            {event.reviews.length > 0
+                                                ? (
+                                                    (
+                                                        event.reviews.map(review => review.rating)
+                                                        .reduce((acc, curr) => acc + curr, 0) / event.reviews.length
+                                                    ).toFixed(1)
+                                                )
+                                                : "0.0"
+                                            }
+                                            <p>({event.reviews.length})</p>
+                                        </div>
+                                    </div>
+                                    )}
                                     <div className={styles.eventActions}>
                                     <div className={styles.buttonGroup} data-tooltip-id="event_like" data-tooltip-content="Like">
                                         <FontAwesomeIcon 
@@ -425,7 +499,7 @@ const MainFeed = () => {
                                         <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
                                     </div>
                                 </div>
-                                { ( !(event.organizer?.username === currentUser?.username ||
+                                {event.status !== "ENDED" && ( !(event.organizer?.username === currentUser?.username ||
                                     event.attendees.some(element => element.username === currentUser?.username)) && event.status !== 'FULL' )&&
                                     <button
                                         disabled={isDisabled(event)}

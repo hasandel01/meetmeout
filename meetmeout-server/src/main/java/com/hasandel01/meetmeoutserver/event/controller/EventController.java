@@ -4,6 +4,7 @@ package com.hasandel01.meetmeoutserver.event.controller;
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.event.model.Review;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import jakarta.validation.Valid;
@@ -65,8 +66,18 @@ public class EventController {
     }
 
 
+    @PutMapping("/update-event/{eventId}")
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable long eventId, @Validated @RequestBody EventDTO eventDTO) {
+        try {
+            return ResponseEntity.ok(eventService.updateEvent(eventId, eventDTO));
+        }catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
     @PostMapping("/update/event-picture/{eventId}")
-    public ResponseEntity<Void> updateEventPicture(@PathVariable long eventId, @RequestParam MultipartFile file) {
+    public ResponseEntity<String> updateEventPicture(@PathVariable long eventId, @RequestParam MultipartFile file) {
 
         try {
             return ResponseEntity.ok(eventService.updateEventPicture(eventId,file));
@@ -125,7 +136,7 @@ public class EventController {
     }
 
     @PostMapping("/add-review/{eventId}")
-    public ResponseEntity<Void> addReview(@Valid @PathVariable long eventId, @RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<ReviewDTO> addReview(@Valid @PathVariable long eventId, @RequestBody ReviewDTO reviewDTO) {
         try {
             return ResponseEntity.ok(eventService.addReviewToEvent(eventId, reviewDTO));
         }catch (RuntimeException e) {
@@ -133,12 +144,22 @@ public class EventController {
         }
     }
 
-    @DeleteMapping("/delete-review/{eventId}")
-    public ResponseEntity<Void> deleteReview(@PathVariable long eventId) {
+    @DeleteMapping("/delete-review/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable long reviewId) {
         try {
-            return ResponseEntity.ok(eventService.deleteReviewFromEvent(eventId));
+            return ResponseEntity.ok(eventService.deleteReviewFromEvent(reviewId));
         }catch (RuntimeException e) {
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+
+    @PutMapping("/update-review/{reviewId}")
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable long reviewId, @RequestBody ReviewDTO newReview) {
+        try {
+            return ResponseEntity.ok(eventService.updateReview(reviewId,newReview));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -221,4 +242,23 @@ public class EventController {
         }
     }
 
+    @PostMapping("/upload-photos/{eventId}")
+    public ResponseEntity<Set<String>> uploadPhotos(@Valid MultipartFile[] files, @PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(eventService.uploadPhotos(files,eventId));
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/average-rating/{eventId}")
+    public ResponseEntity<Double> getAverageRatingForEvent(@PathVariable long eventId) {
+        try {
+
+            return ResponseEntity.ok(eventService.getAverageRating(eventId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

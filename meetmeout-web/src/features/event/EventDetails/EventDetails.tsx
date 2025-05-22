@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
 import styles from './EventDetails.module.css'
-import { faCalendar, faLocationDot, faPenToSquare, faRightFromBracket, faStar, faTrash} from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faPenToSquare, faRightFromBracket, faStar, faTrash, faUserPlus, faImage} from "@fortawesome/free-solid-svg-icons";
 import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
@@ -20,6 +20,7 @@ import RequesterContainerModal from "./RequesterContainerModal/RequesterContaine
 import { useProfileContext } from "../../../context/ProfileContext";
 import Chat from "./Chat/Chat";
 import CompanionsContainerModal from "./CompanionsContainerModal/CompanionContainerModal";
+import { Review } from "../../../types/Like";
 
 const EventDetails = () => {
 
@@ -38,6 +39,26 @@ const EventDetails = () => {
   const [showAllAttendees, setShowAllAttendees] = useState(false);
   const [showAllRequests, setShowAllRequests] = useState(false);
   const {goToUserProfile} = useProfileContext();
+  const [review, setReview] = useState<Review>({
+    review: 0,
+    reviewer: currentUser ?? {
+      id: 0,
+      username: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      profilePictureUrl: '',
+      phone: '',
+      about: '',
+      companions: []
+    },
+    title: '',
+    content: '',
+    updatedAt: '',
+    rating: 0
+  });
+
+
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentText, setEditedCommentText] = useState<string>('');
@@ -88,6 +109,7 @@ const EventDetails = () => {
              endLongitude: 0,
              feeDescription: '',
              routeType: '',
+             eventPhotoUrls: []
          });
     
     const [weather, setWeather] = useState<Weather | null>(null);
@@ -348,10 +370,130 @@ const EventDetails = () => {
       }
     }
 
+  const uploadEventPhotos = async (eventId: number, photos: File[]) => {
+    const formData = new FormData();
+    photos.forEach(photo => {
+      formData.append('files', photo);
+    });
+
+    try {
+      const response = await axiosInstance.post(`/upload-photos/${eventId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      setEvent(prev => ({
+        ...prev,
+        eventPhotoUrls: [...prev.eventPhotoUrls, ...response.data]
+      }));
+      toast.success("Photos uploaded successfully!");
+    } catch (error) {
+      toast.error("Error uploading photos.");
+    }
+  }
+
+  const handleAddReview = async () => {
+
+    try {
+      const response = await axiosInstance.post(`/add-review/${event.id}`, review);
+
+      setEvent(prev => ({
+        ...prev,
+        reviews: [...prev.reviews, response.data]
+      }))
+
+      if(currentUser) {
+        setReview({
+          reviewId: 0,
+          reviewer: currentUser,
+          title: '',
+          content: '',
+          updatedAt: '',
+          rating: 0
+        });
+      }
+
+    } catch(error) {
+      toast.error("Error adding review.");
+    }
+
+    }
+
+    const handleDeleteReview = async (review: Review) => {
+      try {
+
+       await axiosInstance.delete(`/delete-review/${review.reviewId}`);
+        
+        setEvent(prev => ({
+          ...prev,
+          reviews: prev.reviews.filter(r => r.reviewId !== review.reviewId)
+        }))
+
+      }catch(error) {
+        toast.error("Error deleting review.");
+      }
+    }
+
+    const handleEditReview = async (review: Review) => {
+      try {
+
+        const response = await axiosInstance.put(`/update-review/${review.reviewId}`, review);
+
+        setEvent(prev => ({
+          ...prev,
+          reviews: prev.reviews.map(r => r.reviewId === review.reviewId ? response.data : r)
+        }))
+
+
+      }catch(error) {
+        toast.error("Error editing review.");
+      }
+
+    }
+
+
+    const areReviewConditionsSatisfied = () => {
+      const isAttendee = event.attendees.some(attendee => attendee.username === currentUser?.username);
+      const hasNotReviewed = !event.reviews.some(r => r.reviewer.username === currentUser?.username);
+      const isEventEnded = event.status === "ENDED";
+
+      return isAttendee && hasNotReviewed && isEventEnded;
+    }
+
   return (
     <div className={styles.eventContainer}>
       {isUserAllowed ? (
         <>
+        <>
+            {areReviewConditionsSatisfied() && (
+              <div className={styles.reviewPopup}>
+                <h4>Review</h4>
+                <p>Please share your thoughts about the event.</p>
+                <div className={styles.reviewStars}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <FontAwesomeIcon
+                      key={star}
+                      icon={faStar}
+                      className={styles.starIcon}
+                      onClick={() => setReview({ ...review, rating: star })}
+                      style={{ color: review?.rating >= star ? "gold" : "gray" }}
+                    />
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  placeholder="Title"
+                  value={review?.title}
+                  onChange={(e) => setReview({ ...review, title: e.target.value })}
+                />
+                <textarea
+                  placeholder="Write your review here..."
+                  value={review?.content}
+                  onChange={(e) => setReview({ ...review, content: e.target.value })}
+                ></textarea>
+                <button onClick={() => handleAddReview()}>Submit Review</button>
+              </div>
+            )}
           <div className={styles.attendees} >
                   <h4>Attendees</h4>
                       <ul>
@@ -400,6 +542,63 @@ const EventDetails = () => {
                       }                      
                 </div>
                 <div className={styles.eventCardAndComment}>
+                  <div className={styles.eventHeader}>
+                                          {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
+                                            (
+                                            <div className={styles.secondButtonGroup}>
+                                            {event.status !== "ENDED" &&
+                                                    <>
+                                                    <FontAwesomeIcon
+                                                            data-tooltip-id="invite-icon"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                showUsersToInvite()
+                                                            }}
+                                                            className={styles.inviteButton} 
+                                                            icon={faUserPlus} size="2x" />
+                                                          {showInviteModal && <CompanionsContainerModal
+                                                              joinRequests={joinRequests}
+                                                              event = {event}
+                                                              onClose={() => setShowInviteModal(false)}></CompanionsContainerModal>}
+                                                        <Tooltip id="invite-icon" />
+                                                        <span data-tooltip-id="invite-icon" data-tooltip-content="Invite Friends"></span>
+                                                    </> 
+                                              }
+                                              {(event.organizer?.username === currentUser?.username )? (
+                                                  <>
+                                                  {event.status !== "ENDED" && 
+                                                    <FontAwesomeIcon
+                                                        onClick={(e) => {
+                                                          e.stopPropagation();
+                                                          navigate(`/update-event/${event.id}`)
+                                                        }}
+                                                        className={styles.editButton} 
+                                                        icon={faPenToSquare} size="2x" />
+                                                  }
+                                                  <FontAwesomeIcon 
+                                                        onClick={(e) => {
+                                                          e.stopPropagation();
+                                                          handleLeaveEvent()
+                                                        }}
+                                                        className={styles.editButton} 
+                                                        icon={faTrash} size="2x" />
+                                                  </>
+                                                  )
+                                                  : ( 
+                                                  <>
+                                                    <FontAwesomeIcon className={styles.editButton} icon={faRightFromBracket} size="2x" />
+                                                  </>
+                                                  ) }
+                                              </div>
+                                                ) : (
+                                                <button disabled={isDisabled(event)}
+                                                  onClick={() => handleJoinEvent(event.id)} 
+                                                  className={styles.joinButton}>
+                                                  Join Event 
+                                                </button> 
+
+                                            )}
+                  </div>
                   <div className={styles.eventCardAndWeatherAPI}>
                     <div className={styles.eventCard}> 
                         <div className={styles.firstColumn}>
@@ -486,46 +685,6 @@ const EventDetails = () => {
                                                   <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
                                               </div>
                                           </div>                     
-                                            
-                                            {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
-                                            (
-                                            <div className={styles.secondButtonGroup}>
-                                              <button className={styles.inviteButton} onClick={(e) => {
-                                                e.stopPropagation()
-                                                showUsersToInvite()
-                                              }}>
-                                                  Send Invite
-                                              </button>
-                                              {showInviteModal && <CompanionsContainerModal
-                                                      joinRequests={joinRequests}
-                                                      event = {event}
-                                                      onClose={() => setShowInviteModal(false)}></CompanionsContainerModal>}
-                                              <button className={styles.deleteButton} onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleLeaveEvent()
-                                                }}>
-                                              {(event.organizer?.username === currentUser?.username )? (
-                                                  <>
-                                                  <FontAwesomeIcon icon={faTrash} size="2x" />
-                                                  <label> Delete Event </label>
-                                                  </>
-                                                  )
-                                                  : ( 
-                                                  <>
-                                                    <FontAwesomeIcon icon={faRightFromBracket} size="2x" />
-                                                    <label> Leave Event </label>
-                                                  </>
-                                                  ) }
-                                                  </button>
-                                              </div>
-                                                ) : (
-                                                <button disabled={isDisabled(event)}
-                                                  onClick={() => handleJoinEvent(event.id)} 
-                                                  className={styles.joinButton}>
-                                                  Join Event 
-                                                </button> 
-
-                                            )}
                               </div>
                         </div>
                         <div className={styles.commentContainer}>
@@ -537,7 +696,7 @@ const EventDetails = () => {
                                                     const timeB = new Date(b.sentAt);
                                                     return timeA.getTime() - timeB.getTime()
                                                   })
-                                                  .map((comment,index) => (
+                                                  .map(comment => (
                                                       <li className={styles.commentItem}>
                                                             <div className={styles.commentHeader}>
                                                               <div className={styles.senderInfo}>
@@ -600,8 +759,89 @@ const EventDetails = () => {
                                   </div>
                           </div>
                 </div>
-                <Chat eventId={event.id}></Chat>   
+                <div>
+                  <Chat eventId={event.id}></Chat>
+                  <div className={styles.reviewContainer}>
+                    <h4> Reviews</h4>
+                    {event.reviews.map((review, index) => ( 
+                      <div key={index} className={styles.reviewItem}>
+                        <div className={styles.reviewHeader}>
+                          <div className={styles.senderInfo}>
+                            <img src={review.reviewer.profilePictureUrl} alt="User Avatar" />
+                            <span className={styles.username}>{review.reviewer.username}</span>
+                          </div>
+                          <span className={styles.timestamp}>{formatTime(review.updatedAt)}</span>
+                        </div>
+                        <div className={styles.reviewContent}>
+                          <h5>{review.title}</h5>
+                          <p>{review.content}</p>
+                          <div className={styles.reviewStars}>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <FontAwesomeIcon
+                                key={star}
+                                icon={faStar}
+                                className={styles.starIcon}
+                                style={{ color: review.rating >= star ? "gold" : "gray" }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                        {review.reviewer.username === currentUser?.username && (
+                          <div className={styles.reviewActions}>
+                            <FontAwesomeIcon
+                              icon={faPenToSquare}
+                              className={styles.actionIcon}
+                              onClick={() => handleEditReview(review)}
+                              title="Edit"
+                            />
+                            <FontAwesomeIcon
+                              icon={faTrash}
+                              className={styles.actionIcon}
+                              onClick={() => handleDeleteReview(review)}
+                              title="Delete"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}  
+            </div>
+          </div>
+
         </> 
+        <>  
+            {event.status === "ENDED" && 
+              <div className={styles.photoUploadContainer}>
+                <h4>Upload Photos</h4>
+                <input
+                  type="file"
+                  id="event-photo-upload"
+                  style={{ display: "none" }}
+                  multiple
+                  accept="image/*"
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      await uploadEventPhotos(event.id, Array.from(e.target.files));
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <FontAwesomeIcon icon={faImage} /> Resim Yükle
+                <label htmlFor="event-photo-upload" style={{ cursor: "pointer" }}>
+                  <span>Click to upload photos</span>
+                </label>
+                <p>Upload photos of the event here. You can upload multiple photos at once.</p>
+              </div>
+            }      
+                  <div className={styles.photoContainer}>
+                    <h4>Photos</h4>
+                    <div className={styles.photoGrid}>
+                      {event.eventPhotoUrls && event.eventPhotoUrls.map((url, index) => (
+                        <img key={index} src={url} alt={`Photo ${index + 1}`} />
+                      ))}
+                    </div>
+                  </div>
+          </>
+        </>
       )
       : (
         <div>

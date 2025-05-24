@@ -1,0 +1,286 @@
+.eventCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    border-radius: 18px;
+    margin: 20px 60px;
+    background-color: var(--card-color);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--primary-color-dark);
+    cursor: pointer;
+    width: 420px;
+    height: 420px;
+    gap: 10px;
+}
+
+.eventCard.full {
+    opacity: 0.75;
+    background-color: #fcf6e4;}
+
+.eventCard.ended {
+    filter: grayscale(100%);
+    background-color: #f3f4f6;
+}
+
+.eventCard img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.eventCard h2 {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.eventCard p {
+    font-size: 12px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 2px;
+}
+
+.eventCard:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+
+.eventTitle {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 10px;
+}
+
+.eventTitle h2 {
+    font-size: 14px;
+    margin: 0;
+}
+
+.eventCategory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: #00796b solid 1px;
+    color: #00796b;
+}
+
+/* EVENT TIME, DATE & LOCATION */
+
+
+.eventDetailsInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: first baseline;
+    gap: 10px;
+}
+
+.eventTimeDate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.eventTimeDate span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.eventLocation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon {
+    font-size: 18px;
+    color: var(--primary-color-dark);
+    margin: 0;
+}
+
+p {
+    margin: 0;
+    font-size: 12px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    width: 260px;
+    height: 50px;
+}
+
+.tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+    gap: 5px;
+}
+
+.tags span {
+    background-color: #cfeed0;
+    border: 1px solid green;
+    border-radius: 6px;
+    padding: 1px 2px;
+    font-size: 12px;
+    color: green;
+    font-weight: bold;
+}
+
+/** EventStatus **/
+
+.eventStatus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    padding: 2px 4px;
+    font-size: 12px;
+    color: var(--error-color);
+    margin-top: 10px;
+}
+
+.eventStatus.ONGOING {
+    background-color: rgb(83, 201, 83);
+    color: white;
+}
+
+.eventStatus.FULL {
+    background-color: #e99e2f;
+    color: white;
+}
+
+.eventStatus.ENDED {
+    background-color: #8d8c8a;
+    color: white;
+}
+
+
+.eventStatusDraft {
+    color: var(--card-color)
+}
+
+.joinedEnded{
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  box-shadow: none;
+  opacity: 1;
+  filter: none;
+}
+
+/* EVENT BUTTON */
+
+.eventActions {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: end;
+    gap: 24px;
+}
+
+.buttonGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #ffffff;
+    padding: 6px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.buttonGroup:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+}
+
+.heartIcon {
+    color: #e53935;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.commentIcon {
+    color: #1976d2;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.buttonGroup span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+
+.joinButton {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 4px;
+    margin-top: 10 px;
+    transition: background-color 0.2s;
+}
+
+.joinButton:disabled {
+    background-color: grey;
+    cursor: default;
+}
+.joinButton:disabled:hover {
+    background-color: grey;
+}
+
+.joinButton:hover {
+    background-color: #388e3c;
+}
+
+.eventOrganizer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.eventOrganizer img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.eventOrganizer p {
+    color: #333;
+    text-align: center;
+    margin: 0;
+}
+
+.lockIcon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}

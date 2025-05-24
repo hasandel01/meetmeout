@@ -5,6 +5,7 @@
     color: var(--primary-color-dark);
     align-items: center;
     padding: 10px;
+    border-right: 1px solid var(--primary-color-dark);
 }
 
 .attendees label {

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import { faCalendar, faLocationDot, faLock} from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import styles from "./../MainFeed.module.css";
+import styles from "./EventCard.module.css";
 import { Tooltip } from "react-tooltip";
 import { Event } from "../../../types/Event";
 import { User } from "../../../types/User";
@@ -51,14 +51,14 @@ lng
       const navigate = useNavigate();
 
     return (
-     <div key={event.id} onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>
-                                <div className={event.status !== "ENDED" ? (
+        <div className={event.status !== "ENDED" ? (
                                                 isEventFull(event) ? `${styles.eventCard} ${styles.full}` : `${styles.eventCard}`
                                     ): (
                                         event.attendees.some(attendee => attendee.username === currentUser?.username) ? 
                                                 `${styles.eventCard} ${styles.joinedEnded}` : 
                                                 `${styles.eventCard} ${styles.ended}`
-                                    )}>                                   
+                                    )}
+                                    onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>                                   
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
                                             icon={faLock}
@@ -178,8 +178,7 @@ lng
                                                 "Request sent!" :  "Send Join Request!" )
                                         ): "Join" }
                                     </button> }
-                                </div>
-                            </div>     
+        </div>
     )       
 }
 

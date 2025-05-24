@@ -18,6 +18,7 @@ import EventComments from "./EventComments/EventComments";
 import EventParticipants from "./EventParticipants/EventParticipants";
 import EventHeader from "./EventHeader/EventHeader";
 import EventDetailsCard from "./EventCard/EvetCard";
+import EventPhotos from "./EventPhotos/EventPhotos";
 
 const EventDetails = () => {
 
@@ -35,24 +36,23 @@ const EventDetails = () => {
   const [showAllAttendees, setShowAllAttendees] = useState(false);
   const [showAllRequests, setShowAllRequests] = useState(false);
   const {goToUserProfile} = useProfileContext();
-  const [review, setReview] = useState<Review| undefined>(undefined);
-
-
+  const [currentTab, setCurrentTab] = useState<number>(1);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentText, setEditedCommentText] = useState<string>('');
 
-  const handleLocationClick = () => {
-    navigate("/", {
-      state: {
-        flyTo: {
-          lat: event.latitude,
-          lng: event.longitude,
+    const [review, setReview] = useState<Review| null>(null);
+
+
+        const handleLocationClick = () => {
+          navigate("/", {
+            state: {
+              flyTo: {
+                lat: event.latitude,
+                lng: event.longitude,
+              }
+            }
+          })
         }
-      }
-    })
-  }
-
-
       const [event, setEvent] = useState<Event>({
              id: 0,
              title: '',
@@ -201,7 +201,7 @@ const EventDetails = () => {
           updatedAt: '',
         };
 
-      const response = await axiosInstance.post(`/add-comment/${eventId}`, newComment)
+      const response = await axiosInstance.post(`/comment/${eventId}`, newComment)
     
       setEvent(prev => ({
         ...prev,
@@ -237,7 +237,7 @@ const EventDetails = () => {
 
 
       try {
-        await axiosInstance.delete(`/delete-comment/${commentId}`);
+        await axiosInstance.delete(`/comment/${commentId}`);
         setEvent(prev => ({
           ...prev,
           comments: prev.comments.filter(comment => comment.commentId !== commentId)
@@ -261,7 +261,7 @@ const EventDetails = () => {
 
     const handleUpdateComment = async (commentId: number, updatedComment: string) => {
       try {
-        await axiosInstance.put(`/update-comment/${commentId}`, { 
+        await axiosInstance.put(`/comment/${commentId}`, { 
           commentId: commentId,
           comment: updatedComment,
           eventId: event.id,
@@ -307,7 +307,7 @@ const EventDetails = () => {
   const handleAddReview = async () => {
 
     try {
-      const response = await axiosInstance.post(`/add-review/${event.id}`, review);
+      const response = await axiosInstance.post(`/review/${event.id}`, review);
 
       setEvent(prev => ({
         ...prev,
@@ -387,16 +387,15 @@ const EventDetails = () => {
                       icon={faStar}
                       className={styles.starIcon}
                       onClick={() => {
-                        if (review) {
-                          setReview({
-                            reviewId: review.reviewId,
-                            reviewer: review.reviewer,
-                            content: review.content,
-                            updatedAt: review.updatedAt,
-                            rating: star
-                          });
-                        }
-                      }}
+                            if (!currentUser) return;
+                            setReview(prev => ({
+                              reviewId: prev?.reviewId || 0,
+                              reviewer: prev?.reviewer || currentUser,
+                              content: prev?.content || "",
+                              updatedAt: prev?.updatedAt || "",
+                              rating: star
+                            }));
+                          }}
                       style={{ color: (review?.rating ?? 0) >= star ? "gold" : "gray" }}
                     />
                   ))}
@@ -431,85 +430,65 @@ const EventDetails = () => {
                 goToUserProfile={goToUserProfile}
               />
               )}
-
-                <div className={styles.eventCardAndComment}>
-                  {currentUser &&
-                  ( <EventHeader
-                    event={event}
-                    currentUser={currentUser}
-                    joinRequests={joinRequests}
-                  />
-                    )
-                  }
-                        <EventDetailsCard
-                              event={event}
-                              weather={weather}
-                              currentUser={currentUser ?? null}
-                              options={options}
-                              handleLocationClick={handleLocationClick}
-                              handleLike={handleLike}
-                            />
-                        <EventComments
-                          comments={event.comments}
-                          currentUser={currentUser}
-                          eventId={event.id}
-                          commentText={commentString}
-                          setCommentText={setCommentString}
-                          handleAddComment={handleAddComment}
-                          handleEditComment={handleEditComment}
-                          handleDeleteComment={handleDeleteComment}
-                          editingCommentId={editingCommentId}
-                          editedCommentText={editedCommentText}
-                          setEditingCommentId={setEditingCommentId}
-                          setEditedCommentText={setEditedCommentText}
-                          saveEditedComment={saveEditedComment}
-                        />
-                </div>
-                <div>
-                  <Chat eventId={event.id}></Chat>
-                  {currentUser && (
-                    <EventReviews
-                      reviews={event.reviews}
+                <div className={styles.eventDetailsContainer}>
+                    {currentUser &&
+                    ( <EventHeader
+                      event={event}
                       currentUser={currentUser}
-                      handleDeleteReview={handleDeleteReview}
-                      handleEditReview={handleEditReview}
+                      joinRequests={joinRequests}
+                      setCurrentTab={setCurrentTab}
+                      uploadEventPhotos={uploadEventPhotos}
                     />
-                  )}
-          </div>
-        </> 
-        <>  
-            {event.status === "ENDED" && 
-              <div className={styles.photoUploadContainer}>
-                <h4>Upload Photos</h4>
-                <input
-                  type="file"
-                  id="event-photo-upload"
-                  style={{ display: "none" }}
-                  multiple
-                  accept="image/*"
-                  onChange={async (e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                      await uploadEventPhotos(event.id, Array.from(e.target.files));
-                      e.target.value = "";
+                      )
                     }
-                  }}
-                />
-                <FontAwesomeIcon icon={faImage} /> Resim Yükle
-                <label htmlFor="event-photo-upload" style={{ cursor: "pointer" }}>
-                  <span>Click to upload photos</span>
-                </label>
-                <p>Upload photos of the event here. You can upload multiple photos at once.</p>
-              </div>
-            }      
-                  <div className={styles.photoContainer}>
-                    <h4>Photos</h4>
-                    <div className={styles.photoGrid}>
-                      {event.eventPhotoUrls && event.eventPhotoUrls.map((url, index) => (
-                        <img key={index} src={url} alt={`Photo ${index + 1}`} />
-                      ))}
+                    {currentTab === 1 &&
+                    <div className={styles.eventCardAndChat}>
+                      <div className={styles.eventCardAndComments}>
+                          <EventDetailsCard
+                                event={event}
+                                weather={weather}
+                                currentUser={currentUser ?? null}
+                                options={options}
+                                handleLocationClick={handleLocationClick}
+                                handleLike={handleLike}
+                              />
+                          <EventComments
+                            comments={event.comments}
+                            currentUser={currentUser}
+                            eventId={event.id}
+                            commentText={commentString}
+                            setCommentText={setCommentString}
+                            handleAddComment={handleAddComment}
+                            handleEditComment={handleEditComment}
+                            handleDeleteComment={handleDeleteComment}
+                            editingCommentId={editingCommentId}
+                            editedCommentText={editedCommentText}
+                            setEditingCommentId={setEditingCommentId}
+                            setEditedCommentText={setEditedCommentText}
+                            saveEditedComment={saveEditedComment}
+                          />
+                      </div>
+                        <Chat eventId={event.id}></Chat>
                     </div>
-                  </div>
-          </>
+                    }
+                    {currentTab === 3 && (
+                      <div className={styles.reviewsAndPhotos}>
+                        {currentUser && (
+                          <EventReviews
+                            reviews={event.reviews}
+                            currentUser={currentUser}
+                            handleDeleteReview={handleDeleteReview}
+                            handleEditReview={handleEditReview}
+                          />
+                        )}
+                        <EventPhotos
+                          event={event}
+                        />
+                      </div>
+                    )}
+                </div>
+            </> 
+
         </>
       )
       : (

@@ -1,17 +1,32 @@
 .eventHeader {
     display: flex;
     flex-direction: row;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 10px;
+    padding: 10px 20px;
     background-color: var(--background-color);
-    margin-top: 40px;
-    margin-left: 30px;
-    height: 50px;
-    width: 50vw;
-    border: 1px solid var(--primary-color-dark);
+    height: 5vh;
+    width: 90vw;
+    border-bottom: 1px solid var(--primary-color-dark);
 }
 
+.eventTab {
+    display: flex;
+    flex-direction: row;
+    padding: 5px 10px;
+    gap: 50px;
+}
+
+.eventTab label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary-color-dark);
+}
+
+.eventTab label:hover {
+    background-color: var(--primary-color-light);
+    cursor: pointer;
+}
 
 
 .secondButtonGroup {

@@ -85,8 +85,11 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
                                 }
                                 }}
                                 required
+                                onKeyDown={(e) => {
+                                    if(e.key === 'Enter')
+                                        sendMessage()
+                                }}
                             />
-                            <button onClick={sendMessage}> Send </button>
                         </div>
                     </div>             
               </div>  

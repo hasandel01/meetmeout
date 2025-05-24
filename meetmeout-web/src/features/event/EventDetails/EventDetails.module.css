@@ -3,6 +3,22 @@
     flex-direction: row;
 }
 
+.eventDetailsContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.eventCardAndChat {
+    display: flex;
+    flex-direction: row;
+}
+
+.reviewsAndPhotos {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
 /** REVIEW **/
 
 .reviewPopup {
@@ -19,56 +35,15 @@
     z-index: 1000;
 }
 
-
- 
-/** CHAT MESSAGE */
-
-.chatContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: white;
-    width: 30vw;
-    height: 70vh;
-    margin: 30px;
-    border-radius: 10px;
-    padding: 10px;
-    border: 1px solid var(--primary-color-dark);
+.reviewStars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
 }
 
-.chatMessage {
-    display: flex;
-    flex-direction: row;
-    gap: 14px;
-}
-
-.chatMessage img {
-    object-fit: cover;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-}
-
-.sendChatMessageContainer {
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-    bottom: 20px;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.sendChatMessageContainer input {
-    width: 300px;
-}
-
-.sendChatMessage {
-    position: absolute;
-    display: flex;
-    flex-direction: row;
-
+.starIcon {
+  font-size: 20px;
+  cursor: pointer;
 }
 
 /** INVITE MODAL */

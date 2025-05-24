@@ -87,7 +87,7 @@ const CreateEventForm = () => {
     const [selectedImageFile, setSelectedImageFile] = useState<File | null>();
     
     const [event, setEvent] = useState<Event>({
-        id: 1,
+        id: 999,
         title: '',
         description: '',
         startDate: '',

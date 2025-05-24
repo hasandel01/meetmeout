@@ -11,15 +11,17 @@ import { useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 import axiosInstance from "../../../../axios/axios";
 import { useState } from 'react';
-
+import { faImage } from "@fortawesome/free-solid-svg-icons";
 
 interface EventHeaderProps {
   event: Event;
   currentUser: User;
   joinRequests: JoinRequest[];
+  setCurrentTab: (val: number) => void;
+  uploadEventPhotos: (eventId: number, photos: File[]) => Promise<void>;
 }
 
-const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinRequests }) => {
+const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinRequests, setCurrentTab, uploadEventPhotos }) => {
 
     const navigate = useNavigate();
       const [showInviteModal, setShowInviteModal] = useState(false);
@@ -68,6 +70,31 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
 
     return (
         <div className={styles.eventHeader}>
+            <div className={styles.eventTab}>
+                <label onClick={() => setCurrentTab(1)}>Info</label>
+                <label onClick={() => setCurrentTab(2)}>Route</label>
+                <label onClick={() => setCurrentTab(3)}>Reviews & Photos</label>
+            </div>
+            {event.status === "ENDED" && 
+              <div className={styles.photoUploadContainer}>
+                <input
+                  type="file"
+                  id="event-photo-upload"
+                  style={{ display: "none" }}
+                  multiple
+                  accept="image/*"
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      await uploadEventPhotos(event.id, Array.from(e.target.files));
+                      e.target.value = "";
+                    }
+                  }}
+                />
+                <label htmlFor="event-photo-upload" style={{ cursor: "pointer" }}>
+                    <FontAwesomeIcon icon={faImage} /> Upload Photos
+                </label>
+              </div>
+            }  
             {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
                 (
                 <div className={styles.secondButtonGroup}>

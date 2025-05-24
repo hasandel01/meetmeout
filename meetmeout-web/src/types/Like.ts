@@ -19,7 +19,6 @@ export interface Comment {
 export interface Review {
     reviewId: number;
     reviewer: User;
-    title: string;
     content: string;
     updatedAt: string;
     rating: number;

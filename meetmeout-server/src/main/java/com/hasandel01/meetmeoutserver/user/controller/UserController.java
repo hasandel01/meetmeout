@@ -17,38 +17,23 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getMe() {
-        try {
-            return ResponseEntity.ok(userService.getMe());
-        }catch(RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(userService.getMe());
     }
 
-    @PostMapping("update/profile-picture")
+    @PutMapping("/me/profile-picture")
     public ResponseEntity<String> updateProfilePicture(@RequestParam(name = "profilePicture") MultipartFile file) {
-        try {
-            return ResponseEntity.ok(userService.updateProfilePicture(file));
-        }catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(userService.updateProfilePicture(file));
     }
 
     @GetMapping("/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
-        try {
-            return ResponseEntity.ok(userService.getUserByUsername(username));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(userService.getUserByUsername(username));
     }
 
     @PostMapping("/me/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
-        try {
-            return ResponseEntity.ok(userService.updateMe(userDTO));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(userService.updateMe(userDTO));
     }
+
 
 }

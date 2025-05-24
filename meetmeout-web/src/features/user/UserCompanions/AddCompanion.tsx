@@ -14,7 +14,7 @@ const AddCompanion = () => {
 
     const getAllUsers = async () => {
         try {
-            const response = await axiosInstance.get(`/get-possible-friends`);
+            const response = await axiosInstance.get(`/companions/possible`);
             setUsers(response.data);
         } catch (error) {
         }
@@ -22,7 +22,7 @@ const AddCompanion = () => {
 
     const handleAddCompanion = async (receiverEmail: string) => {
         try {
-            await axiosInstance.post(`/add-a-companion/${encodeURIComponent(receiverEmail)}`,
+            await axiosInstance.post(`/companions/${encodeURIComponent(receiverEmail)}`,
                 null);
             
             toast.info("Companion request sent!");

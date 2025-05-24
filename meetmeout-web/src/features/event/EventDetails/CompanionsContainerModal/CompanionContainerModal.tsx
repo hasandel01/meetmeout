@@ -36,7 +36,7 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
 
     const sendInvitationLink = async (eventId: number) => {
         try {
-        await axiosInstance.post(`/send-invitation/${eventId}`, invitedUsers);
+        await axiosInstance.post(`/events/${eventId}/invite`, invitedUsers);
             toast.success(invitedUsers.length === 1 ? "Invitation is sent" : "Invitations are sent")
         } catch(error) {
             toast.error("Error while sending invitation.")

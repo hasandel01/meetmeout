@@ -16,7 +16,7 @@ const MyCalendar = () => {
     const [events, setEvents] = useState<Event[] | null>([]);
 
     const getMyEvents = async () => {
-        return axiosInstance.get("/get-my-events")
+        return axiosInstance.get("/events/mine")
         .then(res => setEvents(res.data))
         .catch(() => toast.error("Error getting events."));
     };

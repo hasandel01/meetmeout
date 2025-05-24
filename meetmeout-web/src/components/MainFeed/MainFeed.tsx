@@ -28,7 +28,7 @@ const EventRatingStars = ({ eventId }: { eventId: number }) => {
     useEffect(() => {
         const fetchAverageRating = async () => {
             try {
-                const response = await axiosInstance.get(`/average-rating/${eventId}`);
+                const response = await axiosInstance.get(`/events/${eventId}/average-rating`);
                 if (response.status === 200) {
                     setAverage(response.data);
                 } else {
@@ -90,19 +90,19 @@ const MainFeed = () => {
     }, []);
 
     const getEvents = async () => {
-        return axiosInstance.get("/get-events")
+        return axiosInstance.get("/events")
         .then(res => setEvents(res.data))
         .catch(() => toast.error("Error getting events."));
     };
 
     const getInvitations = async () => {
-        return axiosInstance.get("/get-invitations")
+        return axiosInstance.get("/events/invitations")
             .then(res => setInvitations(res.data))
             .catch(() => toast.error("Error getting invitations"));
     };
 
     const getRequestSentEvents = async () => {
-        return axiosInstance.get("/get-request-sent-events")
+        return axiosInstance.get("/events/request-sent")
             .then(res => setRequestSentEvents(res.data))
             .catch(() => toast.error("Error getting request sent events."));
     };
@@ -204,7 +204,7 @@ const MainFeed = () => {
 
         try {
 
-            const response = await axiosInstance.post(`/join-event/${eventId}`);
+            const response = await axiosInstance.post(`/events/${eventId}/join`);
 
             if(response.status === 200) {
                 navigate(`/event/${eventId}`)
@@ -249,7 +249,7 @@ const MainFeed = () => {
         );
       
         try {
-          await axiosInstance.post(`/like-event/${eventId}`);
+          await axiosInstance.post(`/events/${eventId}/like`);
         } catch (error) {
           setEvents(prevEvents =>
             prevEvents?.map(ev => {
@@ -274,23 +274,6 @@ const MainFeed = () => {
         }
       };
 
-    const getAverageRating = async (eventId: number): Promise<number> => {
-        
-        try {
-            const response = await axiosInstance.get(`/average-rating/${eventId}`);
-
-            if(response.status === 200) {
-                return response.data;
-            }
-            else {
-                toast.error("Error getting average rating");
-                return 0;
-            }
-        } catch(error) {
-            toast.error("Error getting average rating");
-            return 0;
-        }
-    }
 
     const globalFilterFunction = () => {
     

@@ -13,10 +13,9 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
-    const url = `wss://192.168.1.33:8443/ws?token=${token}`;
 
     const client = new Client({
-      webSocketFactory: () => new WebSocket(url), // 🧠 native WebSocket 
+      brokerURL: `wss://192.168.1.34:8443/ws?token=${token}`,
       debug: (msg) => console.log('🐛 STOMP DEBUG:', msg),
       reconnectDelay: 5000,
       onConnect: () => {

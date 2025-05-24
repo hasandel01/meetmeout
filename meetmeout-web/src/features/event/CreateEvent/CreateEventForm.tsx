@@ -12,7 +12,6 @@ import { useNavigate } from 'react-router-dom';
 import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder, faMoneyBill, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
 import { RouteType } from '../../../types/RouteType';
-import { add } from 'date-fns';
 
 
 const isStartDateAndEndDateSame = (event: Event): boolean => {
@@ -186,7 +185,7 @@ const CreateEventForm = () => {
                     formData.append("eventImage", selectedImageFile);
                 }
     
-                    const response = await axiosInstance.post("/create-event", formData, {
+                    const response = await axiosInstance.post("/events", formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }

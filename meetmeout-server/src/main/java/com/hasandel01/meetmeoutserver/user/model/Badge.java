@@ -1,10 +1,7 @@
 package com.hasandel01.meetmeoutserver.user.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -30,7 +27,9 @@ public class Badge {
 
     private String iconUrl;
 
-    @ManyToMany(mappedBy = "badges")
+    @ManyToMany(mappedBy = "badges", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<User> holders = new HashSet<>();
 
     @CreatedDate

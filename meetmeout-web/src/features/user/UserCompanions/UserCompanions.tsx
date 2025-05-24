@@ -22,7 +22,7 @@ const UserCompanions = () => {
 
         const getRequestSentUsers = async () => {
             try {
-                const response = await axiosInstance.get(`/get-request-sent-users`);
+                const response = await axiosInstance.get(`/companions/request-sent`);
                 setRequestSentUsers(response.data);
             }catch(error) {
 
@@ -31,7 +31,7 @@ const UserCompanions = () => {
 
         const getCompanions = async () => {
             try {
-                const response = await axiosInstance.get(`/${username}/companions`);
+                const response = await axiosInstance.get(`/companions/${username}`);
                 console.log("Companion profile fetched successfully:", response.data);
                 setCompanions(response.data);
             }
@@ -49,7 +49,7 @@ const UserCompanions = () => {
         const removeCompanion = async (companionEmail: string) => {
 
             try {
-                const response = await axiosInstance.post(`/remove-companion/${companionEmail}`)
+                const response = await axiosInstance.delete(`/companions/${companionEmail}`)
                 if(response.data === true)
                     toast.success("Companion removed!")
                 
@@ -62,7 +62,7 @@ const UserCompanions = () => {
 
         const cancelRequest = async (companionEmail: string) => {
             try {
-                const response = await axiosInstance.delete(`/cancel-companion-request/${companionEmail}`);
+                const response = await axiosInstance.delete(`/companions/${companionEmail}/cancel-request`);
                 console.log(response.data)
             } catch(error) {
 

@@ -53,7 +53,7 @@ const UserProfile = () => {
                 if (file) {
                     formData.append("profilePicture", file);
                     try {
-                        const response = await axiosInstance.post("/update/profile-picture", formData,
+                        const response = await axiosInstance.put("/me/profile-picture", formData,
                             {
                                 headers: {
                                 "Content-Type": "multipart/form-data"
@@ -131,20 +131,18 @@ const UserProfile = () => {
                 <div className={styles.badgeContainer}>
                     <div>
                         <h4>Trophies</h4>                    
+                        <ul>
                             {user?.badges
                             .map((badge, index) => {
                                 return (
-                                <div key={index}>
-                                    <ul>
-                                       <li>
+                                       <li key={index}>
                                             <img src={badge.iconUrl} alt="Badge Icon"></img>
                                             <h4>{badge.title}</h4>
                                             <p>{badge.description}</p>
                                         </li> 
-                                    </ul>
-                                </div>
                                 )
                             })}
+                        </ul>
                     </div>
                 </div>
         </div>

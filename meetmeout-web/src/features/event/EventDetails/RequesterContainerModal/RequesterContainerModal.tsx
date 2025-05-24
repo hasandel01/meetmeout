@@ -16,7 +16,7 @@ const RequesterContainerModal: React.FC<RequesterContainerModalProps> = ({reques
 
       const handleAcceptJoinRequest = async (eventId: number, username: string) => {
     try {
-        await axiosInstance.post(`/accept-join-request/${eventId}/${username}`)
+        await axiosInstance.post(`/events/${eventId}/${username}/accept-request`)
     } catch(error)  {
       toast.error("Error accepting join request!")
     }

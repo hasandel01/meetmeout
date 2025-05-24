@@ -52,7 +52,6 @@ const EventDetails = () => {
       about: '',
       companions: []
     },
-    title: '',
     content: '',
     updatedAt: '',
     rating: 0
@@ -132,9 +131,8 @@ const EventDetails = () => {
   const getEvent = async () => {
 
     try {
-        const response = await axiosInstance.get(`/get-event/${eventIdNumber}`);
+        const response = await axiosInstance.get(`/events/${eventIdNumber}`);
         setEvent(response.data);
-        console.log(response.data);
     } catch(error) {
       toast.error("Error fetching event data.");
     }
@@ -164,7 +162,7 @@ const EventDetails = () => {
   const handleLeaveEvent = async () => {
     try {
 
-    await axiosInstance.post(`/leave-event/${eventId.eventId}`);
+    await axiosInstance.post(`/events/${eventId.eventId}/leave`);
     navigate("/")
 
 
@@ -176,10 +174,11 @@ const EventDetails = () => {
   const verifyTokenToAccessDetails = async () => {
 
     try {
-      await axiosInstance.post(`/verify-access-to-event/${eventIdNumber}`, {
+      await axiosInstance.post(`/events/${eventIdNumber}/verify-access`, {
         token: token
         });
-      setIsUserAllowed(true);
+
+        setIsUserAllowed(true);
     } catch(error) {
       toast.error("Error verifying token")
       navigate("/")
@@ -190,7 +189,7 @@ const EventDetails = () => {
 
     try {
 
-        const response = await axiosInstance.post(`/join-event/${eventId}`);
+        const response = await axiosInstance.post(`/events/${eventId}/join`);
 
         if(response.status === 200) {
             toast.success("You successfully joined to the event!")
@@ -229,7 +228,7 @@ const EventDetails = () => {
       }));
 
       try {
-        await axiosInstance.post(`/like-event/${event.id}`);
+        await axiosInstance.post(`/events/${event.id}/like`);
       } catch (error) {
 
         const rolledBackLikes = alreadyLiked
@@ -289,7 +288,7 @@ const EventDetails = () => {
   const getAllJoinRequests = async (eventId: number) => {
 
     try {
-        const response = await axiosInstance.get(`/get-join-requests/${eventId}`)
+        const response = await axiosInstance.get(`/events/${eventId}/join-requests`);
               setJoinRequests(response.data)
      } catch(error) {
       toast.error("Error getting requesters!")
@@ -322,7 +321,6 @@ const EventDetails = () => {
 
   const handleDeleteComment = async (commentId: number) => {  
 
-    console.log(commentId)
 
       try {
         await axiosInstance.delete(`/delete-comment/${commentId}`);
@@ -377,7 +375,7 @@ const EventDetails = () => {
     });
 
     try {
-      const response = await axiosInstance.post(`/upload-photos/${eventId}`, formData, {
+      const response = await axiosInstance.post(`/events/${eventId}/photos`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -406,7 +404,6 @@ const EventDetails = () => {
         setReview({
           reviewId: 0,
           reviewer: currentUser,
-          title: '',
           content: '',
           updatedAt: '',
           rating: 0
@@ -480,12 +477,6 @@ const EventDetails = () => {
                     />
                   ))}
                 </div>
-                <input
-                  type="text"
-                  placeholder="Title"
-                  value={review?.title}
-                  onChange={(e) => setReview({ ...review, title: e.target.value })}
-                />
                 <textarea
                   placeholder="Write your review here..."
                   value={review?.content}
@@ -773,7 +764,6 @@ const EventDetails = () => {
                           <span className={styles.timestamp}>{formatTime(review.updatedAt)}</span>
                         </div>
                         <div className={styles.reviewContent}>
-                          <h5>{review.title}</h5>
                           <p>{review.content}</p>
                           <div className={styles.reviewStars}>
                             {[1, 2, 3, 4, 5].map((star) => (

@@ -21,6 +21,7 @@ import MyCalendar from './features/calendar/MyCalendar'
 import { ProfileContextProvider } from './context/ProfileContext'
 import { WebSocketProvider } from './context/WebSocketContext'
 import UpdateEvent from './features/event/UpdateEvent/UpdateEvent'
+import Settings from './features/user/Settings/Settings'
 
 function App() {
 
@@ -104,6 +105,12 @@ function App() {
                 element = {
                   <ProtectedRoute>
                      <UpdateEvent/>
+                  </ProtectedRoute>
+                }/>
+                <Route path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Settings/>
                   </ProtectedRoute>
                 }/>
             </Route>

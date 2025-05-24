@@ -53,12 +53,12 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Exclude
     private Set<Event> participatedEvents = new HashSet<>();
 
-    @OneToMany(mappedBy = "organizer")
+    @OneToMany(mappedBy = "organizer", cascade = { CascadeType.PERSIST, CascadeType.MERGE } )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Event> organizedEvents = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name="user_badges",
             joinColumns = @JoinColumn(name = "user_id"),

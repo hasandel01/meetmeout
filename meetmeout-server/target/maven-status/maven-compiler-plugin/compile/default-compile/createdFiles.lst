@@ -19,12 +19,14 @@ com\hasandel01\meetmeoutserver\notification\NotificationRepository.class
 com\hasandel01\meetmeoutserver\event\mapper\JoinRequestMapper.class
 com\hasandel01\meetmeoutserver\common\config\CustomHandshakeHandler.class
 com\hasandel01\meetmeoutserver\event\mapper\CommentMapper.class
+com\hasandel01\meetmeoutserver\event\model\RouteType.class
 com\hasandel01\meetmeoutserver\event\model\Event.class
 com\hasandel01\meetmeoutserver\auth\controller\AuthenticationController.class
 com\hasandel01\meetmeoutserver\user\model\User.class
 com\hasandel01\meetmeoutserver\user\controller\UserController.class
 com\hasandel01\meetmeoutserver\event\model\Review$ReviewBuilder.class
 com\hasandel01\meetmeoutserver\auth\model\AuthenticationResponse$AuthenticationResponseBuilder.class
+com\hasandel01\meetmeoutserver\event\scheduler\EventScheduler.class
 com\hasandel01\meetmeoutserver\companion\FriendRequest$Status.class
 com\hasandel01\meetmeoutserver\notification\NotificationDTO.class
 com\hasandel01\meetmeoutserver\companion\FriendRequestMapper.class
@@ -52,6 +54,7 @@ com\hasandel01\meetmeoutserver\auth\model\AuthenticationResponse.class
 com\hasandel01\meetmeoutserver\companion\FriendRequest.class
 com\hasandel01\meetmeoutserver\event\dto\InviteDTO$InviteDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\dto\EventChatMessageDTO.class
+com\hasandel01\meetmeoutserver\enums\BadgeType.class
 com\hasandel01\meetmeoutserver\event\dto\EventChatMessageDTO$EventChatMessageDTOBuilder.class
 com\hasandel01\meetmeoutserver\common\config\interceptor\AuthChannelInterceptor.class
 com\hasandel01\meetmeoutserver\event\model\JoinEventRequest$JoinEventRequestBuilder.class
@@ -83,6 +86,7 @@ com\hasandel01\meetmeoutserver\auth\model\RegisterRequest$RegisterRequestBuilder
 com\hasandel01\meetmeoutserver\event\dto\ReviewDTO$ReviewDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\model\Like.class
 com\hasandel01\meetmeoutserver\event\mapper\EventChatMessageMapper.class
+com\hasandel01\meetmeoutserver\user\repository\BadgeRepository.class
 com\hasandel01\meetmeoutserver\enums\EventStatus.class
 com\hasandel01\meetmeoutserver\notification\Notification$NotificationBuilder.class
 com\hasandel01\meetmeoutserver\enums\Categories.class

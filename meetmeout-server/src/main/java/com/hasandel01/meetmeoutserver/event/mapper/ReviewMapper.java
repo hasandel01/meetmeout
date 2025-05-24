@@ -9,7 +9,6 @@ public class ReviewMapper {
     public static ReviewDTO toReviewDTO(Review review) {
         return ReviewDTO.builder()
                 .reviewId(review.getId())
-                .title(review.getTitle())
                 .updatedAt(review.getUpdatedAt())
                 .reviewer(UserMapper.toUserDTO(review.getReviewer()))
                 .content(review.getContent())

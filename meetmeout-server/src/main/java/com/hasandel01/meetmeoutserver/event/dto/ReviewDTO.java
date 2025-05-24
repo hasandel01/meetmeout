@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public record ReviewDTO (
     Long reviewId,
     UserDTO reviewer,
-    String title,
     String content,
     LocalDateTime updatedAt,
     int rating

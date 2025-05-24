@@ -41,7 +41,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // 2️⃣ API filtre zinciri
     @Bean
     @Order(1)
     public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {

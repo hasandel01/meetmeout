@@ -149,6 +149,48 @@ hr {
     font-size: 12px;
 }
 
+
+.badgeContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.badgeContainer h4 {
+    margin: 0;
+    font-size: 18px;
+}
+
+
+.badgeContainer ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    gap: 10px;
+}
+
+.badgeContainer li {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 5px 0;
+    align-items: center;
+}
+
+
+.badgeContainer img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
 @media (max-width: 768px) {
     
     .userProfile {

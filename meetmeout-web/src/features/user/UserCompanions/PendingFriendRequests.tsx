@@ -13,7 +13,7 @@ const PendingFriendRequests = () => {
 
     const getPendingRequests = async () => {
         try {
-            const response = await axiosInstance.get(`/get-pending-requests`);
+            const response = await axiosInstance.get(`/companions/requests`);
             setFriendRequests(response.data);
         } catch (error) {
         }
@@ -27,7 +27,7 @@ const PendingFriendRequests = () => {
 
     const handleAcceptRequest = async (senderEmail: string) => {
         try {
-            await axiosInstance.post(`/accept-companion-request/${senderEmail}`, null);
+            await axiosInstance.post(`/companions/${senderEmail}/accept`, null);
             toast.info("Companion request is accepted.")
             setFriendRequests((prevRequests) => prevRequests.filter((request) => request.sender.email !== senderEmail));
         } catch (error) {
@@ -37,7 +37,7 @@ const PendingFriendRequests = () => {
 
     const handleRejectRequest = async (senderEmail: string) => {
         try {
-            const response = await axiosInstance.post(`/reject-companion-request/${senderEmail}`, null);
+            const response = await axiosInstance.post(`/companions/${senderEmail}/reject`, null);
             console.log("Companion request rejected:", response.data);
             setFriendRequests((prevRequests) => prevRequests.filter((request) =>  request.sender.email !== senderEmail));
         }

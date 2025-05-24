@@ -1,12 +1,11 @@
 import { SetStateAction, useState } from 'react';
-import axiosInstance from '../axios/axios';
 import styles from'./common/Form.module.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { faUser, faIdBadge, faIdCard, faLock, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import FormInput from './common/FormInput';
-import authAxios from './axios/AuthAxiosConfig';
+import authAxios from './axios/authAxios';
 
 interface UserDetailsFormProps {
     email: string;

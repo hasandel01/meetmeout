@@ -1,5 +1,5 @@
 import axios from "axios";
-import authAxios from "../auth/axios/AuthAxiosConfig";
+import authAxios from "../auth/axios/authAxios";
 
 
 const axiosInstance = axios.create({

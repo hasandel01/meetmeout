@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from "./common/Form.module.css"
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import authAxios from './axios/AuthAxiosConfig';
+import authAxios from './axios/authAxios';
 import FormInput from './common/FormInput';
 
 const ForgotPassword: React.FC = () => {

@@ -1,7 +1,7 @@
 import { useEffect, useState} from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import styles from "./common/Form.module.css"
-import authAxios from "./axios/AuthAxiosConfig";
+import authAxios from "./axios/authAxios";
 
 
 const VerifyEmail = () => {

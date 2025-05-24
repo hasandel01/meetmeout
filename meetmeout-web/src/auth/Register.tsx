@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import authAxios from './axios/AuthAxiosConfig';
+import authAxios from './axios/authAxios';
 import { Link } from 'react-router-dom';
 import UserDetailsForm from './UserDetailsForm';
 import styles from './common/Form.module.css';

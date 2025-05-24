@@ -1,9 +1,7 @@
-import Calendar from "react-calendar";
 import axiosInstance from "../../axios/axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Event } from "../../types/Event";
-import { format } from 'date-fns';
 import styles from "./MyCalendar.module.css";
 import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';

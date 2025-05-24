@@ -3,58 +3,17 @@ import { useEffect } from "react";
 import axiosInstance from "../../axios/axios";
 import { useState } from "react";
 import { Event } from "../../types/Event";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faLocationDot, faLock} from "@fortawesome/free-solid-svg-icons";
-import { faHeart, faComment, faStar } from "@fortawesome/free-solid-svg-icons";
-import { getCategoryIconLabel } from "../../mapper/CategoryMap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-import { Tooltip } from "react-tooltip";
 import { useUserContext } from "../../context/UserContext";
 import { Invitation } from "../../types/Like";
 import MainFeedMap from "./MainFeedMap/MainFeedMap";
 import { MapContainer } from "react-leaflet";
 import { TileLayer } from "react-leaflet";
 import MapPanner from "./MainFeedMap/MainFeedMapPanner/MainFeedMapPanner";
+import EventCard from "./EventCard/EventCard";
+import FilterPanel from "./EventFilterPanel/FilterPanel";
 
-const isStartDateAndEndDateSame = (event: Event): boolean => {
-    return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
-};
-
-const EventRatingStars = ({ eventId }: { eventId: number }) => {
-    const [average, setAverage] = useState<number>(0);
-
-    useEffect(() => {
-        const fetchAverageRating = async () => {
-            try {
-                const response = await axiosInstance.get(`/events/${eventId}/average-rating`);
-                if (response.status === 200) {
-                    setAverage(response.data);
-                } else {
-                    toast.error("Error getting average rating");
-                }
-            } catch (error) {
-                toast.error("Error getting average rating");
-            }
-        };
-
-        fetchAverageRating();
-    }, [eventId]);
-
-    return (
-        <div className={styles.eventRatings}>
-            {[1, 2, 3, 4, 5].map((star) => (
-                <FontAwesomeIcon
-                    key={star}
-                    icon={faStar}
-                    className={styles.starIcon}
-                    style={{ color: average >= star ? "gold" : "gray" }}
-                />
-            ))}
-        </div>
-    );
-};
 
 const MainFeed = () => {
  
@@ -117,14 +76,6 @@ const MainFeed = () => {
             )
         }
     },[])
-
-
-
-    const isEventFull =(event: Event):boolean =>  {
-
-        return event.maximumCapacity <= event.attendees.length;
-
-    } 
 
     
     const searchQuery = (searchString: string) => {
@@ -287,61 +238,12 @@ const MainFeed = () => {
       
     return (
         <div className={styles.mainFeedContainer}>
-            <div className={styles.mainFeedContainerFilter}>
-                <div className={styles.selections}>
-                    <label onClick={() => setGlobalFilter("All Events")}>
-                        All Available Events                    
-                    </label>
-                    <label onClick={() => setGlobalFilter("My Events")}>
-                        My Events
-                    </label>
-                    <label onClick={() => setGlobalFilter("My Drafts")}>
-                        My Drafts
-                    </label>
-                    <label className={styles.toggleWrapper}>
-                        <input
-                            type="checkbox"
-                            checked={showPastEvents}
-                            onChange={(e) => setShowPastEvents(e.target.checked)}
-                        />
-                        <span className={styles.slider}></span>
-                        <span className={styles.labelText}>
-                            {showPastEvents ? "Showing past events" : "Hide past events"}
-                        </span>
-                    </label>
-                </div>
-                <div className={styles.sort}>
-                    <select onChange={(e) => searchQuery(e.target.value)}>
-                        <option
-                            value="Soonest">
-                            Soonest
-                        </option>
-                        <option
-                            value="Latest">
-                            Latest
-                        </option>
-                        <option
-                            value="Most Liked"
-                            >
-                            Most Liked
-                        </option>
-                        <option
-                            value="Recently Added"
-                        >
-                            Recently Added
-                        </option>
-                        <option
-                            value="Most Attended"
-                        >
-                            Most Attended
-                        </option>
-                        <option 
-                            value ="Nearest">
-                            Nearest
-                        </option>
-                    </select>
-                </div>
-            </div>
+            <FilterPanel 
+                setGlobalFilter={setGlobalFilter}
+                showPastEvents={showPastEvents}
+                setShowPastEvents={setShowPastEvents}
+                onSortChange={searchQuery}
+                />
         <div className={styles.mapContainer}>
                 <MapContainer
                 center={[41.0082, 28.9784]}
@@ -370,135 +272,20 @@ const MainFeed = () => {
                     ?.filter((event)=> showPastEvents || event.status !== "ENDED")
                     ?.map((event) => (
                         (
-                            <div key={event.id} onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>
-                                <div className={event.status !== "ENDED" ? (
-                                                isEventFull(event) ? `${styles.eventCard} ${styles.full}` : `${styles.eventCard}`
-                                    ): (
-                                        event.attendees.some(attendee => attendee.username === currentUser?.username) ? 
-                                                `${styles.eventCard} ${styles.joinedEnded}` : 
-                                                `${styles.eventCard} ${styles.ended}`
-                                    )}>                                   
-                                    {event.isPrivate && 
-                                    <><FontAwesomeIcon
-                                            icon={faLock}
-                                            className={styles.lockIcon}
-                                            data-tooltip-id="private_event_tooltip" data-tooltip-content="Private Event" />
-                                            <Tooltip id="private_event_tooltip"/>
-                                    </>}
-                                    <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
-                                    <img src={event.imageUrl} alt={event.title} />
-                                    <div className={styles.eventTitle}>
-                                        <div className={styles.eventCategory}>
-                                                {(() => {
-                                                    const category = getCategoryIconLabel(event.category);
-                                                    return (
-                                                        <span style={{ color: category.color }}>
-                                                            {category.icon} {category.label}
-                                                        </span>
-                                                    );
-                                                })()}
-                                        </div>
-                                        <h2>{event.title}</h2>
-                                    </div>
-                                    <div className={styles.eventDetailsInfo}>
-                                        <div className={styles.eventTimeDate}>
-                                            <span>
-                                                <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                                                <p > {new Date(event.startDate).toLocaleDateString("en-US", options)}
-                                                {!isStartDateAndEndDateSame(event) &&
-                                                    <> - {new Date(event.endDate).toLocaleDateString("en-US", options)}</>
-                                                }
-                                                <strong> &bull; </strong> {event.startTime} - {event.endTime}</p>
-                                            </span>
-                                        </div>
-                                        <div className={styles.eventLocation}>
-                                            <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
-                                            <p>{event.addressName}</p>
-                                            { lng === 0 || lat === 0 ? "" : <>
-                                                <p>( {calculateDistance(event).toFixed(1)} km away )</p>
-                                            </>
-                                            }
-                                        </div>
-                                        <div className={styles.tags}>
-                                            <ul>
-                                                {event.tags?.slice(0, 2).map((tag, index) => (
-                                                    <li key={index}>
-                                                        <span>
-                                                            #{tag} 
-                                                        </span>
-                                                        {index === 1 ? " ..." : ""}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        {event.organizer && (
-                                                <div className={styles.eventOrganizer}>
-                                                    <img src={event.organizer.profilePictureUrl} alt={event.organizer.profilePictureUrl} className="event-organizer-image" />
-                                                    <p>{event.organizer.firstName} {event.organizer.lastName}</p>
-                                                </div>
-                                        )}
-                                    </div>
-                                    {event.status === "ENDED" && (
-                                    <div className={styles.eventRatings}>
-                                        <EventRatingStars eventId={event.id} />
-                                        <div className={styles.averageRating}>
-                                            {event.reviews.length > 0
-                                                ? (
-                                                    (
-                                                        event.reviews.map(review => review.rating)
-                                                        .reduce((acc, curr) => acc + curr, 0) / event.reviews.length
-                                                    ).toFixed(1)
-                                                )
-                                                : "0.0"
-                                            }
-                                            <p>({event.reviews.length})</p>
-                                        </div>
-                                    </div>
-                                    )}
-                                    <div className={styles.eventActions}>
-                                    <div className={styles.buttonGroup} data-tooltip-id="event_like" data-tooltip-content="Like">
-                                        <FontAwesomeIcon 
-                                            icon={
-                                                event.likes.some(u => u.username === currentUser?.username)
-                                                ? faHeart
-                                                : regularHeart} 
-                                            className={styles.heartIcon}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleLike(event.id)
-                                            }}
-                                            />
-                                            <Tooltip id="event_like"/>
-                                        <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
-                                    </div>
-                                    <div className={styles.buttonGroup}>
-                                        <FontAwesomeIcon 
-                                            onClick={ (e) => {
-                                                e.stopPropagation();
-                                                navigate(`/event/${event.id}#comments`)
-                                            }}
-                                            icon={faComment} 
-                                            className={styles.commentIcon} />
-                                        <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
-                                    </div>
-                                </div>
-                                {event.status !== "ENDED" && ( !(event.organizer?.username === currentUser?.username ||
-                                    event.attendees.some(element => element.username === currentUser?.username)) && event.status !== 'FULL' )&&
-                                    <button
-                                        disabled={isDisabled(event)}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleJoinEvent(event.id)}} 
-                                        className={styles.joinButton}>
-                                        {event.isPrivate ? (
-                                            invitations.some(invitation => invitation.eventId === event.id) ? "You are already invited!"
-                                            : (
-                                                requestSentEvents.some(requestSentEvent => requestSentEvent.id === event.id) ? 
-                                                "Request sent!" :  "Send Join Request!" )
-                                        ): "Join" }
-                                    </button> }
-                                </div>
-                            </div>            
+                           <EventCard 
+                            key={event.id}
+                                event={event}
+                                currentUser={currentUser ?? null}
+                                isDisabled={isDisabled}
+                                handleJoinEvent={handleJoinEvent}
+                                handleLike={handleLike}
+                                invitations={invitations}
+                                requestSentEvents={requestSentEvents}
+                                calculateDistance={calculateDistance}
+                                dateOptions={options}
+                                lat={lat}
+                                lng={lng}
+                            />
                         )
                     )))
                 : (

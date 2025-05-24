@@ -2,9 +2,9 @@ import { useState } from 'react';
 import axiosInstance from '../axios/axios';
 import { Link } from 'react-router-dom';
 import UserDetailsForm from './UserDetailsForm';
-import styles from './Form.module.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styles from './common/Form.module.css';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import FormInput from './common/FormInput';
 
 
 const Register = () => {
@@ -37,7 +37,6 @@ const Register = () => {
                 setUserExists(false);
             } else {
                 console.error('Error checking user:', error);
-                alert("Error checking user. Please try again later.");
             }
         }
     }
@@ -51,19 +50,16 @@ const Register = () => {
                     <>
                         <h1> Sign Up! </h1>
                         <form onSubmit={checkUser}>
-                            <div className={styles.inputGroup}>
-                                <label>E-mail</label>
-                                <div className={styles.inputElement}>
-                                    <FontAwesomeIcon icon={faEnvelope}></FontAwesomeIcon>
-                                    <input
+                                    <FormInput
+                                        icon={faEnvelope}
                                         type="email"
-                                        placeholder="E-mail"
-                                        value={email} required
-                                        onChange={(e) => setEmail(e.target.value)} />
-                                </div>
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="Enter your email"
+                                        label='Email'
+                                    />
                                 {userExists &&
                                     <label className={styles.errorMessage}> User already exists! </label> }  
-                            </div>
                             <button type='submit'> Continue </button>
                         </form>
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>

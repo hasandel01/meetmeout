@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axiosInstance from '../axios/axios';
 import { useNavigate } from 'react-router-dom';
-import styles from './Form.module.css';
+import styles from './common/Form.module.css';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faUser, faLock} from '@fortawesome/free-solid-svg-icons'
+import FormInput from './common/FormInput';
 
 const Login = ()  => {
 
@@ -40,26 +40,30 @@ const Login = ()  => {
     return (
         <div className={styles.formContainer}>
             <img alt='mmo-logo' src='/mmo_logo.PNG' className={styles.mmoLogo}></img>
-            <h1> Welcome Back Traveler! </h1>
+            <h2> Welcome Back Traveler! </h2>
             <p> Join Events, find companions! </p>
             <form onSubmit={handleLogin}>
-                <div className={styles.inputGroup}>
-                    <label>Username</label>
-                    <div className={styles.inputElement}>
-                        <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
-                        <input type='text' value={username} required onChange={(e) => setUsername(e.target.value)} />
-                    </div>
-                    <label>Password</label>
-                    <div className={styles.inputElement}>
-                        <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
-                        <input type='password' value={password} required onChange={(e) => setPassword(e.target.value)} />
-                    </div> 
+                        <FormInput
+                            icon={faUser}
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            label="Username"
+                            required
+                            />
+                        <FormInput
+                            icon={faLock}
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            label="Password"
+                            required
+                            />
                     {error && <label className={styles.errorMessage}>{error}</label>}      
-                </div>
                 <Link to="/forgot-password" className={styles.link}>Forgot password?</Link>
                 <button> Sign In </button>
+                <Link to="/register" className={styles.link}> Don't have an account? Sign up!</Link>
             </form>
-            <Link to="/register" className={styles.link}> Don't have an account? Sign up!</Link>
         </div>
     );
 }

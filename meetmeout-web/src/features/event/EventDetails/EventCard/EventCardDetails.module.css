@@ -1,0 +1,268 @@
+/**EVENT CARD SUMMARY**/
+
+.eventCardAndComment {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.eventCardAndWeatherAPI {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+}
+
+.eventCard {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 1px;
+    margin-left: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--primary-color-dark);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: white;
+    width: 50vw;
+    height: 600px;
+}
+
+.firstColumn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    max-width: 50%;
+}
+
+.eventCard img {
+    width: 60%;
+    border-radius: 10%;
+    object-fit: cover;
+}
+
+.weatherWidget {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+}
+
+.weatherContent {
+    position: relative;
+}
+
+
+.weatherInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.secondColumn {
+    flex: 2;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.eventCard h2 {
+    font-size: 24px;
+    color: var(--text-color);
+}
+
+.eventCard p {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+
+.eventTitle {
+    position: relative;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    font-size: 24px;
+    gap: 10px;
+    margin: 0px;
+}
+
+.eventCategory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 18px;
+    border: #00796b solid 1px;
+    color: #00796b;
+}
+
+/* EVENT TIME, DATE & LOCATION */
+
+.eventDetailsInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: first baseline;
+    gap: 20px;
+}
+
+.eventTimeDate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+}
+
+.eventTimeDate span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+}
+
+.eventLocation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 22px;
+}
+
+.icon {
+    font-size: 30px;
+    color: var(--primary-color-dark);
+    margin: 0;
+}
+
+
+.tag {
+    background-color: rgb(189, 247, 189);
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 6px;
+    
+}
+
+.tags p {
+    color: var(--primary-color-dark);
+    font-weight: bolder;
+}
+
+/** EventStatus **/
+
+.eventStatus {
+    display: flex;
+    max-width: fit-content;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    border-radius: 8px;
+    padding: 2px 4px;
+    font-size: 12px;
+    color: var(--error-color);
+}
+
+.eventStatus.ONGOING {
+    background-color: rgb(83, 201, 83);
+    color: white;
+}
+
+.eventStatus.FULL {
+    background-color: #e99e2f;
+    color: white;
+}
+
+/* TO BE IMPLEMENTED */
+
+.eventStatus.completed {
+    background-color: #ffecb3;
+    color: #f57c00;
+}
+.eventStatus.cancelled {
+    background-color: #ffcdd2;
+    color: #d32f2f;
+}
+
+
+.eventStatus.draft {
+    background-color: #e1bee7;
+    color: #8e24aa;
+}
+
+/* EVENT BUTTON */
+
+.eventActions {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: end;
+    gap: 24px;
+}
+
+.buttonGroup {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, transform 0.2s;
+    cursor: pointer;
+}
+
+.buttonGroup:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-2px);
+}
+
+.heartIcon {
+    color: #e53935;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.commentIcon {
+    color: #1976d2;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+}
+
+.buttonGroup span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+}
+
+.joinButton {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 4px;
+    margin-top: 10 px;
+    transition: background-color 0.2s;
+}
+
+.joinButton:disabled {
+    background-color: grey;
+    cursor: default;
+}
+.joinButton:disabled:hover {
+    background-color: grey;
+}
+
+.joinButton:hover {
+    background-color: #388e3c;
+}
+

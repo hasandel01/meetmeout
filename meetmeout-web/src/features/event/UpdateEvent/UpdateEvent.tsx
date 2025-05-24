@@ -97,7 +97,7 @@ const UpdateEvent = () => {
   };
 
   return (
-    <form  className={styles.form} submit={handleSubmit}>
+    <form  className={styles.form} onSubmit={handleSubmit}>
       <h2>Update Event</h2>
       
         <input

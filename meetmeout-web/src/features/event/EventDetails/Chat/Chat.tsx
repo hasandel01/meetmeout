@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Message } from "../../../../types/Message";
 import styles from "./Chat.module.css"
 import { useUserContext } from "../../../../context/UserContext";

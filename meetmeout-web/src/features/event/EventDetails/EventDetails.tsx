@@ -4,23 +4,20 @@ import { useEffect, useState } from "react";
 import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
 import styles from './EventDetails.module.css'
-import { faCalendar, faLocationDot, faPenToSquare, faRightFromBracket, faStar, faTrash, faUserPlus, faImage} from "@fortawesome/free-solid-svg-icons";
-import { faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faImage} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
-import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { JoinRequest } from "../../../types/JoinRequest";
-import { Tooltip } from "react-tooltip";
-import formatTime from "../../../utils/formatTime";
 import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
 import { Weather } from "../../../types/Forecast";
-import AttendeeContainerModal from "./AttendeeContainerModal/AttendeeContainerModal";
-import RequesterContainerModal from "./RequesterContainerModal/RequesterContainerModal";
 import { useProfileContext } from "../../../context/ProfileContext";
 import Chat from "./Chat/Chat";
-import CompanionsContainerModal from "./CompanionsContainerModal/CompanionContainerModal";
 import { Review } from "../../../types/Like";
+import EventReviews from "./EventReviews/EventReviews";
+import EventComments from "./EventComments/EventComments";
+import EventParticipants from "./EventParticipants/EventParticipants";
+import EventHeader from "./EventHeader/EventHeader";
+import EventDetailsCard from "./EventCard/EvetCard";
 
 const EventDetails = () => {
 
@@ -35,28 +32,10 @@ const EventDetails = () => {
   const navigate = useNavigate();
   const [commentString, setCommentString] = useState('');
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
-  const [showInviteModal, setShowInviteModal] = useState(false);
   const [showAllAttendees, setShowAllAttendees] = useState(false);
   const [showAllRequests, setShowAllRequests] = useState(false);
   const {goToUserProfile} = useProfileContext();
-  const [review, setReview] = useState<Review>({
-    review: 0,
-    reviewer: currentUser ?? {
-      id: 0,
-      username: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      profilePictureUrl: '',
-      phone: '',
-      about: '',
-      companions: []
-    },
-    content: '',
-    updatedAt: '',
-    rating: 0
-  });
-
+  const [review, setReview] = useState<Review| undefined>(undefined);
 
 
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
@@ -72,7 +51,6 @@ const EventDetails = () => {
       }
     })
   }
-
 
 
       const [event, setEvent] = useState<Event>({
@@ -138,12 +116,9 @@ const EventDetails = () => {
     }
   }
 
-
   const getWeather = async () => {
 
     try {
-
-    
       const response = await 
         axios
         .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${event.latitude}&lon=${event.longitude}&exclude=minutely,hourly&appid=${apiKey}&units=metric`, {
@@ -157,18 +132,6 @@ const EventDetails = () => {
       console.log((error as any).message);
     }
 
-  }
-
-  const handleLeaveEvent = async () => {
-    try {
-
-    await axiosInstance.post(`/events/${eventId.eventId}/leave`);
-    navigate("/")
-
-
-    } catch(error) {
-        toast.error("Error leaving event.")
-    }
   }
 
   const verifyTokenToAccessDetails = async () => {
@@ -185,29 +148,6 @@ const EventDetails = () => {
     }
   }
   
-  const handleJoinEvent = async (eventId: number) => {
-
-    try {
-
-        const response = await axiosInstance.post(`/events/${eventId}/join`);
-
-        if(response.status === 200) {
-            toast.success("You successfully joined to the event!")
-        }
-        else {
-            toast.error("You couldn't join to the event.")
-        }
-
-    } catch(error) {
-        toast.error("You couldn't join to the event.")
-    }
-
-}
-
-  const isDisabled = (event: Event) => {
-    return event.attendees.some(element => element.username === currentUser?.username)
-  }
-
 
     const handleLike = async () => {
       if (!currentUser) return;
@@ -273,10 +213,7 @@ const EventDetails = () => {
   }
 
   
-  const showUsersToInvite = () => {
-    setShowInviteModal(prev => !prev)
-  }
- 
+
 
   useEffect(() => {
   if (event.id !== 0) {
@@ -295,29 +232,6 @@ const EventDetails = () => {
      }
 
   }
-
-  const isMoreThan8DaysLater = (eventDateStr : string): boolean => {
-
-    const today= new Date();
-    const eventDate = new Date(eventDateStr);
-
-    const diffInTime = eventDate.getTime() - today.getTime();
-    const diffInDays = diffInTime / (1000 * 60 * 60 *24);
-
-    return diffInDays > 7;
-
-  } 
-
-  const returnDayDifference = ():number => {
-
-    const today = new Date();
-    const eventDate = new Date(event.startDate);
-
-    const diffInMs = eventDate.getDate() - today.getDate();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
-    return diffInDays;
-  }
-
 
   const handleDeleteComment = async (commentId: number) => {  
 
@@ -472,331 +386,96 @@ const EventDetails = () => {
                       key={star}
                       icon={faStar}
                       className={styles.starIcon}
-                      onClick={() => setReview({ ...review, rating: star })}
-                      style={{ color: review?.rating >= star ? "gold" : "gray" }}
+                      onClick={() => {
+                        if (review) {
+                          setReview({
+                            reviewId: review.reviewId,
+                            reviewer: review.reviewer,
+                            content: review.content,
+                            updatedAt: review.updatedAt,
+                            rating: star
+                          });
+                        }
+                      }}
+                      style={{ color: (review?.rating ?? 0) >= star ? "gold" : "gray" }}
                     />
                   ))}
                 </div>
                 <textarea
                   placeholder="Write your review here..."
                   value={review?.content}
-                  onChange={(e) => setReview({ ...review, content: e.target.value })}
+                  onChange={(e) => {
+                    if (review) {
+                      setReview({
+                        reviewId: review.reviewId,
+                        reviewer: review.reviewer,
+                        updatedAt: review.updatedAt,
+                        rating: review.rating,
+                        content: e.target.value
+                      });
+                    }
+                  }}
                 ></textarea>
                 <button onClick={() => handleAddReview()}>Submit Review</button>
               </div>
             )}
-          <div className={styles.attendees} >
-                  <h4>Attendees</h4>
-                      <ul>
-                        {event.attendees.slice(0,4).map((attendee,index) => 
-                          <li key={index} onClick={() => goToUserProfile(attendee.username)}>
-                                {event.organizer?.username === attendee.username &&
-                                <>
-                                  <FontAwesomeIcon icon={faStar} className={styles.organizerIcon}
-                                  data-tooltip-id="organizer-icon" data-tooltip-content="Organizer"></FontAwesomeIcon>
-                                  <Tooltip id="organizer-icon"/>
-                                </>
-                                  }
-                                <img src={attendee.profilePictureUrl}></img>
-                                <h5>{attendee.firstName}</h5>
-                          </li>
-                          )}
-                          {event.attendees.length > 4 &&
-                            <div className={styles.andMoreAvatar}
-                                onClick={() => setShowAllAttendees(true)}>
-                              <strong> + {event.attendees.length - 4} </strong>
-                            </div>
-                          }
-                      </ul>
-                      {showAllAttendees && <AttendeeContainerModal attendees={event.attendees} onClose={() => setShowAllAttendees(false)}></AttendeeContainerModal>}
-                      {event.organizer?.username === currentUser?.username &&
-                      <>
-                      <h4>Requesters</h4>
-                            <ul onClick={() => setShowAllRequests(true)}>
-                              {joinRequests.slice(0.4).map((request, index) => 
-                                  <li key={index}>
-                                    <img src={request.user.profilePictureUrl} />
-                                    <h5>{request.user.firstName}</h5>
-                                  </li>
-                              )}
-                              {joinRequests.length > 4 && 
-                              <div className={styles.andMoreAvatar}
-                                   onClick={() => setShowAllRequests(true)}
-                                >
-                                  <strong>+ {joinRequests.length - 4} more</strong>
-                              </div>}
-                        </ul>
-                        {showAllRequests && 
-                        <RequesterContainerModal requests={joinRequests} 
-                                                onClose={() => setShowAllRequests(false)}></RequesterContainerModal>}
-                        </>
-                      }                      
-                </div>
+            {currentUser && (
+              <EventParticipants
+                event={event}
+                currentUser={currentUser ?? null}
+                joinRequests={joinRequests}
+                showAllAttendees={showAllAttendees}
+                setShowAllAttendees={setShowAllAttendees}
+                showAllRequests={showAllRequests}
+                setShowAllRequests={setShowAllRequests}
+                goToUserProfile={goToUserProfile}
+              />
+              )}
+
                 <div className={styles.eventCardAndComment}>
-                  <div className={styles.eventHeader}>
-                                          {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
-                                            (
-                                            <div className={styles.secondButtonGroup}>
-                                            {event.status !== "ENDED" &&
-                                                    <>
-                                                    <FontAwesomeIcon
-                                                            data-tooltip-id="invite-icon"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation()
-                                                                showUsersToInvite()
-                                                            }}
-                                                            className={styles.inviteButton} 
-                                                            icon={faUserPlus} size="2x" />
-                                                          {showInviteModal && <CompanionsContainerModal
-                                                              joinRequests={joinRequests}
-                                                              event = {event}
-                                                              onClose={() => setShowInviteModal(false)}></CompanionsContainerModal>}
-                                                        <Tooltip id="invite-icon" />
-                                                        <span data-tooltip-id="invite-icon" data-tooltip-content="Invite Friends"></span>
-                                                    </> 
-                                              }
-                                              {(event.organizer?.username === currentUser?.username )? (
-                                                  <>
-                                                  {event.status !== "ENDED" && 
-                                                    <FontAwesomeIcon
-                                                        onClick={(e) => {
-                                                          e.stopPropagation();
-                                                          navigate(`/update-event/${event.id}`)
-                                                        }}
-                                                        className={styles.editButton} 
-                                                        icon={faPenToSquare} size="2x" />
-                                                  }
-                                                  <FontAwesomeIcon 
-                                                        onClick={(e) => {
-                                                          e.stopPropagation();
-                                                          handleLeaveEvent()
-                                                        }}
-                                                        className={styles.editButton} 
-                                                        icon={faTrash} size="2x" />
-                                                  </>
-                                                  )
-                                                  : ( 
-                                                  <>
-                                                    <FontAwesomeIcon className={styles.editButton} icon={faRightFromBracket} size="2x" />
-                                                  </>
-                                                  ) }
-                                              </div>
-                                                ) : (
-                                                <button disabled={isDisabled(event)}
-                                                  onClick={() => handleJoinEvent(event.id)} 
-                                                  className={styles.joinButton}>
-                                                  Join Event 
-                                                </button> 
-
-                                            )}
-                  </div>
-                  <div className={styles.eventCardAndWeatherAPI}>
-                    <div className={styles.eventCard}> 
-                        <div className={styles.firstColumn}>
-                            <img src={event.imageUrl} alt={event.title} />
-                            {weather && weather.current && (
-                                    <div className={styles.weatherWidget}>
-                                    <h4>How is the weather on the day of the event?</h4>
-                                      <div className={styles.weatherContent}>
-                                        {!isMoreThan8DaysLater(event.startDate) ? (
-                                          <div className={styles.weatherInfo}>
-                                            <img
-                                                  src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`} 
-                                                  alt={weather.daily.at(returnDayDifference())?.summary}
-                                            ></img>
-                                            <div>
-                                                  <p>{weather.daily.at(returnDayDifference())?.temp.max.toFixed(0)}</p>
-                                                  <p>{weather.daily.at(returnDayDifference())?.temp.min.toFixed(0)}</p>
-                                            </div>
-                                            <p>{weather.daily.at(returnDayDifference())?.summary}</p>
-                                          </div>
-                                        ) : (
-                                          <div>
-                                              We can't provide you weather forecast for this time period. Weather forecast will be shown 8 days before the event date.
-                                            </div>
-                                        )}
-
-                                      </div>
-                                    </div>
-                                  )}
-                        </div>
-                        <div className={styles.secondColumn}>
-                              <div className={`${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
-                                <div className={styles.eventTitle}>
-                                  <div className={styles.eventCategory}>
-                                      {(() => {
-                                        const category = getCategoryIconLabel(event.category);
-                                          return (
-                                            <span style={{ color: category.color }}>
-                                              {category.icon} {category.label}
-                                            </span>
-                                          );
-                                      })()}
-                                  </div>
-                                  <h2>{event.title}</h2>
-                                </div>
-                                <div className={styles.eventDetailsInfo}>
-                                    <div className={styles.eventTimeDate}>
-                                          <span>
-                                            <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                                              <p > {new Date(event.startDate).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime} - {event.endTime}</p>
-                                          </span>
-                                    </div>
-                                    <div className={styles.eventLocation} onClick={handleLocationClick}>
-                                            <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
-                                            <p>{event.addressName}</p>
-                                    </div>
-                                    <div className={styles.tags}>
-                                      {event.tags.map((tag, index) => (
-                                        <span key={index} className={styles.tag}>
-                                          #{tag}
-                                        </span>
-                                      ))}
-                                    </div>
-                                </div>         
-                              </div>
-                              <div className={styles.eventActions}>
-                                              <div className={styles.buttonGroup}>
-                                                  <FontAwesomeIcon 
-                                                      icon={
-                                                          event.likes.some(u => u.username === currentUser?.username)
-                                                          ? faHeart
-                                                          : regularHeart} 
-                                                      className={styles.heartIcon}
-                                                      onClick={(e) => {
-                                                          e.stopPropagation();
-                                                          handleLike()
-                                                      }}/>
-                                                  <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
-                                              </div>
-                                              <div className={styles.buttonGroup}>
-                                                  <FontAwesomeIcon 
-                                                      icon={faComment} 
-                                                      className={styles.commentIcon} />
-                                                  <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
-                                              </div>
-                                          </div>                     
-                              </div>
-                        </div>
-                        <div className={styles.commentContainer}>
-                                <div className={styles.commentContainerAlt}>
-                                                  <ul> 
-                                                  {event.comments
-                                                   .sort((a,b) => {
-                                                    const timeA = new Date(a.sentAt)
-                                                    const timeB = new Date(b.sentAt);
-                                                    return timeA.getTime() - timeB.getTime()
-                                                  })
-                                                  .map(comment => (
-                                                      <li className={styles.commentItem}>
-                                                            <div className={styles.commentHeader}>
-                                                              <div className={styles.senderInfo}>
-                                                                <img src={comment.sender.profilePictureUrl} alt="User Avatar" />
-                                                                <span className={styles.username}>{comment.sender.username}</span>
-                                                              </div>
-                                                              <span> {comment.sentAt !== comment.updatedAt ? "edited" : ""}</span>
-                                                              <span className={styles.timestamp}>{formatTime(comment.updatedAt)}</span>
-                                                            </div>
-
-                                                            {editingCommentId === comment.commentId ? (
-                                                              <div className={styles.editArea}>
-                                                                <input
-                                                                  type="text"
-                                                                  value={editedCommentText}
-                                                                  onChange={(e) => setEditedCommentText(e.target.value)}
-                                                                />
-                                                                <div className={styles.editButtons}>
-                                                                  <button onClick={() => saveEditedComment(comment.commentId)}>Save</button>
-                                                                  <button onClick={() => setEditingCommentId(null)}>Cancel</button>
-                                                                </div>
-                                                              </div>
-                                                            ) : (
-                                                              <p className={styles.commentText}>{comment.comment}</p>
-                                                            )}
-
-                                                            {comment.sender.username === currentUser?.username && (
-                                                              <div className={styles.commentActions}>
-                                                                <FontAwesomeIcon
-                                                                  icon={faPenToSquare}
-                                                                  className={styles.actionIcon}
-                                                                  onClick={() => handleEditComment(comment)}
-                                                                  title="Edit"
-                                                                />
-                                                                <FontAwesomeIcon
-                                                                  icon={faTrash}
-                                                                  className={styles.actionIcon}
-                                                                  onClick={() => handleDeleteComment(comment.commentId)}
-                                                                  title="Delete"
-                                                                />
-                                                              </div>
-                                                            )}
-                                                          </li>
-                                                  ))}
-                                              </ul>
-                                              <hr/>
-                                              <div className={styles.addComment}>
-                                                  <input
-                                                      type="text"
-                                                      placeholder="Add a comment..."
-                                                      value={commentString}
-                                                      onChange={(e) => setCommentString(e.target.value)}
-                                                      onKeyDown={(e) => {
-                                                        if(e.key === 'Enter') {
-                                                          handleAddComment(event.id);
-                                                        }   
-                                                      }}
-                                                  ></input>
-                                              </div>
-                                  </div>
-                          </div>
+                  {currentUser &&
+                  ( <EventHeader
+                    event={event}
+                    currentUser={currentUser}
+                    joinRequests={joinRequests}
+                  />
+                    )
+                  }
+                        <EventDetailsCard
+                              event={event}
+                              weather={weather}
+                              currentUser={currentUser ?? null}
+                              options={options}
+                              handleLocationClick={handleLocationClick}
+                              handleLike={handleLike}
+                            />
+                        <EventComments
+                          comments={event.comments}
+                          currentUser={currentUser}
+                          eventId={event.id}
+                          commentText={commentString}
+                          setCommentText={setCommentString}
+                          handleAddComment={handleAddComment}
+                          handleEditComment={handleEditComment}
+                          handleDeleteComment={handleDeleteComment}
+                          editingCommentId={editingCommentId}
+                          editedCommentText={editedCommentText}
+                          setEditingCommentId={setEditingCommentId}
+                          setEditedCommentText={setEditedCommentText}
+                          saveEditedComment={saveEditedComment}
+                        />
                 </div>
                 <div>
                   <Chat eventId={event.id}></Chat>
-                  <div className={styles.reviewContainer}>
-                    <h4> Reviews</h4>
-                    {event.reviews.map((review, index) => ( 
-                      <div key={index} className={styles.reviewItem}>
-                        <div className={styles.reviewHeader}>
-                          <div className={styles.senderInfo}>
-                            <img src={review.reviewer.profilePictureUrl} alt="User Avatar" />
-                            <span className={styles.username}>{review.reviewer.username}</span>
-                          </div>
-                          <span className={styles.timestamp}>{formatTime(review.updatedAt)}</span>
-                        </div>
-                        <div className={styles.reviewContent}>
-                          <p>{review.content}</p>
-                          <div className={styles.reviewStars}>
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <FontAwesomeIcon
-                                key={star}
-                                icon={faStar}
-                                className={styles.starIcon}
-                                style={{ color: review.rating >= star ? "gold" : "gray" }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        {review.reviewer.username === currentUser?.username && (
-                          <div className={styles.reviewActions}>
-                            <FontAwesomeIcon
-                              icon={faPenToSquare}
-                              className={styles.actionIcon}
-                              onClick={() => handleEditReview(review)}
-                              title="Edit"
-                            />
-                            <FontAwesomeIcon
-                              icon={faTrash}
-                              className={styles.actionIcon}
-                              onClick={() => handleDeleteReview(review)}
-                              title="Delete"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    ))}  
-            </div>
+                  {currentUser && (
+                    <EventReviews
+                      reviews={event.reviews}
+                      currentUser={currentUser}
+                      handleDeleteReview={handleDeleteReview}
+                      handleEditReview={handleEditReview}
+                    />
+                  )}
           </div>
-
         </> 
         <>  
             {event.status === "ENDED" && 

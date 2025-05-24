@@ -1,10 +1,9 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
-import styles from './Form.module.css';
+import styles from './common/Form.module.css';
 import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import authAxios from "./axios/authAxiosConfig";
+import authAxios from "./axios/AuthAxiosConfig";
+import FormInput from "./common/FormInput";
 
 const ResetPassword = () => {
 
@@ -13,17 +12,15 @@ const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const navigate = useNavigate();
-
+    const [error, setError] = useState('');
 
     const handleResetPassword = async () => {
 
         if(confirmPassword !== newPassword) {
-            toast.error("Passwords do not match!")
             return;
         }
         
         try {
-
             await authAxios.post(`/auth/reset-password`, 
                 {
                     resetPasswordToken: token,
@@ -31,12 +28,11 @@ const ResetPassword = () => {
                 }
             )
 
-            toast.success("Password updated!")
-
             navigate("/login")
 
         } catch(error) {
-            toast.error("Error resetting your password.")
+            setError('Passwords do not match');
+            console.error(error);
         }
     } 
 
@@ -44,27 +40,20 @@ const ResetPassword = () => {
     return (
         <div className={styles.formContainer}>
                 <form onSubmit={(e) => { e.preventDefault(); handleResetPassword(); }}>            
-                <div className={styles.inputGroup}>
                 <h3>ResetPassword</h3>
-                <div className={styles.inputElement}>
-                    <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
-                    <input
+                    <FormInput 
+                        icon={faLock}
                         type="password"
-                        placeholder="Enter your new password..."
+                        placeholder="New password..."
                         value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}>
-                        </input>
-                </div>
-                <div className={styles.inputElement}>
-                    <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
-                        <input
-                            type="password"
-                            placeholder="Confirm password..."
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}>
-                        </input>
-                </div>
-            </div>
+                        onChange={(e) => setNewPassword(e.target.value)}/>
+                    <FormInput
+                        icon={faLock}
+                        type="password"
+                        placeholder="Confirm password..."
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}/>
+                    {error && <p className={styles.error}>{error}</p>}
                 <button type="submit">
                     Reset Password
                 </button>

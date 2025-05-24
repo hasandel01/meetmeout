@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarPlus, faSearch, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
-import axiosInstance from '../../axios/axios';
-import { User } from '../../types/User';
+import { faCalendarPlus, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
+import axiosInstance from '../../../axios/axios';
+import { User } from '../../../types/User';
 import { useEffect } from 'react';
-import { Event } from '../../types/Event';
+import { Event } from '../../../types/Event';
 import styles from "./Header.module.css";
-import useMediaQuery from "./hooks/useMediaQuery";
-import { useNotificationContext } from '../../context/NotificationContext';
-import { useUserContext } from '../../context/UserContext';
+import useMediaQuery from "./../hooks/useMediaQuery";
+import { useNotificationContext } from '../../../context/NotificationContext';
+import { useUserContext } from '../../../context/UserContext';
+import SearchBox from './SearchBox/SearchBox';
 
 const Header = () => {
 
@@ -102,57 +103,15 @@ const Header = () => {
                 <div className={styles.logoContainer} onClick={() => navigate("/")}>
                   <img src="/logo_cut.png" alt="Logo" />  
                 </div>
-                <div className={styles.searchBar}>
-                    <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
-                    <input 
-                        type="text" 
-                        placeholder="Event, user, tags, category..."
-                        onChange={(e) => globalSearch(e.target.value)}
-                        onBlur={handleSearchBlur}
-                        onFocus={handleSearchFocus} />
-                      {showSearchResults && (
-                      <div className={styles.searchResults}>
-                        {users.length === 0 && events.length === 0 && (
-                          <div style={{ display: "flex", flexDirection: "row", textAlign: "center", padding: "20px", color: "#888", overflow: "hidden"}}>
-                            <span style={{ fontSize: "20px" }}>🔍</span>
-                            <p style={{ margin: "8px 0 0 0", fontStyle: "italic" }}>
-                              No results found
-                            </p>
-                          </div>
-                        )}
-                        {users.length > 0 && <label>Users</label>}
-                          {users.map((user) => (
-                            <div key={user.id} className='user-result' onClick={() => navigate(`/user-profile/${user.username}`)}>
-                                <ul>
-                                  <li className='user-result-item'>
-                                    <img src={user.profilePictureUrl} alt="User Profile" />
-                                    <div className={styles.userResultInfo}>
-                                      <h2>{user.firstName} {user.lastName}</h2>
-                                      <p>@{user.username}</p>
-                                    </div>
-                                  </li>
-                                </ul>
-                            </div>
-                          ))}
-                          {events.length > 0 && <label>Events</label>}
-                          {events
-                            .filter((event: Event) => event.id !== null && event.id !== undefined)
-                            .map((event: Event) => (
-                            <div key={event.id} className='event-result' onClick={() => navigate(`/event/${event.id}`)}>
-                                <ul>
-                                  <li className='event-result-item'>
-                                    <img src={event.imageUrl} alt="Event" />
-                                    <div className='event-result-info'>
-                                      <h2>{event.title}</h2>
-                                      <p>{event.description}</p>
-                                    </div>
-                                  </li>
-                                </ul>
-                            </div>
-                            ))}
-                          </div>
-                    )}
-                  </div>
+                <SearchBox
+                  onSearch={globalSearch}
+                  users={users}
+                  events={events}
+                  show={showSearchResults}
+                  onFocus={handleSearchFocus}
+                  onBlur={handleSearchBlur}
+                  navigateTo={(path: string) => navigate(path)}
+                />
                 {isMobile ? (
                     <div className={styles.barMenuContainer}>
                       <FontAwesomeIcon icon={faBars} size='2x'

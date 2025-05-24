@@ -1,41 +1,36 @@
 import React, { useState } from 'react';
-import styles from "./Form.module.css"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import styles from "./common/Form.module.css"
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
-import { toast } from 'react-toastify';
-import authAxios from './axios/authAxiosConfig';
+import authAxios from './axios/AuthAxiosConfig';
+import FormInput from './common/FormInput';
+
 const ForgotPassword: React.FC = () => {
     
     const [email, setEmail] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
         try {
             await authAxios.post(`/auth/send-password-reset-link/${email}`)
-            toast.success("Password reset link is sent.")
         } catch (error) {
-            toast.success("User is not found in the system, please sign up!")
+            console.error(error);
         }
     };
 
     return (
         <div className={styles.formContainer}>
             <form onSubmit={handleSubmit}>
-            <h2>Forgot Password</h2>
-                <div className={styles.inputGroup}>
-                    <label>Email</label>
-                    <div className={styles.inputElement}>
-                        <FontAwesomeIcon icon={faEnvelope}/>
-                        <input
+            <h2>Send reset link to e-mail</h2>
+                    <p className={styles.helperText}>  You will receive a reset link via email if your address is registered. </p>
+                       <FormInput
+                            icon={faEnvelope}
+                            label="E-mail"
                             type="email"
-                            id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter your email"
                             required
-                        />
-                    </div>
-                </div>
+                            />
                 <button type="submit">Send Reset Link</button>
             </form>
         </div>

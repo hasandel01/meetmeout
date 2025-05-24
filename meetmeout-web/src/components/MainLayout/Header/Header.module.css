@@ -8,7 +8,7 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
     background-color: var(--background-color);
     width: 100%;
     border-bottom: 1px solid var(--primary-color-dark);
@@ -26,8 +26,8 @@ header .logoContainer {
 }
 
 header .logoContainer img {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background-color: var(--input-background);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -47,13 +47,14 @@ header .logoContainer img:hover {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    padding: 5px 25px;
+    padding: 10px 30px;
     background-color: var(--input-background);
     border-radius: 10px;
     border: 2px solid var(--primary-color-dark);
 }
 
 .searchBar input {
+    width: 100%;
     border: none;
     border-radius: 8px;
     background-color: var(--input-background);
@@ -166,7 +167,7 @@ header .headerMenu {
 
 header .headerMenu span {
     position: relative;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--primary-color-dark);
     cursor: pointer;
     display: flex;
@@ -219,7 +220,7 @@ header .headerMenu span:hover {
   
 .notificationBadge {
     position: absolute;
-    top: -4px;           /* NEGATİF DEĞİL! Yukarı taşmasın */
+    top: -4px;          
     right: -10px;
     background-color: rgb(255, 0, 0);
     border-radius: 50%;
@@ -248,8 +249,8 @@ header .userShortcut:hover {
 }
 
 header .userShortcut img {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     margin-right: 15px;
     background-color: var(--input-background);

@@ -1,0 +1,125 @@
+.commentContainer {
+    position: relative;
+    flex-direction: column;
+    background-color: var(--card-border);
+    width: 50vw;
+    margin: 0px 30px;
+    border: 1px solid var(--primary-color-dark);
+ }
+
+ .commentContainerAlt {
+    background-color: white;
+    border-radius: 12px;
+    padding: 12px;
+ }
+
+ .commentContainer ul {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+ }
+
+ .commentContainer li {
+    background-color: var(--card-color);
+ }
+
+ .commentItem {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background-color: #fff;
+  position: relative;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.senderInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.senderInfo img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.username {
+  font-weight: bold;
+}
+
+.timestamp {
+  font-size: 12px;
+  color: gray;
+}
+
+.commentText {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.commentActions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.actionIcon {
+  color: #444;
+  cursor: pointer;
+}
+
+.actionIcon:hover {
+  color: #007bff;
+}
+
+.editArea input {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.editButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.editButtons button {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+
+.addComment {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    border: 1px solid var(--primary-color-dark);
+}
+.addComment input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--primary-color-dark);
+    outline: none;
+    box-shadow: none;
+    border: none;
+}

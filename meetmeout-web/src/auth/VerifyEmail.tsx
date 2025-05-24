@@ -1,7 +1,7 @@
 import { useEffect, useState} from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axiosInstance from "../axios/axios";
 import styles from "./common/Form.module.css"
+import authAxios from "./axios/AuthAxiosConfig";
 
 
 const VerifyEmail = () => {
@@ -16,7 +16,7 @@ const VerifyEmail = () => {
         if(token) {
             const verifyEmail = async () => {
                 try {
-                    const response = await axiosInstance.post(`/auth/verify-email?token=${token}`);
+                    const response = await authAxios.post(`/auth/verify-email?token=${token}`);
                     if (response.status === 200) {
                         setMessage("Your e-mail is verified. Redirecting to the login page...")
                         setTimeout(() => navigate("/login"), 3000)

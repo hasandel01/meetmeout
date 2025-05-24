@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axiosInstance from '../axios/axios';
+import authAxios from './axios/AuthAxiosConfig';
 import { Link } from 'react-router-dom';
 import UserDetailsForm from './UserDetailsForm';
 import styles from './common/Form.module.css';
@@ -20,7 +20,7 @@ const Register = () => {
             e.preventDefault();
             setFormSubmitted(true);
     
-            const response = await axiosInstance.post('/auth/check-user', {email}
+            const response = await authAxios.post('/auth/check-user', {email}
             );
     
             if (response.data === true) {

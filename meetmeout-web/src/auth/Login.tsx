@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from '../axios/axios';
+import authAxios from './axios/AuthAxiosConfig';
 import { useNavigate } from 'react-router-dom';
 import styles from './common/Form.module.css';
 import { Link } from 'react-router-dom';
@@ -19,7 +19,7 @@ const Login = ()  => {
 
             e.preventDefault();
 
-            const response = await axiosInstance.post('/auth/authenticate', {
+            const response = await authAxios.post('/auth/authenticate', {
                 username: username,
                 password: password,
             });

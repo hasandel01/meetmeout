@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { faUser, faIdBadge, faIdCard, faLock, faShieldAlt } from "@fortawesome/free-solid-svg-icons";
 import FormInput from './common/FormInput';
+import authAxios from './axios/AuthAxiosConfig';
 
 interface UserDetailsFormProps {
     email: string;
@@ -33,7 +34,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                 return;
             }        
     
-            const response = await axiosInstance.post('/auth/register', {
+            const response = await authAxios.post('/auth/register', {
                 email: email,
                 username: username,
                 firstName: firstName,

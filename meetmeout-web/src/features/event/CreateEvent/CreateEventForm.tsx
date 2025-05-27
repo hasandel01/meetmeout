@@ -320,7 +320,7 @@ const CreateEventForm = () => {
                             <h4>Event Time</h4>
                             <hr/> 
                             <div className={styles.timeInput}>
-                                <h5>Start</h5>
+                                <h4>Start</h4>
                                 <input 
                                     type="date"
                                     placeholder="Event Start Date"
@@ -337,7 +337,7 @@ const CreateEventForm = () => {
                                     required />
                             </div>
                             <div className={styles.timeInput}>
-                            <h5>End</h5>
+                            <h4>End</h4>
                                 <input 
                                     type="date"
                                     placeholder="Event Start Date"
@@ -609,7 +609,7 @@ const CreateEventForm = () => {
                                     <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {event.fee} ₺
                                 </p>
                                 {event.feeDescription && (
-                                    <p style={{ fontStyle: "italic", color: "#666" }}>
+                                    <p style={{ fontStyle: "italic",}}>
                                     <FontAwesomeIcon icon={faInfoCircle} /> {event.feeDescription}
                                     </p>
                                 )}

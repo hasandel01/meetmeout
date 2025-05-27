@@ -1,0 +1,68 @@
+.settingsContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    align-items: center;
+    justify-content: center;
+}
+
+.settingsContainer h1 {
+   color: var(--primary-color-dark);
+}
+
+.darkModeToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--primary-color-dark);
+  margin-bottom: 10px;
+}
+
+.darkModeToggle input[type="checkbox"] {
+  display: none;
+}
+
+.privacyToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--primary-color-dark);
+  margin-bottom: 10px;
+}
+
+.privacyToggle input[type="checkbox"] {
+  display: none;
+}
+
+.slider {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+input[type="checkbox"]:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input[type="checkbox"]:checked + .slider::before {
+  transform: translateX(20px);
+}

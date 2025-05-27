@@ -17,10 +17,12 @@ import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import com.hasandel01.meetmeoutserver.user.service.BadgeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,36 +43,19 @@ public class CompanionServiceImpl implements CompanionService {
     private final NotificationService notificationService;
     private final BadgeService badgeService;
 
+    @Transactional
     public List<UserDTO> getFriends() {
-
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = (User) userDetailsService.loadUserByUsername(username);
-
-        Set<User> friends = friendRequestRepository.findAcceptedFriends(user.getId());
-
-        if(friends.isEmpty())
-            return new ArrayList<>();
-
-        return friends.stream()
-                .map(friend -> UserDTO.builder()
-                        .id(friend.getId())
-                        .username(friend.getUsername())
-                        .firstName(friend.getFirstName())
-                        .lastName(friend.getLastName())
-                        .email(friend.getEmail())
-                        .companions(UserMapper.toUserDTOSet(friend.getCompanions()))
-                        .participatedEventIds(friend.getParticipatedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
-                        .organizedEventIds(friend.getOrganizedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
-                        .profilePictureUrl(friend.getProfilePictureUrl())
-                        .phone(friend.getPhone())
-                        .about(friend.getAbout())
-                        .build())
-                .collect(Collectors.toList());
+        return getUserDTOS(username);
     }
 
+    @Transactional
     public List<UserDTO> getUserFriends(String username) {
+        return getUserDTOS(username);
+    }
 
+    @NotNull
+    private List<UserDTO> getUserDTOS(String username) {
         User user = (User) userDetailsService.loadUserByUsername(username);
 
         Set<User> friends = friendRequestRepository.findAcceptedFriends(user.getId());
@@ -95,6 +80,7 @@ public class CompanionServiceImpl implements CompanionService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public boolean sendFriendRequest(String receiverEmail) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -124,6 +110,7 @@ public class CompanionServiceImpl implements CompanionService {
         return true;
     }
 
+    @Transactional
     public boolean acceptRequest(String senderEmail) {
 
         String receiverUsername = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -163,6 +150,7 @@ public class CompanionServiceImpl implements CompanionService {
         return true;
     }
 
+    @Transactional
     public Void rejectRequest(String senderEmail) {
 
         String receiverUsername = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -179,11 +167,14 @@ public class CompanionServiceImpl implements CompanionService {
         return null;
     }
 
+
+    @Transactional
     public List<FriendRequestDTO> getPendingFriendRequests() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        User user = (User) userDetailsService.loadUserByUsername(username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         List<FriendRequest> friendRequests = friendRequestRepository.findByReceiverAndStatus(user, FriendRequest.Status.PENDING)
                 .orElse(new ArrayList<>());
@@ -192,6 +183,8 @@ public class CompanionServiceImpl implements CompanionService {
 
     }
 
+
+    @Transactional
     public Boolean removeCompanion(String companionEmail) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -207,6 +200,7 @@ public class CompanionServiceImpl implements CompanionService {
 
     }
 
+    @Transactional
     public List<UserDTO> getPossibleFriends() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -220,7 +214,7 @@ public class CompanionServiceImpl implements CompanionService {
         List<FriendRequestDTO> friendRequests = getPendingFriendRequests();
 
         List<UserDTO> senders = friendRequests.stream().map(
-                request -> UserMapper.toUserDTO(request.sender())
+                FriendRequestDTO::sender
         ).toList();
 
         companions.addAll(senders);
@@ -236,6 +230,7 @@ public class CompanionServiceImpl implements CompanionService {
                 .toList();
     }
 
+    @Transactional
     public List<UserDTO> getUsersThatFriendRequestIsAlreadySent() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -251,6 +246,7 @@ public class CompanionServiceImpl implements CompanionService {
 
     }
 
+    @Transactional
     public Boolean cancelSentRequest(String companionEmail) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

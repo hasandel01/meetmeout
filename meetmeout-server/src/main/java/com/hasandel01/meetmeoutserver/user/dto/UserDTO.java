@@ -17,5 +17,7 @@ public record UserDTO(
         Set<UserDTO> companions,
         Set<Long> participatedEventIds,
         Set<Long> organizedEventIds,
-        Set<BadgeDTO> badges) {
+        Set<BadgeDTO> badges,
+        boolean showLocation,
+        boolean darkMode) {
 }

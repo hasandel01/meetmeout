@@ -1,0 +1,119 @@
+/** SEARCH RESULTS */
+
+.searchBar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 30px;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    border: 2px solid var(--primary-color-dark);
+}
+
+.searchBar input {
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
+}
+
+.searchBar input::placeholder {
+    color: var(--primary-color-dark);
+}
+ 
+.searchBar input:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+.searchIcon {
+    padding-right: 16px;
+    color: var(--primary-color-dark);
+    border-right: 1px solid var(--primary-color-dark);
+}
+
+.searchResults {
+    position: absolute;
+    top: 100%;
+    max-width: 300px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+    overflow-y: visible;
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
+    border-radius: 6px;
+    border: 1px solid var(--primary-color)
+}
+
+.searchResults p {
+    color: var(--primary-color-dark)
+}
+
+.searchResults ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.searchResults li {
+    padding: 12px;
+    gap: 10px;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    border-bottom: 2px solid var(--background-color);
+}
+
+.searchResults li:hover {
+    background-color: var(--primary-color-light);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.searchResults li h2 {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0px;
+}
+
+.searchResults li p {
+    font-size: 12px;
+    margin: 0px;
+}
+
+.userResultInfo {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0px;
+    align-items: first baseline;
+}
+
+.searchResults li img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 16px;
+    background-color: var(--input-background);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--primary-color-dark);
+    transition: transform 0.3s ease;
+}
+
+.searchResults li:last-child {
+    border-bottom: none;
+    border-radius: 6px;
+}
+
+
+.searchResults label {
+    font-size: 16px;
+    padding: 4px 0px;
+    font-weight: bold;
+    width: 100%;
+    border-bottom: 1px solid var(--primary-color);
+}

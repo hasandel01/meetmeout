@@ -19,33 +19,6 @@
     justify-content: space-evenly;
 }
 
-/** REVIEW **/
-
-.reviewPopup {
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    width: 30vw;
-    height: 30vh;
-    top: 0;
-    left: 20%;
-    background-color: rgba(0, 0, 0, 0.2);
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.reviewStars {
-  display: flex;
-  justify-content: center;
-  gap: 4px;
-}
-
-.starIcon {
-  font-size: 20px;
-  cursor: pointer;
-}
-
 /** INVITE MODAL */
 
 .inviteModalContainer {

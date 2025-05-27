@@ -7,6 +7,7 @@ import com.hasandel01.meetmeoutserver.event.mapper.EventMapper;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
 import com.hasandel01.meetmeoutserver.event.repository.EventRepository;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class SearchController {
 
 
     @GetMapping
+    @Transactional
     public GlobalSearchResponse search(@RequestParam("query") String query, Pageable pageable) {
 
         Set<EventDTO> events = eventRepository.findByTitleContainingIgnoreCase(query, pageable)

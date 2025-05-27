@@ -9,13 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/comment")
 @RequiredArgsConstructor
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/add-comment/{eventId}")
+    @PostMapping("/{eventId}")
     public ResponseEntity<CommentDTO> addComment(@Valid @PathVariable long eventId, @RequestBody CommentDTO comment) {
         try {
             return ResponseEntity.ok(commentService.addComment(eventId, comment));
@@ -25,7 +25,7 @@ public class CommentController {
     }
 
 
-    @DeleteMapping("/delete-comment/{commentId}")
+    @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable long commentId) {
         try {
             return ResponseEntity.ok(commentService.deleteComment(commentId));
@@ -34,7 +34,7 @@ public class CommentController {
         }
     }
 
-    @PutMapping("/update-comment/{commentId}")
+    @PutMapping("/{commentId}")
     public ResponseEntity<Void> updateComment(@PathVariable long commentId, @RequestBody CommentDTO comment) {
         try {
             return ResponseEntity.ok(commentService.updateComment(commentId, comment));

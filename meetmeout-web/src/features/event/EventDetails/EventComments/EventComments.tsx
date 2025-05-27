@@ -40,7 +40,7 @@ const EventComments: React.FC<EventCommentsProps> = ({
 
     
     return (
-        <div className={styles.commentContainer}>
+        <div className={styles.commentContainer} id="eventComments">
             <div className={styles.commentContainerAlt}>
                 <ul> 
                     {comments

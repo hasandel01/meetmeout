@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,6 +28,8 @@ public class Review {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Long id;
 
+
+    @Length(max = 400)
     private String content;
 
     @Min(1)

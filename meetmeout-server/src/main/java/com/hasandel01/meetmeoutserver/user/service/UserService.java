@@ -15,4 +15,8 @@ public interface UserService {
     UserDTO getUserByUsername(String username);
 
     UserDTO updateMe(UserDTO userDTO);
+
+    Boolean updateLocationPreference(Boolean locationPreference);
+
+    Boolean updateDarkModePreference(Boolean darkMode);
 }

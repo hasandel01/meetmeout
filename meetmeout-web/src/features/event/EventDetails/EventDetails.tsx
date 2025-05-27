@@ -3,9 +3,7 @@ import axiosInstance from "../../../axios/axios";
 import { useEffect, useState } from "react";
 import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
-import styles from './EventDetails.module.css'
-import { faStar, faImage} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styles from './EventDetails.module.css';
 import { JoinRequest } from "../../../types/JoinRequest";
 import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
@@ -19,6 +17,7 @@ import EventParticipants from "./EventParticipants/EventParticipants";
 import EventHeader from "./EventHeader/EventHeader";
 import EventDetailsCard from "./EventCard/EvetCard";
 import EventPhotos from "./EventPhotos/EventPhotos";
+import ReviewModal from "./ReviewModal/ReviewModal";
 
 const EventDetails = () => {
 
@@ -39,8 +38,8 @@ const EventDetails = () => {
   const [currentTab, setCurrentTab] = useState<number>(1);
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentText, setEditedCommentText] = useState<string>('');
+  const [showReviewModal, setShowReviewModal] = useState(true);
 
-    const [review, setReview] = useState<Review| null>(null);
 
 
         const handleLocationClick = () => {
@@ -212,8 +211,6 @@ const EventDetails = () => {
     }
   }
 
-  
-
 
   useEffect(() => {
   if (event.id !== 0) {
@@ -304,31 +301,7 @@ const EventDetails = () => {
     }
   }
 
-  const handleAddReview = async () => {
-
-    try {
-      const response = await axiosInstance.post(`/review/${event.id}`, review);
-
-      setEvent(prev => ({
-        ...prev,
-        reviews: [...prev.reviews, response.data]
-      }))
-
-      if(currentUser) {
-        setReview({
-          reviewId: 0,
-          reviewer: currentUser,
-          content: '',
-          updatedAt: '',
-          rating: 0
-        });
-      }
-
-    } catch(error) {
-      toast.error("Error adding review.");
-    }
-
-    }
+ 
 
     const handleDeleteReview = async (review: Review) => {
       try {
@@ -359,9 +332,7 @@ const EventDetails = () => {
       }catch(error) {
         toast.error("Error editing review.");
       }
-
     }
-
 
     const areReviewConditionsSatisfied = () => {
       const isAttendee = event.attendees.some(attendee => attendee.username === currentUser?.username);
@@ -371,53 +342,19 @@ const EventDetails = () => {
       return isAttendee && hasNotReviewed && isEventEnded;
     }
 
+
   return (
     <div className={styles.eventContainer}>
       {isUserAllowed ? (
         <>
-        <>
-            {areReviewConditionsSatisfied() && (
-              <div className={styles.reviewPopup}>
-                <h4>Review</h4>
-                <p>Please share your thoughts about the event.</p>
-                <div className={styles.reviewStars}>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <FontAwesomeIcon
-                      key={star}
-                      icon={faStar}
-                      className={styles.starIcon}
-                      onClick={() => {
-                            if (!currentUser) return;
-                            setReview(prev => ({
-                              reviewId: prev?.reviewId || 0,
-                              reviewer: prev?.reviewer || currentUser,
-                              content: prev?.content || "",
-                              updatedAt: prev?.updatedAt || "",
-                              rating: star
-                            }));
-                          }}
-                      style={{ color: (review?.rating ?? 0) >= star ? "gold" : "gray" }}
-                    />
-                  ))}
-                </div>
-                <textarea
-                  placeholder="Write your review here..."
-                  value={review?.content}
-                  onChange={(e) => {
-                    if (review) {
-                      setReview({
-                        reviewId: review.reviewId,
-                        reviewer: review.reviewer,
-                        updatedAt: review.updatedAt,
-                        rating: review.rating,
-                        content: e.target.value
-                      });
-                    }
-                  }}
-                ></textarea>
-                <button onClick={() => handleAddReview()}>Submit Review</button>
-              </div>
-            )}
+          {currentUser && showReviewModal && areReviewConditionsSatisfied() && (
+            <ReviewModal
+              event={event}
+              currentUser={currentUser}
+              setEvent={setEvent}
+              onClose={() => setShowReviewModal(false)}
+            />
+          )}
             {currentUser && (
               <EventParticipants
                 event={event}
@@ -488,8 +425,6 @@ const EventDetails = () => {
                     )}
                 </div>
             </> 
-
-        </>
       )
       : (
         <div>

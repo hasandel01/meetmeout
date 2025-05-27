@@ -18,6 +18,9 @@
     justify-content: center;
 }
 
+.containerAlt h3 {
+    color: var(--primary-color-dark);
+}
 
 
 .divisionContainer {

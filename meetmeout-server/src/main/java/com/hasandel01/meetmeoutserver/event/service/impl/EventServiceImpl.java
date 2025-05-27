@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -108,6 +107,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return newEvent.getId();
     }
 
+    @Transactional
     public String updateEventPicture(long eventId, MultipartFile file) {
 
         Event event = eventRepository.findById(eventId)
@@ -170,6 +170,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return null;
     }
 
+    @Transactional
     private Void sendJoinEventRequest(Event event) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -271,6 +272,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return null;
     }
 
+    @Transactional
     public ReviewDTO addReviewToEvent(@Valid long eventId, ReviewDTO reviewDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -294,6 +296,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
     }
 
+    @Transactional
     public Void deleteReviewFromEvent(long reviewId) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -314,6 +317,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
 
+    @Transactional
     public CommentDTO addComment(@Valid long eventId, CommentDTO commentDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -348,6 +352,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
 
+    @Transactional
     public List<JoinRequestDTO> getAllJoinRequests(long eventId) {
 
         Event event = eventRepository.findById(eventId)
@@ -363,6 +368,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
     }
 
+    @Transactional
     public List<EventDTO> getAllRequestSentEvents() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -384,6 +390,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
     }
 
+    @Transactional
     public Void sendInvitationToUsers(List<UserDTO> users, long eventId) {
 
         Event event = eventRepository.findById(eventId)
@@ -454,6 +461,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         }
     }
 
+    @Transactional
     public List<InviteDTO> getInvitations() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -480,7 +488,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return user.getParticipatedEvents().stream().map(EventMapper::toEventDto).collect(Collectors.toSet());
     }
 
-
+    @Transactional
     public Void updateComment(long commentId, CommentDTO comment) {
 
         Comment comment1 = commentRepository.findById(commentId)
@@ -511,6 +519,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
     }
 
+    @Transactional
     public EventDTO updateEvent(long eventId, EventDTO eventDTO) throws EventNotFoundException {
 
         Event event = eventRepository.findById(eventId)
@@ -545,6 +554,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return EventMapper.toEventDto(eventRepository.save(event));
     }
 
+    @Transactional
     public ReviewDTO updateReview(long reviewId, ReviewDTO newReview) {
 
         Review review = reviewRepository.findById(reviewId)
@@ -559,6 +569,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return ReviewMapper.toReviewDTO(review);
     }
 
+    @Transactional
     public Double getAverageRating(long eventId) {
 
         Event event = eventRepository.findById(eventId)

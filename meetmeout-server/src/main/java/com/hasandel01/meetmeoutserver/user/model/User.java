@@ -96,7 +96,7 @@ public class User implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
-    boolean emailVerified = false;
+    private Boolean emailVerified = false;
 
     private String verificationToken;
 
@@ -117,5 +117,11 @@ public class User implements UserDetails {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Review> reviews = new HashSet<>();
+
+    @Column(nullable = false)
+    private Boolean showLocation = false;
+
+    @Column(nullable = false)
+    private Boolean darkMode = false;
 
 }

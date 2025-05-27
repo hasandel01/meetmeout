@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -57,11 +58,10 @@ public class NotificationService {
         }
     }
 
-
+    @Transactional
     public Page<NotificationDTO> getNotificationsForUser(String username, Pageable pageable) {
         return notificationRepository.findByReceiverUsernameOrderByIdDesc(username,pageable)
                 .map(NotificationMapper::toNotificationDTO);
-
     }
 
     public void sendFriendRequestNotification(User sender, User receiver) {
@@ -155,7 +155,7 @@ public class NotificationService {
                 .builder()
                 .notificationType(NotificationType.EVENT_RESPONSE)
                 .title("You joined the event!: " + event.getTitle())
-                .body(event.getOrganizer().getFirstName() + "accepted your join request!")
+                .body(event.getOrganizer().getFirstName() + " accepted your join request!")
                 .url("/event/" + event.getId())
                 .sender(event.getOrganizer())
                 .receiver(receiver)

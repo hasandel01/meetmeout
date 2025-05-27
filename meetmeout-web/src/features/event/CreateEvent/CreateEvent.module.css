@@ -163,6 +163,10 @@
     padding: 40px;
 }
 
+.eventLocationSelectorContainer strong, label {
+    color: var(--primary-color-dark);
+}
+
 .routeSelection {
     display: flex;
     flex-direction: row;
@@ -621,6 +625,10 @@ p {
 
 /** STEP 5 */
 
+.eventPreviewContainer {
+    color: var(--primary-color-dark);
+}
+
 .eventSummary {
     position: relative;
     display: flex;
@@ -648,6 +656,10 @@ p {
     border-radius: 10px;
 }
 
+.eventPreviewHeader {
+    color: var(--primary-color-dark);
+}
+
 .eventPreviewInfo {
   display: flex;
   flex-direction: column;
@@ -668,6 +680,10 @@ p {
   margin: 4px 0;
 }
 
+.previewDetails p {
+    color: var(--primary-color-dark);
+}
+
 .eventDescription {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -677,14 +693,11 @@ p {
 
   font-size: 14px;
   line-height: 1.4;
-  color: #444;
 
   max-width: 100%;
   width: 100%;
   min-width: 0;
 }
-
-
 
 .previewDetails {
     margin-top: 6px;
@@ -732,12 +745,14 @@ p {
     font-weight: 500;
     transition: all 0.3 ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--primary-color-dark);
+    color: var(--background-color);
     border: 1px solid var(--primary-color-dark);
+    transition: all 0.3s ease;
 }
 
 .buttons button:hover {
-    background-color: var(--primary-color-dark);
-    color: white;
+    transform: scale(1.05);
 }
 
 

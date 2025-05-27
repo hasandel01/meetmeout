@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { User } from "../../../types/User";
 import axiosInstance from "../../../axios/axios";
 import styles from "./UserProfile.module.css";
-import { faCamera, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faLocationDot, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
 import { useUserContext } from "../../../context/UserContext";
+import { useLocationContext } from "../../../context/LocationContex";
+import axios from "axios";
 
 
 const UserProfile = () => {
@@ -16,15 +18,66 @@ const UserProfile = () => {
     const { currentUser, getMe } = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [showUserUpdateForm, setShowUserUpdateForm] = useState(false);
+    const {userLatitude, userLongitude} = useLocationContext();
+    const [userLocation, setUserLocation] = useState<string | null>(null);
 
     const getUserProfile = async () => {
         try {
             const response = await axiosInstance.get(`/${username}`);
             setUser(response.data);
+            console.log("User profile fetched successfully:", response.data);
     }   catch (error) {
             console.error("Error fetching user profile:", error);
         }
     };
+
+    const getAddressFromCoords = async () => {
+
+
+        try {
+            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${userLatitude}&lon=${userLongitude}&format=json`);
+            
+            const address = response.data.address as {
+            road? :string;
+            village?: string;
+            town?: string;
+            suburb?: string;
+            neighbourhood: string;
+            city?: string;
+            county?: string;
+            state?: string;
+            hamlet?: string;
+            }
+
+            let mostSpecific =
+            address.road ||
+            address.neighbourhood ||
+            address.village ||
+            address.hamlet ||
+            '';
+
+            let district =
+            address.town ||
+            address.suburb ||
+            '';
+
+            let city =
+            address.city ||
+            address.county ||
+            address.state ||
+            '';
+
+            const parts = [mostSpecific, district, city].filter(Boolean);
+            const fallbackName = parts.join(', ');
+            setUserLocation(fallbackName || "Unknown Location");
+            console.log("User location fetched successfully:", fallbackName);
+
+        }
+        catch (error) {
+            console.error("Error fetching address:", error);
+            return null;
+        }
+    }
 
     const getCompanions = async () => {
         try {
@@ -41,6 +94,14 @@ const UserProfile = () => {
         getUserProfile();
         getCompanions();
     }, []);
+
+    useEffect(() => {
+        if (userLatitude && userLongitude) {
+            getAddressFromCoords();
+        }   
+    }
+    , [userLatitude, userLongitude]);
+
 
     const updateProfilePicture = async () => {
         try {
@@ -109,7 +170,12 @@ const UserProfile = () => {
                     <div className={styles.userInfo}>
                         <h3>{user?.firstName} {user?.lastName}</h3>
                         <h4>@{user?.username}</h4>
-                        <p> {user?.about}</p>
+                         <p> {user?.about}</p>
+                        {userLatitude && userLongitude &&  (
+                            ((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) ? (
+                            <p><FontAwesomeIcon icon={faLocationDot}/> {userLocation}</p>
+                        ) : (
+                            <p></p>))}                  
                     </div>
                     <hr/>
                     <div className={styles.stats}>
@@ -137,8 +203,10 @@ const UserProfile = () => {
                                 return (
                                        <li key={index}>
                                             <img src={badge.iconUrl} alt="Badge Icon"></img>
-                                            <h4>{badge.title}</h4>
-                                            <p>{badge.description}</p>
+                                            <div className={styles.badgeInfo}>
+                                                <h4>{badge.title}</h4>
+                                                <p>{badge.description}</p>
+                                            </div>
                                         </li> 
                                 )
                             })}

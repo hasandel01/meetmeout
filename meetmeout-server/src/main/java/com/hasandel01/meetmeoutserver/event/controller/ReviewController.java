@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping
+@RequestMapping("/review")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/add-review/{eventId}")
+    @PostMapping("/{eventId}")
     public ResponseEntity<ReviewDTO> addReview(@Valid @PathVariable long eventId, @RequestBody ReviewDTO reviewDTO) {
         try {
             return ResponseEntity.ok(reviewService.addReviewToEvent(eventId, reviewDTO));
@@ -25,7 +25,7 @@ public class ReviewController {
         }
     }
 
-    @DeleteMapping("/delete-review/{reviewId}")
+    @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable long reviewId) {
         try {
             return ResponseEntity.ok(reviewService.deleteReviewFromEvent(reviewId));
@@ -34,8 +34,7 @@ public class ReviewController {
         }
     }
 
-
-    @PutMapping("/update-review/{reviewId}")
+    @PutMapping("/{reviewId}")
     public ResponseEntity<ReviewDTO> updateReview(@PathVariable long reviewId, @RequestBody ReviewDTO newReview) {
         try {
             return ResponseEntity.ok(reviewService.updateReview(reviewId,newReview));

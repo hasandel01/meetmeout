@@ -39,122 +39,6 @@ header .logoContainer img:hover {
     transform: scale(1.1);
 }
 
-
-/** SEARCH RESULTS */
-
-.searchBar {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 30px;
-    background-color: var(--input-background);
-    border-radius: 10px;
-    border: 2px solid var(--primary-color-dark);
-}
-
-.searchBar input {
-    width: 100%;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--input-background);
-}
-  
-
-.searchBar input:focus {
-    outline: none;
-    border: none;
-    box-shadow: none;
-}
-
-.searchIcon {
-    padding-right: 16px;
-    color: var(--primary-color-dark);
-    border-right: 1px solid var(--primary-color-dark);
-}
-
-.searchResults {
-    position: absolute;
-    top: 100%;
-    max-width: 300px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    z-index: 999;
-    overflow-y: visible;
-    background-color: var(--card-color);
-    border-radius: 6px;
-    border: 1px solid var(--primary-color)
-}
-
-.searchResults ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.searchResults li {
-    padding: 12px;
-    gap: 10px;
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    border-bottom: 2px solid var(--background-color);
-    color: var(--text-color);
-}
-
-.searchResults li:hover {
-    background-color: var(--primary-color-light);
-    color: var(--text-color);
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
-.searchResults li h2 {
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--text-color);
-    margin: 0px;
-}
-
-.searchResults li p {
-    font-size: 12px;
-    color: var(--text-color);
-    margin: 0px;
-}
-
-.userResultInfo {
-    display: flex;
-    flex-direction: column;
-    margin-left: 0px;
-    align-items: first baseline;
-}
-
-.searchResults li img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 16px;
-    background-color: var(--input-background);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--primary-color-dark);
-    transition: transform 0.3s ease;
-}
-
-.searchResults li:last-child {
-    border-bottom: none;
-    border-radius: 6px;
-}
-
-
-.searchResults label {
-    font-size: 16px;
-    padding: 4px 0px;
-    font-weight: bold;
-    width: 100%;
-    border-bottom: 1px solid var(--primary-color);
-}
-
 /** NAVMENU */
 
 header .headerMenu {
@@ -228,7 +112,7 @@ header .headerMenu span:hover {
     font-weight: bold;
     padding: 2px 6px;
     z-index: 10;
-    color: var(--background-color);
+    color: var(--card-color);
 }
 
 
@@ -267,7 +151,7 @@ header .userShortcut img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: var(--card-color);
+    background-color: var(--background-color);
     width: 200px;
     z-index: 999;
     border: 1px solid var(--primary-color-dark);
@@ -283,18 +167,18 @@ header .userShortcut img {
 }
 
 .userMenu li {
-    padding: 8px;
     text-align: center;
     border-bottom: 1px solid var(--card-border);
-    color: var(--text-color);
+    color: var(--primary-color-dark);
     font-size: 14px;
     font-weight: bold;
     border-radius: 6px;
+    padding: 10px;
 }
 
 .userMenu li:hover {
-    background-color: var(--primary-color-light);
-    color: var(--text-color);
+    background-color: var(--primary-color);
+    color: var(--primary-color-dark);
     transition: background-color 0.3s ease;
 }
 
@@ -302,24 +186,17 @@ header .userShortcut img {
     border-bottom: none;
 }
 
-.userMenu li a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 16px;
-    font-weight: bold;
-}
-
 .userMenu li label {
     cursor: pointer;
-    color: var(--text-color);
     font-size: 16px;
     font-weight: bold;
+    margin-left: 5px;
 }
 
 
 @media (max-width: 768px) {
 
-      header {
+    header {
         position: sticky;
         top: 0;
         width: 100%;
@@ -352,12 +229,14 @@ header .userShortcut img {
         background-color: var(--input-background);
         border-radius: 8px;
         margin-left: 0px;
+        width: 5vw;
     }
     
     .searchBar input {
         border: none;
         border-radius: 8px;
         background-color: var(--input-background);
+    
       }
       
     

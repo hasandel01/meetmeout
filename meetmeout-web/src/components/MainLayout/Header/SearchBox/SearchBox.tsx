@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import styles from './../Header.module.css';
+import styles from './SearchBox.module.css';
 import { User } from '../../../../types/User';
 import { Event } from '../../../../types/Event';
 

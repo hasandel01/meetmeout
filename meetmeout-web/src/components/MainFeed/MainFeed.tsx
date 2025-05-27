@@ -13,22 +13,10 @@ import { TileLayer } from "react-leaflet";
 import MapPanner from "./MainFeedMap/MainFeedMapPanner/MainFeedMapPanner";
 import EventCard from "./EventCard/EventCard";
 import FilterPanel from "./EventFilterPanel/FilterPanel";
-
+import calculateDistance from "../../utils/calculateDistance";
+import { useLocationContext } from "../../context/LocationContex";
 
 const MainFeed = () => {
- 
-    const [events, setEvents] = useState<Event[] | null>([]);
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const navigate = useNavigate();
-    const {currentUser} = useUserContext();
-    const [loading, setLoading] = useState(true);
-    const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
-    const [invitations, setInvitations] = useState<Invitation[]>([]);
-    const [lng, setLng] = useState<number | undefined>(0);
-    const [lat, setLat] = useState<number | undefined>(0);
-    const [globalFilter, setGlobalFilter] = useState('All Events');
-    const [showPastEvents, setShowPastEvents] = useState(false);
-
 
     const location = useLocation();
     const flyTo = location.state?.flyTo;
@@ -39,6 +27,17 @@ const MainFeed = () => {
         lng: flyTo.longitude
         }));
     }
+ 
+    const [events, setEvents] = useState<Event[] | null>([]);
+    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const navigate = useNavigate();
+    const {currentUser} = useUserContext();
+    const [loading, setLoading] = useState(true);
+    const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
+    const [invitations, setInvitations] = useState<Invitation[]>([]);
+    const {userLatitude, userLongitude } = useLocationContext();
+    const [globalFilter, setGlobalFilter] = useState('All Events');
+    const [showPastEvents, setShowPastEvents] = useState(false);
 
     useEffect(() => {
         Promise.all([
@@ -66,19 +65,8 @@ const MainFeed = () => {
             .catch(() => toast.error("Error getting request sent events."));
     };
 
-    useEffect(() => {
-        if(navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    setLat(pos.coords.latitude);
-                    setLng(pos.coords.longitude);
-                } 
-            )
-        }
-    },[])
 
-    
-    const searchQuery = (searchString: string) => {
+    const sortQuery = (searchString: string) => {
 
         if(!events) return;
 
@@ -126,30 +114,6 @@ const MainFeed = () => {
     
         
     }
-
-        const calculateDistance = (event: Event): number => {
-            if (lat === undefined || lng === undefined || !event.latitude || !event.longitude) {
-                return Number.MAX_SAFE_INTEGER; 
-            }
-
-            const R = 6371;
-            const toRad = (value: number) => value * Math.PI / 180;
-
-            const dLat = toRad(event.latitude - lat);
-            const dLon = toRad(event.longitude - lng);
-
-            const lat1 = toRad(lat);
-            const lat2 = toRad(event.latitude);
-
-            const a =
-                Math.sin(dLat / 2) ** 2 +
-                Math.cos(lat1) * Math.cos(lat2) *
-                Math.sin(dLon / 2) ** 2;
-
-            const c = 2 * Math.asin(Math.sqrt(a));
-            return R * c;
-        };
-
 
     const handleJoinEvent = async (eventId: number) => {
 
@@ -242,7 +206,7 @@ const MainFeed = () => {
                 setGlobalFilter={setGlobalFilter}
                 showPastEvents={showPastEvents}
                 setShowPastEvents={setShowPastEvents}
-                onSortChange={searchQuery}
+                onSortChange={sortQuery}
                 />
         <div className={styles.mapContainer}>
                 <MapContainer
@@ -254,7 +218,7 @@ const MainFeed = () => {
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MainFeedMap events={globalFilterFunction()?.filter((event)=> showPastEvents || event.status !== "ENDED") || []} coords={{ lat: lat ?? 41.0082, lng: lng ?? 28.9784 }} />
+                <MainFeedMap events={globalFilterFunction()?.filter((event)=> showPastEvents || event.status !== "ENDED") || []} coords={{ lat: userLatitude ?? 41.0082, lng: userLongitude ?? 28.9784 }} />
                 {flyTo && <MapPanner coords={flyTo} />}
                 </MapContainer>
         </div>
@@ -283,8 +247,8 @@ const MainFeed = () => {
                                 requestSentEvents={requestSentEvents}
                                 calculateDistance={calculateDistance}
                                 dateOptions={options}
-                                lat={lat}
-                                lng={lng}
+                                lat={userLatitude}
+                                lng={userLongitude}
                             />
                         )
                     )))

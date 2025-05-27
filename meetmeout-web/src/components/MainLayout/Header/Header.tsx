@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { useNavigate,useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarPlus, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket, faCalendarDays } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarPlus, faBell, faUserGroup, faHome, faBars, faGear, faRightFromBracket, faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
 import axiosInstance from '../../../axios/axios';
 import { User } from '../../../types/User';
 import { useEffect } from 'react';
@@ -96,6 +96,29 @@ const Header = () => {
         document.removeEventListener("mousedown", handleClickOutside);
       };
     },[showBarMenu])
+
+
+
+    useEffect(() => {
+
+      const handleClickOutside = (event: MouseEvent) => {
+
+        const userMenu = document.querySelector(`.${styles.userMenu}`)
+
+        if(userMenu && !userMenu.contains(event.target as Node))
+            setShowMenu(false);
+      }
+
+        if(showMenu){
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+    },[showMenu])
+
 
 
     return (
@@ -226,9 +249,17 @@ const Header = () => {
                       <div className={styles.userMenu}>
                           <ul>
                           {currentUser?.username && (
-                              <li><a href={`/user-profile/${currentUser.username}`}>Profile </a></li>)}
-                              <li><a href="/settings">Settings</a></li>
-                              <li><label onClick={handleSignOut}>Sign out</label></li>
+                              <li onClick={() => navigate(`/user-profile/${currentUser.username}`)}>
+                                <FontAwesomeIcon icon={faUser}/>
+                                <label>Profile</label>
+                                </li>)}
+                              <li onClick={() => navigate(`/settings`)}>
+                                  <FontAwesomeIcon icon={faGear}/>
+                                <label>Settings</label>
+                              </li>
+                              <li>
+                                  <FontAwesomeIcon icon={faRightFromBracket}/>
+                                <label onClick={handleSignOut}>Sign out</label></li>
                           </ul>
                         </div>
                     )}

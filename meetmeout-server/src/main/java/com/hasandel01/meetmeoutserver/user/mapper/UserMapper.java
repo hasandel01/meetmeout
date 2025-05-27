@@ -23,6 +23,8 @@ public class UserMapper {
                 .phone(user.getPhone())
                 .profilePictureUrl(user.getProfilePictureUrl())
                 .about(user.getAbout())
+                .showLocation(user.getShowLocation())
+                .darkMode(user.getDarkMode())
                 .participatedEventIds(user.getParticipatedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
                 .organizedEventIds(user.getOrganizedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
                 .badges(user.getBadges().stream().map(BadgeMapper::toBadgeDTO).collect(Collectors.toSet()))

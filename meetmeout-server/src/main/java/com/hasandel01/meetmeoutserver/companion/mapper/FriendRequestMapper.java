@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.companion.mapper;
 
 import com.hasandel01.meetmeoutserver.companion.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.companion.model.FriendRequest;
+import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,8 +16,8 @@ public class FriendRequestMapper {
         return  FriendRequestDTO
                 .builder()
                 .id(friendRequest.getId())
-                .sender(friendRequest.getSender())
-                .receiver(friendRequest.getReceiver())
+                .sender(UserMapper.toUserDTO(friendRequest.getSender()))
+                .receiver(UserMapper.toUserDTO(friendRequest.getReceiver()))
                 .status(friendRequest.getStatus())
                 .build();
 

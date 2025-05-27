@@ -41,8 +41,8 @@ const FilterPanel = ({
         <select onChange={(e) => onSortChange(e.target.value)}>
           <option value="Soonest">Soonest</option>
           <option value="Latest">Latest</option>
-          <option value="Most Liked">Most Liked</option>
           <option value="Recently Added">Recently Added</option>
+          <option value="Most Liked">Most Liked</option>
           <option value="Most Attended">Most Attended</option>
           <option value="Nearest">Nearest</option>
         </select>

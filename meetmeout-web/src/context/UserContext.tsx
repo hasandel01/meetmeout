@@ -19,6 +19,7 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
         try {
             const response = await axiosInstance.get("/me");
             setCurrentUser(response.data);
+            console.log("Current user:", response.data);
         } catch(error) {
             toast.error("Error fetching user data.");
         }
@@ -28,6 +29,7 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
         if(currentUser === undefined)
             getMe();
     },[currentUser])
+
 
     return (
         <UserContext.Provider value={{currentUser, getMe}}>

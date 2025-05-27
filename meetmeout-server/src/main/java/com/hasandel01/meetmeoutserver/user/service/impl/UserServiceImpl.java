@@ -95,4 +95,30 @@ public class UserServiceImpl implements UserService {
 
         return UserMapper.toUserDTO(user);
     }
+
+    @Transactional
+    public Boolean updateLocationPreference(Boolean locationPreference) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        user.setShowLocation(locationPreference);
+
+        return userRepository.save(user).getShowLocation();
+    }
+
+    @Transactional
+    public Boolean updateDarkModePreference(Boolean darkModePreference) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        user.setDarkMode(darkModePreference);
+
+        return userRepository.save(user).getDarkMode();
+    }
 }

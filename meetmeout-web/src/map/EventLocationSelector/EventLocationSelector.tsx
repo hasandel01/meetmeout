@@ -250,7 +250,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
   return (
     <div>
           <div className={styles.mapInputContainer}>
-              <FontAwesomeIcon icon={faSearch} />
+              <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
               <input
                 type='text'
                 placeholder='Search start location...'
@@ -272,7 +272,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
             </div>
             {isThereRoute && 
              <div className={styles.mapInputContainer}>
-              <FontAwesomeIcon icon={faSearch} />
+              <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
               <input
                 type='text'
                 placeholder='Search end location...'

@@ -7,6 +7,11 @@
 }
 
 
+.searchIcon {
+  color: var(--primary-color-dark);
+}
+
+
 .searchResults {
     position: absolute;
     display: flex;

@@ -1,6 +1,8 @@
 package com.hasandel01.meetmeoutserver.user.controller;
 
 
+import com.hasandel01.meetmeoutserver.user.dto.DarkModeDTO;
+import com.hasandel01.meetmeoutserver.user.dto.LocationDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,17 @@ public class UserController {
     @PostMapping("/me/update")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.updateMe(userDTO));
+    }
+
+
+    @PutMapping("/me/location-preference")
+    public ResponseEntity<Boolean> updateLocationPreference(@RequestBody LocationDTO locationPreference) {
+        return ResponseEntity.ok(userService.updateLocationPreference(locationPreference.showLocation()));
+    }
+
+    @PutMapping("/me/dark-mode")
+    public ResponseEntity<Boolean> updateDarkMode(@RequestBody DarkModeDTO darkMode) {
+        return ResponseEntity.ok(userService.updateDarkModePreference(darkMode.darkMode()));
     }
 
 

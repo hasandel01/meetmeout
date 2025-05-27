@@ -13,4 +13,6 @@ export interface User {
     participatedEventIds: number[];
     organizedEventIds: number[];
     badges: Badge[];
+    showLocation: boolean;
+    darkMode: boolean;
 }

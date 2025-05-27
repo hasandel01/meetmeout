@@ -156,7 +156,7 @@ lng
                                         <FontAwesomeIcon 
                                             onClick={ (e) => {
                                                 e.stopPropagation();
-                                                navigate(`/event/${event.id}#comments`)
+                                                navigate(`/event/${event.id}#eventComments`)
                                             }}
                                             icon={faComment} 
                                             className={styles.commentIcon} />

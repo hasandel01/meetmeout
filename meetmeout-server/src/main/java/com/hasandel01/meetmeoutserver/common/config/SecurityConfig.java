@@ -28,7 +28,6 @@ public class SecurityConfig {
     @Value("${app.frontend.url}")
     private String frontendUrl;
 
-    // 🔐 1. WebSocket güvenlik zinciri — sadece "/ws/**"
     @Bean
     @Order(0)
     public SecurityFilterChain websocketSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -48,8 +47,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
                     config.setAllowedOrigins(List.of("https://meetmeout.vercel.app", frontendUrl));
-                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
-                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                     config.setAllowedHeaders(List.of("*"));
                     config.setAllowCredentials(true);
                     return config;
                 }))

@@ -57,15 +57,14 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
 
     return (
     <div className={styles.formContainer}>
-                    <h1> Please provide information </h1>
+                    <h2> Please provide information </h2>
                     <p> Please fill in the following details to create your account. </p>
-                    <form className="register-form" onSubmit={handleRegister}>
+                    <form onSubmit={handleRegister}>
                                 <FormInput
                                     icon={faUser}
                                     type="text"
                                     value={username}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setUsername(e.target.value)}
-                                    placeholder="Username"
                                     label="Username"
                                     />
                                 <FormInput
@@ -73,7 +72,6 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     type="text"
                                     value={firstName}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setFirstName(e.target.value)}
-                                    placeholder="First Name"
                                     label="First Name"
                                     />
                                 <FormInput
@@ -81,7 +79,6 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     type="text"
                                     value={lastName}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setLastName(e.target.value)}
-                                    placeholder="Last Name"
                                     label="Last Name"
                                     />
                                 <FormInput
@@ -89,7 +86,6 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     type="password"
                                     value={password}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setPassword(e.target.value)}
-                                    placeholder="Password"
                                     label="Password"
                                     />
                                 <FormInput
@@ -97,7 +93,6 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     type="password"
                                     value={confirmPassword}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setConfirmPassword(e.target.value)}
-                                    placeholder="Confirm Password"
                                     label="Confirm Password"
                                     />
                                 {error && <p className={styles.compactError}>{error}</p>}

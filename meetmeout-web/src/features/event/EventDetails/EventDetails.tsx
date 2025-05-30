@@ -52,6 +52,7 @@ const EventDetails = () => {
             }
           })
         }
+        
       const [event, setEvent] = useState<Event>({
              id: 0,
              title: '',

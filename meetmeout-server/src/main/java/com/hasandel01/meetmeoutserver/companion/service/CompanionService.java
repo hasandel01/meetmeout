@@ -30,4 +30,5 @@ public interface CompanionService {
 
     List<UserDTO> getUserFriends(String username);
 
+    FriendRequestDTO getCompanionStatus(String username);
 }

@@ -7,7 +7,16 @@
 
   --primary-color: #15b37e;               
   --primary-color-dark: #025c42;
-  --primary-color-light: #def0e6;
+  --primary-color-light: #128e65;
+
+
+  --background-grey: #f0f0f0;
+  --text-color-grey: #555;
+  --grey-hover: #e0e0e0;
+  --border-grey: #ccc; 
+
+  --hover-color: #52ac8f;
+  --hover-text-color: #fcfffe;
 
   --background-color: #fcfffe;
   --card-color: #ffffff;
@@ -55,11 +64,16 @@ body {
 
 
 body.dark {
-  --background-color: #025c42;
-  --primary-color-dark: #ffffff;
+    --background-color: #025c42;
+    --primary-color-dark: #ffffff;
     background-color: var(--background-color);
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10' stroke='%23ffffff' stroke-width='1' fill='none' opacity='0.5'/%3E%3C/svg%3E");
-}
+
+    --background-grey: #2c2c2c;
+    --text-color-grey: #bbbbbb;
+    --border-grey: #444;
+    --grey-hover: #3a3a3a;
+  }
 
 
 @keyframes redRingPulse {
@@ -99,4 +113,81 @@ body.dark {
   height: 36px;
   margin-left: 10px;
   z-index: 1;
+}
+
+/** FULL CALENDAR CLASSES GENERAL CSS */
+
+.fc {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.fc .fc-toolbar-title {
+    color: var(--primary-color-dark);
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.fc .fc-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  transition: backround-color 0.4s ease-in;
+}
+
+.fc .fc-button:hover {
+  background-color: var(--primary-color-dark);
+  color: var(--background-color);
+}
+
+.fc .fc-button:disabled {
+  background-color: #ccc;
+  color: #666;
+}
+
+/** TIMEGRIDS */
+
+.fc .fc-timegrid-slot {
+  background-color: var(--background-color);
+  border-color: var(--accent-color);
+}
+
+.fc .fc-timegrid-slot:hover {
+  background-color: var(--accent-color-light);
+}
+
+.fc .fc-day-today {
+  background-color: var(--secondary-color);
+  color: var(--secondary-color-light);
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+  background-color: var(--secondary-color-light);
+}
+
+.fc .fc-timegrid-axis-cushion {
+  color: var(--primary-color-dark);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 2px 4px;
+  text-align: right;
+}
+
+
+/** DAYS */
+.fc .fc-col-header-cell-cushion {
+  color: var(--primary-color-dark);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+
+/* Etkinlik kutuları */
+.fc .fc-event {
+  border: none;
+  border-radius: 8px;
+  padding: 4px;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }

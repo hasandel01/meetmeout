@@ -2,25 +2,93 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow: hidden;
 }
 
 .userProfileHeader {
     display: flex;
-    padding: 30px;
+    padding: 40px;
 }
-
 
 .userProfileDetails {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fff;
-    padding: 20px;
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
+    padding: 40px;
     border-radius: 8px;
+    border: 1px solid var(--primary-color-dark);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.companionStatusSendRequest {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: 4px 8px;
+    transition: 0.2s ease-in-out;
+}
+
+.companionStatusSendRequest:hover {
+    transform: scale(1.02);
+    cursor: pointer;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.companionStatusRequestSent {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: 1px solid var(--border-grey);
+    color: var(--text-color-grey);
+    background-color: var(--background-grey);
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: 4px 8px;
+    font-weight: bold;
+}
+
+.companionStatusAccepted {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    border: 1px solid var(--border-grey);
+    color: var(--text-color-grey);
+    background-color: var(--background-grey);
+    border-radius: 6px;
+    padding: 2px 4px;
+    margin: 4px 8px;
+    font-weight: bold;
+}
+
+
+.companionStatusAccepted:hover {
+    cursor: pointer;
+    background-color: var(--grey-hover);
+}
+
+
+.removeCompanion {
+    position: absolute;
+    display: flex;
+    margin: 4px 0px;
+    color: red;
+
+}
+
+.removeCompanion p {
+    color: red;
+}
+
+.removeCompanion:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 
 .updateIcon {
     position: absolute;
@@ -44,6 +112,7 @@
     border-radius: 50%;
     object-fit: cover;
     transition: transform 0.3s ease;
+    border: 2px solid var(--primary-color-dark);
 }
 
 .userProfileDetails img:hover {
@@ -127,7 +196,6 @@ hr {
     justify-content: center;
     gap: 10px;
     margin-top: 10px;
-    background-color: #fff;
 }
 
 .stats span {
@@ -136,7 +204,7 @@ hr {
     border-radius: 8px;
     width: 80px;
     height: 80px;
-    background-color: white;
+    background-color: var(--background-color);
 }
 
 .stats span h4 {

@@ -48,7 +48,7 @@ const Register = () => {
             <img alt='mmoLogo' src='/mmo_logo.PNG' className={styles.mmoLogo}></img>
                 {(!formSubmitted || userExists) && (
                     <>
-                        <h1> Sign Up! </h1>
+                        <h2> Sign Up! </h2>
                         <form onSubmit={checkUser}>
                                     <FormInput
                                         icon={faEnvelope}

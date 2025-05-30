@@ -60,6 +60,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .about("")
                     .verificationToken(verificationToken)
                     .emailVerified(false)
+                    .darkMode(false)
+                    .showLocation(false)
                     .build();
 
             emailSenderService.sendEmail(user.getEmail(), "Please verify your email",

@@ -25,10 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -54,8 +51,31 @@ public class CompanionServiceImpl implements CompanionService {
         return getUserDTOS(username);
     }
 
+    @Transactional
+    public FriendRequestDTO getCompanionStatus(String username) {
+
+        String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(currentUserName)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        User companion = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Optional<FriendRequest> friendRequest = friendRequestRepository
+                .findBySenderAndReceiverOrReceiverAndSender(user,companion,user,companion);
+
+        if(friendRequest.isPresent()) {
+            return FriendRequestMapper.toDTO(friendRequest.get());
+        } else {
+            return FriendRequestDTO.builder().status(FriendRequest.Status.NONE).build();
+        }
+
+    }
+
     @NotNull
     private List<UserDTO> getUserDTOS(String username) {
+
         User user = (User) userDetailsService.loadUserByUsername(username);
 
         Set<User> friends = friendRequestRepository.findAcceptedFriends(user.getId());
@@ -75,6 +95,8 @@ public class CompanionServiceImpl implements CompanionService {
                         .organizedEventIds(friend.getOrganizedEvents().stream().map(Event::getId).collect(Collectors.toSet()))
                         .profilePictureUrl(friend.getProfilePictureUrl())
                         .phone(friend.getPhone())
+                        .showLocation(friend.getShowLocation())
+                        .darkMode(friend.getDarkMode())
                         .about(friend.getAbout())
                         .build())
                 .collect(Collectors.toList());

@@ -1,14 +1,92 @@
 .eventOnCalendarContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     background-color: white;
     border: 1px solid var(--primary-color-dark);
-    border-radius: 10px;
-    min-height: 80vh;
+    color: var(--primary-color-dark);
+    background-color: var(--background-color);
     max-width: 1200px;
+    padding: 20px;
+    margin: 0 auto;
 }
 
 .eventOnCalendarContainer img {
     width: 50px;
     height: 50px;
+}
+
+.eventItem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 2px 4px;
+    gap: 5px;
+}
+
+.eventItem img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.eventItem:hover {
+    cursor: pointer;
+}
+
+.eventTimeDate {
+    display: flex;
+    flex-direction: row;
+    color: var(--background-color);
+    font-size: 12px;    
+    align-items: center;
+    gap: 4px;
+}
+
+.eventTimeDate p {
+    color: var(--background-color);
+    font-size: 12px;
+}
+
+.eventLocation {
+    display: flex;
+    flex-direction: row;
+    color: var(--background-color);
+    font-size: 12px;
+    align-items: center;
+    gap: 4px;
+}
+
+.eventLocation p {
+    color: var(--background-color);
+    font-size: 12px;
+}
+
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    width: 220px;
+    height: 50px;
+}
+
+.tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0px;
+    list-style: none;
+    gap: 5px;
+}
+
+.tags span {
+    background-color: #cfeed0;
+    border: 1px solid green;
+    border-radius: 6px;
+    padding: 1px 2px;
+    font-size: 10px;
+    color: green;
+    font-weight: bold;
 }

@@ -4,7 +4,7 @@ import axiosInstance from "../../../axios/axios";
 import { useEffect, useState } from "react";
 
 const Settings = () => {
-    const [darkMode, setDarkMode] = useState<boolean>(false);
+    
     const { currentUser, getMe } = useUserContext();
     const [showLocation, setShowLocation] = useState<boolean>(false);
 
@@ -13,11 +13,6 @@ const Settings = () => {
             setShowLocation(currentUser.showLocation);
         }
     }, [currentUser]);
-
-    useEffect(() => {
-        if(currentUser?.darkMode !== undefined) {
-            setDarkMode(currentUser.darkMode);
-        }}, [currentUser]);
 
 
     const updateDarkMode = async (value: boolean) => {
@@ -30,11 +25,6 @@ const Settings = () => {
                 console.error("Error updating dark mode:", error);
             }
             );
-
-                if(value)
-                    document.body.classList.add("dark");
-                else
-                    document.body.classList.remove("dark");
     
         };
     
@@ -54,32 +44,40 @@ const Settings = () => {
     };
 
     const handleDarkModeChange = (value: boolean) => {
-        setDarkMode(value);
         updateDarkMode(value);
     };
 
     return (
         <div className={styles.settingsContainer}>
             <h1>Settings</h1>
-            <div className={styles.preferences}>
-                <label className={styles.darkModeToggle}>
-                    <input
-                        type="checkbox"
-                        checked={darkMode}
-                        onChange={(e) => handleDarkModeChange(e.target.checked)} />
-                    <span className={styles.slider}></span>
-                    <span>Dark Mode</span>
-                </label>
-            </div>
-            <div className={styles.privacy}>
-                <label className={styles.privacyToggle}>
-                    <input
-                        type="checkbox"
-                        checked={showLocation}
-                        onChange={(e) => handleShowLocationChange(e.target.checked)} />
-                    <span className={styles.slider}></span>
-                    <span>Show Location</span>
-                </label>
+            <div className={styles.settings}>
+                <h4>Preferences</h4>
+                <hr/>
+                <div className={styles.preferences}>
+                        {currentUser && (
+                            <label className={styles.darkModeToggle}>
+                            <input
+                                type="checkbox"
+                                checked={currentUser.darkMode}
+                                onChange={(e) => handleDarkModeChange(e.target.checked)}
+                            />
+                                    <span className={styles.slider}></span>
+                                    <span>Dark Mode</span>
+                            </label>
+                            )}
+                </div>
+                <h4>Privacy</h4>
+                <hr/>
+                <div className={styles.privacy}>
+                    <label className={styles.privacyToggle}>
+                        <input
+                            type="checkbox"
+                            checked={showLocation}
+                            onChange={(e) => handleShowLocationChange(e.target.checked)} />
+                        <span className={styles.slider}></span>
+                        <span>Show Location</span>
+                    </label>
+                </div>
             </div>
         </div>
     );

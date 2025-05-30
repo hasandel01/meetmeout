@@ -251,15 +251,15 @@ const Header = () => {
                           {currentUser?.username && (
                               <li onClick={() => navigate(`/user-profile/${currentUser.username}`)}>
                                 <FontAwesomeIcon icon={faUser}/>
-                                <label>Profile</label>
+                                <h5>Profile</h5>
                                 </li>)}
                               <li onClick={() => navigate(`/settings`)}>
                                   <FontAwesomeIcon icon={faGear}/>
-                                <label>Settings</label>
+                                <h5>Settings</h5>
                               </li>
-                              <li>
+                              <li onClick={handleSignOut}>
                                   <FontAwesomeIcon icon={faRightFromBracket}/>
-                                <label onClick={handleSignOut}>Sign out</label></li>
+                                <h5 >Sign out</h5></li>
                           </ul>
                         </div>
                     )}

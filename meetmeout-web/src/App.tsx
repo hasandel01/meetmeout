@@ -22,7 +22,7 @@ import { ProfileContextProvider } from './context/ProfileContext'
 import { WebSocketProvider } from './context/WebSocketContext'
 import UpdateEvent from './features/event/UpdateEvent/UpdateEvent'
 import Settings from './features/user/Settings/Settings'
-import { DarkModeContextProvider } from './context/darkModeContext'
+import { DarkModeContextProvider } from './context/DarkModeContex'
 import { LocationProvider } from './context/LocationContex'
 
 function App() {
@@ -48,7 +48,6 @@ function App() {
             <Route path="/verify" element={<VerifyEmail/>}/>
             <Route path="/forgot-password" element={<ForgotPassword/>}/>
             <Route path="/reset-password" element={<ResetPassword/>}/>
-
             <Route path="/"
             element={
             <ProtectedRoute>

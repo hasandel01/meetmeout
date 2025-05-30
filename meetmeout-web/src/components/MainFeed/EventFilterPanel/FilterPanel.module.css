@@ -1,0 +1,100 @@
+.mainFeedContainerFilter {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    background-color: var(--background-color);
+    justify-content: space-between;
+}
+
+.mainFeedContainerFilter h4 {
+    border-bottom: 1px solid var(--primary-color-dark);
+}
+
+.selections {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.selections label {
+    padding: 10px;
+    display: flex;
+    background-color: var(--background-color);
+    font-weight: bold;
+}
+
+.selections label:hover {
+    cursor: pointer;
+    background-color: var(--hover-color);
+    color: var(--hover-text-color)
+}
+
+
+.toggleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--primary-color-dark);
+  margin-bottom: 10px;
+}
+
+.toggleWrapper input[type="checkbox"] {
+  display: none;
+}
+
+.slider {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+input[type="checkbox"]:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input[type="checkbox"]:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.labelText {
+  font-weight: 500;
+}
+
+
+.sort {
+    display: flex;
+    flex-direction: row;
+    padding: 15px;
+}
+
+.sort select {
+    cursor: pointer;
+}
+
+.mainFeedContainer header .sort select {
+    border: none;
+}
+
+
+.categoryFilterContainer {
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+}

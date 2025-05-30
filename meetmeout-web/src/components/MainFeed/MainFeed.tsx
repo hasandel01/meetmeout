@@ -190,7 +190,7 @@ const MainFeed = () => {
       };
 
 
-    const globalFilterFunction = () => {
+    const globalFilterHandler = () => {
     
         if(globalFilter === 'My Drafts')
             return events?.filter(event => event.isDraft)
@@ -198,6 +198,7 @@ const MainFeed = () => {
             return events?.filter(event => event.attendees.some(attendee => attendee.username === currentUser?.username) && !event.isDraft)
         else if(globalFilter === 'All Events')
             return events?.filter(event => !event.isDraft)
+
     }
       
     return (
@@ -218,7 +219,7 @@ const MainFeed = () => {
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MainFeedMap events={globalFilterFunction()?.filter((event)=> showPastEvents || event.status !== "ENDED") || []} coords={{ lat: userLatitude ?? 41.0082, lng: userLongitude ?? 28.9784 }} />
+                <MainFeedMap events={globalFilterHandler()?.filter((event)=> showPastEvents || event.status !== "ENDED") || []} coords={{ lat: userLatitude ?? 41.0082, lng: userLongitude ?? 28.9784 }} />
                 {flyTo && <MapPanner coords={flyTo} />}
                 </MapContainer>
         </div>
@@ -232,7 +233,7 @@ const MainFeed = () => {
                     </>
 
                 ) : events && events.length > 0 ? (
-                    globalFilterFunction()
+                    globalFilterHandler()
                     ?.filter((event)=> showPastEvents || event.status !== "ENDED")
                     ?.map((event) => (
                         (

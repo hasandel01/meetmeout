@@ -167,31 +167,29 @@ header .userShortcut img {
 }
 
 .userMenu li {
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     border-bottom: 1px solid var(--card-border);
     color: var(--primary-color-dark);
     font-size: 14px;
     font-weight: bold;
-    border-radius: 6px;
-    padding: 10px;
-}
-
-.userMenu li:hover {
-    background-color: var(--primary-color);
-    color: var(--primary-color-dark);
-    transition: background-color 0.3s ease;
+    border-radius: 4px;
+    gap: 10px;
 }
 
 .userMenu li:last-child {
     border-bottom: none;
 }
 
-.userMenu li label {
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    margin-left: 5px;
+.userMenu li:hover {
+    background-color: var(--hover-color);
+    color: var(--hover-text-color);
+    transition: background-color 0.3s ease;
 }
+
+
 
 
 @media (max-width: 768px) {

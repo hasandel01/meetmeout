@@ -24,7 +24,6 @@ const SearchBox = ({ onSearch, users, events, show, onFocus, onBlur, navigateTo 
                         onChange={(e) => onSearch(e.target.value)}
                         onBlur={onBlur}
                         onFocus={onFocus} />
-                      
                       {show && (
                       <div className={styles.searchResults}>
                         {users.length === 0 && events.length === 0 && (

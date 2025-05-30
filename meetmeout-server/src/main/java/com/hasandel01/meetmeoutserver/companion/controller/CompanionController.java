@@ -62,4 +62,9 @@ public class CompanionController {
         return ResponseEntity.ok(companionService.cancelSentRequest(companionEmail));
     }
 
+    @GetMapping("/{username}/status")
+    public ResponseEntity<FriendRequestDTO> getCompanionStatus(@PathVariable String username) {
+        return ResponseEntity.ok(companionService.getCompanionStatus(username));
+    }
+
 }

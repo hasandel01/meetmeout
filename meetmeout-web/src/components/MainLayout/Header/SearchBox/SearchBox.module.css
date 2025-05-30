@@ -50,9 +50,6 @@
     border: 1px solid var(--primary-color)
 }
 
-.searchResults p {
-    color: var(--primary-color-dark)
-}
 
 .searchResults ul {
     list-style: none;
@@ -69,12 +66,6 @@
     border-bottom: 2px solid var(--background-color);
 }
 
-.searchResults li:hover {
-    background-color: var(--primary-color-light);
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
-
 .searchResults li h2 {
     font-size: 16px;
     font-weight: bold;
@@ -84,6 +75,13 @@
 .searchResults li p {
     font-size: 12px;
     margin: 0px;
+}
+
+.searchResults li:hover {
+    background-color: var(--hover-color);
+    color: var(--hover-text-color);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .userResultInfo {

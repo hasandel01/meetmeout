@@ -1,4 +1,7 @@
-import styles from "./../MainFeed.module.css";
+import { useState } from "react";
+import styles from "./FilterPanel.module.css";
+import Select, {MultiValue} from 'react-select'
+import { categoryMap } from "../../../mapper/CategoryMap";
 
 interface FilterPanelProps {
   setGlobalFilter: (filter: string) => void;
@@ -7,12 +10,34 @@ interface FilterPanelProps {
   onSortChange: (value: string) => void;
 }
 
+type OptionType = {
+  value: string;
+  label: string;
+};
+
 const FilterPanel = ({
   setGlobalFilter,
   showPastEvents,
   setShowPastEvents,
   onSortChange
 }: FilterPanelProps) => {
+
+  const [showFreeEvents, setShowFreeEvents] = useState<boolean>(false);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const categoryOptions: OptionType[] =  Object.entries(categoryMap).map(([value , label]) => (
+    {
+      value,
+      label
+    }
+  ));
+
+  const handleSelectedCategories = (selectedCategories: MultiValue<OptionType>) => {
+    const selected = selectedCategories.map((cat) => cat.value);
+    setSelectedCategories(selected);
+    console.log(selectedCategories)
+  }
+
   return (
     <div className={styles.mainFeedContainerFilter}>
       <div className={styles.selections}>
@@ -36,6 +61,21 @@ const FilterPanel = ({
             {showPastEvents ? "Showing past events" : "Hide past events"}
           </span>
         </label>
+        <label>
+          <input 
+            type="checkbox"
+            checked={showFreeEvents}
+            onChange={(e) => setShowFreeEvents(e.target.checked)}
+          /> Free to Join
+        </label>
+        <div className={styles.categoryFilterContainer}>
+          <Select
+            isMulti
+            options={categoryOptions}
+            onChange={handleSelectedCategories}
+            placeholder="Choose categories"
+            ></Select>
+        </div>
       </div>
       <div className={styles.sort}>
         <select onChange={(e) => onSortChange(e.target.value)}>

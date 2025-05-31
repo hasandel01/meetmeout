@@ -1,35 +1,37 @@
 .userProfile {
     display: flex;
     flex-direction: column;
-    align-items: center;
-}
-
-.userProfileHeader {
-    display: flex;
-    padding: 40px;
+    align-items: flex-start;
+    margin: 10px 20px;
+    padding: 10px;
 }
 
 .userProfileDetails {
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     background-color: var(--background-color);
     color: var(--primary-color-dark);
-    padding: 40px;
-    border-radius: 8px;
+    padding: 20px 40px;
+    border-radius: 10px;
     border: 1px solid var(--primary-color-dark);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 1200px;
+}
+
+.userProfileHeader {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .companionStatusSendRequest {
-    position: absolute;
-    left: 0px;
-    top: 0px;
     border: 1px solid var(--primary-color-dark);
     border-radius: 6px;
-    padding: 2px 4px;
-    margin: 4px 8px;
+    padding: 6px 12px;
     transition: 0.2s ease-in-out;
 }
 
@@ -40,37 +42,27 @@
 }
 
 .companionStatusRequestSent {
-    position: absolute;
-    left: 0px;
-    top: 0px;
     border: 1px solid var(--border-grey);
     color: var(--text-color-grey);
     background-color: var(--background-grey);
+    padding: 6px 12px;
     border-radius: 6px;
-    padding: 2px 4px;
-    margin: 4px 8px;
     font-weight: bold;
 }
 
 .companionStatusAccepted {
-    position: absolute;
-    left: 0px;
-    top: 0px;
     border: 1px solid var(--border-grey);
     color: var(--text-color-grey);
     background-color: var(--background-grey);
+    padding: 6px 12px;
     border-radius: 6px;
-    padding: 2px 4px;
-    margin: 4px 8px;
     font-weight: bold;
 }
-
 
 .companionStatusAccepted:hover {
     cursor: pointer;
     background-color: var(--grey-hover);
 }
-
 
 .removeCompanion {
     position: absolute;
@@ -90,15 +82,46 @@
 }
 
 
+.userInfo {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    padding: 10px 20px;
+    width: 90%;
+    gap: 20px;
+}
+
+.user {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transform: translateY(-10%);
+    margin-right: 20px;
+}
+
+.user h4,h5{
+    font-size: 14px;
+    margin: 0px;
+}
+
+.about {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 100px;
+}
+
+.about h5 {
+    font-weight: bold;
+}
+
+
 .updateIcon {
-    position: absolute;
     display: flex;
     align-items: center;
     justify-content: center;
-    right: 10px;
-    padding: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     border-radius: 50%;
 }
 
@@ -106,65 +129,41 @@
     background-color: #d4d3d3;
 }
 
-.userProfileDetails img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-    border: 2px solid var(--primary-color-dark);
-}
-
-.userProfileDetails img:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    opacity: 0.8;
-    transition: opacity 0.2s ease;
-}
-
-.userInfo {
-    margin-left: 12px;
-}
-
-.userInfo h3 {
-    margin: 0;
-}
-
-.userInfo h4 {
-    margin: 2px;
-}
-
 hr {
     margin: 16px 0px;
     border-radius: 2px;
-    background-color: #919191;
+    background-color: var(--primary-color-dark);
     width: 100%;
 }
 
 /* PROFILE PICTURE STYLES */
 
-.profilePictureContainer {
+.profilePictureAndLocation {
     position: relative;
-    width: 100px;
-    height: 100px;
-    margin-bottom: 20px;
-    overflow: hidden;
     cursor: pointer;
     border-radius: 50%;
-    background-color: green;
+}
+
+.profilePictureAndLocation p {
+    margin: 10px 0px;
 }
 
 .profilePicture {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
     object-fit: cover;
     display: block;
-    border-radius: 50%;
     transition: transform 0.3s ease;
+    overflow: hidden;
 }
+
+.profilePicture img {
+    width: 150px;
+    height: 150px;
+}
+
 
 .cameraOverlay {
     position: absolute;
@@ -187,44 +186,139 @@ hr {
     opacity: 0.8;
 }
 
-/* STATS */
+/** ATTENDEDEVENTS CONTAINER */
 
-.stats {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
+.eventsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.stats span {
+.eventCard {
+  display: grid;
+  grid-template-columns: 150px 1fr 200px;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: white;
+  align-items: center;
+}
+
+.eventImage img {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.eventInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.eventInfo:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.eventInfo h3 {
+  margin: 0;
+}
+
+.eventDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.eventDetails p {
+  margin: 0;
+}
+
+.icon {
+  margin-right: 0.5rem;
+  color: #15b37e;
+}
+
+
+.companionsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    border: 1px solid var(--primary-color-dark);
+    padding: 20px;
+}
+
+.companionsContainer img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color-dark)
+}
+
+.companion {
     display: flex;
     flex-direction: column;
+    margin-right: 20px;
+    padding: 10px;
+    gap: 5px;
+}
+
+.companion:hover {
+    cursor: pointer;
+    background-color: var(--grey-hover);
+}
+
+/* STATS */
+
+.tabContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.tabMenu {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.tabMenu label {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
     border-radius: 8px;
-    width: 80px;
-    height: 80px;
     background-color: var(--background-color);
 }
 
-.stats span h4 {
-    font-size: 18px;
-    margin: 8px;
+.tabMenu h5,h6 {
+    margin: 0px;
 }
 
-.stats span p {
-    margin: 0;
-    font-size: 12px;
+.tabMenu label:hover {
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: white;
 }
 
+
+.tabContainer p:hover {
+    cursor: pointer;
+}
 
 .badgeContainer {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin-top: 20px;
+    align-items: flex-start;
     background-color: var(--background-color);
-    padding: 20px;
     border-radius: 8px;
     color: var(--primary-color-dark);
     border: 1px solid var(--primary-color-dark);
@@ -235,20 +329,17 @@ hr {
     font-size: 18px;
 }
 
-
 .badgeContainer ul {
-    display: flex;
-    flex-direction: row;
     align-items: center;
     padding: 0;
-    gap: 10px;
 }
 
 .badgeContainer li {
     display: flex;
     flex-direction: row;
     list-style: none;
-    margin: 5px 0;
+    margin: 10px;
+    padding: 10px;
     align-items: center;
 }
 
@@ -266,6 +357,12 @@ hr {
     display: flex;
     flex-direction: column;
     padding: 10px;
+}
+
+.userReviews {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
 }
 
 @media (max-width: 768px) {

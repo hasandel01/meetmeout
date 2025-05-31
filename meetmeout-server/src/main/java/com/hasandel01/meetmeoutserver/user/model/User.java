@@ -7,6 +7,7 @@ import com.hasandel01.meetmeoutserver.event.model.Like;
 import com.hasandel01.meetmeoutserver.event.model.Review;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -43,6 +44,7 @@ public class User implements UserDetails {
 
     private String profilePictureUrl;
 
+    @Length(max = 400)
     private String about;
 
     @Transient
@@ -124,4 +126,13 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean darkMode = false;
 
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<UserReview> userReviews = new HashSet<>();
+
+    @OneToMany(mappedBy =  "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<UserReview> receivedUserReviews = new HashSet<>();
 }

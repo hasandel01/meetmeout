@@ -24,8 +24,24 @@ import UpdateEvent from './features/event/UpdateEvent/UpdateEvent'
 import Settings from './features/user/Settings/Settings'
 import { DarkModeContextProvider } from './context/DarkModeContex'
 import { LocationProvider } from './context/LocationContex'
+import { useEffect } from 'react'
+import { BadgeContextProvider } from './context/BadgeContext'
 
 function App() {
+
+  useEffect(() => {
+      const unlockAudio = () => {
+          const audio = new Audio("/sounds/success.mp3");
+          audio.play().then(() => {
+              audio.pause(); 
+              audio.currentTime = 0;
+          });
+          window.removeEventListener("click", unlockAudio);
+      };
+
+      window.addEventListener("click", unlockAudio);
+  }, []);
+
 
   return (
     <>
@@ -57,7 +73,9 @@ function App() {
                     <WebSocketProvider>
                       <DarkModeContextProvider>
                         <LocationProvider>
+                          <BadgeContextProvider>
                             <MainLayout/>
+                          </BadgeContextProvider>
                         </LocationProvider>
                       </DarkModeContextProvider>
                     </WebSocketProvider>

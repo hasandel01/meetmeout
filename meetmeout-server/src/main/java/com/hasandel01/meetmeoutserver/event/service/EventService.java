@@ -21,7 +21,7 @@ public interface EventService {
     EventDTO getEventById(long eventId);
 
     @Transactional
-    Void join(long eventId);
+    Boolean join(long eventId);
 
     @Transactional
     Void acceptJoinRequest(long eventId, String username);
@@ -50,4 +50,6 @@ public interface EventService {
     EventDTO updateEvent(long eventId, EventDTO eventDTO);
 
     Double getAverageRating(long eventId);
+
+    List<EventDTO> getEventsByIds(Set<Long> eventIds);
 }

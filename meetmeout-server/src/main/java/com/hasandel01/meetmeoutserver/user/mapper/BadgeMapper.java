@@ -8,6 +8,7 @@ public class BadgeMapper {
     public static BadgeDTO toBadgeDTO(Badge badge) {
 
         return BadgeDTO.builder()
+                .id(badge.getId())
                 .title(badge.getTitle())
                 .description(badge.getDescription())
                 .iconUrl(badge.getIconUrl())

@@ -82,10 +82,14 @@ input[type="checkbox"]:checked + .slider::before {
     display: flex;
     flex-direction: row;
     padding: 15px;
+    align-items: center;
+    gap: 10px;
 }
 
 .sort select {
     cursor: pointer;
+    border-radius: 0px;
+    color: var(--primary-color-dark);
 }
 
 .mainFeedContainer header .sort select {

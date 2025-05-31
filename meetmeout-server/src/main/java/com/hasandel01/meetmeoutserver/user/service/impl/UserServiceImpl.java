@@ -5,9 +5,11 @@ import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
 import com.hasandel01.meetmeoutserver.user.model.User;
+import com.hasandel01.meetmeoutserver.user.model.UserReview;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import com.hasandel01.meetmeoutserver.common.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.common.service.EmailSenderService;
+import com.hasandel01.meetmeoutserver.user.repository.UserReviewRepository;
 import com.hasandel01.meetmeoutserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +34,8 @@ public class UserServiceImpl implements UserService {
     private final CloudStorageService cloudStorageService;
 
     private final EmailSenderService emailSenderService;
+
+    private final UserReviewRepository userReviewRepository;
 
     @Transactional
     public UserDTO getMe() {
@@ -59,6 +64,7 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDTO(user);
     }
 
+    @Transactional
     public UserDTO updateMe(UserDTO userDTO) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -120,5 +126,17 @@ public class UserServiceImpl implements UserService {
         user.setDarkMode(darkModePreference);
 
         return userRepository.save(user).getDarkMode();
+    }
+
+
+    @Transactional
+    public Double getAverageRating(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        List<UserReview> userReviewList = userReviewRepository.findByUser(user);
+
+        return userReviewList.stream().mapToDouble(UserReview::getRating).average().orElse(0);
     }
 }

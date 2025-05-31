@@ -78,6 +78,7 @@ const FilterPanel = ({
         </div>
       </div>
       <div className={styles.sort}>
+        <label>Sort by:  </label>
         <select onChange={(e) => onSortChange(e.target.value)}>
           <option value="Soonest">Soonest</option>
           <option value="Latest">Latest</option>

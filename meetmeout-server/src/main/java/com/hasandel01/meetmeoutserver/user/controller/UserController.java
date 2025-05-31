@@ -48,5 +48,10 @@ public class UserController {
         return ResponseEntity.ok(userService.updateDarkModePreference(darkMode.darkMode()));
     }
 
+    @GetMapping("/{username}/average-rating")
+    public ResponseEntity<Double> getAverageRatingForUser(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getAverageRating(username));
+    }
+
 
 }

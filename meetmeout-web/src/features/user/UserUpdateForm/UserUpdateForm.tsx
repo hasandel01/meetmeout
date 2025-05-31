@@ -7,10 +7,11 @@ import 'react-toastify/dist/ReactToastify.css';
 
 interface UserUpdateFormProps {
     currentUser: User;
+    showUserUpdateForm: boolean;
     onClose: () => void;
 }
 
-const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) => {
+const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpdateForm, onClose}) => {
 
     const [user, setUser] = useState<User>(currentUser);
 
@@ -41,6 +42,24 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
         }
     }
 
+
+    useEffect(() => {
+    
+        const handleCloseClick = (event: MouseEvent) => {
+
+            const form = document.querySelector(`.${styles.formContainer}`)
+
+            if(form && !form.contains(event.target as Node))
+                onClose();
+        }
+
+            document.addEventListener("mousedown",handleCloseClick);
+
+        return () => {
+            document.removeEventListener("mousedown", handleCloseClick);
+        }
+    
+    },[])
     
 
     return (

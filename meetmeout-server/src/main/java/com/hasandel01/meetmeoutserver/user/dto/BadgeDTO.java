@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Builder
 public record BadgeDTO(
+        Long id,
         String title,
         String description,
         String iconUrl,

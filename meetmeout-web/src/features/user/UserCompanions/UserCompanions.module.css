@@ -226,7 +226,7 @@
 
 
 .addButton {
-    background-color: blue;
+    background-color: var(--accent-color-dark);
     color: white;
     padding: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);

@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -64,5 +65,10 @@ public class EventController {
     @GetMapping("/{eventId}/average-rating")
     public ResponseEntity<Double> getAverageRatingForEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.getAverageRating(eventId));
+    }
+
+    @GetMapping("/with-ids")
+    public ResponseEntity<List<EventDTO>> getEventsByIds(@RequestParam("ids") Set<Long> ids) {
+        return ResponseEntity.ok(eventService.getEventsByIds(ids));
     }
 }

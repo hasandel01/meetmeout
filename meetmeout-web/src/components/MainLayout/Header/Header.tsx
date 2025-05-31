@@ -133,7 +133,6 @@ const Header = () => {
                   show={showSearchResults}
                   onFocus={handleSearchFocus}
                   onBlur={handleSearchBlur}
-                  navigateTo={(path: string) => navigate(path)}
                 />
                 {isMobile ? (
                     <div className={styles.barMenuContainer}>

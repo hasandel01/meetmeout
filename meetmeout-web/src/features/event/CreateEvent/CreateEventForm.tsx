@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder, faMoneyBill, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
 import { RouteType } from '../../../types/RouteType';
+import { useBadgeContext } from '../../../context/BadgeContext';
 
 
 const isStartDateAndEndDateSame = (event: Event): boolean => {
@@ -82,7 +83,7 @@ const CreateEventForm = () => {
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
     const [addressName, setAddressName] = useState<string | null>(null);
     const [endAddressName, setEndAddressName] = useState<string | null>(null);
-
+    const {getMe} = useBadgeContext();
 
     const [selectedImageFile, setSelectedImageFile] = useState<File | null>();
     
@@ -199,7 +200,8 @@ const CreateEventForm = () => {
                     }
 
                     setEvent((prev) => prev.id = response.data)
-                    setTimeout(() => navigate(`/event/${event.id}`), 100);            
+                    await getMe();
+                    setTimeout(() => navigate(`/event/${event.id}`), 100);
     
             }
             catch (error) {

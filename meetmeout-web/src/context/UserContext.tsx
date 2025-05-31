@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { User } from "../types/User";
 import axiosInstance from "../axios/axios";
 import {toast} from 'react-toastify';
@@ -19,7 +19,6 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
         try {
             const response = await axiosInstance.get("/me");
             setCurrentUser(response.data);
-            console.log("Current user:", response.data);
         } catch(error) {
             toast.error("Error fetching user data.");
         }
@@ -29,7 +28,6 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
         if(currentUser === undefined)
             getMe();
     },[currentUser])
-
 
     return (
         <UserContext.Provider value={{currentUser, getMe}}>

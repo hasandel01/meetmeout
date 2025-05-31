@@ -34,6 +34,7 @@ public class UserMapper {
                                 .collect(Collectors.toSet())
                         : null
                 )
+                .userReviews(user.getUserReviews().stream().map(UserReviewMapper::userReviewDTO).collect(Collectors.toSet()))
                 .build();
     }
 

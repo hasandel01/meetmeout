@@ -142,7 +142,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
     @Transactional
-    public Void join(long eventId) {
+    public Boolean join(long eventId) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
@@ -163,15 +163,19 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
             event.getAttendees().add(user);
             eventRepository.save(event);
             userRepository.save(user);
-            if(user.getParticipatedEvents().size() == 1)
+            if(user.getParticipatedEvents().stream()
+                    .filter(participatedEvent -> !user.getOrganizedEvents().contains(participatedEvent))
+                    .count() == 1)
                 badgeService.addBadgeToUser(user, BadgeType.FIRST_EVENT);
+
+            return false;
         }
 
-        return null;
+
     }
 
     @Transactional
-    private Void sendJoinEventRequest(Event event) {
+    protected Boolean sendJoinEventRequest(Event event) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -189,7 +193,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         notificationService.sendJoinRequestToOrganizer(event,user);
 
-        return null;
+        return true;
     }
 
     @Transactional
@@ -213,7 +217,9 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         joinEventRequestRepository.deleteAll(joinEventRequest);
 
-        if(user.getParticipatedEvents().size() == 1)
+        if(user.getParticipatedEvents().stream()
+                .filter(participatedEvent -> !user.getOrganizedEvents().contains(participatedEvent))
+                .count() == 1)
             badgeService.addBadgeToUser(user, BadgeType.FIRST_EVENT);
 
         return null;
@@ -579,6 +585,14 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         return !reviewList.isEmpty() ?
                 reviewList.stream().mapToDouble(Review::getRating).sum()/ reviewList.size() : 0;
+    }
+
+    @Transactional
+    public List<EventDTO> getEventsByIds(Set<Long> eventIds) {
+        return eventRepository.findAllById(eventIds)
+                .stream()
+                .map(EventMapper::toEventDto)
+                .toList();
     }
 }
 

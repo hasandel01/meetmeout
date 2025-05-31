@@ -1,4 +1,6 @@
 import { Badge } from "./Badge";
+import { Review } from "./Like";
+import { UserReview } from "./UserReviews";
 
 export interface User {
     id: number;
@@ -15,4 +17,6 @@ export interface User {
     badges: Badge[];
     showLocation: boolean;
     darkMode: boolean;
+    reviews: Review[];
+    userReviews: UserReview[];
 }

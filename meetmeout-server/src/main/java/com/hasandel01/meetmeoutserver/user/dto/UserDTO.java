@@ -1,5 +1,6 @@
 package com.hasandel01.meetmeoutserver.user.dto;
 
+import com.hasandel01.meetmeoutserver.user.model.UserReview;
 import lombok.Builder;
 
 import java.util.Set;
@@ -19,5 +20,6 @@ public record UserDTO(
         Set<Long> organizedEventIds,
         Set<BadgeDTO> badges,
         boolean showLocation,
-        boolean darkMode) {
+        boolean darkMode,
+        Set<UserReviewDTO> userReviews) {
 }

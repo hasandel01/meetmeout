@@ -15,6 +15,7 @@ import EventCard from "./EventCard/EventCard";
 import FilterPanel from "./EventFilterPanel/FilterPanel";
 import calculateDistance from "../../utils/calculateDistance";
 import { useLocationContext } from "../../context/LocationContex";
+import { useBadgeContext } from "../../context/BadgeContext";
 
 const MainFeed = () => {
 
@@ -38,6 +39,7 @@ const MainFeed = () => {
     const {userLatitude, userLongitude } = useLocationContext();
     const [globalFilter, setGlobalFilter] = useState('All Events');
     const [showPastEvents, setShowPastEvents] = useState(false);
+    const {getMe} = useBadgeContext();
 
     useEffect(() => {
         Promise.all([
@@ -123,8 +125,12 @@ const MainFeed = () => {
 
             if(response.status === 200) {
                 navigate(`/event/${eventId}`)
-            }
-            else {
+
+                console.log(response.data)
+                if(!response.data)
+                    await getMe();
+
+            }else {
                 toast.error("You couldn't join to the event.")
             }
 

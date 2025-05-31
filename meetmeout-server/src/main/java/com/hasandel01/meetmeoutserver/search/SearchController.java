@@ -1,8 +1,6 @@
 package com.hasandel01.meetmeoutserver.search;
 
-
 import com.hasandel01.meetmeoutserver.companion.dto.FriendRequestDTO;
-import com.hasandel01.meetmeoutserver.companion.model.FriendRequest;
 import com.hasandel01.meetmeoutserver.companion.repository.FriendRequestRepository;
 import com.hasandel01.meetmeoutserver.companion.service.CompanionService;
 import com.hasandel01.meetmeoutserver.event.dto.EventDTO;

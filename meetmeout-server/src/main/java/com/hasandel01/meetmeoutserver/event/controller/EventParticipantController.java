@@ -29,7 +29,7 @@ public class EventParticipantController {
     }
 
     @PostMapping("/{eventId}/join")
-    public ResponseEntity<Void> joinEvent(@PathVariable long eventId) {
+    public ResponseEntity<Boolean> joinEvent(@PathVariable long eventId) {
         return ResponseEntity.ok(eventService.join(eventId));
     }
 

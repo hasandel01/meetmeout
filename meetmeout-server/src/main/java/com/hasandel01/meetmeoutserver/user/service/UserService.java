@@ -19,4 +19,6 @@ public interface UserService {
     Boolean updateLocationPreference(Boolean locationPreference);
 
     Boolean updateDarkModePreference(Boolean darkMode);
+
+    Double getAverageRating(String username);
 }

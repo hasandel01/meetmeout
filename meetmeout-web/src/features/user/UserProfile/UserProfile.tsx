@@ -2,35 +2,41 @@ import { useEffect, useState } from "react";
 import { User } from "../../../types/User";
 import axiosInstance from "../../../axios/axios";
 import styles from "./UserProfile.module.css";
-import { faCamera, faLocationDot, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faCalendar, faLocationDot, faPenToSquare, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
 import { useUserContext } from "../../../context/UserContext";
 import { useLocationContext } from "../../../context/LocationContex";
 import axios from "axios";
 import { FriendRequest } from "../../../types/FriendRequest";
+import { Event } from "../../../types/Event";
+import qs from 'qs';
+import calculateDistance from "../../../utils/calculateDistance";
 
+function UserProfile() {
 
-const UserProfile = () => {
-
-    const { username } = useParams<{ username: string }>();
+    const { username } = useParams<{ username: string; }>();
     const [user, setUser] = useState<User | null>(null);
     const { currentUser, getMe } = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [showUserUpdateForm, setShowUserUpdateForm] = useState(false);
-    const {userLatitude, userLongitude} = useLocationContext();
+    const { userLatitude, userLongitude } = useLocationContext();
     const [userLocation, setUserLocation] = useState<string | null>(null);
-    const [companionStatus, setCompanionStatus] = useState<FriendRequest |null>(null);
+    const [companionStatus, setCompanionStatus] = useState<FriendRequest | null>(null);
     const [statusLabel, setStatusLabel] = useState('');
     const [showRemove, setShowRemove] = useState(false);
     const [showCancel, setShowCancel] = useState(false);
+    const [averageRating, setAverageRating] = useState(0);
+    const [organizedEvents, setOrganizedEvents] = useState<Event[]>([]);
+    const [attendedEvents, setAttendedEvents] = useState<Event[]>([]);
+    const navigate = useNavigate();
 
     const getUserProfile = async () => {
         try {
             const response = await axiosInstance.get(`/${username}`);
             setUser(response.data);
-    }   catch (error) {
+        } catch (error) {
             console.error("Error fetching user profile:", error);
         }
     };
@@ -40,36 +46,33 @@ const UserProfile = () => {
 
         try {
             const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${userLatitude}&lon=${userLongitude}&format=json`);
-            
+
             const address = response.data.address as {
-            road? :string;
-            village?: string;
-            town?: string;
-            suburb?: string;
-            neighbourhood: string;
-            city?: string;
-            county?: string;
-            state?: string;
-            hamlet?: string;
-            }
+                road?: string;
+                village?: string;
+                town?: string;
+                suburb?: string;
+                neighbourhood: string;
+                city?: string;
+                county?: string;
+                state?: string;
+                hamlet?: string;
+            };
 
-            let mostSpecific =
-            address.road ||
-            address.neighbourhood ||
-            address.village ||
-            address.hamlet ||
-            '';
+            let mostSpecific = address.road ||
+                address.neighbourhood ||
+                address.village ||
+                address.hamlet ||
+                '';
 
-            let district =
-            address.town ||
-            address.suburb ||
-            '';
+            let district = address.town ||
+                address.suburb ||
+                '';
 
-            let city =
-            address.city ||
-            address.county ||
-            address.state ||
-            '';
+            let city = address.city ||
+                address.county ||
+                address.state ||
+                '';
 
             const parts = [mostSpecific, district, city].filter(Boolean);
             const fallbackName = parts.join(', ');
@@ -79,13 +82,13 @@ const UserProfile = () => {
             console.error("Error fetching address:", error);
             return null;
         }
-    }
+    };
 
     const getCompanions = async () => {
         try {
             const response = await axiosInstance.get(`/companions/${username}`);
             console.log("Companion profile fetched successfully:", response.data);
-            setCompanions(response.data );
+            setCompanions(response.data);
         }
         catch (error) {
             console.error("Error fetching companion profile:", error);
@@ -93,25 +96,29 @@ const UserProfile = () => {
     };
 
     useEffect(() => {
+        setUser(null);
         getUserProfile();
         getCompanions();
-    }, []);
+    }, [username]);
 
     useEffect(() => {
         if (userLatitude && userLongitude) {
             getAddressFromCoords();
-        }   
-    }
-    , [userLatitude, userLongitude]);
+        }
+    },
+        [userLatitude, userLongitude]);
 
 
 
     useEffect(() => {
 
-        if(user) {
+        if (user) {
             getCompanionStatus();
+            fetchAverageRatingForUser();
+            getUserOrganizedEventsByIds();
+            getUserAttendedEventsByIds();
         }
-    },[user])
+    }, [user]);
 
 
     const updateProfilePicture = async () => {
@@ -128,8 +135,8 @@ const UserProfile = () => {
                         const response = await axiosInstance.put("/me/profile-picture", formData,
                             {
                                 headers: {
-                                "Content-Type": "multipart/form-data"
-                              }
+                                    "Content-Type": "multipart/form-data"
+                                }
                             }
                         );
 
@@ -146,8 +153,8 @@ const UserProfile = () => {
                     } catch (error) {
                     }
                 }
-            }
-            fileInput.click();  
+            };
+            fileInput.click();
         }
         catch (error) {
             console.error("Error creating file input:", error);
@@ -156,63 +163,62 @@ const UserProfile = () => {
 
     const updateProfile = async () => {
         setShowUserUpdateForm(prev => !prev);
-    }
+    };
 
     const getCompanionStatus = async () => {
         try {
             const response = await axiosInstance.get(`/companions/${username}/status`);
-            setCompanionStatus(response.data) 
-            console.log(response.data)
-        }catch(error) {
-
+            setCompanionStatus(response.data);
+            console.log(response.data);
+        } catch (error) {
         }
 
-    }
+    };
 
     useEffect(() => {
 
-        if(companionStatus?.status === "PENDING")
-            setStatusLabel("REQUEST SENT ✓")
-        else if(companionStatus?.status === "ACCEPTED")
-            setStatusLabel("COMPANION ✔")
-        else if(companionStatus?.status === "NONE")
-            setStatusLabel("SEND REQUEST!")
+        if (companionStatus?.status === "PENDING")
+            setStatusLabel("REQUEST SENT ✓");
+        else if (companionStatus?.status === "ACCEPTED")
+            setStatusLabel("COMPANION ✔");
+        else if (companionStatus?.status === "NONE")
+            setStatusLabel("SEND REQUEST!");
 
-    },[companionStatus]);
+    }, [companionStatus]);
 
-        const sendFriendRequest = async () => {
+    const sendFriendRequest = async () => {
 
-            if(companionStatus?.status !== "NONE")
-                return;
+        if (companionStatus?.status !== "NONE")
+            return;
 
-            if (!user?.email) {
-                console.error("User email is undefined.");
-                return;
-            }
+        if (!user?.email) {
+            console.error("User email is undefined.");
+            return;
+        }
 
-            try {
-                await axiosInstance.post(`/companions/${encodeURIComponent(user.email)}`,
-                    null);
+        try {
+            await axiosInstance.post(`/companions/${encodeURIComponent(user.email)}`,
+                null);
 
-                setStatusLabel(`REQUEST SENT ✓`)
-                setCompanionStatus({...companionStatus, status: "PENDING"});
-            }
-            catch (error) {
-            }
-    }
+            setStatusLabel(`REQUEST SENT ✓`);
+            setCompanionStatus({ ...companionStatus, status: "PENDING" });
+        }
+        catch (error) {
+        }
+    };
 
     const handleLabelClick = () => {
-        
-        if(companionStatus?.status === "ACCEPTED")
+
+        if (companionStatus?.status === "ACCEPTED")
             setShowRemove(prev => !prev);
-        else if(companionStatus?.status === "NONE")
+        else if (companionStatus?.status === "NONE")
             sendFriendRequest();
-        else if(companionStatus?.status === "PENDING")
-            setShowCancel(prev => !prev)
-    }
+        else if (companionStatus?.status === "PENDING")
+            setShowCancel(prev => !prev);
+    };
 
     const removeCompanion = async () => {
-        
+
         try {
 
             if (!user?.email) {
@@ -220,144 +226,346 @@ const UserProfile = () => {
                 return;
             }
 
-            await axiosInstance.delete(`/companions/${user.email}`)
-                                
-                setStatusLabel(`SEND REQUEST!`)
-                setCompanionStatus(
-                    companionStatus
-                        ? { ...companionStatus, status: "NONE" }
-                        : { id: "", status: "NONE", sender: user as User, receiver: currentUser as User }
-                );
-             
-        }catch(error) {
+            await axiosInstance.delete(`/companions/${user.email}`);
+
+            setStatusLabel(`SEND REQUEST!`);
+            setCompanionStatus(
+                companionStatus
+                    ? { ...companionStatus, status: "NONE" }
+                    : { id: "", status: "NONE", sender: user as User, receiver: currentUser as User }
+            );
+
+        } catch (error) {
         }
-    }
+    };
 
     const cancelRequest = async () => {
         try {
-            
-            if(!user?.email)
+
+            if (!user?.email)
                 return;
 
             await axiosInstance.delete(`/companions/${user?.email}/cancel-request`);
 
-                setStatusLabel(`SEND REQUEST!`)
-                setCompanionStatus(
-                    companionStatus
-                        ? { ...companionStatus, status: "NONE" }
-                        : { id: "", status: "NONE", sender: user as User, receiver: currentUser as User }
-                );
+            setStatusLabel(`SEND REQUEST!`);
+            setCompanionStatus(
+                companionStatus
+                    ? { ...companionStatus, status: "NONE" }
+                    : { id: "", status: "NONE", sender: user as User, receiver: currentUser as User }
+            );
 
-        } catch(error) {
-
+        } catch (error) {
         }
-    } 
+    };
 
     useEffect(() => {
 
         const handleMouseReset = (event: MouseEvent) => {
 
-        const removeCompanion = document.querySelector(`.${styles.removeCompanion}`)
-        
-        if(removeCompanion && !removeCompanion.contains(event.target as Node))
-            setShowRemove(false)
+            const removeCompanion = document.querySelector(`.${styles.removeCompanion}`);
 
-    }
+            if (removeCompanion && !removeCompanion.contains(event.target as Node))
+                setShowRemove(false);
 
-        if(showRemove)
-            document.addEventListener("mousedown",handleMouseReset)
+        };
+
+        if (showRemove)
+            document.addEventListener("mousedown", handleMouseReset);
 
         return () => {
-            document.removeEventListener("mousedown", handleMouseReset)
+            document.removeEventListener("mousedown", handleMouseReset);
+        };
+
+
+    }, [showRemove]);
+
+
+    const [tab, setTab] = useState(1);
+
+
+    const fetchAverageRatingForUser = async () => {
+
+        try {
+
+            const response = await axiosInstance.get(`/${user?.username}/average-rating`);
+            setAverageRating(response.data);
+        } catch (error) {
         }
 
+    };
 
-    },[showRemove]);
     
+    const isStartDateAndEndDateSame = (event: Event): boolean => {
+        return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
+    };
+
+
+    const getUserOrganizedEventsByIds = async () => {
+        try {
+            if (user) {
+                const response = await axiosInstance.get(`/events/with-ids`, {
+                    params: { ids: user.organizedEventIds },
+                    paramsSerializer: (params) => {
+                        return qs.stringify(params, { arrayFormat: 'repeat' }); // --> ids=1&ids=2
+                    }
+                });
+                setOrganizedEvents(response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch events", error);
+        }
+    };
+
+    const dateOptions: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+    const getUserAttendedEventsByIds = async () => {
+        try {
+            if (user) {
+                const response = await axiosInstance.get(`/events/with-ids`, {
+                    params: { ids: user.participatedEventIds },
+                    paramsSerializer: (params) => {
+                        return qs.stringify(params, { arrayFormat: 'repeat' });
+                    }
+                });
+                setAttendedEvents(response.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch events", error);
+        }
+    };
+
+     const handleLocationClick = (event: Event) => {
+          navigate("/", {
+            state: {
+              flyTo: {
+                lat: event.latitude,
+                lng: event.longitude,
+              }
+            }
+          })
+        }
 
     return (
         <div className={styles.userProfile}>
-            {user && showUserUpdateForm && <UserUpdateForm currentUser={user} onClose={() => setShowUserUpdateForm((prev) => !prev)} />}
-            <div className={styles.userProfileHeader}>
-                <div className={styles.userProfileDetails}> {
-                    currentUser?.username !== username &&
-                    <>
-                        <div className={companionStatus?.status === "NONE" ? `${styles.companionStatusSendRequest}` : 
-                        (companionStatus?.status === "ACCEPTED" ? `${styles.companionStatusAccepted}` : `${styles.companionStatusRequestSent}` )}
+            <div className={styles.updateForm}>
+                {user && showUserUpdateForm &&
+                    <UserUpdateForm showUserUpdateForm={showUserUpdateForm} currentUser={user} onClose={() => setShowUserUpdateForm((prev) => !prev)} />}
+            </div>
+            <div className={styles.userProfileDetails}>
+                <div className={styles.userProfileHeader}>
+                    {currentUser?.username !== username &&
+                        <div className={companionStatus?.status === "NONE" ? `${styles.companionStatusSendRequest}` :
+                            (companionStatus?.status === "ACCEPTED" ? `${styles.companionStatusAccepted}` : `${styles.companionStatusRequestSent}`)}
                             onClick={() => handleLabelClick()}>
                             <p>{statusLabel}</p>
                             {companionStatus?.status === "ACCEPTED" && showRemove &&
-                            <div className={styles.removeCompanion} onClick={() => removeCompanion()}>
-                                <p>Remove</p>
-                            </div>
-                            }
-                            {companionStatus?.status === "PENDING" && showCancel && 
-                             <div className={styles.removeCompanion} onClick={() => cancelRequest()}>
-                                <p>Cancel</p>
-                            </div>}
-                        </div>
-                    </>
-                    }
-                    <FontAwesomeIcon 
-                        icon={faPenToSquare} 
-                        size="2x" 
-                        className={styles.updateIcon}
-                        onClick={updateProfile}
-                        ></FontAwesomeIcon>
-                    <div className={styles.userProfilePictureContainer}>
+                                <div className={styles.removeCompanion} onClick={() => removeCompanion()}>
+                                    <p>Remove</p>
+                                </div>}
+                            {companionStatus?.status === "PENDING" && showCancel &&
+                                <div className={styles.removeCompanion} onClick={() => cancelRequest()}>
+                                    <p>Cancel</p>
+                                </div>}
+                        </div>}
+                    {currentUser?.username === username &&
+                        <FontAwesomeIcon
+                            icon={faPenToSquare}
+                            size="2x"
+                            className={styles.updateIcon}
+                            onClick={updateProfile}
+                        ></FontAwesomeIcon>}
+                </div>
+                <div className={styles.userInfo}>
+                    <div className={styles.profilePictureAndLocation}>
                         <div className={styles.profilePicture}>
-                            <img  src={user?.profilePictureUrl} alt= "User Profile" />
+                            <img src={user?.profilePictureUrl} alt="User Profile" />
                             {currentUser && currentUser.username === username && (
-                                <span className={styles.cameraOverlay} onClick={updateProfilePicture} > <FontAwesomeIcon icon={faCamera} size="2x" /></span>
+                                <span className={styles.cameraOverlay} onClick={updateProfilePicture}> <FontAwesomeIcon icon={faCamera} size="2x" /></span>
                             )}
                         </div>
-                    </div>
-                    <div className={styles.userInfo}>
-                        <h3>{user?.firstName} {user?.lastName}</h3>
-                        <h4>@{user?.username}</h4>
-                         <p> {user?.about}</p>
-                        {userLatitude && userLongitude &&  (
+                        {userLatitude && userLongitude && (
                             ((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) ? (
-                            <p><FontAwesomeIcon icon={faLocationDot}/> {userLocation}</p>
-                        ) : (
-                            <p></p>))}                  
+                                <p><FontAwesomeIcon icon={faLocationDot} /> {userLocation}</p>
+                            ) : (
+                                <p></p>))}
+                    </div>
+                    <div className={styles.user}>
+                        <h4>{user?.firstName} {user?.lastName}</h4>
+                        <h5>@{user?.username}</h5>
+                    </div>
+                    <div className={styles.about}>
+                        <div className={styles.infoCard}>
+                            <h5>About</h5>
+                            <hr />
+                            <p> {user?.about}</p>
+                        </div>
+                        <div className={styles.infoCard}>
+                            <h5>Phone</h5>
+                            <hr />
+                            <p> {user?.phone}</p>
+                        </div>
+                    </div>
+                    <div className={styles.userReviews}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <FontAwesomeIcon
+                                icon={faStar}
+                                style={{ color: averageRating >= star ? "gold" : "grey" }} />
+                        ))}
+                        <p>({user?.userReviews.length})</p>
+                    </div>
+                </div>
+                <hr />
+                <div className={styles.tabContainer}>
+                    <div className={styles.tabMenu}>
+                        <label onClick={() => setTab(1)}>
+                            <h5>Participated Events</h5>
+                            <h6>({user?.participatedEventIds?.length})</h6>
+                        </label>
+                        <label onClick={() => setTab(2)}>
+                            <h5>Created Events</h5>
+                            <h6>({user?.organizedEventIds?.length})</h6>
+                        </label>
+                        <label onClick={() => setTab(3)}>
+                            <h5>Companions</h5>
+                            <h6>({companions.length})</h6>
+                        </label>
+                        <label onClick={() => setTab(4)}>
+                            <h5>Trophies</h5>
+                            <h6>({user?.badges.length})</h6>
+                        </label>
                     </div>
                     <hr/>
-                    <div className={styles.stats}>
-                        <span>
-                            <h4>{user?.participatedEventIds?.length}</h4>
-                            <p>Participated Events</p>
-                        </span>
-                        <span>
-                            <h4>{user?.organizedEventIds?.length}</h4>
-                            <p>Created Events</p>
-                        </span>
-                        <span>
-                            <h4>{companions.length}</h4>
-                            <p> Companions</p>
-                        </span>
-                    </div>
-                    </div>
+                    {tab === 1 && (
+                        attendedEvents.length > 0 ? (
+                                                    <div className={styles.eventsContainer}>
+                            {attendedEvents.map(event => (
+                                <div className={styles.eventCard} key={event.id} >
+                                <div className={styles.eventImage}>
+                                    <img src={event.imageUrl} alt={event.title} />
+                                </div>
+
+                                <div className={styles.eventInfo} onClick={() => navigate(`/event/${event.id}`)}>
+                                    <h3>{event.title}</h3>
+                                    <p>{event.description}</p>
+                                </div>
+
+                                <div className={styles.eventDetails}>
+                                    <div className={styles.eventTimeDate}>
+                                    <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
+                                    <p>
+                                        {new Date(event.startDate).toLocaleDateString("en-US", dateOptions)}
+                                        {!isStartDateAndEndDateSame(event) && (
+                                        <> - {new Date(event.endDate).toLocaleDateString("en-US", dateOptions)}</>
+                                        )}
+                                        <br />
+                                        {event.startTime} - {event.endTime}
+                                    </p>
+                                    </div>
+                                    <div className={styles.eventLocation} onClick={() => handleLocationClick(event)}>
+                                    <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
+                                    <p>{event.addressName}</p>
+                                    {userLongitude !== 0 && userLatitude !== 0 && (
+                                        <p>({calculateDistance(event).toFixed(1)} km away)</p>
+                                    )}
+                                    </div>
+                                </div>
+                                </div>
+                            ))}
+                            </div>
+                            ) : (
+                                currentUser?.username === user?.username ? 
+                                <p>You haven't been in any event yet.</p>
+                                :
+                                <p>This user hasn't been in any event yet. </p>
+                            )
+                    )}
+                    {tab === 2 && (
+                        organizedEvents.length > 0 ? (
+                        <div className={styles.eventsContainer}>
+                            {organizedEvents.map(event => (
+                                <div className={styles.eventCard} key={event.id}>
+                                <div className={styles.eventImage}>
+                                    <img src={event.imageUrl} alt={event.title} />
+                                </div>
+
+                                <div className={styles.eventInfo}  onClick={() => navigate(`/event/${event.id}`)}>
+                                    <h3>{event.title}</h3>
+                                    <p>{event.description}</p>
+                                </div>
+
+                                <div className={styles.eventDetails}>
+                                    <div className={styles.eventTimeDate}>
+                                    <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
+                                    <p>
+                                        {new Date(event.startDate).toLocaleDateString("en-US", dateOptions)}
+                                        {!isStartDateAndEndDateSame(event) && (
+                                        <> - {new Date(event.endDate).toLocaleDateString("en-US", dateOptions)}</>
+                                        )}
+                                        <br />
+                                        {event.startTime} - {event.endTime}
+                                    </p>
+                                    </div>
+
+                                    <div className={styles.eventLocation} onClick={() => handleLocationClick(event)}>
+                                    <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
+                                    <p>{event.addressName}</p>
+                                    {userLongitude !== 0 && userLatitude !== 0 && (
+                                        <p>({calculateDistance(event).toFixed(1)} km away)</p>
+                                    )}
+                                    </div>
+                                </div>
+                                </div>
+                            ))}
+                            </div>
+                        ) : (
+                            currentUser?.username === user?.username ? 
+                            <p>You haven't created any event yet.</p>
+                            :
+                            <p>This user hasn't created any event yet.</p>
+                        ))}
+                    {tab === 3 && (
+                        companions.length > 0 ? 
+                        (
+                        <div className={styles.companionsContainer}>
+                            {companions.map(companion => (
+                                <div className={styles.companion} onClick={() => navigate(`/user-profile/${companion.username}`)}>
+                                    <img src={companion.profilePictureUrl}></img>
+                                    <h6>{companion.firstName} {companion.lastName}</h6>
+                                    <p>{companion.username}</p>
+                                </div>
+                            ))}
+                        </div>)
+                        : (
+                            currentUser?.username === user?.username ? 
+                            <p>You don't have any companions on your journey.</p>
+                            :
+                            <p>This user doesn't have any companions.</p>
+                        ))}
+                    {tab === 4 && user?.badges && (
+                        user.badges.length > 0 ? (
+                        <div className={styles.badgeContainer}>
+                            <ul>
+                                {user?.badges
+                                    .map((badge, index) => {
+                                        return (
+                                            <li key={index}>
+                                                <img src={badge.iconUrl} alt="Badge Icon"></img>
+                                                <div className={styles.badgeInfo}>
+                                                    <h4>{badge.title}</h4>
+                                                    <p>{badge.description}</p>
+                                                </div>
+                                            </li>
+                                        );
+                                    })}
+                            </ul>
+                        </div>)
+                        : (
+                            <p>No trophies unlocked.</p>
+                        )
+                    )}
                 </div>
-                <div className={styles.badgeContainer}>
-                    <div>
-                        <h4>Trophies</h4>                    
-                        <ul>
-                            {user?.badges
-                            .map((badge, index) => {
-                                return (
-                                       <li key={index}>
-                                            <img src={badge.iconUrl} alt="Badge Icon"></img>
-                                            <div className={styles.badgeInfo}>
-                                                <h4>{badge.title}</h4>
-                                                <p>{badge.description}</p>
-                                            </div>
-                                        </li> 
-                                )
-                            })}
-                        </ul>
-                    </div>
-                </div>
+            </div>
+
         </div>
     );
 }

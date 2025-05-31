@@ -49,7 +49,6 @@ const Settings = () => {
 
     return (
         <div className={styles.settingsContainer}>
-            <h1>Settings</h1>
             <div className={styles.settings}>
                 <h4>Preferences</h4>
                 <hr/>

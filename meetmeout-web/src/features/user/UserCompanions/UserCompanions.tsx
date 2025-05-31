@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axiosInstance from "../../../axios/axios";
 import {User} from "../../../types/User";
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import { useProfileContext } from "../../../context/ProfileContext";
 import {FriendRequest} from "../../../types/FriendRequest";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { useBadgeContext } from "../../../context/BadgeContext";
 
 const UserCompanions = () => {
 
@@ -25,6 +26,7 @@ const UserCompanions = () => {
     const size = 3;
     const [sortType, setSortType] = useState(`Recently Added`);
     const [query, setQuery] = useState("");
+    const {getMe} = useBadgeContext();
 
     const getPendingRequests = async () => {
         try {
@@ -33,7 +35,6 @@ const UserCompanions = () => {
         } catch (error) {
         }
     };
-
 
     const getAllPossibleCompanions = async () => {
         try {
@@ -73,6 +74,8 @@ const UserCompanions = () => {
             await axiosInstance.post(`/companions/${senderEmail}/accept`, null);
             toast.info("Companion request is accepted.")
             setFriendRequests((prevRequests) => prevRequests.filter((request) => request.sender.email !== senderEmail));
+            await getCompanions();
+            await getMe();
         } catch (error) {
             toast.error("Error happened while accepting companion request.")
         }

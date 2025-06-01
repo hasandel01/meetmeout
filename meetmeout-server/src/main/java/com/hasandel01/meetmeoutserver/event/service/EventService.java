@@ -1,5 +1,6 @@
 package com.hasandel01.meetmeoutserver.event.service;
 
+import com.hasandel01.meetmeoutserver.event.controller.DescriptionRequest;
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
@@ -55,7 +56,7 @@ public interface EventService {
 
     Boolean publishEvent(Long eventId);
 
-    Boolean changeDescription(Long eventId, String description);
+    Boolean changeDescription(Long eventId, DescriptionRequest description);
 
     Boolean feeUpdate(Long eventId, FeeUpdateRequest feeUpdateRequest);
 

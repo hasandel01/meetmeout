@@ -2,21 +2,25 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    background-color: var(--card-color);
-    border: 3px solid var(--primary-color-dark);
-    max-height: 500px;
-    min-height: 500px;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color-dark);
+    height: 600px;
     min-width: 400px;
-    padding: 30px;
-    margin: 30px;
-    border-radius: 10px;
+    padding: 40px;
+    margin: 10px 40px;
+    border-radius: 6px;
+    color: var(--primary-color-dark);
+}
+
+.chatContainer label {
+    font-weight: bold;
 }
 
 
 .messageList {
     border: 1px solid var(--primary-color-dark);
     border-radius: 4px;
-    min-height: 400px;
+    min-height: 500px;
 }
 
 .chatMessage {
@@ -32,13 +36,10 @@
 }
 
 .sendChatMessageContainer input {
-    padding: 10px;
-    width: 300px;
+    display: flex;
+    padding: 10px 20px;
+    width: 360px;
     border: 1px solid var(--primary-color-dark);
 }
 
 
-.sendChatMessageContainer button {
-    background-color: var(--primary-color);
-    color: white;
-}

@@ -64,7 +64,7 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
 
     return (
             <div className={styles.chatContainer}>
-                <label>Event Chat</label>
+                <label>Chat</label>
                     <ul className={styles.messageList}>
                         {messages.map( (message, index) => (
                             <li key={index} className={styles.chatMessage}>

@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.event.service.impl;
 
 
 import com.hasandel01.meetmeoutserver.enums.BadgeType;
+import com.hasandel01.meetmeoutserver.event.controller.DescriptionRequest;
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.mapper.*;
@@ -161,6 +162,9 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
             user.getParticipatedEvents().add(event);
             event.getAttendees().add(user);
+            if(event.getAttendees().size() == event.getMaximumCapacity())
+                event.setStatus(EventStatus.FULL);
+
             eventRepository.save(event);
             userRepository.save(user);
             if(user.getParticipatedEvents().stream()
@@ -170,8 +174,6 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
             return false;
         }
-
-
     }
 
     @Transactional
@@ -208,6 +210,8 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         user.getParticipatedEvents().add(event);
         event.getAttendees().add(user);
+        if(event.getAttendees().size() == event.getMaximumCapacity())
+            event.setStatus(EventStatus.FULL);
         eventRepository.save(event);
         userRepository.save(user);
 
@@ -239,6 +243,8 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
         event.getAttendees().remove(user);
+        if(event.getAttendees().size() != event.getMaximumCapacity())
+            event.setStatus(EventStatus.ONGOING);
 
         eventRepository.save(event);
         userRepository.save(user);
@@ -557,7 +563,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         event.setTags(eventDTO.tags());
         event.setPrivate(eventDTO.isPrivate());
         event.setDraft(eventDTO.isDraft());
-        
+
         return EventMapper.toEventDto(eventRepository.save(event));
     }
 
@@ -609,14 +615,15 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
     @Transactional
-    public Boolean changeDescription(Long eventId, String description) {
+    public Boolean changeDescription(Long eventId, DescriptionRequest description) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
 
-        event.setDescription(description);
+        event.setDescription(description.description());
         eventRepository.save(event);
+        notificationService.sendEventUpdatedNotificationToAttendees(event);
 
         return true;
     }

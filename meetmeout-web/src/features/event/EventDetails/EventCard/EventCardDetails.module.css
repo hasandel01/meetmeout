@@ -1,16 +1,4 @@
-/**EVENT CARD SUMMARY**/
-
-.eventCardAndComment {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-.eventCardAndWeatherAPI {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-}
+/**EVENT DETAILS CARD**/
 
 .eventCard {
     position: relative;
@@ -21,25 +9,116 @@
     margin-left: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--primary-color-dark);
-    transition: transform 0.2s, box-shadow 0.2s;
-    background-color: white;
-    width: 50vw;
-    height: 600px;
+    background-color: var(--background-color);
+    border-radius: 6px;
+    width: 55vw;
+    height: 700px;
+    margin-top: 10px;
 }
 
-.firstColumn {
+.eventCard h2 {
+    font-size: 24px;
+}
+
+.eventCard p {
+    font-size: 14px;
+}
+
+
+.lockIcon {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 22px;
+    color: var(--primary-color-dark);
+}
+
+.attendeeContainer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    align-items: center;
+    color: var(--primary-color-dark);
+    padding: 10px;
+    font-size: 16px;
+}
+
+.eventImageLocationDate {
     position: relative;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     padding: 20px;
-    max-width: 50%;
+    max-width: 40%;
+    gap: 30px;
+}
+
+/** EVENT STATUS */
+.statusAndEventInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+
+}
+
+.eventInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    color: var(--primary-color-dark);
+}
+
+.eventTitle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .eventCard img {
-    width: 60%;
-    border-radius: 10%;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
     object-fit: cover;
 }
+
+.feeInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 12px;
+  padding: 10px;
+  background-color: #f1f8e9;
+  border: 1px solid var(--primary-color-dark);
+  border-radius: 8px;
+  color: #33691e;
+  font-size: 14px;
+}
+
+.feeAmount {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #388e3c;
+}
+
+
+.feeInfo svg {
+  color: #689f38;
+}
+
+.feeInfo span {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.feeInfo p {
+  margin: 0;
+}
+
 
 .weatherWidget {
     position: relative;
@@ -60,27 +139,6 @@
     align-items: center;
 }
 
-.secondColumn {
-    flex: 2;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-
-.eventCard h2 {
-    font-size: 24px;
-    color: var(--text-color);
-}
-
-.eventCard p {
-    font-size: 14px;
-    color: var(--text-color);
-}
-
-
 .eventTitle {
     position: relative;
     display: inline-flex;
@@ -99,8 +157,7 @@
     border-radius: 4px;
     padding: 4px 8px;
     font-size: 18px;
-    border: #00796b solid 1px;
-    color: #00796b;
+    border: 1px solid var(--primary-color-dark);
 }
 
 /* EVENT TIME, DATE & LOCATION */
@@ -148,16 +205,32 @@
 }
 
 
-.tag {
-    background-color: rgb(189, 247, 189);
-    border: 1px solid var(--primary-color-dark);
-    border-radius: 6px;
+
+/** EVENT TAGS */
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.tags p {
-    color: var(--primary-color-dark);
-    font-weight: bolder;
+.tags ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 10px;
 }
+
+.tags span {
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: green;
+    background-color: var(--background-color);
+    border: 1px solid var(--primary-color-dark);
+    font-weight: bold;
+}
+
 
 /** EventStatus **/
 
@@ -181,23 +254,6 @@
 .eventStatus.FULL {
     background-color: #e99e2f;
     color: white;
-}
-
-/* TO BE IMPLEMENTED */
-
-.eventStatus.completed {
-    background-color: #ffecb3;
-    color: #f57c00;
-}
-.eventStatus.cancelled {
-    background-color: #ffcdd2;
-    color: #d32f2f;
-}
-
-
-.eventStatus.draft {
-    background-color: #e1bee7;
-    color: #8e24aa;
 }
 
 /* EVENT BUTTON */
@@ -272,4 +328,8 @@
 .joinButton:hover {
     background-color: #388e3c;
 }
+
+
+
+/** UPDATES **/
 

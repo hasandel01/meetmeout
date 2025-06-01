@@ -66,7 +66,8 @@ lng
                                             data-tooltip-id="private_event_tooltip" data-tooltip-content="Private Event" />
                                             <Tooltip id="private_event_tooltip"/>
                                     </>}
-                                    <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}> {event.status}</div>
+                                    <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}>
+                                        {!event.isDraft && event.status} </div>
                                     <img src={event.imageUrl} alt={event.title} />
                                     <div className={styles.eventTitle}>
                                         <div className={styles.eventCategory}>

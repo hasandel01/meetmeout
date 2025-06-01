@@ -124,7 +124,7 @@ header .userShortcut {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    padding-right: 30px;
+    margin-right: 40px;
     transition: transform 0.7 ease;
 }
 

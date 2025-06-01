@@ -73,7 +73,7 @@ public class EventController {
     }
 
     @PutMapping("/{eventId}/description")
-    public ResponseEntity<Boolean> updateDescription(@PathVariable Long eventId,@RequestParam String description) {
+    public ResponseEntity<Boolean> updateDescription(@PathVariable Long eventId,@RequestBody DescriptionRequest description) {
         return ResponseEntity.ok(eventService.changeDescription(eventId, description));
     }
 

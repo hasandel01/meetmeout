@@ -6,6 +6,7 @@ import { Event } from "../../../../types/Event";
 import { Weather } from "../../../../types/Forecast";
 import { getCategoryIconLabel } from "../../../../mapper/CategoryMap";
 import { User } from "../../../../types/User";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   event: Event;
@@ -40,6 +41,8 @@ const EventDetailsCard = ({
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
     return diffInDays;
   };
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.eventCardAndWeatherAPI}>
@@ -87,7 +90,9 @@ const EventDetailsCard = ({
             <h2>{event.title}</h2>
           </div>
           <div className={styles.eventDetailsInfo}>
-            <div className={styles.eventTimeDate}>
+            <div className={styles.eventTimeDate}  onClick={event.attendees.some(attendee => attendee.username === currentUser?.username) ? 
+                                                                                    () => navigate("/my-calendar", {state: {highlightedEventId: event.id, 
+                                                                                                                            date: event.startDate}} ) : undefined}>
               <span>
                 <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
                 <p>

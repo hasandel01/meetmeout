@@ -81,7 +81,7 @@ public class Event {
     private boolean isFeeRequired;
     private double fee;
 
-    @Length(max = 400)
+    @Length(max = 300)
     private String feeDescription;
 
     private boolean isPrivate;

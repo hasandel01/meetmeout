@@ -4,17 +4,17 @@ import { User } from "../../../types/User";
 import axiosInstance from "../../../axios/axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 interface UserUpdateFormProps {
     currentUser: User;
-    showUserUpdateForm: boolean;
     onClose: () => void;
 }
 
-const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpdateForm, onClose}) => {
+const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) => {
 
     const [user, setUser] = useState<User>(currentUser);
-
 
     useEffect(() => {
 
@@ -34,9 +34,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpd
 
     const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         try {
             const response = await axiosInstance.post(`/me/update`, user)
             console.log(response.data)
+            onClose();
         } catch(error ) {
                 toast.error("Error updating user! E-mail is already registered");
         }
@@ -49,8 +51,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpd
 
             const form = document.querySelector(`.${styles.formContainer}`)
 
-            if(form && !form.contains(event.target as Node))
+            if(form && !form.contains(event.target as Node)) {
                 onClose();
+            }
         }
 
             document.addEventListener("mousedown",handleCloseClick);
@@ -59,13 +62,16 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpd
             document.removeEventListener("mousedown", handleCloseClick);
         }
     
-    },[])
+    },[onClose])
     
 
     return (
+    <div className={styles.modalOverlay}>
         <div className={styles.formContainer}>
+            <h5>Update your profile! 💾</h5>
             <form onSubmit={handleProfileUpdate}>
                 <label>Username</label>
+                <hr/>
                 <input
                     type="text"
                     value={user.username}
@@ -79,7 +85,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpd
                     value={user.firstName}
                     onChange={(e) => setUser({...user, firstName: e.target.value})}
                 />
-                <label>Last Name</label>                
+                <label>Last Name</label> 
                 <hr/>
                 <input 
                     type="text"
@@ -88,8 +94,9 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpd
                 />
                 <label>About</label>
                 <hr/>
-                <input 
-                    type="text"
+                <textarea
+                    placeholder="Express yourself..."
+                    maxLength={400}
                     value={user.about}
                     onChange={(e) => setUser({...user, about: e.target.value})}
                 />
@@ -102,14 +109,15 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, showUserUpd
                 />
                 <label>Phone Number</label>
                 <hr/>
-                <input 
-                    type="text"
+                <PhoneInput
+                    country={'tr'}
                     value={user.phone}
-                    onChange={(e) => setUser({...user, phone: e.target.value})}
+                    onChange={phone => setUser({ ...user, phone })}
                 />
-                <button type="submit"> Save </button>
+            <button type="submit"> Save </button>
             </form>
         </div>
+    </div>
     )
 } 
 

@@ -217,6 +217,12 @@ function UserProfile() {
             setShowCancel(prev => !prev);
     };
 
+    const handleUserUpdate = async () => {
+        await getMe();
+        await getUserProfile();
+        setShowUserUpdateForm((prev) => !prev)
+    }
+
     const removeCompanion = async () => {
 
         try {
@@ -347,12 +353,15 @@ function UserProfile() {
 
     return (
         <div className={styles.userProfile}>
-            <div className={styles.updateForm}>
-                {user && showUserUpdateForm &&
-                    <UserUpdateForm showUserUpdateForm={showUserUpdateForm} currentUser={user} onClose={() => setShowUserUpdateForm((prev) => !prev)} />}
-            </div>
+                {showUserUpdateForm && (
+                    <UserUpdateForm
+                        currentUser={user as User}
+                        onClose={() => handleUserUpdate()}
+                    />
+                )}
             <div className={styles.userProfileDetails}>
-                <div className={styles.userProfileHeader}>
+                <div className={styles.userInfo}>
+                    <div className={styles.userProfileHeader}>
                     {currentUser?.username !== username &&
                         <div className={companionStatus?.status === "NONE" ? `${styles.companionStatusSendRequest}` :
                             (companionStatus?.status === "ACCEPTED" ? `${styles.companionStatusAccepted}` : `${styles.companionStatusRequestSent}`)}
@@ -375,7 +384,6 @@ function UserProfile() {
                             onClick={updateProfile}
                         ></FontAwesomeIcon>}
                 </div>
-                <div className={styles.userInfo}>
                     <div className={styles.profilePictureAndLocation}>
                         <div className={styles.profilePicture}>
                             <img src={user?.profilePictureUrl} alt="User Profile" />
@@ -399,10 +407,17 @@ function UserProfile() {
                             <hr />
                             <p> {user?.about}</p>
                         </div>
-                        <div className={styles.infoCard}>
-                            <h5>Phone</h5>
-                            <hr />
-                            <p> {user?.phone}</p>
+                        <div className={styles.contacts}>
+                        <h5>Contacts</h5>
+                        <hr />
+                        <div className={styles.contactItem}>
+                                <h6>Phone</h6>
+                                <p>{user?.phone?.trim() ? user.phone : "Not provided."}</p>
+                            </div>
+                            <div className={styles.contactItem}>
+                                <h6>E-mail</h6>
+                                <p>{user?.email?.trim() ? user.email : "Not provided."}</p>
+                            </div>
                         </div>
                     </div>
                     <div className={styles.userReviews}>
@@ -417,27 +432,43 @@ function UserProfile() {
                 <hr />
                 <div className={styles.tabContainer}>
                     <div className={styles.tabMenu}>
-                        <label onClick={() => setTab(1)}>
-                            <h5>Participated Events</h5>
-                            <h6>({user?.participatedEventIds?.length})</h6>
-                        </label>
-                        <label onClick={() => setTab(2)}>
-                            <h5>Created Events</h5>
-                            <h6>({user?.organizedEventIds?.length})</h6>
-                        </label>
-                        <label onClick={() => setTab(3)}>
-                            <h5>Companions</h5>
-                            <h6>({companions.length})</h6>
-                        </label>
-                        <label onClick={() => setTab(4)}>
-                            <h5>Trophies</h5>
-                            <h6>({user?.badges.length})</h6>
-                        </label>
+                    <label
+                        className={tab === 1 ? styles.activeTab : ''}
+                        onClick={() => setTab(1)}
+                    >
+                        <h5>Participated Events</h5>
+                        <h5>({user?.participatedEventIds?.length})</h5>
+                    </label>
+
+                    <label
+                        className={tab === 2 ? styles.activeTab : ''}
+                        onClick={() => setTab(2)}
+                    >
+                        <h5>Created Events</h5>
+                        <h5>({user?.organizedEventIds?.length})</h5>
+                    </label>
+
+                    <label
+                        className={tab === 3 ? styles.activeTab : ''}
+                        onClick={() => setTab(3)}
+                    >
+                        <h5>Companions</h5>
+                        <h5>({companions.length})</h5>
+                    </label>
+
+                    <label
+                        className={tab === 4 ? styles.activeTab : ''}
+                        onClick={() => setTab(4)}
+                    >
+                        <h5>Trophies</h5>
+                        <h5>({user?.badges.length})</h5>
+                    </label>
                     </div>
+
                     <hr/>
                     {tab === 1 && (
                         attendedEvents.length > 0 ? (
-                                                    <div className={styles.eventsContainer}>
+                            <div className={styles.eventsContainer}>
                             {attendedEvents.map(event => (
                                 <div className={styles.eventCard} key={event.id} >
                                 <div className={styles.eventImage}>
@@ -450,7 +481,9 @@ function UserProfile() {
                                 </div>
 
                                 <div className={styles.eventDetails}>
-                                    <div className={styles.eventTimeDate}>
+                                    <div className={styles.eventTimeDate} onClick={currentUser?.username === user?.username ? 
+                                                                                    () => navigate("/my-calendar", {state: {highlightedEventId: event.id, 
+                                                                                                                            date: event.startDate}} ) : undefined}>
                                     <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
                                     <p>
                                         {new Date(event.startDate).toLocaleDateString("en-US", dateOptions)}
@@ -494,7 +527,9 @@ function UserProfile() {
                                 </div>
 
                                 <div className={styles.eventDetails}>
-                                    <div className={styles.eventTimeDate}>
+                                    <div className={styles.eventTimeDate} onClick={currentUser?.username === user?.username ? 
+                                                                                    () => navigate("/my-calendar", {state: {highlightedEventId: event.id, 
+                                                                                                                            date: event.startDate}} ) : undefined}>
                                     <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
                                     <p>
                                         {new Date(event.startDate).toLocaleDateString("en-US", dateOptions)}
@@ -528,7 +563,7 @@ function UserProfile() {
                         (
                         <div className={styles.companionsContainer}>
                             {companions.map(companion => (
-                                <div className={styles.companion} onClick={() => navigate(`/user-profile/${companion.username}`)}>
+                                <div key={companion.username} className={styles.companion} onClick={() => navigate(`/user-profile/${companion.username}`)}>
                                     <img src={companion.profilePictureUrl}></img>
                                     <h6>{companion.firstName} {companion.lastName}</h6>
                                     <p>{companion.username}</p>

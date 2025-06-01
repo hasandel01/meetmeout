@@ -9,7 +9,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const getColorBasedOnCategory = (color: string): string => {
@@ -45,6 +45,8 @@ const getColorBasedOnCategory = (color: string): string => {
 const MyCalendar = () => {
 
     const [events, setEvents] = useState<Event[] | null>([]);
+    const location = useLocation();
+    const initialDate = location.state?.date || new Date().toISOString().split("T")[0];
 
     const getMyEvents = async () => {
         return axiosInstance.get("/events/mine")
@@ -57,12 +59,6 @@ const MyCalendar = () => {
     useEffect(() => {
         getMyEvents()
     },[])
-
-    const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-
-    const isStartDateAndEndDateSame = (event: Event): boolean => {
-        return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
-    };
 
     const handleLocationClick = (event: Event) => {
         navigate("/", {
@@ -103,6 +99,7 @@ const MyCalendar = () => {
             <FullCalendar
             plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
+            initialDate={initialDate}
             slotMinTime="00:00:00"
             slotMaxTime="24:00:00"
             slotDuration="00:30:00"

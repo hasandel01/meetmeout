@@ -119,6 +119,10 @@
     gap: 30px;
 }
 
+.eventTimeDate:hover {
+    cursor: pointer;
+}
+
 .eventTimeDate span {
     display: flex;
     flex-direction: row;
@@ -131,6 +135,10 @@
     flex-direction: row;
     align-items: center;
     gap: 22px;
+}
+
+.eventLocation:hover {
+    cursor: pointer;
 }
 
 .icon {

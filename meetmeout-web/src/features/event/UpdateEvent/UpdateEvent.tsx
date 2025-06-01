@@ -3,19 +3,18 @@ import axiosInstance from '../../../axios/axios';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Event } from '../../../types/Event';
-import { RouteType } from '../../../types/RouteType';
 import styles from './UpdateEvent.module.css';
 
-
 const UpdateEvent = () => {
-  const { eventId } = useParams(); 
 
+  const { eventId } = useParams(); 
+  const [updatedEvent, setUpdatedEvent] = useState<Event | undefined>(undefined);
 
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         const response = await axiosInstance.get(`/events/${eventId}`);
-        setFormData(response.data);
+        setUpdatedEvent(response.data);
       } catch (error) {
         toast.error('Failed to fetch event data.');
       }
@@ -23,52 +22,24 @@ const UpdateEvent = () => {
 
     if (eventId) fetchEvent();
   }, [eventId]);
+    
 
-  
+  const dateNow = new Date();
+  const start = new Date(`${updatedEvent?.startDate}T${updatedEvent?.startTime}`)
+  const end = new Date(`${updatedEvent?.endDate}T${updatedEvent?.endTime}`);
 
-  const [formData, setFormData] = useState<Event>({
-            id: 1,
-            title: '',
-            description: '',
-            startDate: '',
-            endDate: '',
-            startTime: '',
-            endTime: '',
-            imageUrl: "https://res.cloudinary.com/droju2iga/image/upload/v1746880197/default_event_wg5tsm.png",
-            tags: [],
-            isPrivate: false,
-            isDraft: false,
-            maximumCapacity: 1,
-            status: 'ONGOING',
-            attendees: [],
-            organizer: null,
-            addressName: '',
-            endAddressName: '',
-            category: '',
-            longitude: 0,
-            latitude: 0,
-            likes: [],
-            comments: [],
-            reviews: [],
-            createdAt: '',
-            isThereRoute: false,
-            isCapacityRequired: false,
-            isFeeRequired: false,
-            fee: 0,
-            endLatitude: 0,
-            endLongitude: 0,
-            feeDescription: '',
-            routeType: RouteType.CAR,
-            eventPhotoUrls: []
-  });
+  const diffToStart = (start.getTime() - dateNow.getTime()) / 60000;
+
+  const isFullyEditable = diffToStart > 15;
+  const isPartiallyEditable = dateNow >= start && dateNow <= end;
 
   useEffect(() => {
 
     const updateEvent = async () => {
       try {
-        const response = await axiosInstance.put(`/events/${eventId}`, formData);
+        const response = await axiosInstance.put(`/events/${eventId}`, updatedEvent);
 
-        setFormData(response.data);
+        setUpdatedEvent(response.data);
       } catch (error) {
         toast.error('Failed to fetch event data.');
       }
@@ -79,14 +50,14 @@ const UpdateEvent = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setUpdatedEvent((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await axiosInstance.put(`/events/${eventId}`, {
-        formData
+        updatedEvent
       });
 
       toast.success('Event updated successfully!');
@@ -98,8 +69,9 @@ const UpdateEvent = () => {
 
   return (
     <form  className={styles.form} onSubmit={handleSubmit}>
-      <h2>Update Event</h2>
-      
+      <h4>Update Event</h4>
+      {isFullyEditable && <p>You can update all details of this event. 🚴‍♂️</p>}
+      {isPartiallyEditable && <p>Only the description and end time can be updated at this time. 🚶‍♂️</p>}
         <input
           type="file"
           id="imageUrl"
@@ -110,28 +82,26 @@ const UpdateEvent = () => {
             if (file) {
               const reader = new FileReader();
               reader.onloadend = () => {
-                setFormData((prev) => ({ ...prev, imageUrl: reader.result as string }));
+                setUpdatedEvent((prev) => ({ ...prev, imageUrl: reader.result as string }));
               };
               reader.readAsDataURL(file);
             }
           }}
         />
-
         <input
           type="text"
           id="name"
           name="name"
           placeholder='Event Title'
-          value={formData.title}
+          value={updatedEvent?.title}
           onChange={handleChange}
           required
         />
-        
         <textarea
           id="description"
           name="description"
           placeholder='Event Description'
-          value={formData.description}
+          value={updatedEvent?.description}
           onChange={handleChange}
           required
           />
@@ -140,16 +110,16 @@ const UpdateEvent = () => {
           type="date"
           id="date"
           name="date"
-          value={formData.startDate}
+          value={updatedEvent?.startDate}
           onChange={handleChange}
           required
         />
 
         <input
-          type="text"
-          id="location"
-          name="location"
-          value={formData.endDate}
+          type="date"
+          id="endDate"
+          name="endDate"
+          value={updatedEvent?.endDate}
           onChange={handleChange}
           required
         />
@@ -158,7 +128,7 @@ const UpdateEvent = () => {
           type="time"
           id="startTime"
           name="startTime"
-          value={formData.startTime}
+          value={updatedEvent?.startTime}
           onChange={handleChange}
           required
         />
@@ -167,7 +137,7 @@ const UpdateEvent = () => {
           type="time"
           id="endTime"
           name="endTime"
-          value={formData.endTime}
+          value={updatedEvent?.endTime}
           onChange={handleChange}
           required 
         />
@@ -178,7 +148,7 @@ const UpdateEvent = () => {
           type="text"
           id="location"
           name="location"
-          value={formData.addressName}
+          value={updatedEvent?.addressName}
           onChange={handleChange}
           required
         />

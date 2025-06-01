@@ -10,5 +10,6 @@ public enum NotificationType {
     EVENT_LIKE,
     EVENT_REVIEW,
     EVENT_INVITE,
-    EVENT_INVITE_RESPONSE
+    EVENT_INVITE_RESPONSE,
+    EVENT_UPDATE
 }

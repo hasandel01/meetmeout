@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { faCamera, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faCamera, faUnlock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axiosInstance from '../../../axios/axios';
 import { Event } from '../../../types/Event';
@@ -8,7 +8,7 @@ import styles from "./CreateEvent.module.css";
 import { toast } from 'react-toastify';
 import {categoryMap, getCategoryIconLabel} from "../../../mapper/CategoryMap"
 import TagInput from './TagInput';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder, faMoneyBill, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
 import { RouteType } from '../../../types/RouteType';
@@ -22,11 +22,29 @@ const isStartDateAndEndDateSame = (event: Event): boolean => {
 const CreateEventForm = () => {
     
     const [step, setStep] = useState(1);
+    const steps = ["Information","Location","Rules","Image","Summary"];
     const [errors, setErrors] = useState<any>({});
     const navigate = useNavigate();
     const [routeType, setRouteType] = useState<RouteType>(RouteType.CAR);
+    const location = useLocation();
+    const draftEvent = location.state?.draftEvent;
+    const [isDraftEvent, setIsDraftEvent] = useState(false);
 
-        const newErrors: any = {};
+    useEffect(() => {
+        if (draftEvent) {
+            setEvent(draftEvent);
+            setIsDraftEvent(true);
+            if (draftEvent.latitude && draftEvent.longitude) {
+            setCoordinates({ latitude: draftEvent.latitude, longitude: draftEvent.longitude });
+            }
+            setAddressName(draftEvent.addressName || "");
+            setEndAddressName(draftEvent.endAddressName || "");
+            setRouteType(draftEvent.routeType || RouteType.CAR);
+        }
+        }, [draftEvent]);
+
+
+    const newErrors: any = {};
 
     const validateStep = (currentStep: number) => {
     
@@ -186,6 +204,28 @@ const CreateEventForm = () => {
                     formData.append("eventImage", selectedImageFile);
                 }
     
+                    if(isDraftEvent) {
+
+                    console.log("draft event")
+
+                    const response = await axiosInstance.put(`/events/${event.id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+
+                    if(!isDraft) {
+                        toast.success("Event created successfully!");
+                        showConfetti();
+                    } else {
+                        toast.info("Your draft is saved successfully!");
+                    }
+
+                    setEvent((prev) => prev.id = response.data)
+                    await getMe();
+                    setTimeout(() => navigate(`/event/${event.id}`), 100);
+
+                } else {
                     const response = await axiosInstance.post("/events", formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -202,6 +242,8 @@ const CreateEventForm = () => {
                     setEvent((prev) => prev.id = response.data)
                     await getMe();
                     setTimeout(() => navigate(`/event/${event.id}`), 100);
+
+                }
     
             }
             catch (error) {
@@ -210,10 +252,12 @@ const CreateEventForm = () => {
           
         }
 
+
     const handleCreateEvent = (event: React.FormEvent, isDraft: boolean) => {
         event.preventDefault(); 
         createAnEvent(isDraft);
     };
+
 
     const updateEventPicture = async () => {
 
@@ -275,7 +319,6 @@ const CreateEventForm = () => {
     todayDate.getDate() === selectedDate.getDate();
 
     
-
     const getTodayFormatted = () => {
         const today = new Date(Date.now());
         const year = today.getFullYear();
@@ -422,7 +465,9 @@ const CreateEventForm = () => {
   
                         </div>
                         <div className={styles.eventLocationSelector}>
-                            <EventLocationSelector setCoordinates={setCoordinates} route={routeType ?? RouteType.CAR} 
+                            <EventLocationSelector 
+                            latitude={coordinates?.latitude} longitude={coordinates?.longitude} endLatitude={event.endLatitude} endLongitude={event.endLongitude}
+                            setCoordinates={setCoordinates} route={routeType ?? RouteType.CAR} 
                             setAddressName={setAddressName} setEndAddressName={setEndAddressName} isThereRoute={event.isThereRoute} setEndCoordinates={coords => {
                                 setEvent({
                                     ...event,
@@ -627,28 +672,23 @@ const CreateEventForm = () => {
 
     return (
         <div className={styles.createEventFormContainer}>
+            {isDraftEvent &&
+            <button onClick={() => navigate(`/event/${event.id}`)} className={styles.backButton}>
+                <FontAwesomeIcon icon={faArrowLeft} size="2x" />
+                <span>Back to Event Details</span>
+            </button>}
             <div className={styles.containerAlt}>
+                
                 <div className={styles.stepContainer}>
-                    <div className={styles.step}>
-                        <div className={step >= 1 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
-                        <span>Information</span>
-                    </div>
-                    <div className={styles.step}>
-                        <div className={step >= 2 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}>  </div>
-                        <span>Location</span>
-                    </div>
-                    <div className={styles.step}>
-                        <div className={step >= 3 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
-                        <span>Rules</span>
-                    </div>
-                    <div className={styles.step}>
-                        <div className={step >= 4 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
-                        <span>Image</span>
-                    </div>
-                    <div className={styles.step}>
-                        <div className={step >= 5 ? `${styles.stepCircleActive}`  : `${styles.stepCircle}`}> </div>
-                        <span>Summary</span>
-                    </div>
+                    {steps.map( (label,index) => (
+                        <div className={styles.stepItem} key={index}>
+                            <div className={`${styles.stepCircle} ${step === index + 1 ? styles.stepCircleActive :''}`}>
+                                {index + 1}
+                            </div>
+                            <span className={styles.stepLabel}>{label}</span>
+                            {index !== steps.length - 1 && <div className={styles.stepLine}></div>}
+                        </div>
+                    ))}
                 </div>
 
                 {renderStep()}

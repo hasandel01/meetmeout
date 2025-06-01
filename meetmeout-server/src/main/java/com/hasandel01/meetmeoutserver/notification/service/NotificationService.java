@@ -169,9 +169,6 @@ public class NotificationService {
 
     public void sendUserInvitationNotification(Invite invite) {
 
-
-        log.info(String.valueOf(invite.getInvited()));
-
         Notification notification = Notification
                 .builder()
                 .notificationType(NotificationType.EVENT_INVITE)
@@ -187,4 +184,28 @@ public class NotificationService {
         notificationRepository.save(notification);
 
     }
+
+    public void sendEventUpdatedNotificationToAttendees(Event event) {
+
+        Set<User> attendees = event.getAttendees();
+        User organizer = event.getOrganizer();
+
+        for (User attendee : attendees) {
+            if (attendee.equals(organizer)) continue;
+
+            Notification notification = Notification.builder()
+                    .notificationType(NotificationType.EVENT_UPDATE)
+                    .title("An event you joined has been updated.")
+                    .body("The event was updated by " + organizer.getUsername())
+                    .url("/event/" + event.getId())
+                    .sender(organizer)
+                    .receiver(attendee)
+                    .read(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+
+            notificationRepository.save(notification);
+        }
+    }
+
 }

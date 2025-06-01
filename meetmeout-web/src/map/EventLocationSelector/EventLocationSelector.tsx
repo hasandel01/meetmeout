@@ -18,21 +18,30 @@ interface Props {
   isThereRoute: boolean;
   setEndCoordinates: (coords: { latitude: number; longitude: number }) => void;
   route: RouteType;
+  latitude?: number;
+  longitude?: number;
+  endLatitude?: number;
+  endLongitude?: number;
 }
 
 
 
-const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName, setEndAddressName, isThereRoute, setEndCoordinates, route }) => {
+const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName, setEndAddressName, isThereRoute, setEndCoordinates, route,
+  latitude, longitude, endLatitude, endLongitude
+ }) => {
   
   const [clickCount, setClickCount] = useState(0);
 
+  const [position, setPosition] = useState<[number, number]>([
+    latitude ?? 41.0082,
+    longitude ?? 28.9784
+  ]);
+  const [endPosition, setEndPosition] = useState<[number, number]>([endLatitude ?? 0, endLongitude ?? 0]);
 
-  const [position, setPosition] = useState<[number, number]>([41.015, 28.97]);
   const [address, setLocalAddress] = useState<string>('');
   const [endAdress, setLocalEndAddress] = useState<string>('');
   const [addressName, setLocalAddressName] = useState<string>('');
   const [showSearchResults, setShowSearchResults] = useState(false);
-  const [endPosition, setEndPosition] = useState<[number, number]>([0,0]);
   const [endAddressName, setLocalEndAddressName] = useState<string>('');
   const [startQuery, setStartQuery] = useState('');
   const [endQuery, setEndQuery] = useState('');

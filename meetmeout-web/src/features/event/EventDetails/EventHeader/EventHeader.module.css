@@ -28,6 +28,19 @@
     cursor: pointer;
 }
 
+.publishEvent {
+    display: flex;
+    font-weight: bold;
+    border: 1px solid var(--secondary-color-dark);
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.publishEvent:hover {
+    color: var(--background-color);
+    background-color: var(--secondary-color-dark);
+    cursor: pointer;
+}
 
 .secondButtonGroup {
     display: flex;

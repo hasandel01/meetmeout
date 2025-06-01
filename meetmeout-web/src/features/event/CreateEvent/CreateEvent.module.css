@@ -1,6 +1,7 @@
 /* CREATE EVENT */
 
 .createEventFormContainer {
+    position: relative;
     width: 90vw;
     display: flex;
     flex-direction: column;
@@ -9,6 +10,27 @@
     overflow: auto;
     padding: 30px;
 }
+
+.backButton {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: none;
+  border: none;
+  color: var(--primary-color-dark);
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.backButton:hover {
+  text-decoration: underline;
+}
+
 
 .containerAlt {
     position: relative;
@@ -27,45 +49,58 @@
 }
 
 .stepContainer {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  gap: 1rem;
 }
 
-.step {
-    padding: 5px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 60px;
+  position: relative;
+  text-align: center;
 }
 
 .stepCircle {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid var(--primary-color-dark);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-color-dark);
+  background-color: var(--background-color);
+  color: var(--primary-color-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s;
 }
 
 .stepCircleActive {
-    display: flex;
-    flex-direction: column;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid var(--primary-color-dark);
-    background-color: var(--primary-color);
+  background-color: var(--primary-color-dark);
+  color: var(--background-color);
+  border: 2px solid var(--primary-color-dark);
 }
 
+.stepLabel {
+  font-size: 0.8rem;
+  color: var(--primary-color-dark);
+}
 
-.step span {
-    font-weight: bold;
-    color: var(--primary-color-dark);
+.stepLine {
+  position: absolute;
+  top: 16px;
+  left: 100%;
+  width: 100%;
+  height: 2px;
+  background-color: var(--primary-color);
+  z-index: -1;
 }
 
 /** STEP 1 */

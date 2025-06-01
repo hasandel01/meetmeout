@@ -20,7 +20,6 @@ import { UserContextProvider } from './context/UserContext'
 import MyCalendar from './features/calendar/MyCalendar'
 import { ProfileContextProvider } from './context/ProfileContext'
 import { WebSocketProvider } from './context/WebSocketContext'
-import UpdateEvent from './features/event/UpdateEvent/UpdateEvent'
 import Settings from './features/user/Settings/Settings'
 import { DarkModeContextProvider } from './context/DarkModeContex'
 import { LocationProvider } from './context/LocationContex'
@@ -122,12 +121,6 @@ function App() {
                 element = {
                   <ProtectedRoute>
                       <MyCalendar/>
-                  </ProtectedRoute>
-                }/>
-                <Route path='/update-event/:eventId'
-                element = {
-                  <ProtectedRoute>
-                     <UpdateEvent/>
                   </ProtectedRoute>
                 }/>
                 <Route path="/settings"

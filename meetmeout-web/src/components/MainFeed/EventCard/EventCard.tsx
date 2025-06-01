@@ -58,7 +58,7 @@ lng
                                                 `${styles.eventCard} ${styles.joinedEnded}` : 
                                                 `${styles.eventCard} ${styles.ended}`
                                     )}
-                                    onClick={() => {event.isDraft ? navigate(`/update-event/${event.id}`) :  navigate(`/event/${event.id}`)}}>                                   
+                                    onClick={() => navigate(`/event/${event.id}`)}>                                   
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
                                             icon={faLock}

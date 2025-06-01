@@ -531,7 +531,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        String url = cloudStorageService.uploadEventPicture(eventDTO.eventImage());
+        String url = event.getImageUrl();
 
         event.setTitle(eventDTO.title());
         event.setDescription(eventDTO.description());
@@ -553,10 +553,11 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         event.setFeeRequired(eventDTO.isFeeRequired());
         event.setThereRoute(eventDTO.isThereRoute());
         event.setRouteType(eventDTO.routeType());
-
+        event.setCategory(eventDTO.category());
+        event.setTags(eventDTO.tags());
         event.setPrivate(eventDTO.isPrivate());
         event.setDraft(eventDTO.isDraft());
-
+        
         return EventMapper.toEventDto(eventRepository.save(event));
     }
 
@@ -593,6 +594,78 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
                 .stream()
                 .map(EventMapper::toEventDto)
                 .toList();
+    }
+
+    @Transactional
+    public Boolean publishEvent(Long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        event.setDraft(false);
+        eventRepository.save(event);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean changeDescription(Long eventId, String description) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+
+        event.setDescription(description);
+        eventRepository.save(event);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean feeUpdate(Long eventId, FeeUpdateRequest feeUpdateRequest) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        event.setFee(feeUpdateRequest.feeAmount());
+        event.setFeeDescription(feeUpdateRequest.feeDescription());
+        event.setFeeRequired(feeUpdateRequest.isFeeRequired());
+
+        eventRepository.save(event);
+        notificationService.sendEventUpdatedNotificationToAttendees(event);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        event.setTags(tagUpdateRequest.tags());
+        eventRepository.save(event);
+        notificationService.sendEventUpdatedNotificationToAttendees(event);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+
+        if(event.getAttendees().size() > capacityUpdateRequest.maxCapacity() && event.isCapacityRequired())
+            throw new RuntimeException("Capacity is full");
+
+        event.setCapacityRequired(capacityUpdateRequest.isCapacityRequired());
+        event.setMaximumCapacity(capacityUpdateRequest.maxCapacity());
+        eventRepository.save(event);
+        notificationService.sendEventUpdatedNotificationToAttendees(event);
+
+        return true;
     }
 }
 

@@ -106,6 +106,9 @@ const EventDetails = () => {
     },[event.latitude, event.longitude]);
 
 
+    useEffect(() => {
+      getEvent();
+    },[event.isDraft])
   const getEvent = async () => {
 
     try {
@@ -372,6 +375,7 @@ const EventDetails = () => {
                     {currentUser &&
                     ( <EventHeader
                       event={event}
+                      setEvent={setEvent}
                       currentUser={currentUser}
                       joinRequests={joinRequests}
                       setCurrentTab={setCurrentTab}

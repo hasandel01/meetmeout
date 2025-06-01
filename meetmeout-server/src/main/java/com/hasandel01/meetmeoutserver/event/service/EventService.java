@@ -52,4 +52,14 @@ public interface EventService {
     Double getAverageRating(long eventId);
 
     List<EventDTO> getEventsByIds(Set<Long> eventIds);
+
+    Boolean publishEvent(Long eventId);
+
+    Boolean changeDescription(Long eventId, String description);
+
+    Boolean feeUpdate(Long eventId, FeeUpdateRequest feeUpdateRequest);
+
+    Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest);
+
+    Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest);
 }

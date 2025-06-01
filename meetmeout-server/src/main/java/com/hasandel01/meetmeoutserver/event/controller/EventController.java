@@ -38,13 +38,8 @@ public class EventController {
     }
 
     @PutMapping("/{eventId}")
-    public ResponseEntity<EventDTO> updateEvent(@PathVariable long eventId, @Validated @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> updateEvent(@PathVariable long eventId, @Valid @ModelAttribute EventDTO eventDTO) {
         return ResponseEntity.ok(eventService.updateEvent(eventId, eventDTO));
-    }
-
-    @PutMapping("/picture/{eventId}")
-    public ResponseEntity<String> updateEventPicture(@PathVariable long eventId, @RequestParam MultipartFile file) {
-        return ResponseEntity.ok(eventService.updateEventPicture(eventId,file));
     }
 
     @GetMapping("/{eventId}")
@@ -71,4 +66,39 @@ public class EventController {
     public ResponseEntity<List<EventDTO>> getEventsByIds(@RequestParam("ids") Set<Long> ids) {
         return ResponseEntity.ok(eventService.getEventsByIds(ids));
     }
+
+    @PutMapping("/publish/{eventId}")
+    public ResponseEntity<Boolean> publishDraftEvent(@PathVariable Long eventId) {
+        return ResponseEntity.ok(eventService.publishEvent(eventId));
+    }
+
+    @PutMapping("/{eventId}/description")
+    public ResponseEntity<Boolean> updateDescription(@PathVariable Long eventId,@RequestParam String description) {
+        return ResponseEntity.ok(eventService.changeDescription(eventId, description));
+    }
+
+    @PutMapping("/{eventId}/event-image")
+    public ResponseEntity<String> updateEventImage(@PathVariable Long eventId, MultipartFile file) {
+        return ResponseEntity.ok(eventService.updateEventPicture(eventId,file));
+    }
+
+    @PutMapping("/{eventId}/fee")
+    public ResponseEntity<Boolean> updateFeeInformation(@PathVariable Long eventId,
+                                                        @Validated @RequestBody FeeUpdateRequest feeUpdateRequest){
+        return ResponseEntity.ok(eventService.feeUpdate(eventId,feeUpdateRequest));
+    }
+
+    @PutMapping("/{eventId}/tags")
+    public ResponseEntity<Boolean> updateEventTags(@PathVariable Long eventId,
+                                                   @Validated @RequestBody TagUpdateRequest tagUpdateRequest){
+        return ResponseEntity.ok(eventService.tagsUpdate(eventId,tagUpdateRequest));
+    }
+
+
+    @PutMapping("/{eventId}/capacity")
+    public ResponseEntity<Boolean> updateCapacity(@PathVariable Long eventId,
+                                                  @Validated @RequestBody CapacityUpdateRequest capacityUpdateRequest) {
+        return ResponseEntity.ok(eventService.capacityUpdate(eventId,capacityUpdateRequest));
+    }
+
 }

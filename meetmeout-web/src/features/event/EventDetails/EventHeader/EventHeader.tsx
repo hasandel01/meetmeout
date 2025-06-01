@@ -12,16 +12,19 @@ import { toast } from 'react-toastify';
 import axiosInstance from "../../../../axios/axios";
 import { useState } from 'react';
 import { faImage } from "@fortawesome/free-solid-svg-icons";
+import confetti from "canvas-confetti";
+
 
 interface EventHeaderProps {
   event: Event;
+  setEvent: (event: Event) => void;
   currentUser: User;
   joinRequests: JoinRequest[];
   setCurrentTab: (val: number) => void;
   uploadEventPhotos: (eventId: number, photos: File[]) => Promise<void>;
 }
 
-const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinRequests, setCurrentTab, uploadEventPhotos }) => {
+const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinRequests, setCurrentTab, uploadEventPhotos, setEvent }) => {
 
     const navigate = useNavigate();
       const [showInviteModal, setShowInviteModal] = useState(false);
@@ -38,6 +41,14 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
             toast.error("Error leaving event.")
         }
     } 
+
+        const showConfetti = () => {
+            confetti({
+                particleCount: 200,
+                spread: 80,
+                origin: {y:0.6},
+            })
+        }
 
       const showUsersToInvite = () => {
         setShowInviteModal(prev => !prev)
@@ -68,6 +79,23 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
 
     }
 
+    const handlePublishEvent = async () => {
+
+        try {
+            const response = await axiosInstance.put(`/events/publish/${event.id}`)
+            
+            console.log("OK")
+            console.log(response.data)
+            if(response.data) {
+                showConfetti();
+                setEvent({...event, isDraft: false});
+            }
+        }
+        catch (error) {
+            toast.error("ERROR PUBLISHING EVENT.")
+        }
+    }
+
     return (
         <div className={styles.eventHeader}>
             <div className={styles.eventTab}>
@@ -94,7 +122,9 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                     <FontAwesomeIcon icon={faImage} /> Upload Photos
                 </label>
               </div>
-            }  
+            } 
+            {event.isDraft && 
+            <label className={styles.publishEvent} onClick={() => handlePublishEvent()}>📢 Publish</label>}
             {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
                 (
                 <div className={styles.secondButtonGroup}>
@@ -118,11 +148,11 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                         }
                         {(event.organizer?.username === currentUser?.username )? (
                             <>
-                                {event.status !== "ENDED" && 
+                                {event.status !== "ENDED" &&  event.isDraft &&
                                     <FontAwesomeIcon
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            navigate(`/update-event/${event.id}`)
+                                            navigate("/create-event", {state: {draftEvent: event}})
                                         }}
                                         className={styles.editButton} 
                                         icon={faPenToSquare} size="2x" />

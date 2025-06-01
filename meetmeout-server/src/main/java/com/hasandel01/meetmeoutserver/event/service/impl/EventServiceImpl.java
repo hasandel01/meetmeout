@@ -647,6 +647,8 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     @Transactional
     public Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest) {
 
+        System.out.println("UPDATEE" +
+                "");
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 

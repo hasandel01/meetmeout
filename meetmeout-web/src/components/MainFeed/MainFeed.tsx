@@ -30,6 +30,7 @@ const MainFeed = () => {
     }
  
     const [events, setEvents] = useState<Event[] | null>([]);
+    const [filteredEvents, setFilteredEvents] = useState<Event[] |null>();
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const navigate = useNavigate();
     const {currentUser} = useUserContext();
@@ -37,9 +38,51 @@ const MainFeed = () => {
     const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
     const [invitations, setInvitations] = useState<Invitation[]>([]);
     const {userLatitude, userLongitude } = useLocationContext();
-    const [globalFilter, setGlobalFilter] = useState('All Events');
-    const [showPastEvents, setShowPastEvents] = useState(false);
     const {getMe} = useBadgeContext();
+
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [showPastEvents, setShowPastEvents] = useState(false);
+    const [showFreeEvents, setShowFreeEvents] = useState(false);
+    const [filterGroup, setFilterGroup] = useState<'All Events' | 'My Events' | 'My Drafts'>('All Events');
+    const [onlyPublicEvents, setOnlyPublicEvents] = useState(false);
+
+
+    useEffect(() => {
+  if (!events) return;
+
+  let result = [...events];
+
+    if (!showPastEvents) {
+        result = result.filter(ev => {
+        const eventDate = new Date(`${ev.startDate}T${ev.startTime}`);
+        return eventDate >= new Date();
+        });
+    }
+
+    if (showFreeEvents) {
+        result = result.filter(ev => ev.fee === 0 || !ev.isFeeRequired);
+    }
+
+    if (onlyPublicEvents) {
+        result = result.filter(ev => !ev.isPrivate)
+    }
+
+    if (selectedCategory) {
+    result = result.filter(ev => ev.category === selectedCategory);
+    }
+
+
+    if (filterGroup === 'My Events') {
+        result = result.filter(ev => ev.organizer && ev.organizer.username === currentUser?.username);
+    }
+
+    if (filterGroup === 'My Drafts') {
+        result = result.filter(ev => ev.status === 'DRAFT' && ev.organizer && ev.organizer.username === currentUser?.username);
+    }
+
+    setFilteredEvents(result);
+    }, [events, showPastEvents, showFreeEvents, selectedCategory, filterGroup, currentUser, onlyPublicEvents]);
+
 
     useEffect(() => {
         Promise.all([
@@ -112,9 +155,7 @@ const MainFeed = () => {
             });
 
             setEvents(sortedEvents);
-        }
-    
-        
+        }    
     }
 
     const handleJoinEvent = async (eventId: number) => {
@@ -196,24 +237,16 @@ const MainFeed = () => {
       };
 
 
-    const globalFilterHandler = () => {
-    
-        if(globalFilter === 'My Drafts')
-            return events?.filter(event => event.isDraft)
-        else if(globalFilter === 'My Events')
-            return events?.filter(event => event.attendees.some(attendee => attendee.username === currentUser?.username) && !event.isDraft)
-        else if(globalFilter === 'All Events')
-            return events?.filter(event => !event.isDraft)
-
-    }
-      
     return (
         <div className={styles.mainFeedContainer}>
             <FilterPanel 
-                setGlobalFilter={setGlobalFilter}
-                showPastEvents={showPastEvents}
-                setShowPastEvents={setShowPastEvents}
                 onSortChange={sortQuery}
+                onCategoryChange={setSelectedCategory}
+                onShowPastEventsChange={setShowPastEvents}
+                onShowFreeEventsChange={setShowFreeEvents}
+                onFilterGroupChange={setFilterGroup}
+                onOnlyPublicEventsChange={setOnlyPublicEvents}
+                onlyPublicEvents={onlyPublicEvents}
                 />
         <div className={styles.mapContainer}>
                 <MapContainer
@@ -225,7 +258,7 @@ const MainFeed = () => {
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MainFeedMap events={globalFilterHandler()?.filter((event)=> showPastEvents || event.status !== "ENDED") || []} coords={{ lat: userLatitude ?? 41.0082, lng: userLongitude ?? 28.9784 }} />
+                <MainFeedMap events={filteredEvents || []} coords={{ lat: userLatitude ?? 41.0082, lng: userLongitude ?? 28.9784 }} />
                 {flyTo && <MapPanner coords={flyTo} />}
                 </MapContainer>
         </div>
@@ -239,8 +272,7 @@ const MainFeed = () => {
                     </>
 
                 ) : events && events.length > 0 ? (
-                    globalFilterHandler()
-                    ?.filter((event)=> showPastEvents || event.status !== "ENDED")
+                    filteredEvents
                     ?.map((event) => (
                         (
                            <EventCard 
@@ -261,7 +293,14 @@ const MainFeed = () => {
                     )))
                 : (
                     <div className="no-events">
-                        <h2>No ongoing events. The world is chill 😎</h2>
+                        {(filteredEvents?.length ?? 0) > 0 ?
+                        (
+                            <h2>No result based on filters</h2>
+                        ) : 
+                        (
+                            <h2>No ongoing events. The world is chill 😎</h2>
+                        )
+                        }
                     </div>
                 )}
         </div>

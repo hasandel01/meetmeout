@@ -1,6 +1,6 @@
 import styles from "./EventCardDetails.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faLocationDot, faHeart, faComment, faLock, faUserGroup, faMoneyBill, faMoneyBill1Wave, faMoneyBillTransfer, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faHeart, faComment, faLock, faUserGroup, faMoneyBill, faMoneyBill1Wave, faMoneyBillTransfer, faPenToSquare, faSave, faTicket, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Event } from "../../../../types/Event";
 import { Weather } from "../../../../types/Forecast";
@@ -9,24 +9,29 @@ import { User } from "../../../../types/User";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "react-tooltip";
 import axiosInstance from "../../../../axios/axios";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import TagInput from "../../CreateEvent/TagInput";
 
 interface Props {
   event: Event;
+  setEvent: (event: Event) => void;
   weather: Weather | null; 
   currentUser: User | null;
   options: Intl.DateTimeFormatOptions;
   handleLocationClick: () => void;
   handleLike: () => void;
+  onCommentClick: () => void;
 }
 
 const EventDetailsCard = ({
   event,
+  setEvent,
   weather,
   currentUser,
   options,
   handleLocationClick,
-  handleLike
+  handleLike,
+  onCommentClick
 }: Props) => {
 
   const isMoreThan8DaysLater = (eventDateStr: string): boolean => {
@@ -50,31 +55,67 @@ const EventDetailsCard = ({
   const [editedDescription, setEditedDescription] = useState(event.description);
 
   const [isEditingTags, setIsEditingTags] = useState(false);
-  const [editedTags, setEditedTags] = useState(event.tags.join(", "));
+  const [editedTags, setEditedTags] = useState<string[]>(event.tags);
+
 
   const [isEditingFee, setIsEditingFee] = useState(false);
   const [editedFee, setEditedFee] = useState(event.fee);
   const [editedFeeDesc, setEditedFeeDesc] = useState(event.feeDescription);
 
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (textareaRef.current && !textareaRef.current.contains(e.target as Node)) {
+        setIsEditingDescription(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsEditingDescription(false);
+      }
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleDescrtiptionChange();
+      }
+    };
+
+    if (isEditingDescription) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isEditingDescription, editedDescription]);
+
+
+
   const handleDescrtiptionChange = async () => {
   try {
     await axiosInstance.put(`/events/${event.id}/description`, { description: editedDescription });
     setIsEditingDescription(false);
+    setEvent({...event, description: editedDescription})
   } catch (error) {
     console.error("Description update failed", error);
   }
 };
 
-const handleUpdateTags = async () => {
-  try {
-    const tagsArray = editedTags.split(",").map(tag => tag.trim()).filter(Boolean);
-    await axiosInstance.put(`/events/${event.id}/tags`, { tags: tagsArray });
-    setIsEditingTags(false);
-  } catch (error) {
-    console.error("Tag update failed", error);
-  }
-};
+    const handleUpdateTags = async () => {
+      try {
+        await axiosInstance.put(`/events/${event.id}/tags`, {
+          tags: editedTags
+        });
+        setEvent({ ...event, tags: editedTags });
+        setIsEditingTags(false);
+      } catch (error) {
+        console.error("Tag update failed", error);
+      }
+    };
 
 const handleFeeChange = async () => {
   try {
@@ -100,6 +141,57 @@ const handleFeeChange = async () => {
         }
   }
 
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axiosInstance.put(
+        `/events/${event.id}/event-image`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      setEvent({ ...event, imageUrl: response.data });
+    } catch (error) {
+      console.error("Image upload failed", error);
+    }
+  };
+
+    const tagsEditRef = useRef<HTMLDivElement>(null);
+
+      useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (tagsEditRef.current && !tagsEditRef.current.contains(event.target as Node)) {
+          setIsEditingTags(false);
+        }
+      }
+
+      const handleKeyDown = (event: KeyboardEvent) => {
+
+        if(event.key === "Escape")
+          setIsEditingTags(false);
+      }
+
+      if (isEditingTags) {
+        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("keydown", handleKeyDown)
+      }
+
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keydown",handleKeyDown)
+      };
+    }, [isEditingTags]);
+
+
+
+
+
+
   return (
       <div className={styles.eventCard}>
         <div className={styles.lockContainer}>
@@ -122,6 +214,19 @@ const handleFeeChange = async () => {
           }
         <div className={styles.eventImageLocationDate}>
             <img src={event.imageUrl} alt={event.title} />
+            {currentUser?.username === event.organizer?.username &&
+            <>
+            <label htmlFor="eventImageUpload" className={styles.editImageLabel}>
+                  <FontAwesomeIcon icon={faPenToSquare} /> Change Image
+                </label>
+                <input
+                  id="eventImageUpload"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleImageChange}
+                />
+                </>}
               <div className={styles.eventTimeDate}  onClick={() => navigate("/my-calendar", {
                                                                                           state: {
                                                                                             date: event.startDate,
@@ -141,17 +246,40 @@ const handleFeeChange = async () => {
                 <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                 <p>{event.addressName}</p>
               </div>
-              <div className={styles.tags}>
-                  <label>Tags</label>
-                  <FontAwesomeIcon onClick={() => handleUpdateTags()} icon={faPenToSquare}/>
-                  <hr/>                                                                        
-                  <ul>
-                    {event.tags?.map((tag, index) => (
-                        <li key={index}>
+              <div className={styles.tags} ref={tagsEditRef}>
+                    <div className={styles.tagsHeader}>
+                      <label>Tags</label>
+                      {currentUser?.username === event.organizer?.username && (
+                        isEditingTags ? (
+                          <FontAwesomeIcon
+                            className={styles.editDescription}
+                            onClick={() => handleUpdateTags()}
+                            icon={faCheck}
+                          />
+                        ) : (
+                          <FontAwesomeIcon
+                            className={styles.editDescription}
+                            onClick={() => setIsEditingTags(true)}
+                            icon={faPenToSquare}
+                          />
+                        )
+                      )}
+                    </div>
+                    <hr />
+                    {isEditingTags ? (
+                      <div  className={styles.tagsEdit}>
+                        <TagInput tags={editedTags} setTags={setEditedTags} />
+                      </div>
+                    ) : (
+                      <ul>
+                        {event.tags?.map((tag, index) => (
+                          <li key={index}>
                             <span>#{tag}</span>
-                        </li>))}
-                  </ul>
-             </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
         </div>
         <div className={styles.statusAndEventInfo}>
         <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}>{!event.isDraft && event.status}</div>
@@ -172,31 +300,34 @@ const handleFeeChange = async () => {
           <div className={styles.descriptionContainer}>
                   <div className={styles.descriptionHeader}>
                     <label>Description</label>
-                    <FontAwesomeIcon icon={faPenToSquare} onClick={() => setIsEditingDescription(true)} />
+                    {currentUser?.username === event.organizer?.username &&
+                    <FontAwesomeIcon icon={faPenToSquare} className={styles.editDescription} onClick={() => setIsEditingDescription(true)} />}
                   </div>
+                  <hr/>
                   {isEditingDescription ? (
-                    <>
+                    <div className={styles.editDescriptionContainer}>
                       <textarea 
                           value={editedDescription} 
                           maxLength={500}
+                          style={{ resize: "none", height: "250px"}}
                           onChange={(e) => setEditedDescription(e.target.value)} />
-                      <button onClick={handleDescrtiptionChange}>Save</button>
-                      <button onClick={() => setIsEditingDescription(false)}>Cancel</button>
-                    </>
+                    </div>
                   ) : (
                     <p>{event.description}</p>
                   )}
                 </div>
           {event.isFeeRequired ? (
             <div className={styles.feeInfo}>
-              <div className={styles.feeAmount}>
+              <div className={styles.feeAmount} data-tooltip-id="fee-amount" data-tooltip-content={event.feeDescription}>
                 <FontAwesomeIcon icon={faMoneyBill} />
-                <span>{event.fee}</span>
+                <span>: {event.fee}$</span>
               </div>
-              <p>{event.feeDescription}</p>
+              <Tooltip id="fee-amount"></Tooltip>
             </div>
           ): (
-            <p> Event is free. </p>
+            <div className={styles.feeInfo}>
+                <span>Free</span>
+            </div>
           )}
           {weather && weather.current && (
             <div className={styles.weatherWidget}>
@@ -238,7 +369,7 @@ const handleFeeChange = async () => {
             <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
           </div>
           <div className={styles.buttonGroup}>
-            <FontAwesomeIcon icon={faComment} className={styles.commentIcon} />
+            <FontAwesomeIcon icon={faComment} className={styles.commentIcon} onClick={(e) => { e.stopPropagation(); onCommentClick()}} />
             <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
           </div>
         </div>

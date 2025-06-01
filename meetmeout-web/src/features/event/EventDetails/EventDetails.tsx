@@ -1,6 +1,6 @@
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axiosInstance from "../../../axios/axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Event } from "../../../types/Event";
 import {toast} from 'react-toastify';
 import styles from './EventDetails.module.css';
@@ -39,7 +39,6 @@ const EventDetails = () => {
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editedCommentText, setEditedCommentText] = useState<string>('');
   const [showReviewModal, setShowReviewModal] = useState(true);
-
 
 
         const handleLocationClick = () => {
@@ -90,6 +89,17 @@ const EventDetails = () => {
          });
     
     const [weather, setWeather] = useState<Weather | null>(null);
+
+    const commentInputRef = useRef<HTMLInputElement>(null);
+
+
+    const scrollToComment = () => {
+
+      if(commentInputRef.current) {
+        commentInputRef.current.scrollIntoView({behavior: "smooth", block: "center"})
+        commentInputRef.current.focus();
+      }
+    }
 
 
     useEffect(() => {
@@ -387,7 +397,9 @@ const EventDetails = () => {
                     <div className={styles.eventCardAndChat}>
                       <div className={styles.eventCardAndComments}>
                           <EventDetailsCard
+                                onCommentClick={scrollToComment}
                                 event={event}
+                                setEvent={setEvent}
                                 weather={weather}
                                 currentUser={currentUser ?? null}
                                 options={options}
@@ -395,6 +407,7 @@ const EventDetails = () => {
                                 handleLike={handleLike}
                               />
                           <EventComments
+                            ref={commentInputRef}
                             comments={event.comments}
                             currentUser={currentUser}
                             eventId={event.id}

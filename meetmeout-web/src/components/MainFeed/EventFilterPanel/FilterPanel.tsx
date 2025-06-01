@@ -1,13 +1,15 @@
-import { useState } from "react";
 import styles from "./FilterPanel.module.css";
-import Select, {MultiValue} from 'react-select'
+import Select from 'react-select';
 import { categoryMap } from "../../../mapper/CategoryMap";
 
 interface FilterPanelProps {
-  setGlobalFilter: (filter: string) => void;
-  showPastEvents: boolean;
-  setShowPastEvents: (val: boolean) => void;
   onSortChange: (value: string) => void;
+  onCategoryChange: (category: string) => void;
+  onShowPastEventsChange: (show: boolean) => void;
+  onShowFreeEventsChange: (freeOnly: boolean) => void;
+  onFilterGroupChange: (group: 'All Events' | 'My Events' | 'My Drafts') => void;
+  onlyPublicEvents: boolean;
+  onOnlyPublicEventsChange: (val: boolean) => void;
 }
 
 type OptionType = {
@@ -16,67 +18,64 @@ type OptionType = {
 };
 
 const FilterPanel = ({
-  setGlobalFilter,
-  showPastEvents,
-  setShowPastEvents,
-  onSortChange
+  onSortChange,
+  onCategoryChange,
+  onShowPastEventsChange,
+  onShowFreeEventsChange,
+  onFilterGroupChange,
+  onlyPublicEvents,
+  onOnlyPublicEventsChange
 }: FilterPanelProps) => {
 
-  const [showFreeEvents, setShowFreeEvents] = useState<boolean>(false);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
-  const categoryOptions: OptionType[] =  Object.entries(categoryMap).map(([value , label]) => (
-    {
-      value,
-      label
-    }
-  ));
-
-  const handleSelectedCategories = (selectedCategories: MultiValue<OptionType>) => {
-    const selected = selectedCategories.map((cat) => cat.value);
-    setSelectedCategories(selected);
-    console.log(selectedCategories)
-  }
+  const categoryOptions: OptionType[] = Object.entries(categoryMap).map(([value, label]) => ({
+    value,
+    label
+  }));
 
   return (
     <div className={styles.mainFeedContainerFilter}>
       <div className={styles.selections}>
-        <label onClick={() => setGlobalFilter("All Events")}>
+        <label onClick={() => onFilterGroupChange("All Events")}>
           All Available Events                    
         </label>
-        <label onClick={() => setGlobalFilter("My Events")}>
+        <label onClick={() => onFilterGroupChange("My Events")}>
           My Events
         </label>
-        <label onClick={() => setGlobalFilter("My Drafts")}>
+        <label onClick={() => onFilterGroupChange("My Drafts")}>
           My Drafts
         </label>
         <label className={styles.toggleWrapper}>
           <input
             type="checkbox"
-            checked={showPastEvents}
-            onChange={(e) => setShowPastEvents(e.target.checked)}
+            onChange={(e) => onShowPastEventsChange(e.target.checked)}
           />
           <span className={styles.slider}></span>
           <span className={styles.labelText}>
-            {showPastEvents ? "Showing past events" : "Hide past events"}
+            Show Past Events
           </span>
         </label>
         <label>
           <input 
             type="checkbox"
-            checked={showFreeEvents}
-            onChange={(e) => setShowFreeEvents(e.target.checked)}
+            onChange={(e) => onShowFreeEventsChange(e.target.checked)}
           /> Free to Join
         </label>
         <div className={styles.categoryFilterContainer}>
           <Select
-            isMulti
-            options={categoryOptions}
-            onChange={handleSelectedCategories}
-            placeholder="Choose categories"
-            ></Select>
+          isClearable
+          options={categoryOptions}
+          onChange={(selected) => onCategoryChange(selected?.value || '')}
+          placeholder="Choose category"
+        />
         </div>
       </div>
+      <label>
+        <input 
+          type="checkbox"
+          checked={onlyPublicEvents}
+          onChange={(e) => onOnlyPublicEventsChange(e.target.checked)}
+        /> Only Public Events
+      </label>
       <div className={styles.sort}>
         <label>Sort by:  </label>
         <select onChange={(e) => onSortChange(e.target.value)}>

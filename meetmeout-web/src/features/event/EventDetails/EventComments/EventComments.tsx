@@ -4,6 +4,7 @@ import styles from "./EventComments.module.css";
 import formatTime from "../../../../utils/formatTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import  { forwardRef } from "react";
 
 
 interface EventCommentsProps {
@@ -22,7 +23,7 @@ interface EventCommentsProps {
   saveEditedComment: (commentId: number) => void;
 }
 
-const EventComments: React.FC<EventCommentsProps> = ({
+const EventComments = forwardRef<HTMLInputElement, EventCommentsProps>(({
   comments,
   currentUser,
   eventId,
@@ -36,9 +37,8 @@ const EventComments: React.FC<EventCommentsProps> = ({
   setEditingCommentId,
   setEditedCommentText,
   saveEditedComment,
-})=> {
+}, ref)=> {
 
-    
     return (
         <div className={styles.commentContainer} id="eventComments">
             <div className={styles.commentContainerAlt}>
@@ -61,7 +61,7 @@ const EventComments: React.FC<EventCommentsProps> = ({
                                     </div>
                                     {editingCommentId === comment.commentId ? (
                                         <div className={styles.editArea}>
-                                            <input
+                                            <input 
                                                                   type="text"
                                                                   value={editedCommentText}
                                                                   onChange={(e) => setEditedCommentText(e.target.value)}
@@ -97,6 +97,7 @@ const EventComments: React.FC<EventCommentsProps> = ({
                                               <hr/>
                                               <div className={styles.addComment}>
                                                   <input
+                                                      ref={ref}
                                                       type="text"
                                                       placeholder="Add a comment..."
                                                       value={commentText}
@@ -111,7 +112,6 @@ const EventComments: React.FC<EventCommentsProps> = ({
                                   </div>
                           </div>
     )
-
-}
+});
 
 export default EventComments;

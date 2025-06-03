@@ -194,173 +194,147 @@ const UserCompanions = () => {
       }
 
     return (
-        <div className ={styles.companionsContainer}>
-            <div className={styles.filterPanel}>
-                <label onClick={()=> setPage(1)}> Companions </label>
-                <label onClick={() => setPage(2)}> Pending Requests </label>
-            </div>
-                <div className={styles.mainPanel}>
-                    {page === 1 && 
-                    <div className={styles.userContainer}>  
-                        <h3>Companions</h3>
-                        {companions.length > 0 ? (
-                            <div className={styles.divisionContainer}>
-                                <div className={styles.companionsHeader}>
-                                    <div className={styles.searchBar}> 
-                                        <FontAwesomeIcon icon={faSearch}/>
-                                        <input
-                                            type="text"
-                                            placeholder="Search companions..."
-                                            onChange={(e) => setQuery(e.target.value)} 
-                                        />
-                                    </div>
-                                    <div className={styles.sortContainer}> 
-                                        <label>Sort by: </label>
-                                        <select className={styles.companionSort} onChange={(e) => setSortType(e.target.value)}>
-                                                <option value="Recently Added">Recently Added</option>
-                                                <option value="First Name">First Name</option>
-                                                <option value="Last Name">Last Name</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            <ul>
-                                {sortCompanions()?.filter(companion => {
-                                        if(query === '') 
-                                             return [...companions].reverse;
-                                        else
-                                            return searchResults.some(searchResult => companion.username === searchResult.username)
-                                    }).map((companion: User) => (
-                                    <li key={companion.email}>
-                                        <div className={styles.userDetails} onClick={() => goToUserProfile(companion.username)}>
-                                            <img src={companion.profilePictureUrl} alt="Companion" />
-                                            <div className={styles.userDetailsInfo}>
-                                                <h4>{companion.firstName} {companion.lastName}</h4>
-                                                <p>@{companion.username}</p>
-                                            </div>
-                                        </div>
-                                        <button 
-                                                className={styles.decline}
-                                                onClick={(e) =>
-                                            {
-                                                e.stopPropagation();
-                                                removeCompanion(companion.email)
-                                            }
-                                        }>
-                                            Remove
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>      
-                        </div>
-                        ) : (
-                            <p>There is no companions, maybe you want to add?</p>
-                        )}
+    <div className={styles.companionsContainer}>
+        <div className={styles.mainPanel}>
+        <div className={styles.tabHeader}>
+            <button className={page === 1 ? styles.activeTab : ""} onClick={() => setPage(1)}>Companions</button>
+            <button className={page === 2 ? styles.activeTab : ""} onClick={() => setPage(2)}>Pending Requests</button>
+        </div>
+
+        {page === 1 && (
+            <div className={styles.userContainer}>
+                <h3>Companions</h3>
+
+                {companions.length > 0 ? (
+                <>
+                    <div className={styles.companionsHeader}>
+                    <div className={styles.searchBar}>
+                        <FontAwesomeIcon icon={faSearch} />
+                        <input
+                        type="text"
+                        placeholder="Search companions..."
+                        onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </div>
+                    <div className={styles.sortContainer}>
+                        <label>Sort by:</label>
+                        <select onChange={(e) => setSortType(e.target.value)}>
+                        <option value="Recently Added">Recently Added</option>
+                        <option value="First Name">First Name</option>
+                        <option value="Last Name">Last Name</option>
+                        </select>
+                    </div>
                     </div>
 
-                }
-                {page === 2 && currentUser?.username === username && (
-                <div className={styles.userContainer}>
-                    <h3>Pending Friend Requests</h3>
-                    {friendRequests.length > 0 ? (
-                        <div className={styles.divisionContainer}>
-                            <div className={styles.companionsHeader}>
-                                    <div className={styles.searchBar}> 
-                                        <FontAwesomeIcon icon={faSearch}/>
-                                        <input
-                                            type="text"
-                                            placeholder="Search requesters..."
-                                            onChange={(e) => setQuery(e.target.value)} 
-                                        />
-                                    </div>
-                                    <div className={styles.sortContainer}> 
-                                        <label>Sort by: </label>
-                                        <select className={styles.companionSort} onChange={(e) => setSortType(e.target.value)}>
-                                                <option value="Recently Added">Recently Added</option>
-                                                <option value="First Name">First Name</option>
-                                                <option value="Last Name">Last Name</option>
-                                        </select>
-                                    </div>
+                    <ul className={styles.divisionContainer}>
+                    {sortCompanions()
+                        ?.filter(c => query === "" || searchResults.some(s => s.username === c.username))
+                        .map(c => (
+                        <li key={c.email}>
+                            <div className={styles.userDetails} onClick={() => goToUserProfile(c.username)}>
+                            <img src={c.profilePictureUrl} alt="User" />
+                            <div className={styles.userDetailsInfo}>
+                                <h4>{c.firstName} {c.lastName}</h4>
+                                <p>@{c.username}</p>
                             </div>
-                            <ul>
-                                {sortRequesters()
-                                ?.filter(request => {
-                                        if(query === '') 
-                                             return [...friendRequests].reverse;
-                                        else
-                                            return searchResults.some(searchResult => request.sender.username === searchResult.username)
-                                        }).map((request) => (
-                                        <li key={request.id} className="friend-request-item" onClick={() => goToUserProfile(request.sender.username)}>
-                                        <div className={styles.userDetails}>
-                                            <img src={request.sender.profilePictureUrl} alt="User" className="user-picture" />
-                                            <div className={styles.userDetailsInfo}>
-                                                <h4>{request.sender.firstName} {request.sender.lastName}</h4>
-                                                <p>@{request.sender.username}</p>
-                                            </div>
-                                        </div>
-                                        <div className={styles.actionButtons}>
-                                        <button 
-                                            className={`${styles.button} ${styles.accept}`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAcceptRequest(request.sender.email);
-                                            }}>
-                                                Accept</button>
-                                        <button 
-                                            className={`${styles.button} ${styles.decline}`}
-                                            onClick={(e) =>
-                                            {
-                                                e.stopPropagation(); 
-                                                handleRejectRequest(request.sender.email)
-                                            }}>Decline</button>
-                                        </div>
-                                        </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ) 
-                    : (
-                        <p>There are no pending requests for now.</p>
-                    )}
-
-                </div> 
+                            </div>
+                            <button className={styles.decline} onClick={(e) => {
+                            e.stopPropagation();
+                            removeCompanion(c.email);
+                            }}>Remove</button>
+                        </li>
+                    ))}
+                    </ul>
+                </>
+                ) : (
+                <p className={styles.noRequestsText}>You have no companions.</p>
                 )}
-
             </div>
-            {currentUser?.username === username && (
-                <div className={styles.suggestionsPanel}>
-                    <div className={styles.userContainerSg}>
-                        <h3>Suggestions</h3>
-                        {possibleCompanions && possibleCompanions.length > 0 ? (
-                            <div className={styles.divisionContainer}>
-                                <ul>
-                                {possibleCompanions?.map((user) => (
-                                    <li onClick={() => goToUserProfile(user.username)}>
-                                        <div className={styles.userDetails}>
-                                            <img src={user.profilePictureUrl} alt="User" className="user-picture" />
-                                                <div className={styles.userDetailsInfo}>
-                                                    <h4>{user.firstName} {user.lastName}</h4>
-                                                    <p>@{user.username}</p>
-                                                </div>
-                                        </div>
-                                        <button className={`${styles.addButton}`} 
-                                            onClick={(e) =>{
-                                                e.stopPropagation();
-                                                handleAddCompanion(user.email);
-                                        }}> Send Request</button>
-                                    </li>
-                                ))}
-                                </ul>
-                            </div>
-                            ) : 
-                            (
-                                <p> There are no suggestions right now. </p>
-                            )}
+        )}
+        {page === 2 && currentUser?.username === username && (
+        <div className={styles.userContainer}>
+            <h3>Pending Friend Requests</h3>
 
-                    </div>        
-                </div>     
+                    {friendRequests.length > 0 ? (
+            <>
+                <div className={styles.companionsHeader}>
+                <div className={styles.searchBar}>
+                    <FontAwesomeIcon icon={faSearch} />
+                    <input
+                    type="text"
+                    placeholder="Search requesters..."
+                    onChange={(e) => setQuery(e.target.value)}
+                    />
+                </div>
+                <div className={styles.sortContainer}>
+                    <label>Sort by:</label>
+                    <select onChange={(e) => setSortType(e.target.value)}>
+                    <option value="Recently Added">Recently Added</option>
+                    <option value="First Name">First Name</option>
+                    <option value="Last Name">Last Name</option>
+                    </select>
+                </div>
+                </div>
+
+                <ul className={styles.divisionContainer}>
+                {sortRequesters()
+                    ?.filter(r => query === "" || searchResults.some(s => s.username === r.sender.username))
+                    .map(request => (
+                    <li key={request.id} onClick={() => goToUserProfile(request.sender.username)}>
+                        <div className={styles.userDetails}>
+                        <img src={request.sender.profilePictureUrl} alt="User" />
+                        <div className={styles.userDetailsInfo}>
+                            <h4>{request.sender.firstName} {request.sender.lastName}</h4>
+                            <p>@{request.sender.username}</p>
+                        </div>
+                        </div>
+                        <div className={styles.actionButtons}>
+                        <button className={styles.accept} onClick={(e) => {
+                            e.stopPropagation();
+                            handleAcceptRequest(request.sender.email);
+                        }}>Accept</button>
+                        <button className={styles.decline} onClick={(e) => {
+                            e.stopPropagation();
+                            handleRejectRequest(request.sender.email);
+                        }}>Decline</button>
+                        </div>
+                    </li>
+                ))}
+                </ul>
+            </>
+            ) : (
+            <p className={styles.noRequestsText}>You have no pending requests at the moment.</p>
             )}
         </div>
-    )
+        )}
+        {currentUser?.username === username && (
+            <div className={styles.suggestionsPanel}>
+            <h3>Suggestions</h3>
+            {possibleCompanions && possibleCompanions.length > 0 ? (
+                <ul className={styles.divisionContainer}>
+                {possibleCompanions.map(user => (
+                    <li key={user.email} onClick={() => goToUserProfile(user.username)}>
+                    <div className={styles.userDetails}>
+                        <img src={user.profilePictureUrl} alt="User" />
+                        <div className={styles.userDetailsInfo}>
+                        <h4>{user.firstName} {user.lastName}</h4>
+                        <p>@{user.username}</p>
+                        </div>
+                    </div>
+                    <button className={styles.addButton} onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddCompanion(user.email);
+                    }}>Send Request</button>
+                    </li>
+                ))}
+                </ul>
+            ) : <p>No suggestions right now.</p>}
+            </div>
+        )}
+        </div>
+    </div>
+);
+
 }
 
 export default UserCompanions;

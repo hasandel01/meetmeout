@@ -1,52 +1,63 @@
 .mapInputContainer {
-    display: flex;
-    flex-direction: row;
-    padding: 10px;
-    align-items: center;
-    gap: 20px;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
 }
 
+.inputWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
 
 .searchIcon {
   color: var(--primary-color-dark);
+  font-size: 18px;
+  margin-left: 8px;
 }
 
+.inputWrapper input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--primary-color-dark);
+  border-radius: 6px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font-size: 16px;
+}
 
 .searchResults {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    left: 300px;
-    top: 160px;
-    width: 600px;
-    background-color: var(--background-color);
-    z-index: 999;
-    border: 1px solid var(--primary-color-dark);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  background-color: white;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .searchResults ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 0px;
-    padding: 10px;
-    width: 90%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-
 .searchResults li {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
 }
 
 .searchResults li:hover {
-    background-color: var(--primary-color-light);
-    cursor: pointer;
-
+  background-color: var(--hover-color);
 }
 
 @keyframes bounceWave {
@@ -65,4 +76,33 @@
 .flag-img {
   width: 36px;
   height: 36px;
+}
+
+@media (max-width: 768px) {
+  .mapInputContainer {
+    flex-direction: row;
+    width: 100%;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .mapInputContainer input {
+    color: var(--text-color);
+  }
+  
+
+  .searchResults ul {
+    width: 100%;
+    padding: 5px;
+  }
+
+  .searchResults li {
+    font-size: 14px;
+  }
+
+  .leaflet-container {
+    height: 200px !important;
+    margin-top: 10px;
+    border-radius: 10px;
+  }
 }

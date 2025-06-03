@@ -49,3 +49,47 @@
 }
 
 
+@media (max-width: 768px) {
+  .chatContainer {
+    padding: 20px;
+    margin: 10px;
+    min-width: unset;
+    width: 85vw;
+    height: 400px;
+  }
+
+  .messageList {
+    min-height: 300px;
+    overflow-y: auto;
+  }
+
+  .chatMessage {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding: 6px;
+  }
+
+  .chatMessage h5 {
+    font-size: 14px;
+    word-break: break-word;
+    max-width: 80%;
+  }
+
+  .chatMessage img {
+    height: 36px;
+    width: 36px;
+  }
+
+  .sendChatMessageContainer {
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .sendChatMessageContainer input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+  }
+}

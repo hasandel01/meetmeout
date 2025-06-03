@@ -165,6 +165,10 @@
         width: 100vw;
         max-width: 100%;
     }
+
+    .searchBar input {
+        font-size: 12px;
+    }
 }
 
 

@@ -1,5 +1,5 @@
 import { MapContainer, TileLayer, Marker, useMapEvents, Popup } from 'react-leaflet';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import 'leaflet/dist/leaflet.css';
 import axios from 'axios';
 import styles from "./EventLocationSelector.module.css"
@@ -137,30 +137,6 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
   }, [endQuery]);
 
 
-
-   useEffect(() => {
-      
-      const handleClickOutside = (event: MouseEvent) => {
-        const menu = document.querySelector(`.${styles.searchResults}`);
-        if (
-          menu &&
-          !menu.contains(event.target as Node)
-        ) {
-          setShowSearchResults(false);
-        }
-
-      }
-
-      if (showSearchResults) {
-        document.addEventListener("mousedown", handleClickOutside);
-      }
-
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
-    },[showSearchResults])
-
-
   const handleStartClick = (result: any) => {
     const lat = parseFloat(result.lat);
     const lon = parseFloat(result.lon);
@@ -256,53 +232,86 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
       </div>;
   };
 
+
+    const startWrapperRef = useRef<HTMLDivElement | null>(null);
+    const endWrapperRef = useRef<HTMLDivElement | null>(null);
+
+
+    useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Node;
+
+    if (activeInput === 'start' && startWrapperRef.current && !startWrapperRef.current.contains(target)) {
+      setActiveInput(null);
+    }
+
+    if (activeInput === 'end' && endWrapperRef.current && !endWrapperRef.current.contains(target)) {
+      setActiveInput(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => document.removeEventListener("mousedown", handleClickOutside);
+}, [activeInput]);
+
+
+
   return (
     <div>
           <div className={styles.mapInputContainer}>
-              <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
-              <input
-                type='text'
-                placeholder='Search start location...'
-                value={startQuery}
-                onChange={(e) => setStartQuery(e.target.value)}
-                onFocus={() => setActiveInput('start')}
-              />
-              {activeInput === 'start' && startSearchResults.length > 0 && (
-                <div className={styles.searchResults}>
-                  <ul>
-                    {startSearchResults.map(result => (
-                      <li key={result.place_id} onClick={() => handleStartClick(result)}>
-                        {result.display_name}
-                      </li>
-                    ))}
-                  </ul>
+                <div className={styles.inputWrapper} ref={startWrapperRef}>
+                  <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+                  <input
+                    type='text'
+                    placeholder='Search start location...'
+                    value={startQuery}
+                    onChange={(e) => setStartQuery(e.target.value)}
+                   onFocus={() => {
+                      setActiveInput('start');
+                      setShowSearchResults(true);
+                    }}
+                  />
                 </div>
-              )}
-            </div>
+                {activeInput === 'start' && startSearchResults.length > 0 && (
+                  <div className={styles.searchResults}>
+                    <ul>
+                      {startSearchResults.map(result => (
+                        <li key={result.place_id} onClick={() => handleStartClick(result)}>
+                          {result.display_name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             {isThereRoute && 
-             <div className={styles.mapInputContainer}>
-              <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
-              <input
-                type='text'
-                placeholder='Search end location...'
-                value={endQuery}
-                onChange={(e) => setEndQuery(e.target.value)}
-                onFocus={() => setActiveInput('end')}
-              />
-              {activeInput === 'end' && endSearchResults.length > 0 && (
-                <div className={styles.searchResults}>
-                  <ul>
-                    {endSearchResults.map(result => (
-                      <li key={result.place_id} onClick={() => handleEndClick(result)}>
-                        {result.display_name}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              <div className={styles.mapInputContainer}>
+                              <div className={styles.inputWrapper} ref={endWrapperRef}>
+                <FontAwesomeIcon icon={faSearch} className={styles.searchIcon}/>
+                <input
+                  type='text'
+                  placeholder='Search end location...'
+                  value={endQuery}
+                  onChange={(e) => setEndQuery(e.target.value)}
+                  onFocus={() => {
+                    setActiveInput('end');
+                    setShowSearchResults(true);
+                  }}
+                />
+                {activeInput === 'end' && endSearchResults.length > 0 && (
+                  <div className={styles.searchResults}>
+                    <ul>
+                      {endSearchResults.map(result => (
+                        <li key={result.place_id} onClick={() => handleEndClick(result)}>
+                          {result.display_name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
             }
-           
       <div style={{ height: '450px', width: '600px' }}>
         <MapContainer
           center={position}

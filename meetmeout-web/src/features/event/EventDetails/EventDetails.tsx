@@ -90,7 +90,7 @@ const EventDetails = () => {
     
     const [weather, setWeather] = useState<Weather | null>(null);
 
-    const commentInputRef = useRef<HTMLInputElement>(null);
+    const commentInputRef = useRef<HTMLTextAreaElement>(null);
 
 
     const scrollToComment = () => {

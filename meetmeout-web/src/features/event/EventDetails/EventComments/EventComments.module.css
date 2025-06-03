@@ -8,7 +8,7 @@
  }
 
  .commentContainerAlt {
-    background-color: white;
+    background-color: var(--background-color);
     border-radius: 12px;
     padding: 12px;
  }
@@ -28,7 +28,7 @@
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 12px;
-  background-color: #fff;
+  background-color: var(--background-color);
   position: relative;
 }
 
@@ -105,21 +105,84 @@
   cursor: pointer;
 }
 
-
 .addComment {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 10px;
     margin-top: 20px;
-    border: 1px solid var(--primary-color-dark);
-}
-.addComment input {
-    width: 100%;
-    padding: 10px;
     border-radius: 8px;
     border: 1px solid var(--primary-color-dark);
-    outline: none;
-    box-shadow: none;
-    border: none;
+}
+
+.commentInput {
+  width: 100%;
+  border: 1px solid var(--primary-color-dark);
+  border-radius: 8px;
+  resize: none;
+  overflow: hidden;
+  padding: 10px;
+  font-size: 14px;
+}
+
+
+
+@media (max-width: 768px) {
+  .commentContainer {
+    width: 85vw;
+    margin: 0 auto;
+  }
+
+  .commentContainerAlt {
+    padding: 10px;
+  }
+
+  .commentItem {
+    padding: 10px;
+  }
+
+  .commentText {
+    font-size: 14px;
+    word-wrap: break-word;
+  }
+
+  .commentHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .senderInfo {
+    gap: 6px;
+  }
+
+  .senderInfo img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .editArea input {
+    font-size: 13px;
+  }
+
+  .addComment {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addComment textarea {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .editButtons button {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+
+  .commentActions {
+    top: 8px;
+    right: 8px;
+    gap: 4px;
+  }
 }

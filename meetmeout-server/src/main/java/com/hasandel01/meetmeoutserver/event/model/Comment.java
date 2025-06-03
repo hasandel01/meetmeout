@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.event.model;
 
 import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Size(min = 1, max = 100)
     private String comment;
 
     @ManyToOne

@@ -429,5 +429,65 @@
 
 
 
-/** UPDATES **/
+
+@media (max-width: 768px) {
+  .eventCard {
+    flex-direction: column;
+    width: 85vw;
+    margin: 10px;
+    height: auto;
+    margin-left: 0;
+    padding: 20px;
+    align-items: center;
+  }
+
+  .eventImageLocationDate {
+    max-width: 100%;
+    padding: 10px;
+    align-items: center;
+  }
+
+  .eventCard img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .descriptionContainer {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+
+  .tags {
+    margin-top: 20px;
+    width: 100%;
+  }
+
+  .eventActions {
+    position: static;
+    justify-content: left;
+    padding: 10px 0;
+    width: 100%;
+  }
+
+  .feeInfo {
+    align-items: right;
+    padding: 10px;
+  }
+
+  .statusAndEventInfo {
+    align-items: center;
+    width: 100%;
+  }
+
+  .eventInfo {
+    align-items: center;
+  }
+
+  .eventLocation,
+  .eventTimeDate {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
 

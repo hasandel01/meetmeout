@@ -23,7 +23,7 @@ interface EventCommentsProps {
   saveEditedComment: (commentId: number) => void;
 }
 
-const EventComments = forwardRef<HTMLInputElement, EventCommentsProps>(({
+const EventComments = forwardRef<HTMLTextAreaElement, EventCommentsProps>(({
   comments,
   currentUser,
   eventId,
@@ -96,18 +96,27 @@ const EventComments = forwardRef<HTMLInputElement, EventCommentsProps>(({
                                               </ul>
                                               <hr/>
                                               <div className={styles.addComment}>
-                                                  <input
-                                                      ref={ref}
-                                                      type="text"
+                                                  <textarea
+                                                      ref={ref} 
+                                                      maxLength={600}
+                                                      minLength={1}
+                                                      rows={1}
+                                                      onInput={(e) => {
+                                                        e.currentTarget.style.height = "auto";
+                                                        e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+                                                      }}
                                                       placeholder="Add a comment..."
                                                       value={commentText}
                                                       onChange={(e) => setCommentText(e.target.value)}
                                                       onKeyDown={(e) => {
-                                                        if(e.key === 'Enter') {
+                                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                                          e.preventDefault();
                                                           handleAddComment(eventId);
-                                                        }   
+                                                        }
                                                       }}
-                                                  ></input>
+                                                      className={styles.commentInput}
+                                                    />
+
                                               </div>
                                   </div>
                           </div>

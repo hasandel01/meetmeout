@@ -571,7 +571,8 @@ const CreateEventForm = () => {
                                 <TagInput tags={event.tags} setTags={(newTags) => setEvent({ ...event, tags: newTags })} />
                             </div>
                             </div>
-                    </div><div className={styles.eventType}>
+                    </div>
+                        <div className={styles.eventPrivacy}>
                             <h4>Preferences</h4>
                             <hr />
                             <div className={styles.eventCheckBoxes}>

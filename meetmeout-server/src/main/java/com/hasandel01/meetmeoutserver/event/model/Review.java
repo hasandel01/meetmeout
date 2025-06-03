@@ -28,7 +28,6 @@ public class Review {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Long id;
 
-
     @Length(max = 400)
     private String content;
 

@@ -52,12 +52,6 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
         return;
     }
 
-        // ⏱️ Optimistic olarak ekle
-        setMessages(prev => [...prev, {
-            ...newMessage,
-            timestamp: new Date().toISOString() // opsiyonel
-        }]);
-
         client.publish({
             destination: `/app/chat/event/${eventId}`,
             body: JSON.stringify(newMessage)

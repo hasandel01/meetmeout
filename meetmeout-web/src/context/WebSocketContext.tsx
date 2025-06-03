@@ -18,8 +18,9 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const maxReconnectAttempts = 5;
 
   const subscribe = (destination: string, callback: (message: IMessage) => void, headers?: StompHeaders) => {
-    if (!clientRef.current || !isConnected) {
-      throw new Error("WebSocket not connected");
+   if (!clientRef.current || !clientRef.current.connected) {
+      console.warn("❌ Tried to subscribe, but WebSocket is not connected yet.");
+      return () => {};
     }
     const subscription = clientRef.current.subscribe(destination, callback, headers);
     return () => subscription.unsubscribe();
@@ -99,12 +100,12 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     }
   }, []);
 
-  const contextValue = useMemo(() => ({
+  const contextValue: WebSocketContextType = {
     client: clientRef.current,
     isConnected,
     subscribe,
-    send
-  }), [isConnected]);
+    send,
+  };
 
   return (
     <WebSocketContext.Provider value={contextValue}>

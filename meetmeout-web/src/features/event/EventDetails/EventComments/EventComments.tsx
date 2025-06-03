@@ -50,7 +50,7 @@ const EventComments = forwardRef<HTMLTextAreaElement, EventCommentsProps>(({
                             return timeA.getTime() - timeB.getTime()
                             })
                             .map(comment => (
-                                <li className={styles.commentItem}>
+                                <li className={styles.commentItem} key={comment.commentId}>
                                     <div className={styles.commentHeader}>
                                         <div className={styles.senderInfo}>
                                             <img src={comment.sender.profilePictureUrl} alt="User Avatar" />

@@ -36,26 +36,30 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
 
   useEffect(() => {
-    if (!isConnected) return;
+  if (!isConnected || !currentUser?.username) return;
 
-    const username = currentUser?.username;
-    if (!username) return;
+  let unsubscribe = () => {};
+  const timeout = setTimeout(() => {
+    try {
+      unsubscribe = subscribe(`/queue/notifications/${currentUser.username}`, (msg) => {
+        const newNotification: Notification = JSON.parse(msg.body);
+        toast.info(`🔔 ${newNotification.title}`, {
+          onClick: () => window.location.href = newNotification.url,
+          autoClose: 5000,
+        });
+      });
+    } catch (error) {
+      console.error("❌ WebSocket subscription failed:", error);
+    }
+  }, 300);
 
-    const unsubscribe = subscribe("/queue/notifications/"+ currentUser?.username, (msg) => {
-            console.log("🔔 Notification received!", msg.body);
-            const newNotification: Notification = JSON.parse(msg.body);
-            toast.info(`🔔 ${newNotification.title}`, {
-                onClick: () => window.location.href = newNotification.url,
-                autoClose: 5000,
-            });
-    });
+  return () => {
+    clearTimeout(timeout);
+    unsubscribe?.(); // BU ARTIK ÇALIŞIR
+  };
+}, [isConnected, currentUser?.username]);
 
 
-
-    return () => {
-      unsubscribe();
-    };
-  }, [isConnected]);
 
   return (
     <NotificationContext.Provider value={{ notifications, fetchNotifications }}>

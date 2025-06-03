@@ -50,6 +50,8 @@ const Login = ()  => {
                             onChange={(e) => setUsername(e.target.value)}
                             label="Username"
                             required
+                            minLength={3}
+                            maxLength={30}
                             />
                         <FormInput
                             icon={faLock}
@@ -58,6 +60,8 @@ const Login = ()  => {
                             onChange={(e) => setPassword(e.target.value)}
                             label="Password"
                             required
+                            minLength={8}
+                            maxLength={100}
                             />
                     {error && <label className={styles.errorMessage}>{error}</label>}      
                 <Link to="/forgot-password" className={styles.link}>Forgot password?</Link>

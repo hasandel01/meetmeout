@@ -8,6 +8,7 @@ import com.hasandel01.meetmeoutserver.event.service.EventChatService;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.event.repository.EventChatMessageRepository;
 import com.hasandel01.meetmeoutserver.event.repository.EventRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class EventChatServiceImpl implements EventChatService {
         return message;
     }
 
+    @Transactional
     public List<EventChatMessageDTO> getChatMessagesForEvent(Long eventId) {
 
         Event event = eventRepository.findById(eventId)

@@ -5,7 +5,7 @@ import { useUserContext } from "../../../../context/UserContext";
 
 import {toast} from 'react-toastify';
 import axiosInstance from "../../../../axios/axios";
-import { useWebSocketContext } from "../../../../context/WebSocketContext";
+import { useWebSocket } from "../../../../context/WebSocketContext";
 
 interface ChatProps {
     eventId: number
@@ -20,7 +20,7 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
         message: ""
         });
 
-     const {clientRef} = useWebSocketContext(); 
+     const {client} = useWebSocket(); 
 
 
       useEffect(() => {
@@ -29,33 +29,49 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
         }
       },[eventId])
 
+      useEffect(() => {
+    if (!client || !client.connected) return;
+
+    const subscription = client.subscribe(`/topic/chat/event/${eventId}`, (message) => {
+        const received: Message = JSON.parse(message.body);
+        setMessages((prev) => [...prev, received]);
+    });
+
+    return () => {
+        subscription.unsubscribe();
+    };
+}, [client, eventId]);
+
 
 
     const sendMessage = () => {
-  
-        if (!clientRef.current || !clientRef.current.connected) {
+    if (!client || !client.connected) return;
+    
+    if (newMessage.message.trim() === "") {
+        toast.warn("Cannot send an empty message!");
         return;
-        }
-        
-        if(newMessage.message.trim() === "") {
-            toast.warn("Cannot send an empty message!")
-            return
-        }
-        
-        clientRef.current.publish({
-        destination: `/app/chat/event/${eventId}`,
-        body: JSON.stringify(newMessage)
+    }
+
+        // ⏱️ Optimistic olarak ekle
+        setMessages(prev => [...prev, {
+            ...newMessage,
+            timestamp: new Date().toISOString() // opsiyonel
+        }]);
+
+        client.publish({
+            destination: `/app/chat/event/${eventId}`,
+            body: JSON.stringify(newMessage)
         });
 
-        setNewMessage({ user: currentUser!, message: "" });
+    setNewMessage({ user: currentUser!, message: "" });
+}
 
-    }
 
       const getMessagesForEvent = async () => {
     
         try {
           const response = await axiosInstance.get(`/get-chat-messages/${eventId}`)
-            setMessages(prev => [...prev, ...response.data]);
+            setMessages(response.data); // direkt setle
         } catch(error) {
           toast.error("Error getting event messages")
         }

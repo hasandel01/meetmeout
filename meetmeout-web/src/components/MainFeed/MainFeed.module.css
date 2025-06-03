@@ -11,7 +11,7 @@ html, body {
 
 .mapContainer {
   position: relative;
-  padding-top: 10px;
+  margin: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,75 +19,45 @@ html, body {
 }
 
 
+.map {
+  border: 2px solid var(--primary-color-dark);
+}
+
 .onGoingEventsContainer {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  align-items: start;
+  justify-items: center;
+  gap: 20px;
 }
 
 @media (max-width: 768px) {
 
-    .mainFeedContainer {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: 100vw;
-    }
+  .mainFeedContainer {
+    width: 100vw;
+    padding: 0;
+  }
 
+  html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  }
 
-    .mapContainer{
-        margin-top: 250px;
-        height: 90px;
-        width: 320px; 
-    }
-    .eventCard {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        border-radius: 16px;
-        padding: 8px;
-        margin-top: 40px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
-        width: 300px;
-        height: 500px;
-        gap: 20px;
-    }
+  .mapContainer {
+    width: 100%;
+    margin: 20px 0;
+  }
 
-    .heartIcon {
-        color: #e53935;
-        font-size: 28px;
-        transition: transform 0.2s ease;
-    }
-    
-    .commentIcon {
-        color: #1976d2;
-        font-size: 28px;
-        transition: transform 0.2s ease;
-    }
+  .map {
+    width: 90vw;
+    height: 300px;
+  }
 
-    .joinButton {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-        right: 20px;
-        bottom: 20px;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        max-width: 100px;
-        font-size: 18px;
-        margin: 0 4px;
-        margin-top: 10 px;
-        transition: background-color 0.2s;
-    }
-
+  .onGoingEventsContainer {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
 
 }
 

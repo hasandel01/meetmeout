@@ -57,6 +57,8 @@ const Register = () => {
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="Enter your email"
                                         label='Email'
+                                        required
+                                        maxLength={100}
                                     />
                                 {userExists &&
                                     <label className={styles.errorMessage}> User already exists! </label> }  

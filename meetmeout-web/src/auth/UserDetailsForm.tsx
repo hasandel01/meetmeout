@@ -66,6 +66,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     value={username}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setUsername(e.target.value)}
                                     label="Username"
+                                    required
+                                    minLength={3}
+                                    maxLength={30}
                                     />
                                 <FormInput
                                     icon={faIdBadge}
@@ -73,6 +76,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     value={firstName}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setFirstName(e.target.value)}
                                     label="First Name"
+                                    required
+                                    minLength={2}
+                                    maxLength={50}
                                     />
                                 <FormInput
                                     icon={faIdCard}
@@ -80,6 +86,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     value={lastName}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setLastName(e.target.value)}
                                     label="Last Name"
+                                    required
+                                    minLength={2}
+                                    maxLength={50}
                                     />
                                 <FormInput
                                     icon={faLock}
@@ -87,6 +96,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     value={password}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setPassword(e.target.value)}
                                     label="Password"
+                                    required
+                                    minLength={8}
+                                    maxLength={100}
                                     />
                                 <FormInput
                                     icon={faShieldAlt}
@@ -94,6 +106,9 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     value={confirmPassword}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setConfirmPassword(e.target.value)}
                                     label="Confirm Password"
+                                    required
+                                    minLength={8}
+                                    maxLength={100}
                                     />
                                 {error && <p className={styles.compactError}>{error}</p>}
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>

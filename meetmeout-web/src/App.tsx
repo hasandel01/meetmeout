@@ -67,19 +67,19 @@ function App() {
             element={
             <ProtectedRoute>
               <UserContextProvider>
-                <NotificationProvider>
                   <ProfileContextProvider>
                     <WebSocketProvider>
                       <DarkModeContextProvider>
                         <LocationProvider>
                           <BadgeContextProvider>
-                            <MainLayout/>
+                            <NotificationProvider>
+                              <MainLayout/>
+                            </NotificationProvider>
                           </BadgeContextProvider>
                         </LocationProvider>
                       </DarkModeContextProvider>
                     </WebSocketProvider>
                   </ProfileContextProvider>
-                </NotificationProvider>
               </UserContextProvider>
             </ProtectedRoute>}>    
             <Route path="/" element={

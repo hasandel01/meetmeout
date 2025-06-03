@@ -5,15 +5,15 @@
     justify-content: flex-start;
     align-items: center;
     border-radius: 18px;
-    margin: 20px 60px;
+    margin: 40px 0px;
     background-color: var(--card-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid var(--primary-color-dark);
     cursor: pointer;
-    width: 420px;
-    height: 420px;
-    gap: 10px;
+    width: 450px;
+    height: 450px;
+    gap: 15px;
 }
 
 .eventCard.full {
@@ -282,4 +282,49 @@ p {
     position: absolute;
     top: 20px;
     left: 20px;
+}
+
+@media (max-width: 768px) {
+  .eventCard {
+    width: 90vw;
+    max-width: 360px;
+    margin: 20px auto;
+    padding: 12px;
+    height: 450px;
+    box-sizing: border-box;
+  }
+
+  .eventDetailsInfo,
+  .tags ul,
+  .eventLocation,
+  .eventTimeDate,
+  .eventActions {
+    flex-wrap: wrap;
+    text-align: left;
+  }
+
+  .tags {
+    width: 100%;
+    height: auto;
+  }
+
+  .eventTitle h2 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .eventCard img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .eventStatus {
+    font-size: 10px;
+  }
+
+  .eventCategory {
+    font-size: 12px;
+    flex-wrap: wrap;
+    text-align: center;
+  }
 }

@@ -798,7 +798,6 @@ p {
 
 /** ERROR TEXT */
 
-
 .errorText {
     font-size: 14px;
     color: var(--error-color);
@@ -810,31 +809,68 @@ p {
 
 @media (max-width: 768px) {
 
-
     .createEventFormContainer {
-        position: relative;
-        display: flex;
-        flex-direction: column;
         width: 100vw;
-        align-items: center;
-        justify-content: center;
+        padding: unset;
     }
 
     .containerAlt {
-        position: absolute;
-        min-width: 300px;
-        min-height: none;
-        max-width: none;
-        max-height: none;
-        border-radius: 16px;
-        padding: 10px;
-      }
-
-
-    .inputGroup input {
-        width: 90%;
-        height: 30px;
+        width: 100vw;
+        min-width: unset; 
+        max-height: unset;
+        box-sizing: border-box;
+        border-radius: 0%;
     }
+
+    .backButton {
+        display: none;
+    }
+
+    .eventInfoAndDate {
+        max-width: 90vw;
+        height: 70vh;
+    }
+
+    .eventRules,
+    .eventCategoryAndTags {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .inputDescription {
+        color: var(--text-color) !important;
+        height: 20vh;
+    }
+
+    .inputTitle {
+        color: var(--text-color) !important;
+    }
+
+
+    .timeInput {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .timeInput label {
+        margin: 0px;
+        color: var(--primary-color-dark);
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+      input[type="date"],
+        input[type="time"] {
+            color: var(--text-color); /* ✅ Mutlaka ekle */
+            width: 100%;
+            font-size: 18px;
+            appearance: auto;
+            -webkit-appearance: auto;
+        }
 
 
     

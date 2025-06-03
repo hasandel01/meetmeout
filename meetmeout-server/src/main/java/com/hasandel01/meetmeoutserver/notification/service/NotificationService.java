@@ -9,6 +9,7 @@ import com.hasandel01.meetmeoutserver.notification.model.Notification;
 import com.hasandel01.meetmeoutserver.notification.repository.NotificationRepository;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.companion.repository.FriendRequestRepository;
+import com.hasandel01.meetmeoutserver.wsrelay.WebSocketNotificationRelayService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,8 +32,10 @@ public class NotificationService {
 
     private final FriendRequestRepository friendRequestRepository;
 
-    public void sendEventCreatedNotificationToCompanions(User creator, Event newEvent) {
+    private final WebSocketNotificationRelayService webSocketRelay;
 
+
+    public void sendEventCreatedNotificationToCompanions(User creator, Event newEvent) {
 
         Set<User> companions = friendRequestRepository.findAcceptedFriends(creator.getId());
 
@@ -49,11 +52,8 @@ public class NotificationService {
                     .build();
 
             notificationRepository.save(notification);
-
-            messagingTemplate
-                    .convertAndSendToUser(companion.getUsername(),
-                            "queue/notifications",
-                            NotificationMapper.toNotificationDTO(notification));
+            NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+            webSocketRelay.send(dto);
 
         }
     }
@@ -62,6 +62,7 @@ public class NotificationService {
     public Page<NotificationDTO> getNotificationsForUser(String username, Pageable pageable) {
         return notificationRepository.findByReceiverUsernameOrderByIdDesc(username,pageable)
                 .map(NotificationMapper::toNotificationDTO);
+
     }
 
     public void sendFriendRequestNotification(User sender, User receiver) {
@@ -78,6 +79,8 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
 
     }
 
@@ -95,6 +98,8 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
 
     }
 
@@ -115,6 +120,8 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
 
     }
 
@@ -127,6 +134,7 @@ public class NotificationService {
 
         notification.setRead(true);
         notificationRepository.save(notification);
+
 
         return null;
     }
@@ -146,6 +154,8 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
 
     }
 
@@ -164,6 +174,8 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
 
     }
 
@@ -182,6 +194,8 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
 
     }
 
@@ -205,6 +219,8 @@ public class NotificationService {
                     .build();
 
             notificationRepository.save(notification);
+            NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+            webSocketRelay.send(dto);
         }
     }
 

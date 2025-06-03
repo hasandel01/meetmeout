@@ -15,6 +15,7 @@ interface SearchBoxProps {
   onBlur: () => void;
 }
 
+
 const SearchBox = ({ onSearch, users, events, show, onFocus, onBlur}: SearchBoxProps) => {
 
   const navigate = useNavigate();
@@ -60,9 +61,9 @@ const SearchBox = ({ onSearch, users, events, show, onFocus, onBlur}: SearchBoxP
                                 <ul>
                                   <li className='event-result-item'>
                                     <img src={event.imageUrl} alt="Event" />
-                                    <div className='event-result-info'>
-                                      <h2>{event.title}</h2>
-                                      <p>{event.description}</p>
+                                    <div className={styles.eventResultInfo}>
+                                     <h2>{event.title}</h2>
+                                      <p title={event.description}>{event.description}</p>
                                     </div>
                                   </li>
                                 </ul>

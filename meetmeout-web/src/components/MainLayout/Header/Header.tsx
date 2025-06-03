@@ -171,14 +171,33 @@ const Header = () => {
                               <FontAwesomeIcon icon={faUserGroup} size="2x" />
                               <label> Companions </label>
                             </div>
+                            <div
+                              onClick={() => navigate(`/my-calendar`)}
+                              className={styles.barMenuItem}
+                              >
+                                <FontAwesomeIcon icon={faCalendarDays} size='2x'></FontAwesomeIcon>
+                                <label>Calendar</label>
+                            </div>
                             <div onClick={() => {
                               navigate("/notifications")
                               setShowBarMenu(false)
                             }} className={styles.barMenuItem}>
-                              <FontAwesomeIcon icon={faBell} size="2x" />
+                            <div className={notifications.filter(n => !n.read).length > 0 ? styles.iconWrapperHas : styles.iconWrapper}>
+                              {notifications.filter(n => !n.read).length > 0 && (
+                                  <div className={styles.notificationBadge}>
+                                    {notifications.filter(n => !n.read).length}
+                                  </div>
+                                )}
+                                <FontAwesomeIcon icon={faBell} size="2x" />
+                              </div>
                               <label>Notifications</label>
                             </div>
-                            <div className={styles.barMenuItem}>
+                            <div 
+                              onClick={() => {
+                                navigate("/settings")
+                                setShowBarMenu(false)
+                              }}
+                              className={styles.barMenuItem}>
                               <FontAwesomeIcon icon={faGear} size= "2x"></FontAwesomeIcon >
                               <label>Settings</label>
                             </div>

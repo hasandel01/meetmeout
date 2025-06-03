@@ -60,6 +60,13 @@ const FilterPanel = ({
             onChange={(e) => onShowFreeEventsChange(e.target.checked)}
           /> Free to Join
         </label>
+        <label>
+        <input 
+          type="checkbox"
+          checked={onlyPublicEvents}
+          onChange={(e) => onOnlyPublicEventsChange(e.target.checked)}
+        /> Only Public Events
+      </label>
         <div className={styles.categoryFilterContainer}>
           <Select
           isClearable
@@ -69,13 +76,6 @@ const FilterPanel = ({
         />
         </div>
       </div>
-      <label>
-        <input 
-          type="checkbox"
-          checked={onlyPublicEvents}
-          onChange={(e) => onOnlyPublicEventsChange(e.target.checked)}
-        /> Only Public Events
-      </label>
       <div className={styles.sort}>
         <label>Sort by:  </label>
         <select onChange={(e) => onSortChange(e.target.value)}>

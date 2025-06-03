@@ -2,9 +2,10 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    min-width: 40vw;
     justify-content: center;
     align-items: center;
-    width: 40vw;
+    min-height: 70vh;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     background-color: white;
     border-radius: 5%;
@@ -25,25 +26,25 @@
 .formContainer form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 70%;
     justify-content: center;
+    padding: 40px;
+    gap: 20px;
+    width: 70%;
 }
 
 
 .formContainer form .link {
     position: relative;
     display: flex;
-    justify-content: end;
-    flex-direction: row;
+    justify-content: flex-end;
 }
 
 .inputGroup {
     display: flex;
     flex-direction: column;
-    align-items: first baseline;
-    gap: 4px;
-    padding: 2px 4px;
+    align-items: flex-start;
+    gap: 6px;
+    width: 100%;
 }
 
 .inputGroup label {
@@ -56,11 +57,12 @@
     display: flex;
     flex-direction: row;
     border: none;
-    padding: 4px 12px;
+    padding: 4px 8px;
     align-items: center;
     border-radius: 8px;
     border: 1px solid var(--primary-color-dark);
     transition: box-shadow 0.3s ease;
+    width: 100%;
 }
 
 .inputElement:focus-within {
@@ -79,15 +81,20 @@
 }
 
 .formContainer form button {
+    position: relative;
     background-color: var(--button-color);
     border-radius: var(--button-border-radius);
     padding: var(--button-padding);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     font-size: 18px;
     color: white;
-    width: 70%;
     border: none;
     cursor: pointer;
     margin-bottom: 10px;
+    margin-left: 10px;
+    
 }
 
 .formContainer form button:hover {
@@ -117,29 +124,23 @@
 }
 
 @media (max-width: 768px) {
-
-    body {
-        margin: 0;
-        padding: 0;
-        background-color: #f5fcff;
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10' stroke='%23047857' stroke-width='1' fill='none' opacity='0.15'/%3E%3C/svg%3E");
-        overflow-x: hidden;
-    }
-    
     html, body {
-        height: 100%;
+        height: auto;
         overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
+        overflow-y: auto;
     }
-    
-    
+
+    .mmoLogo {
+        width: 100px;
+        margin-bottom: 1rem;
+    }
+
     .formContainer {
-        width: 90vw;
-        min-height: auto;
         padding: 1.5rem;
+        width: 90vw;
         box-shadow: none;
-        border-radius: 0;
-        margin: 0 auto;
+        border-radius: 8px;
+        margin: 1rem auto;
     }
 
     .formContainer form input,
@@ -148,8 +149,14 @@
         font-size: 20px;
     }
 
+    .formContainer form button {
+        min-height: 48px;
+        padding: 12px;
+        font-size: 18px;
+    }
+
     .formContainer h1 {
-        font-size: 24px;
+        font-size: 26px;
     }
 
     .formContainer p {
@@ -161,10 +168,19 @@
         width: auto;
     }
 
-    .formContainer form link {
+    .formContainer form .link {
         display: flex;
         flex-direction: row;
         align-items: right;
+    }
+
+    .inputElement input {
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        color: var(--text-color) !important;
     }
 }
 

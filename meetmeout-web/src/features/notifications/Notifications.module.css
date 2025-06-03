@@ -72,3 +72,28 @@
     color: white;
   }
   
+
+  @media (max-width: 768px) {
+
+    .notificationContainer {
+        display: flex;
+        justify-content: center; 
+        padding: 0px;
+        margin: 0px;
+        width: 100vw;
+      }
+      
+      .notificationDropdown {
+        background-color: var(--background-color);
+        border-radius: 12px;
+        width: 90vw;
+        max-width: 600px;
+        color: var(--primary-color-dark);
+      }
+
+      .notificationDropdown ul {
+            margin: 0px;
+      }
+  
+    
+  }

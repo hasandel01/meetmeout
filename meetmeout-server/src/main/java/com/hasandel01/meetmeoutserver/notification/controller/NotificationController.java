@@ -28,7 +28,6 @@ public class NotificationController {
 
     }
 
-
     @PutMapping("/change-notification-status/{notificationId}")
     public ResponseEntity<Void> updateNotificationStatusToRead(@PathVariable Long notificationId) {
         try {

@@ -6,6 +6,7 @@ import com.hasandel01.meetmeoutserver.event.model.Event;
 import com.hasandel01.meetmeoutserver.event.model.Like;
 import com.hasandel01.meetmeoutserver.event.model.Review;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,18 +29,25 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Size(min = 2, max = 50)
     private String firstName;
 
+    @Size(min = 2, max = 50)
     private String lastName;
 
+    @Size(min = 3, max = 30)
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Size(max = 100)
     @Column(unique = true)
     private String email;
 
+    @Size(min = 8, max = 100)
+    @Column(nullable = false)
     private String password;
 
+    @Size(min = 10, max = 15)
     private String phone;
 
     private String profilePictureUrl;

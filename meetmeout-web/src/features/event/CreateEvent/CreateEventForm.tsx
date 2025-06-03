@@ -535,7 +535,7 @@ const CreateEventForm = () => {
                                     />
                                     <textarea
                                         rows={3}
-                                        maxLength={400}
+                                        maxLength={300}
                                         placeholder='Inform the people on expenses...'
                                         value={event.feeDescription}
                                         onChange={(e) => setEvent({...event, feeDescription: e.target.value})}

@@ -1,68 +1,66 @@
 .mainFeedContainerFilter {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    background-color: var(--background-color);
-    justify-content: space-between;
-}
-
-.mainFeedContainerFilter h4 {
-    border-bottom: 1px solid var(--primary-color-dark);
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background-color: var(--background-color);
+  gap: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
 .selections {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
 }
 
 .selections label {
-    padding: 10px;
-    display: flex;
-    background-color: var(--background-color);
-    font-weight: bold;
+  padding: 8px 12px;
+  font-weight: bold;
+  border-radius: 6px;
+  background-color: var(--background-color);
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .selections label:hover {
-    cursor: pointer;
-    background-color: var(--hover-color);
-    color: var(--hover-text-color)
+  background-color: var(--hover-color);
+  color: var(--hover-text-color);
+  cursor: pointer;
 }
-
 
 .toggleWrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: var(--primary-color-dark);
-  margin-bottom: 10px;
-}
-
-.toggleWrapper input[type="checkbox"] {
-  display: none;
+  gap: 8px;
 }
 
 .slider {
-  width: 40px;
-  height: 20px;
+  width: 36px;
+  height: 18px;
   background-color: #ccc;
-  border-radius: 12px;
+  border-radius: 10px;
   position: relative;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .slider::before {
   content: "";
   position: absolute;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background-color: white;
   border-radius: 50%;
   top: 2px;
   left: 2px;
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 input[type="checkbox"]:checked + .slider {
@@ -70,35 +68,55 @@ input[type="checkbox"]:checked + .slider {
 }
 
 input[type="checkbox"]:checked + .slider::before {
-  transform: translateX(20px);
+  transform: translateX(18px);
 }
-
-.labelText {
-  font-weight: 500;
-}
-
 
 .sort {
-    display: flex;
-    flex-direction: row;
-    padding: 15px;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .sort select {
-    cursor: pointer;
-    border-radius: 0px;
-    color: var(--primary-color-dark);
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  color: var(--primary-color-dark);
+  background-color: var(--background-color);
+  font-weight: 500;
+  cursor: pointer;
 }
-
-.mainFeedContainer header .sort select {
-    border: none;
-}
-
 
 .categoryFilterContainer {
-    display: flex;
+  min-width: 200px;
+  flex: 1;
+  max-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .mainFeedContainerFilter {
     flex-direction: column;
+    gap: 20px;
+    padding: 12px;
+  }
+
+  .selections {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .sort {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sort select {
+    width: 100%;
+  }
+
+  .categoryFilterContainer {
+    width: 100%;
     z-index: 999;
+  }
 }

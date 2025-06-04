@@ -47,6 +47,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
           onClick: () => window.location.href = newNotification.url,
           autoClose: 5000,
         });
+        setNotifications((prev) => [...prev, newNotification])
       });
     } catch (error) {
       console.error("❌ WebSocket subscription failed:", error);

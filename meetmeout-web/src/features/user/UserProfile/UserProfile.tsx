@@ -12,7 +12,7 @@ import axios from "axios";
 import { FriendRequest } from "../../../types/FriendRequest";
 import { Event } from "../../../types/Event";
 import qs from 'qs';
-import calculateDistance from "../../../utils/calculateDistance";
+import { calculateDistance } from "../../../utils/calculateDistance";
 
 function UserProfile() {
 
@@ -498,7 +498,7 @@ function UserProfile() {
                                     <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                                     <p>{event.addressName}</p>
                                     {userLongitude !== 0 && userLatitude !== 0 && (
-                                        <p>({calculateDistance(event).toFixed(1)} km away)</p>
+                                        <p>({calculateDistance(event, userLatitude, userLongitude).toFixed(1)} km away)</p>
                                     )}
                                     </div>
                                 </div>
@@ -545,7 +545,7 @@ function UserProfile() {
                                     <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                                     <p>{event.addressName}</p>
                                     {userLongitude !== 0 && userLatitude !== 0 && (
-                                        <p>({calculateDistance(event).toFixed(1)} km away)</p>
+                                        <p>({calculateDistance(event, userLatitude, userLongitude).toFixed(1)} km away)</p>
                                     )}
                                     </div>
                                 </div>

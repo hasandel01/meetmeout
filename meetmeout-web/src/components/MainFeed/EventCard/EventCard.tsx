@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faHeart as regularHeart } from "@fortawesome/free-regular-svg-icons";
 import { faCalendar, faLocationDot, faLock} from "@fortawesome/free-solid-svg-icons";
@@ -9,6 +9,8 @@ import { Event } from "../../../types/Event";
 import { User } from "../../../types/User";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 import EventRatingStars from "../EventRatingStars/EventRatingStars";
+import { calculateDistance } from "../../../utils/calculateDistance";
+import { useState, useEffect } from "react";
 
 interface EventCardProps {
     event: Event;
@@ -18,7 +20,6 @@ interface EventCardProps {
     handleLike: (eventId: number) => void;
     invitations: { eventId: number }[];
     requestSentEvents: Event[];
-    calculateDistance: (event: Event) => number;
     dateOptions: Intl.DateTimeFormatOptions;
     lat?: number;
     lng?: number;
@@ -42,13 +43,19 @@ const EventCard = ({
   handleLike,
   invitations,
   requestSentEvents,
-  calculateDistance,
   dateOptions,
   lat,
 lng
 }: EventCardProps) => {
 
       const navigate = useNavigate();
+      const distance = calculateDistance(event, lat, lng);
+      const [requestSent, setRequestSent] = useState<boolean>(false);
+
+    useEffect(() => {
+        const alreadySent = requestSentEvents.some(req => req.id === event.id);
+        setRequestSent(alreadySent);
+    }, [requestSentEvents, event.id]);
 
     return (
         <div className={event.status !== "ENDED" ? (
@@ -58,7 +65,8 @@ lng
                                                 `${styles.eventCard} ${styles.joinedEnded}` : 
                                                 `${styles.eventCard} ${styles.ended}`
                                     )}
-                                    onClick={() => navigate(`/event/${event.id}`)}>                                   
+                                    onClick={ (event.isPrivate && !event.attendees.some(attendee => attendee.username === currentUser?.username) )
+                                                ? undefined : () => navigate(`/event/${event.id}`)}>                                   
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
                                             icon={faLock}
@@ -97,7 +105,7 @@ lng
                                             <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                                             <p>{event.addressName}</p>
                                             { lng === 0 || lat === 0 ? "" : <>
-                                                <p>( {calculateDistance(event).toFixed(1)} km away )</p>
+                                                <p>( {distance.toFixed(1)} km away )</p>
                                             </>
                                             }
                                         </div>
@@ -137,45 +145,49 @@ lng
                                         </div>
                                     </div>
                                     )}
+                                    {!event.isPrivate &&
                                     <div className={styles.eventActions}>
-                                    <div className={styles.buttonGroup} data-tooltip-id="event_like" data-tooltip-content="Like">
-                                        <FontAwesomeIcon 
-                                            icon={
-                                                event.likes.some(u => u.username === currentUser?.username)
-                                                ? faHeart
-                                                : regularHeart} 
-                                            className={styles.heartIcon}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleLike(event.id);
-                                            }}
-                                            />
-                                            <Tooltip id="event_like"/>
-                                        <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
+                                        <div className={styles.buttonGroup} data-tooltip-id="event_like" data-tooltip-content="Like">
+                                            <FontAwesomeIcon 
+                                                icon={
+                                                    event.likes.some(u => u.username === currentUser?.username)
+                                                    ? faHeart
+                                                    : regularHeart} 
+                                                className={styles.heartIcon}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleLike(event.id);
+                                                }}
+                                                />
+                                                <Tooltip id="event_like"/>
+                                            <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
+                                        </div>
+                                        <div className={styles.buttonGroup}>
+                                            <FontAwesomeIcon 
+                                                onClick={ (e) => {
+                                                    e.stopPropagation();
+                                                    navigate(`/event/${event.id}#eventComments`)
+                                                }}
+                                                icon={faComment} 
+                                                className={styles.commentIcon} />
+                                            <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
+                                        </div>
                                     </div>
-                                    <div className={styles.buttonGroup}>
-                                        <FontAwesomeIcon 
-                                            onClick={ (e) => {
-                                                e.stopPropagation();
-                                                navigate(`/event/${event.id}#eventComments`)
-                                            }}
-                                            icon={faComment} 
-                                            className={styles.commentIcon} />
-                                        <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
-                                    </div>
-                                </div>
+                                    } 
                                 {event.status !== "ENDED" && ( !(event.organizer?.username === currentUser?.username ||
                                     event.attendees.some(element => element.username === currentUser?.username)) && event.status !== 'FULL' )&&
                                     <button
-                                        disabled={isDisabled(event)}
+                                        disabled={requestSent}
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleJoinEvent(event.id)}} 
+                                            handleJoinEvent(event.id)
+                                            setRequestSent(true);
+                                        }} 
                                         className={styles.joinButton}>
                                         {event.isPrivate ? (
                                             invitations.some(invitation => invitation.eventId === event.id) ? "You are already invited!"
                                             : (
-                                                requestSentEvents.some(requestSentEvent => requestSentEvent.id === event.id) ? 
+                                                requestSent ? 
                                                 "Request sent!" :  "Send Join Request!" )
                                         ): "Join" }
                                     </button> }

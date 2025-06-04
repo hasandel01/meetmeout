@@ -123,6 +123,27 @@
     margin-top: 4px;
 }
 
+
+
+.compactInput {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid var(--primary-color-dark);
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.compactInput:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 4px rgba(0, 128, 0, 0.2);
+}
+
 @media (max-width: 768px) {
     html, body {
         height: auto;
@@ -185,23 +206,5 @@
 }
 
 
-.compactInput {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid var(--primary-color-dark);
-  border-radius: 6px;
-  background-color: #fff;
-  color: #333;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
-}
-
-.compactInput:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 4px rgba(0, 128, 0, 0.2);
-}
 
 

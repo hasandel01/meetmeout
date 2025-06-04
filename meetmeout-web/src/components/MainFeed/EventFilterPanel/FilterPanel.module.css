@@ -93,6 +93,10 @@ input[type="checkbox"]:checked + .slider::before {
   max-width: 300px;
 }
 
+.toggleWrapper input {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .mainFeedContainerFilter {
     flex-direction: column;

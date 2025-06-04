@@ -13,9 +13,9 @@ import { TileLayer } from "react-leaflet";
 import MapPanner from "./MainFeedMap/MainFeedMapPanner/MainFeedMapPanner";
 import EventCard from "./EventCard/EventCard";
 import FilterPanel from "./EventFilterPanel/FilterPanel";
-import calculateDistance from "../../utils/calculateDistance";
 import { useLocationContext } from "../../context/LocationContex";
 import { useBadgeContext } from "../../context/BadgeContext";
+import { calculateDistance } from "../../utils/calculateDistance";
 
 const MainFeed = () => {
 
@@ -45,6 +45,7 @@ const MainFeed = () => {
     const [showFreeEvents, setShowFreeEvents] = useState(false);
     const [filterGroup, setFilterGroup] = useState<'All Events' | 'My Events' | 'My Drafts'>('All Events');
     const [onlyPublicEvents, setOnlyPublicEvents] = useState(false);
+    const { userLatitude: lat, userLongitude: lng } = useLocationContext();
 
 
     useEffect(() => {
@@ -149,14 +150,15 @@ const MainFeed = () => {
             })
             setEvents(sortedEvents)
         } else if(searchString === "Nearest") {
-              
+            
             const sortedEvents = [...events]?.sort((a, b) => {
-                return calculateDistance(a) - calculateDistance(b);
+            return calculateDistance(a, lat, lng) - calculateDistance(b, lat, lng);
             });
-
             setEvents(sortedEvents);
-        }    
+        }
     }
+
+
 
     const handleJoinEvent = async (eventId: number) => {
 
@@ -165,11 +167,12 @@ const MainFeed = () => {
             const response = await axiosInstance.post(`/events/${eventId}/join`);
 
             if(response.status === 200) {
-                navigate(`/event/${eventId}`)
 
-                console.log(response.data)
-                if(!response.data)
+                if(!response.data) {
+                    toast.success("You joined to the event.")
+                    setTimeout(() => navigate(`/event/${eventId}`), 500);
                     await getMe();
+                }
 
             }else {
                 toast.error("You couldn't join to the event.")
@@ -285,7 +288,6 @@ const MainFeed = () => {
                                 handleLike={handleLike}
                                 invitations={invitations}
                                 requestSentEvents={requestSentEvents}
-                                calculateDistance={calculateDistance}
                                 dateOptions={options}
                                 lat={userLatitude}
                                 lng={userLongitude}

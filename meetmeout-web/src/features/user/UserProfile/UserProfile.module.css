@@ -284,6 +284,8 @@ hr {
   border-radius: 10px;
   background-color: var(--background-color);
   align-items: center;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .eventImage img {
@@ -299,6 +301,8 @@ hr {
   flex-direction: column;
   align-items: flex-start;
   gap: 0.5rem;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .eventInfo:hover {
@@ -466,18 +470,42 @@ hr {
     bottom: 10px;
 }
 
+.eventInfo h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.eventInfo p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+
+
 @media (max-width: 768px) {
   .userProfile {
     min-width: auto;
-    width: 85vw;
+    width: 90vw;
     margin: 0;
-    padding: 10px;
+    padding: 5px;
+  }
+
+  .cameraOverlay {
+    opacity: 0.8;
   }
 
   .userProfileDetails {
     min-width: auto;
     width: 100%;
     padding: 15px;
+  }
+
+  .userProfileHeader {
+    top: 0px;
   }
 
   .userInfo {
@@ -496,6 +524,7 @@ hr {
   .tabMenu {
     flex-direction: column;
     gap: 5px;
+    width: 90%;
   }
 
   .eventCard {

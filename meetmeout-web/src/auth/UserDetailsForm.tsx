@@ -65,7 +65,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     type="text"
                                     value={username}
                                     onChange={(e: { target: { value: SetStateAction<string>; }; }) => setUsername(e.target.value)}
-                                    label="Username"
+                                    label="Username (You can't change your username later!)"
                                     required
                                     minLength={3}
                                     maxLength={30}

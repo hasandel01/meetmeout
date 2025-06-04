@@ -68,6 +68,9 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
 
             if(response.status === 200) {
                 toast.success("You successfully joined to the event!")
+                      setTimeout(() => {
+                        window.location.reload();
+                    }, 1200);
             }
             else {
                 toast.error("You couldn't join to the event.")

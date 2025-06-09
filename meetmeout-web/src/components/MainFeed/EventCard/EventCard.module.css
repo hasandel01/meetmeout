@@ -6,14 +6,15 @@
     align-items: center;
     border-radius: 18px;
     margin: 40px 0px;
-    background-color: var(--card-color);
+    background-color: var(--background-color);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid var(--primary-color-dark);
     cursor: pointer;
-    width: 450px;
-    height: 450px;
+    width: 500px;
+    height: 500px;
     gap: 15px;
+    color: var(--primary-color-dark);
 }
 
 .eventCard.full {
@@ -30,17 +31,16 @@
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
+    border: 1px solid var(--primary-color-dark);
 }
 
 .eventCard h2 {
     font-size: 14px;
-    color: #333;
     margin-bottom: 2px;
 }
 
 .eventCard p {
     font-size: 12px;
-    color: #333;
     text-align: center;
     margin-bottom: 2px;
 }
@@ -71,8 +71,20 @@
     border-radius: 4px;
     padding: 4px 8px;
     font-size: 12px;
-    border: #00796b solid 1px;
-    color: #00796b;
+    border: var(--primary-color-dark) solid 1px;
+    color: var(--primary-color-dark);
+}
+
+
+.eventDescription {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-overflow: ellipsis;
+    font-size: 12px;                  
 }
 
 /* EVENT TIME, DATE & LOCATION */
@@ -270,10 +282,10 @@ p {
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
+    border: 1px solid var(--primary-color-dark);
 }
 
 .eventOrganizer p {
-    color: #333;
     text-align: center;
     margin: 0;
 }
@@ -290,7 +302,7 @@ p {
     max-width: 360px;
     margin: 20px auto;
     padding: 12px;
-    height: 450px;
+    height: 540px;
     box-sizing: border-box;
   }
 
@@ -309,6 +321,12 @@ p {
   }
 
   .eventTitle h2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    word-break: break-word;
     font-size: 16px;
     text-align: center;
   }

@@ -223,7 +223,7 @@ public class CompanionServiceImpl implements CompanionService {
     }
 
     @Transactional
-    public List<UserDTO> getPossibleFriends() {
+    public List<UserDTO> getRecommendedFriends() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 

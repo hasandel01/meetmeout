@@ -3,16 +3,15 @@
 .eventCard {
     position: relative;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: flex-start;
-    padding: 1px;
     margin-left: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--primary-color-dark);
     background-color: var(--background-color);
-    border-radius: 6px;
+    border-radius: 6px 6px 0px 0px;
     width: 55vw;
-    height: 800px;
+    height: 1100px;
     margin-top: 10px;
 }
 
@@ -37,13 +36,37 @@
 /** ATTENDEE CONTAINER **/
 
 .attendeeContainer {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    align-items: center;
-    color: var(--primary-color-dark);
-    padding: 10px;
-    font-size: 16px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center; 
+  gap: 6px; 
+  color: var(--primary-color-dark);
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+
+/** WEATHER & DETAILS*/
+
+
+.eventDetails {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.statusAndEventInfo {
+  flex: 2;
+  min-width: 0;
+}
+
+.eventImageLocationDate {
+  flex: 1;
+  min-width: 0;
 }
 
 /** DESCRIPTION CONTAINER */
@@ -54,8 +77,7 @@
   margin-top: 5px;
   padding: 10px;
   border-left: 4px solid var(--primary-color-dark);
-  width: 90%;
-  height: 300px;
+  width: 100%;
 }
 
 .descriptionHeader {
@@ -72,19 +94,27 @@
 }
 
 .descriptionContainer p {
-  font-size: 14px;
-  line-height: 1.0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 .descriptionContainer textarea {
   width: 100%;
-  padding: 10px;
   font-size: 14px;
-  resize: vertical;
+  resize: none;
   border-radius: 6px;
   border: 1px solid #ccc;
-  margin-top: 6px;
+  padding: 8px;
+  box-sizing: border-box;
 }
+
+
+
+.editDescriptionContainer {
+  width: 100%;
+}
+
 
 .editDescription {
   margin-top: 8px;
@@ -108,9 +138,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     padding: 20px;
-    max-width: 40%;
     gap: 20px;
 }
 
@@ -131,13 +160,13 @@
 
 /** EVENT STATUS */
 .statusAndEventInfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  flex: 1;
+  min-width: 0; 
 }
-
 .eventInfo {
     display: flex;
     flex-direction: column;
@@ -157,12 +186,18 @@
     align-items: flex-start;
 }
 
-.eventCard img {
-    width: 250px;
-    height: 250px;
-    border-radius: 50%;
-    object-fit: cover;
+.eventTitle h2 {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
+
+.eventCard img:not(.weatherIcon) {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 
 .feeInfo {
   display: flex;
@@ -199,23 +234,60 @@
 
 
 .weatherWidget {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 70%;
-}
-
-.weatherContent {
-    position: relative;
+  margin-top: 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
 
-.weatherInfo {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+.weatherRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+  justify-items: center;
 }
+
+
+.weatherCard {
+  width: 100%;
+  max-width: 90px;
+  min-width: 80px;
+  background-color: white;
+  border-radius: 8px;
+  padding: 4px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  font-size: 10px;
+}
+
+.weatherDate {
+  font-weight: bold;
+  margin-bottom: 2px;
+  font-size: 10px;
+}
+
+.weatherIcon {
+  width: 32px !important;
+  height: 32px !important;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.weatherSummary {
+  font-size: 10px;
+  margin: 4px 0;
+}
+
+.weatherTemp {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+
 
 .eventTitle {
     position: relative;
@@ -245,6 +317,13 @@
     flex-direction: column;
     align-items: first baseline;
     gap: 20px;
+}
+
+.locationDate {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 15px;
 }
 
 .eventTimeDate {
@@ -290,7 +369,6 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    border-top: 3px solid var(--primary-color-dark);
     margin-top: 30px;
     align-items: flex-start;
 }
@@ -351,6 +429,10 @@
 
 .eventStatus.FULL {
     background-color: #e99e2f;
+    color: white;
+}
+.eventStatus.ENDED {
+    background-color: #8d8c8a;
     color: white;
 }
 
@@ -432,13 +514,19 @@
 
 @media (max-width: 768px) {
   .eventCard {
-    flex-direction: column;
-    width: 85vw;
-    margin: 10px;
+    width: 100vw;
+    margin: unset;
     height: auto;
     margin-left: 0;
-    padding: 20px;
+    padding: unset;
     align-items: center;
+  }
+
+  .eventDetails {
+    flex-direction: column;
+    max-width: 90vw;
+    padding: 10px;    
+
   }
 
   .eventImageLocationDate {
@@ -448,8 +536,8 @@
   }
 
   .eventCard img {
-    width: 180px;
-    height: 180px;
+    width: 160px;
+    height: 160px;
   }
 
   .descriptionContainer {
@@ -477,17 +565,24 @@
 
   .statusAndEventInfo {
     align-items: center;
-    width: 100%;
+    max-width: none;
+    min-width: none;
   }
 
   .eventInfo {
     align-items: center;
   }
 
-  .eventLocation,
-  .eventTimeDate {
-    flex-direction: column;
-    gap: 10px;
+  .buttonGroup {
+    margin-left: 10px;
+  }
+
+  .heartIcon {
+    font-size: 24px;
+  }
+
+  .commentIcon {
+    font-size: 24px;
   }
 }
 

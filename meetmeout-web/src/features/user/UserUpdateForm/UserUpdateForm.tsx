@@ -68,7 +68,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
     return (
     <div className={styles.modalOverlay}>
         <div className={styles.formContainer}>
-            <h5>Update your profile! 💾</h5>
+            <h4>Update your profile! 💾</h4>
             <form onSubmit={handleProfileUpdate}>
                 <label>Username</label>
                 <hr/>

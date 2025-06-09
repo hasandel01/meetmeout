@@ -90,6 +90,7 @@ lng
                                         </div>
                                         <h2>{event.title}</h2>
                                     </div>
+                                    <p className={styles.eventDescription}>{event.description}</p>
                                     <div className={styles.eventDetailsInfo}>
                                         <div className={styles.eventTimeDate}>
                                             <span>

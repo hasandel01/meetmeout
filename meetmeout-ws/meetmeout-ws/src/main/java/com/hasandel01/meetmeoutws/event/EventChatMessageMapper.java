@@ -10,6 +10,7 @@ public class EventChatMessageMapper {
         return EventChatMessageDTO.builder()
                 .message(eventChatMessage.getMessage())
                 .user(UserMapper.toUserDTO(eventChatMessage.getSender()))
+                .timestamp(eventChatMessage.getTimestamp())
                 .build();
 
     }

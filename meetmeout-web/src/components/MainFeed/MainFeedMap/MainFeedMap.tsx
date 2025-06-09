@@ -43,24 +43,41 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
         const marker = L.marker([event.latitude, event.longitude], {
           icon: L.divIcon({
             html: `
-              <div class="${styles.markerImageWrapper}">
+              <div class="${styles.markerImageWrapper}" title="${event.isPrivate ? "Private Event" : "Public"}">
                 <span>${icon}</span>
                 <img src="${event.imageUrl}" />
+                ${event.isPrivate ? '<p>🔒</p>' : ''}
               </div>
             `,
             className: "",
           }),
         }).addTo(map);
 
-        marker.bindTooltip(`${event.title} | ${event.addressName}`, {
-          direction: 'top',
-          offset: [20, -20],
-          className: styles.markerToolTip
+        const feeText = event.isFeeRequired ? `${event.fee}$` : "Free";
+        const date = new Date(event.startDate).toLocaleDateString("en-GB");
+
+        const tooltipHtml = `
+          <div style="text-align: left;">
+            <strong>${event.title}</strong><br/>
+            <small>${date} | ${feeText}</small>
+            <small>${event.attendees.length} attendees</small>
+          </div>
+        `;
+
+        marker.bindTooltip(tooltipHtml, {
+          direction: "top",
+          offset: [0, -10],
+          permanent: false,
+          opacity: 0.95,
+          className: "custom-tooltip",
+          sticky: true,
         });
 
-        marker.on("click", () => {
-          navigate(`/event/${event.id}`);
-        });
+        if(!event.isPrivate) {
+          marker.on("click", () => {
+            navigate(`/event/${event.id}`);
+          });
+        }
 
         const layerGroup = L.layerGroup().addTo(map);
 
@@ -104,8 +121,8 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
             const endMarker = L.marker([event.endLatitude, event.endLongitude], {
               icon: L.divIcon({
                 html: `
-                  <div class="${styles.markerImageWrapper}">
-                    <img src="/finish-flag.svg" />
+                  <div class="${styles.finishMarker}">
+                    <img src="/finish-flag.png" />
                   </div>
                 `,
                 className: "",

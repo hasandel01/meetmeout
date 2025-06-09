@@ -30,6 +30,10 @@ const EventParticipants = ({
   goToUserProfile
 }: Props) => {
 
+    const organizer = event.attendees.find(a => a.username === event.organizer?.username)
+    const others = event.attendees.filter(a => a.username !== event.organizer?.username)
+    event.attendees = [organizer, ...others].filter((a): a is User => a !== undefined)
+
     return (
         <div className={styles.attendees} >
                   <h4>Attendees</h4>

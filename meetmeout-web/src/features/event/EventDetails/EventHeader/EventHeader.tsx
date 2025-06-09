@@ -103,8 +103,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
         <div className={styles.eventHeader}>
             <div className={styles.eventTab}>
                 <label onClick={() => setCurrentTab(1)}>Info</label>
-                <label onClick={() => setCurrentTab(2)}>Route</label>
-                <label onClick={() => setCurrentTab(3)}>Reviews & Photos</label>
+                <label onClick={() => setCurrentTab(2)}>Reviews & Photos</label>
             </div>
             {event.status === "ENDED" && 
               <div className={styles.photoUploadContainer}>
@@ -180,11 +179,13 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                         )}
                         </div>
                             ) : (
-                            <button disabled={isDisabled(event)}
-                                onClick={() => handleJoinEvent(event.id)} 
-                                className={styles.joinButton}>
-                                Join Event 
-                                </button> 
+                                <div className={styles.secondButtonGroup}>
+                                    <button disabled={isDisabled(event)}
+                                    onClick={() => handleJoinEvent(event.id)} 
+                                    className={styles.joinButton}>
+                                    Join Event 
+                                    </button> 
+                                </div>
                         )}
                   </div>
     );

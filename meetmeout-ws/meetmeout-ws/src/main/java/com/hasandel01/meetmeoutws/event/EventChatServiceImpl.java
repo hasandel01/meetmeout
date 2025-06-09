@@ -4,6 +4,7 @@ import com.hasandel01.meetmeoutws.user.User;
 import com.hasandel01.meetmeoutws.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +20,7 @@ public class EventChatServiceImpl implements EventChatService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
-
+    @Transactional
     public EventChatMessageDTO save(EventChatMessageDTO message, Long eventId) {
 
         String username = message.user().username();
@@ -41,7 +42,7 @@ public class EventChatServiceImpl implements EventChatService {
 
         eventChatMessageRepository.save(chatMessage);
 
-        return message;
+        return EventChatMessageMapper.toEventChatMessageDTO(chatMessage);
     }
 
     public List<EventChatMessageDTO> getChatMessagesForEvent(Long eventId) {

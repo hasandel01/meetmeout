@@ -2,37 +2,52 @@ import { useState, useEffect } from "react";
 import { Message } from "../../../../types/Message";
 import styles from "./Chat.module.css"
 import { useUserContext } from "../../../../context/UserContext";
-
 import {toast} from 'react-toastify';
 import axiosInstance from "../../../../axios/axios";
 import { useWebSocket } from "../../../../context/WebSocketContext";
+import formatTime from "../../../../utils/formatTime";
+import { Event } from "../../../../types/Event";
+import { useRef } from "react";
 
 interface ChatProps {
-    eventId: number
+    event: Event
 }
 
-const Chat: React.FC<ChatProps> = ({eventId}) => {
+const Chat: React.FC<ChatProps> = ({event}) => {
 
       const {currentUser} = useUserContext();
       const [messages, setMessages] = useState<Message[]>([]);
         const [newMessage, setNewMessage] = useState<Message>({
         user: currentUser!,
-        message: ""
+        message: "",
+        timestamp: ""
         });
 
-     const {client} = useWebSocket(); 
+    const {client} = useWebSocket(); 
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+    };
+
+        
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
 
       useEffect(() => {
-        if (eventId !== 0) {
+        if (event.id !== 0) {
             getMessagesForEvent();
         }
-      },[eventId])
+      },[event.id])
 
       useEffect(() => {
     if (!client || !client.connected) return;
 
-    const subscription = client.subscribe(`/topic/chat/event/${eventId}`, (message) => {
+    const subscription = client.subscribe(`/topic/chat/event/${event.id}`, (message) => {
         const received: Message = JSON.parse(message.body);
         setMessages((prev) => [...prev, received]);
     });
@@ -40,8 +55,7 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
     return () => {
         subscription.unsubscribe();
     };
-}, [client, eventId]);
-
+}, [client, event.id]);
 
 
     const sendMessage = () => {
@@ -53,19 +67,18 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
     }
 
         client.publish({
-            destination: `/app/chat/event/${eventId}`,
+            destination: `/app/chat/event/${event.id}`,
             body: JSON.stringify(newMessage)
         });
 
-    setNewMessage({ user: currentUser!, message: "" });
+    setNewMessage({ user: currentUser!, message: "", timestamp: "" });
 }
-
 
       const getMessagesForEvent = async () => {
     
         try {
-          const response = await axiosInstance.get(`/get-chat-messages/${eventId}`)
-            setMessages(response.data); // direkt setle
+          const response = await axiosInstance.get(`/get-chat-messages/${event.id}`)
+            setMessages(response.data); 
         } catch(error) {
           toast.error("Error getting event messages")
         }
@@ -76,29 +89,59 @@ const Chat: React.FC<ChatProps> = ({eventId}) => {
             <div className={styles.chatContainer}>
                 <label>Chat</label>
                     <ul className={styles.messageList}>
-                        {messages.map( (message, index) => (
-                            <li key={index} className={styles.chatMessage}>
-                                <img src={message.user.profilePictureUrl}></img>
-                                <h5>{message.message}</h5>
+                        {messages.length === 0 ? (
+                            <div className={styles.emptyChatMessage} >
+                            No chatting yet – start a conversation ✨
+                            </div>
+                        ) : (
+                            messages.map((message, index) => (
+                            <li
+                                key={index}
+                                className={
+                                message.user.username !== currentUser?.username
+                                    ? styles.otherChat
+                                    : styles.ownChat
+                                }
+                            >
+                                <div className={styles.avatar}>
+                                <img src={message.user.profilePictureUrl} alt="avatar" />
+                                <h4>{message.user.username}</h4>
+                                </div>
+                                <div className={styles.messageBubble}>
+                                <p className={styles.messageText}>{message.message}</p>
+                                <span className={styles.timestamp}>
+                                    {message.timestamp ? formatTime(message.timestamp) : "–"}
+                                </span>
+                                </div>
                             </li>
-                        ))}
+                            ))
+                        )}
+                                            <div ref={messagesEndRef} />
+
                     </ul>
                     <div className={styles.sendChatMessageContainer}>
                         <div className={styles.sendChatMessage}>
-                            <input
-                                type="text"
-                                placeholder="Enter a message"
+                            <textarea
+                                maxLength={1000}
+                                minLength={1}
+                                rows={2}
+                                placeholder={!event.attendees.some(attendee => attendee.username === currentUser?.username) 
+                                    ? "Only participants can send a message" 
+                                    : "Enter a message"}
                                 value={newMessage?.message}
                                 onChange={(e) => {
                                 if (currentUser) {
-                                    setNewMessage({ user: currentUser, message: e.target.value });
+                                    setNewMessage({ user: currentUser, message: e.target.value, timestamp: "" });
                                 }
                                 }}
                                 required
                                 onKeyDown={(e) => {
-                                    if(e.key === 'Enter')
-                                        sendMessage()
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    sendMessage();
+                                }
                                 }}
+                                disabled={!event.attendees.some(attendee => attendee.username === currentUser?.username)}
                             />
                         </div>
                     </div>             

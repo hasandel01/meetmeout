@@ -58,8 +58,6 @@ public interface EventService {
 
     Boolean changeDescription(Long eventId, DescriptionRequest description);
 
-    Boolean feeUpdate(Long eventId, FeeUpdateRequest feeUpdateRequest);
-
     Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest);
 
     Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest);

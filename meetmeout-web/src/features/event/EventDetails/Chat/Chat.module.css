@@ -4,11 +4,11 @@
     flex-direction: column;
     background-color: var(--background-color);
     border: 1px solid var(--primary-color-dark);
-    height: 700px;
+    height: 750px;
     width: 100%;
-    max-width: 500px;
+    max-width: 400px;
     padding: 20px;
-    margin: 10px auto;
+    margin: 10px 0px;
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--primary-color-dark);
@@ -28,6 +28,7 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    max-height: 100%;
     padding: 10px;
     border: 1px solid var(--primary-color-dark);
     border-radius: 4px;
@@ -36,37 +37,121 @@
     gap: 6px;
 }
 
-.chatMessage {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px;
+.otherChat, .ownChat {
+  display: flex;
+  align-items: flex-start;
+  margin: 4px 4px;
+  width: 100%;
 }
 
-.chatMessage img {
-    height: 50px;
-    width: 50px;
-    border-radius: 50%;
-    object-fit: cover;
+.ownChat {
+  flex-direction: row-reverse;
+}
+
+.otherChat {
+  justify-content: flex-start;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 8px;
+}
+
+.avatar img {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--primary-color-dark);
+}
+
+.avatar h4 {
+  font-size: 12px;
+  margin-top: 2px;
+  text-align: center;
+}
+
+.messageBubble {
+  background-color: #f0f0f0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  position: relative;
+  word-break: break-word;
+}
+
+.ownChat .messageBubble {
+  background-color: #d0f0c0;
+}
+
+.messageText {
+  margin: 0;
+  font-size: 14px;
+}
+
+.timestamp {
+  font-size: 10px;
+  color: #888;
+  margin-top: 4px;
+  display: block;
+  text-align: right;
+}
+
+.messageBubble::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 0;
+}
+
+.otherChat .messageBubble::after {
+  left: 0px;
+  border-top: 10px solid transparent;
+  border-left: 10px solid #f0f0f0;
+}
+
+.ownChat .messageBubble::after {
+  right: 0px;
+  border-top: 10px solid transparent;
+  border-right: 10px solid #d0f0c0;
 }
 
 .sendChatMessageContainer {
     display: flex;
     flex-direction: row;
     gap: 10px;
-    align-items: center;
+    width: 100%;
 }
 
+.sendChatMessage {
+  width: 100%;
+}
 
-.sendChatMessageContainer input {
+.sendChatMessage textarea {
     flex: 1;
-    padding: 10px 16px;
-    border-radius: 20px;
+    border-radius: 6px;
     border: 1px solid var(--primary-color-dark);
     font-size: 14px;
-    outline: none;
+    resize: none;
+    width: 94%;
     transition: border-color 0.3s;
+    max-height: 100px;
 }
+
+.sendChatMessage  textarea:disabled {
+  background-color: rgb(241, 241, 241);
+}
+
+.emptyChatMessage {
+  text-align: center;
+  color: #999;
+  padding: 40px 0;
+  font-style: italic;
+  font-size: 14px;
+}
+
 
 
 @media (max-width: 768px) {
@@ -83,22 +168,17 @@
     overflow-y: auto;
   }
 
-  .chatMessage {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    padding: 6px;
+  .avatar img {
+    height: 32px;
+    width: 32px;
   }
 
-  .chatMessage h5 {
-    font-size: 14px;
-    word-break: break-word;
-    max-width: 80%;
+  .avatar h4 {
+    font-size: 10px;
   }
 
-  .chatMessage img {
-    height: 36px;
-    width: 36px;
+  .messageBubble {
+    font-size: 13px;
   }
 
   .sendChatMessageContainer {
@@ -107,8 +187,7 @@
     margin-top: 10px;
   }
 
-  .sendChatMessageContainer input {
-    width: 100%;
+  .sendChatMessageContainer textarea {
     padding: 8px;
     font-size: 14px;
     color: var(--text-color);

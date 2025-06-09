@@ -26,7 +26,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Size(min = 1, max = 100)
+    @Size(min = 1, max = 500)
     private String comment;
 
     @ManyToOne

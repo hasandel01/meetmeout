@@ -30,14 +30,11 @@ const EventDetails = () => {
   const eventIdNumber = parseInt(eventId?.eventId || "0", 10);
   const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const navigate = useNavigate();
-  const [commentString, setCommentString] = useState('');
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
   const [showAllAttendees, setShowAllAttendees] = useState(false);
   const [showAllRequests, setShowAllRequests] = useState(false);
   const {goToUserProfile} = useProfileContext();
   const [currentTab, setCurrentTab] = useState<number>(1);
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [editedCommentText, setEditedCommentText] = useState<string>('');
   const [showReviewModal, setShowReviewModal] = useState(true);
 
 
@@ -115,11 +112,11 @@ const EventDetails = () => {
       }
     },[event.latitude, event.longitude]);
 
-
     useEffect(() => {
       getEvent();
     },[event.isDraft])
-  const getEvent = async () => {
+  
+    const getEvent = async () => {
 
     try {
         const response = await axiosInstance.get(`/events/${eventIdNumber}`);
@@ -202,30 +199,6 @@ const EventDetails = () => {
     };
 
 
-  const handleAddComment = async (eventId: number) => {
-
-    try {
-        const newComment = {
-          commentId: null,
-          comment: commentString,
-          eventId: eventId,
-          sender: currentUser,
-          sentAt: '',
-          updatedAt: '',
-        };
-
-      const response = await axiosInstance.post(`/comment/${eventId}`, newComment)
-    
-      setEvent(prev => ({
-        ...prev,
-        comments: [...prev.comments, response.data]
-      }));
-      setCommentString('');
-    } catch(error) {
-    }
-  }
-
-
   useEffect(() => {
   if (event.id !== 0) {
     getAllJoinRequests(event.id);
@@ -243,55 +216,6 @@ const EventDetails = () => {
      }
 
   }
-
-  const handleDeleteComment = async (commentId: number) => {  
-
-
-      try {
-        await axiosInstance.delete(`/comment/${commentId}`);
-        setEvent(prev => ({
-          ...prev,
-          comments: prev.comments.filter(comment => comment.commentId !== commentId)
-        }));
-        toast.success("Comment deleted successfully!");
-      } catch (error) {
-        toast.error("Error deleting comment.");
-      }
-    }
-
-    const handleEditComment = (comment: any) => {
-      setEditingCommentId(comment.commentId);
-      setEditedCommentText(comment.comment);
-    };
-
-    const saveEditedComment = async (commentId: number) => {
-      await handleUpdateComment(commentId, editedCommentText);
-      setEditingCommentId(null);
-      setEditedCommentText('');
-    };
-
-    const handleUpdateComment = async (commentId: number, updatedComment: string) => {
-      try {
-        await axiosInstance.put(`/comment/${commentId}`, { 
-          commentId: commentId,
-          comment: updatedComment,
-          eventId: event.id,
-          sender: currentUser,
-          updatedAt: ''
-        });
-
-        setEvent(prev => ({
-          ...prev,
-          comments: prev.comments.map(comment =>
-            comment.commentId === commentId ? { ...comment, comment: updatedComment } : comment
-          )
-        }));
-
-        toast.success("Comment updated successfully!");
-      } catch (error) {
-        toast.error("Error updating comment.");
-      }
-    }
 
   const uploadEventPhotos = async (eventId: number, photos: File[]) => {
     const formData = new FormData();
@@ -408,25 +332,15 @@ const EventDetails = () => {
                               />
                           <EventComments
                             ref={commentInputRef}
-                            comments={event.comments}
                             currentUser={currentUser}
-                            eventId={event.id}
-                            commentText={commentString}
-                            setCommentText={setCommentString}
-                            handleAddComment={handleAddComment}
-                            handleEditComment={handleEditComment}
-                            handleDeleteComment={handleDeleteComment}
-                            editingCommentId={editingCommentId}
-                            editedCommentText={editedCommentText}
-                            setEditingCommentId={setEditingCommentId}
-                            setEditedCommentText={setEditedCommentText}
-                            saveEditedComment={saveEditedComment}
+                            event={event}
+                            setEvent={setEvent}
                           />
                       </div>
-                        <Chat eventId={event.id}></Chat>
+                        <Chat event={event}></Chat>
                     </div>
                     }
-                    {currentTab === 3 && (
+                    {currentTab === 2 && (
                       <div className={styles.reviewsAndPhotos}>
                         {currentUser && (
                           <EventReviews

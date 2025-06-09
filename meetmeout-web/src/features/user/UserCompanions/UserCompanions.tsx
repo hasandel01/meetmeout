@@ -38,7 +38,7 @@ const UserCompanions = () => {
 
     const getAllPossibleCompanions = async () => {
         try {
-            const response = await axiosInstance.get(`/companions/possible`);
+            const response = await axiosInstance.get(`/companions/recommendations`);
             setPossibleCompanions(response.data);
         } catch (error) {
         }

@@ -82,12 +82,6 @@ public class EventController {
         return ResponseEntity.ok(eventService.updateEventPicture(eventId,file));
     }
 
-    @PutMapping("/{eventId}/fee")
-    public ResponseEntity<Boolean> updateFeeInformation(@PathVariable Long eventId,
-                                                        @Validated @RequestBody FeeUpdateRequest feeUpdateRequest){
-        return ResponseEntity.ok(eventService.feeUpdate(eventId,feeUpdateRequest));
-    }
-
     @PutMapping("/{eventId}/tags")
     public ResponseEntity<Boolean> updateEventTags(@PathVariable Long eventId,
                                                    @Validated @RequestBody TagUpdateRequest tagUpdateRequest){

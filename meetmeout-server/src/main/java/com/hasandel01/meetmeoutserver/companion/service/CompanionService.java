@@ -22,7 +22,7 @@ public interface CompanionService {
 
     Boolean removeCompanion(String companionEmail);
 
-    List<UserDTO> getPossibleFriends();
+    List<UserDTO> getRecommendedFriends();
 
     List<UserDTO> getUsersThatFriendRequestIsAlreadySent();
 

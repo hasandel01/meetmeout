@@ -629,22 +629,6 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
     @Transactional
-    public Boolean feeUpdate(Long eventId, FeeUpdateRequest feeUpdateRequest) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
-        event.setFee(feeUpdateRequest.feeAmount());
-        event.setFeeDescription(feeUpdateRequest.feeDescription());
-        event.setFeeRequired(feeUpdateRequest.isFeeRequired());
-
-        eventRepository.save(event);
-        notificationService.sendEventUpdatedNotificationToAttendees(event);
-
-        return true;
-    }
-
-    @Transactional
     public Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest) {
 
         System.out.println("UPDATEE" +
@@ -664,7 +648,6 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
 
         if(event.getAttendees().size() > capacityUpdateRequest.maxCapacity() && event.isCapacityRequired())
             throw new RuntimeException("Capacity is full");

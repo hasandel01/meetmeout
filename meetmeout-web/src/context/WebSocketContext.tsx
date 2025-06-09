@@ -40,12 +40,12 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         toast.error("Access token not found");
         return;
       }
-      const socketUrl = `wss://192.168.1.36:9000/ws?token=${token}`;
+      const socketUrl = `wss://192.168.1.42:9000/ws`;
 
       const client = new Client({
         webSocketFactory: () => new WebSocket(socketUrl),
           connectHeaders: {
-            Authorization: `Bearer ${token}`, // büyük A, tam string
+            Authorization: `Bearer ${token}`,
         },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,

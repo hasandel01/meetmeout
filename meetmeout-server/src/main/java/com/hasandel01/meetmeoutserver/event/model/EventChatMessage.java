@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.event.model;
 
 import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +28,8 @@ public class EventChatMessage {
     @ManyToOne(optional = false)
     private User sender;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false)
+    @Size(min = 1, max = 1000)
     private String message;
 
     private LocalDateTime timestamp;

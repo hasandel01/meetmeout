@@ -1,13 +1,14 @@
 import styles from "./EventCardDetails.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faLocationDot, faHeart, faComment, faLock, faUserGroup, faMoneyBill, faMoneyBill1Wave, faMoneyBillTransfer, faPenToSquare, faSave, faTicket, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faHeart, faComment, faLock, faUserGroup, faMoneyBill,faPenToSquare, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Event } from "../../../../types/Event";
 import { Weather } from "../../../../types/Forecast";
 import { getCategoryIconLabel } from "../../../../mapper/CategoryMap";
 import { User } from "../../../../types/User";
 import { useNavigate } from "react-router-dom";
-import { Tooltip } from "react-tooltip";
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 import axiosInstance from "../../../../axios/axios";
 import { useState, useRef, useEffect } from "react";
 import TagInput from "../../CreateEvent/TagInput";
@@ -42,30 +43,20 @@ const EventDetailsCard = ({
     return diffInDays > 7;
   };
 
-  const returnDayDifference = (): number => {
-    const today = new Date();
-    const eventDate = new Date(event.startDate);
-    const diffInMs = eventDate.getDate() - today.getDate();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    return diffInDays;
-  };
-
   const navigate = useNavigate();
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(event.description);
 
   const [isEditingTags, setIsEditingTags] = useState(false);
   const [editedTags, setEditedTags] = useState<string[]>(event.tags);
-
-
-  const [isEditingFee, setIsEditingFee] = useState(false);
-  const [editedFee, setEditedFee] = useState(event.fee);
-  const [editedFeeDesc, setEditedFeeDesc] = useState(event.feeDescription);
+  const [isEditingCapacity, setIsEditingCapacity] = useState(false);
+  const [newCapacity, setNewCapacity] = useState(event.maximumCapacity);
 
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    
     const handleClickOutside = (e: MouseEvent) => {
       if (textareaRef.current && !textareaRef.current.contains(e.target as Node)) {
         setIsEditingDescription(false);
@@ -117,29 +108,41 @@ const EventDetailsCard = ({
       }
     };
 
-const handleFeeChange = async () => {
-  try {
-    await axiosInstance.put(`/events/${event.id}/fee`, {
-      feeAmount: editedFee,
-      feeDescription: editedFeeDesc,
-      isFeeRequired: true
-    });
-    setIsEditingFee(false);
-  } catch (error) {
-    console.error("Fee update failed", error);
+
+  const handleUpdateCapacity = async () => {
+    if (newCapacity <= event.maximumCapacity) return;
+
+    try {
+      await axiosInstance.put(`/events/${event.id}/capacity`, { maxCapacity: newCapacity, isCapacityRequired: true });
+      setEvent({ ...event, maximumCapacity: newCapacity });
+      setIsEditingCapacity(false);
+    } catch (error) {
+      console.error("Capacity update failed", error);
   }
 };
 
 
-  const handleCapacityChange = async () => {
-        try {
 
-          const response = await axiosInstance.put(`/events/${event.id}/capacity`)
-        }
-        catch(error) {
+  const getEventDayIndices = () => {
+    const today = new Date();
+    const startDay = new Date(event.startDate).setHours(0, 0, 0, 0);
+    const endDay = new Date(event.endDate ?? event.startDate).setHours(0, 0, 0, 0);
 
-        }
-  }
+    const indices: number[] = [];
+    for (let i = 0; i <= 7; i++) {
+      const forecastDate = new Date(today);
+      forecastDate.setDate(today.getDate() + i);
+      const fDay = forecastDate.setHours(0, 0, 0, 0);
+
+      if (fDay >= startDay && fDay <= endDay) {
+        indices.push(i);
+      }
+    }
+
+    return indices;
+  };
+
+
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -188,174 +191,214 @@ const handleFeeChange = async () => {
     }, [isEditingTags]);
 
 
-
-
-
-
   return (
-      <div className={styles.eventCard}>
-        <div className={styles.lockContainer}>
-          {event.isPrivate && <>
+    <div className={styles.eventCard}>
+      <div className={styles.lockContainer}>
+        {event.isPrivate && <>
           <FontAwesomeIcon
-                  icon={faLock}
-                  className={styles.lockIcon}
-                  data-tooltip-id="private_event_tooltip" data-tooltip-content="Private Event" />
-              <Tooltip id="private_event_tooltip"/>
-              </>
-          } 
-          </div>
-          {event.isCapacityRequired &&
-           <div className={styles.attendeeContainer}>
-            <FontAwesomeIcon
-                icon={faUserGroup}
-                className={styles.attendeeIcon}/>
-            <span>{event.attendees.length}/{event.maximumCapacity}</span>
-          </div>
+            icon={faLock}
+            className={styles.lockIcon}
+            data-tooltip-id="private_event_tooltip" data-tooltip-content="Private Event" />
+          <Tooltip id="private_event_tooltip"/> </>
+        } 
+      </div>
+        {event.isCapacityRequired &&
+        <div
+        className={styles.attendeeContainer}
+        data-tooltip-id="attendee_tooltip"
+        data-tooltip-content="Attendees/Capacity"
+        onClick={() => {
+          if (currentUser?.username === event.organizer?.username) {
+            setIsEditingCapacity(true);
           }
-        <div className={styles.eventImageLocationDate}>
-            <img src={event.imageUrl} alt={event.title} />
-            {currentUser?.username === event.organizer?.username &&
-            <>
-            <label htmlFor="eventImageUpload" className={styles.editImageLabel}>
-                  <FontAwesomeIcon icon={faPenToSquare} /> Change Image
-                </label>
-                <input
-                  id="eventImageUpload"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImageChange}
-                />
-                </>}
-              <div className={styles.eventTimeDate}  onClick={() => navigate("/my-calendar", {
-                                                                                          state: {
-                                                                                            date: event.startDate,
-                                                                                            highlightedEventId: event.attendees.some(a => a.username === currentUser?.username)
-                                                                                              ? event.id
-                                                                                              : undefined,
-                                                                                          },
-                                                                                        })}>
-                <span>
-                  <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
-                  <p>
-                    {new Date(event.startDate).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime} - {event.endTime}
-                  </p>
-                </span>
-              </div>
-              <div className={styles.eventLocation} onClick={handleLocationClick}>
-                <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
-                <p>{event.addressName}</p>
-              </div>
-              <div className={styles.tags} ref={tagsEditRef}>
-                    <div className={styles.tagsHeader}>
-                      <label>Tags</label>
-                      {currentUser?.username === event.organizer?.username && (
-                        isEditingTags ? (
-                          <FontAwesomeIcon
-                            className={styles.editDescription}
-                            onClick={() => handleUpdateTags()}
-                            icon={faCheck}
-                          />
-                        ) : (
-                          <FontAwesomeIcon
-                            className={styles.editDescription}
-                            onClick={() => setIsEditingTags(true)}
-                            icon={faPenToSquare}
-                          />
-                        )
-                      )}
+        }}
+      >
+        <FontAwesomeIcon icon={faUserGroup} className={styles.attendeeIcon} />
+        {!isEditingCapacity ? (
+          <span>{event.attendees.length}/{event.maximumCapacity}</span>
+        ) : (
+          <span>
+            <input
+              type="number"
+              value={newCapacity}
+              min={event.maximumCapacity}
+              onChange={(e) => setNewCapacity(Number(e.target.value))}
+              onBlur={handleUpdateCapacity}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleUpdateCapacity();
+                } else if (e.key === "Escape") {
+                  setIsEditingCapacity(false);
+                  setNewCapacity(event.maximumCapacity);
+                }
+              }}
+              style={{ width: "30px", height: "10px", fontSize: "14px" }}
+              autoFocus
+            />
+          </span>
+        )}
+      </div>
+      }
+      <div className={styles.eventDetails}>
+        <div className={styles.statusAndEventInfo}>
+                <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}>
+                {!event.isDraft && event.status}
+                </div>
+                <div className={styles.eventInfo}>
+                  <div className={styles.eventTitle}>
+                    <div className={styles.eventCategory}>
+                    {(() => {
+                      const category = getCategoryIconLabel(event.category);
+                      return (
+                        <span style={{ color: category.color }}>
+                          {category.icon} {category.label}
+                        </span>
+                      );
+                    })()}
                     </div>
-                    <hr />
-                    {isEditingTags ? (
-                      <div  className={styles.tagsEdit}>
-                        <TagInput tags={editedTags} setTags={setEditedTags} />
+                    <h2>{event.title}</h2>
+                  </div>
+                  <div className={styles.descriptionContainer}>
+                    <div className={styles.descriptionHeader}>
+                      <label>Description</label>
+                      {currentUser?.username === event.organizer?.username &&
+                      <FontAwesomeIcon icon={faPenToSquare} className={styles.editDescription} onClick={() => setIsEditingDescription(true)} />}
+                    </div>
+                    <hr/>
+                    {isEditingDescription ? (
+                      <div className={styles.editDescriptionContainer}>
+                        <textarea
+                            ref={textareaRef}
+                            value={editedDescription} 
+                            maxLength={500}
+                            onChange={(e) => setEditedDescription(e.target.value)} />
                       </div>
                     ) : (
-                      <ul>
-                        {event.tags?.map((tag, index) => (
-                          <li key={index}>
-                            <span>#{tag}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <p>{event.description}</p>
                     )}
                   </div>
-        </div>
-        <div className={styles.statusAndEventInfo}>
-        <div className={event.isDraft ? `${styles.eventStatusDraft}` :  `${styles.eventStatus} ${styles[event.status]}`}>{!event.isDraft && event.status}</div>
-          <div className={styles.eventInfo}>
-            <div className={styles.eventTitle}>
-              <div className={styles.eventCategory}>
-                {(() => {
-                  const category = getCategoryIconLabel(event.category);
-                  return (
-                    <span style={{ color: category.color }}>
-                      {category.icon} {category.label}
-                    </span>
-                  );
-                })()}
-              </div>
-                <h2>{event.title}</h2>
-          </div>
-          <div className={styles.descriptionContainer}>
-                  <div className={styles.descriptionHeader}>
-                    <label>Description</label>
-                    {currentUser?.username === event.organizer?.username &&
-                    <FontAwesomeIcon icon={faPenToSquare} className={styles.editDescription} onClick={() => setIsEditingDescription(true)} />}
-                  </div>
-                  <hr/>
-                  {isEditingDescription ? (
-                    <div className={styles.editDescriptionContainer}>
-                      <textarea 
-                          value={editedDescription} 
-                          maxLength={500}
-                          style={{ resize: "none", height: "250px"}}
-                          onChange={(e) => setEditedDescription(e.target.value)} />
+                  {event.isFeeRequired ? (
+                    <div className={styles.feeInfo}>
+                      <div className={styles.feeAmount} data-tooltip-id="fee-amount" data-tooltip-content={event.feeDescription}>
+                        <FontAwesomeIcon icon={faMoneyBill} />
+                        <span>: {event.fee}$</span>
+                      </div>
+                      <Tooltip id="fee-amount"></Tooltip>
                     </div>
-                  ) : (
-                    <p>{event.description}</p>
+                  ): (
+                    <div className={styles.feeInfo}>
+                        <span>Free</span>
+                    </div>
                   )}
-                </div>
-          {event.isFeeRequired ? (
-            <div className={styles.feeInfo}>
-              <div className={styles.feeAmount} data-tooltip-id="fee-amount" data-tooltip-content={event.feeDescription}>
-                <FontAwesomeIcon icon={faMoneyBill} />
-                <span>: {event.fee}$</span>
-              </div>
-              <Tooltip id="fee-amount"></Tooltip>
+               </div>
             </div>
-          ): (
-            <div className={styles.feeInfo}>
-                <span>Free</span>
-            </div>
-          )}
-          {weather && weather.current && (
-            <div className={styles.weatherWidget}>
-              <h4>How is the weather on the day of the event?</h4>
-              <div className={styles.weatherContent}>
-                {!isMoreThan8DaysLater(event.startDate) ? (
-                  <div className={styles.weatherInfo}>
-                    <img
-                      src={`https://openweathermap.org/img/wn/${weather.current.weather[0].icon}@2x.png`}
-                      alt={weather.daily.at(returnDayDifference())?.summary}
+            <div className={styles.eventImageLocationDate}>
+                <img src={event.imageUrl} alt={event.title} />
+                {currentUser?.username === event.organizer?.username &&
+                <>
+                <label htmlFor="eventImageUpload" className={styles.editImageLabel}>
+                      <FontAwesomeIcon icon={faPenToSquare} /> Change Image
+                    </label>
+                    <input
+                      id="eventImageUpload"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: "none" }}
+                      onChange={handleImageChange}
                     />
-                    <div>
-                      <p>{weather.daily.at(returnDayDifference())?.temp.max.toFixed(0)}</p>
-                      <p>{weather.daily.at(returnDayDifference())?.temp.min.toFixed(0)}</p>
+                    </>}
+                    <div className={styles.locationDate}>
+                        <div className={styles.eventTimeDate} 
+                          onClick={() => navigate("/my-calendar", {
+                                          state: {
+                                              date: event.startDate,
+                                              highlightedEventId: 
+                                                    event.attendees.some(a => a.username === currentUser?.username)
+                                                          ? event.id
+                                                          : undefined,
+                                                        },
+                                            })}>
+                        <span>
+                          <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
+                          <p>
+                            {new Date(event.startDate).toLocaleDateString("en-US", options)} <strong>&bull;</strong> {event.startTime} - {event.endTime}
+                          </p>
+                        </span>
+                      </div>
+                      <div className={styles.eventLocation} onClick={handleLocationClick} 
+                                  data-tooltip-id="location-tooltip" data-tooltip-content= "Click to see on the map.">
+                        <FontAwesomeIcon icon={faLocationDot} className={styles.icon}/>
+                        <p>{event.addressName}</p>
+                        <Tooltip id="location-tooltip"></Tooltip>
+                      </div>
                     </div>
-                    <p>{weather.daily.at(returnDayDifference())?.summary}</p>
-                  </div>
-                ) : (
-                  <div>
-                    We can't provide you weather forecast for this time period. Weather forecast will be shown 8 days before the event date.
-                  </div>
-                )}
+                    <div className={styles.tags} ref={tagsEditRef}>
+                          <div className={styles.tagsHeader}>
+                            <label>Tags</label>
+                            {currentUser?.username === event.organizer?.username && (
+                              isEditingTags ? (
+                                <FontAwesomeIcon
+                                  className={styles.editDescription}
+                                  onClick={() => handleUpdateTags()}
+                                  icon={faCheck}
+                                />
+                              ) : (
+                                <FontAwesomeIcon
+                                  className={styles.editDescription}
+                                  onClick={() => setIsEditingTags(true)}
+                                  icon={faPenToSquare}
+                                />
+                              )
+                            )}
+                          </div>
+                          <hr />
+                          {isEditingTags ? (
+                            <div  className={styles.tagsEdit}>
+                              <TagInput tags={editedTags} setTags={setEditedTags} />
+                            </div>
+                          ) : (
+                            <ul>
+                              {event.tags?.map((tag, index) => (
+                                <li key={index}>
+                                  <span>#{tag}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                    </div>
+                </div>
+        </div>        
+          {weather && weather.daily && !isMoreThan8DaysLater(event.startDate) ? (
+            <div className={styles.weatherWidget}>
+              <h4>Weather During the Event</h4>
+              <div className={styles.weatherRow}>
+                {getEventDayIndices().map((i) => {
+                  const daily = weather.daily[i];
+                  if (!daily) return null;
+                  const forecastDate = new Date();
+                  forecastDate.setDate(new Date().getDate() + i);
+                  return (
+                    <div className={styles.weatherCard} key={i}>
+                      <p className={styles.weatherDate}>{forecastDate.toLocaleDateString("en-US", options)}</p>
+                      <img
+                        src={`https://openweathermap.org/img/wn/${daily.weather[0].icon}@2x.png`}
+                        alt={daily.summary}
+                        className={styles.weatherIcon}
+                        width="32px"
+                        height="32px"
+                      />
+                      <p className={styles.weatherSummary}>{daily.summary}</p>
+                      <p className={styles.weatherTemp}>{daily.temp.max.toFixed(0)}° / {daily.temp.min.toFixed(0)}°</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
+          ) : (
+            <div className={styles.weatherWidget}>
+              <p>Weather forecast will be available 8 days before the event.</p>
+            </div>
           )}
-        </div>
-        </div>
-        
         <div className={styles.eventActions}>
           <div className={styles.buttonGroup}>
             <FontAwesomeIcon

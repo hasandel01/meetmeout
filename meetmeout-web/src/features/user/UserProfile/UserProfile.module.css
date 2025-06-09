@@ -4,7 +4,6 @@
     align-items: flex-start;
     margin: 10px 20px;
     padding: 10px;
-    min-width: 1200px;
 }
 
 .userProfileDetails {
@@ -18,9 +17,7 @@
     border-radius: 10px;
     border: 1px solid var(--primary-color-dark);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    min-width: 1200px;
-    min-height: 800px;
-    max-width: 1200px;
+    width: 90vw;
 }
 
 .userProfileHeader {

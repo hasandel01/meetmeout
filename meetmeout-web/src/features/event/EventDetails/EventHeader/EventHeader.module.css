@@ -63,9 +63,9 @@
 }
 
 .inviteButton:hover {
-    background-color: #f1f1f1;
     transform: translateY(-2px);
     font-weight: bolder;
+    color: blue;
 }
 
 .editButton {
@@ -79,9 +79,9 @@
 
 
 .editButton:hover {
-    background-color: #f1f1f1;
     transform: translateY(-2px);
     font-weight: bolder;
+    color: red;
 }
 
 .joinButton {
@@ -140,6 +140,5 @@
   .joinButton {
     width: 100%;
     justify-content: center;
-    text-align: center;
   }
 }

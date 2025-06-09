@@ -47,9 +47,9 @@ public class CompanionController {
         return ResponseEntity.ok(companionService.removeCompanion(companionEmail));
     }
 
-    @GetMapping("/possible")
-    public ResponseEntity<List<UserDTO>> getPossibleFriends() {
-        return ResponseEntity.ok(companionService.getPossibleFriends());
+    @GetMapping("/recommendations")
+    public ResponseEntity<List<UserDTO>> getRecommendedFriends() {
+        return ResponseEntity.ok(companionService.getRecommendedFriends());
     }
 
     @GetMapping("/request-sent")

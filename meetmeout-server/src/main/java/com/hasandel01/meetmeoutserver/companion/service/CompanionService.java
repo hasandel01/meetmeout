@@ -8,7 +8,6 @@ import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import java.util.List;
 
 
-
 public interface CompanionService {
 
     List<UserDTO> getFriends();

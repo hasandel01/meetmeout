@@ -49,23 +49,27 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
   const [activeInput, setActiveInput] = useState<'start' | 'end' | null>(null);
 
 
-  const getAddressFromCoords = async (latitude: number, longitude: number) => {
-    
-    try {
-        const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
-        
+  const getAddressFromCoords = async (
+      latitude: number,
+      longitude: number,
+      type: 'start' | 'end'
+    ) => {
+      try {
+        const response = await axios.get(
+          `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+        );
+
         const address = response.data.address as {
-          road? :string;
+          road?: string;
           village?: string;
           town?: string;
           suburb?: string;
-          neighbourhood: string;
+          neighbourhood?: string;
           city?: string;
           county?: string;
           state?: string;
           hamlet?: string;
-        }
-        console.log(address);
+        };
 
         let mostSpecific =
           address.road ||
@@ -74,39 +78,27 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
           address.hamlet ||
           '';
 
-        let district =
-          address.town ||
-          address.suburb ||
-          '';
-
-        let city =
-          address.city ||
-          address.county ||
-          address.state ||
-          '';
-
+        let district = address.town || address.suburb || '';
+        let city = address.city || address.county || address.state || '';
         const parts = [mostSpecific, district, city].filter(Boolean);
         const fallbackName = parts.join(', ');
 
-            
-          if(clickCount % 2 === 0) {
-            setCoordinates({ latitude, longitude });
-            setAddressName(fallbackName);
-            setLocalAddress(response.data.display_name);
-            setLocalAddressName(fallbackName);
-          }
-          else {
-            setEndCoordinates({ latitude, longitude });
-            setEndAddressName(fallbackName);
-            setLocalEndAddress(response.data.display_name);
-            setLocalEndAddressName(fallbackName);
-          }
-    }
-    catch (error) {
-        console.error("Error fetching address:", error);
-        return null;
-    }
-}
+        if (type === 'start') {
+          setCoordinates({ latitude, longitude });
+          setAddressName(fallbackName);
+          setLocalAddress(response.data.display_name);
+          setLocalAddressName(fallbackName);
+        } else {
+          setEndCoordinates({ latitude, longitude });
+          setEndAddressName(fallbackName);
+          setLocalEndAddress(response.data.display_name);
+          setLocalEndAddressName(fallbackName);
+        }
+      } catch (error) {
+        console.error('Error fetching address:', error);
+      }
+    };
+
 
     const debounceSearch = useCallback(
     debounce((q: string, type: 'start' | 'end') => {
@@ -141,7 +133,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
     const lon = parseFloat(result.lon);
     setPosition([lat, lon]);
     setCoordinates({ latitude: lat, longitude: lon });
-    getAddressFromCoords(lat, lon);
+    getAddressFromCoords(lat, lon, 'start');
     setStartSearchResults([]);
   };
 
@@ -164,7 +156,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
     if (!isThereRoute) {
       setPosition([lat, lng]);
       setCoordinates({ latitude: lat, longitude: lng });
-      getAddressFromCoords(lat, lng);
+      getAddressFromCoords(lat, lng, 'start');
       setEndCoordinates({ latitude: lat, longitude: lng })
       setEndPosition([0,0])
     } else {
@@ -172,12 +164,12 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
         setPosition([lat, lng]);
         setCoordinates({ latitude: lat, longitude: lng });
         setClickCount(prev => prev + 1);
-        getAddressFromCoords(lat, lng);
+        getAddressFromCoords(lat, lng, 'start');
       } else if (clickCount % 2 === 1) {
         setEndPosition([lat, lng]);
         setEndCoordinates({ latitude: lat, longitude: lng });
         setClickCount(prev => prev + 1);
-        getAddressFromCoords(lat, lng);
+        getAddressFromCoords(lat, lng, 'end');
       }
     }
   },
@@ -265,7 +257,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
                     placeholder='Search start location...'
                     value={startQuery}
                     onChange={(e) => setStartQuery(e.target.value)}
-                   onFocus={() => {
+                    onFocus={() => {
                       setActiveInput('start');
                     }}
                   />
@@ -274,8 +266,8 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
                   <div className={styles.searchResults}>
                     <ul>
                       {startSearchResults.map(result => (
-                        <li key={result.place_id} onClick={() => handleStartClick(result)}>
-                          {result.display_name}
+                        <li key={result.place_id} onMouseDown={() => handleStartClick(result)}>
+                            {result.display_name}
                         </li>
                       ))}
                     </ul>

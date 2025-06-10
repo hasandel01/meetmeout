@@ -40,7 +40,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         toast.error("Access token not found");
         return;
       }
-      const socketUrl = `wss://192.168.1.42:9000/ws`;
+      
+      const socketUrl = `${import.meta.env.VITE_SOCKET_BASE_URL.replace("https", "wss")}/ws`;
 
       const client = new Client({
         webSocketFactory: () => new WebSocket(socketUrl),

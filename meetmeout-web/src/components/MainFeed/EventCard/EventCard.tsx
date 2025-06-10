@@ -38,7 +38,6 @@ interface EventCardProps {
 const EventCard = ({
   event,
   currentUser,
-  isDisabled,
   handleJoinEvent,
   handleLike,
   invitations,

@@ -115,6 +115,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    cursor: pointer;
 }
 
 .userDetails img {
@@ -122,6 +123,17 @@
     height: 60px;
     object-fit: cover;
     border-radius: 50%;
+}
+
+
+.userDetailsInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.userDetailsInfo:hover {
+    text-decoration: underline;
 }
 
 .userDetailsInfo h4,

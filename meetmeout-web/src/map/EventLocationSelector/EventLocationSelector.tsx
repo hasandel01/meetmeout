@@ -41,7 +41,6 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
   const [address, setLocalAddress] = useState<string>('');
   const [endAdress, setLocalEndAddress] = useState<string>('');
   const [addressName, setLocalAddressName] = useState<string>('');
-  const [showSearchResults, setShowSearchResults] = useState(false);
   const [endAddressName, setLocalEndAddressName] = useState<string>('');
   const [startQuery, setStartQuery] = useState('');
   const [endQuery, setEndQuery] = useState('');
@@ -268,7 +267,6 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
                     onChange={(e) => setStartQuery(e.target.value)}
                    onFocus={() => {
                       setActiveInput('start');
-                      setShowSearchResults(true);
                     }}
                   />
                 </div>
@@ -295,7 +293,6 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
                   onChange={(e) => setEndQuery(e.target.value)}
                   onFocus={() => {
                     setActiveInput('end');
-                    setShowSearchResults(true);
                   }}
                 />
                 {activeInput === 'end' && endSearchResults.length > 0 && (

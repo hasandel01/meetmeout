@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types/User";
 import axiosInstance from "../axios/axios";
 import {toast} from 'react-toastify';

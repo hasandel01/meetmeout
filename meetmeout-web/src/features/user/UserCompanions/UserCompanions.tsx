@@ -11,6 +11,7 @@ import {FriendRequest} from "../../../types/FriendRequest";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useBadgeContext } from "../../../context/BadgeContext";
+import { RecommendedFriendDTO } from "../../../types/RecommendedFriend";
 
 const UserCompanions = () => {
 
@@ -18,7 +19,7 @@ const UserCompanions = () => {
     const {currentUser} = useUserContext();
     const [page, setPage] = useState(1);
     const [companions, setCompanions] = useState<User[]>([]);
-    const [possibleCompanions, setPossibleCompanions] = useState<User[] | null>(null);
+    const [recommendedCompanions, setRecommendedCompanions] = useState<RecommendedFriendDTO[] | null>(null);
     const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
     const {goToUserProfile} = useProfileContext();
     const [searchResults, setSearchResults] = useState<User[]>([]);
@@ -39,7 +40,7 @@ const UserCompanions = () => {
     const getAllPossibleCompanions = async () => {
         try {
             const response = await axiosInstance.get(`/companions/recommendations`);
-            setPossibleCompanions(response.data);
+            setRecommendedCompanions(response.data);
         } catch (error) {
         }
     };
@@ -62,7 +63,7 @@ const UserCompanions = () => {
             
             toast.info("Companion request sent!");
 
-            setPossibleCompanions((prev) => (prev ?? []).filter((user) => user.email !== receiverEmail))
+            setRecommendedCompanions((prev) => (prev ?? []).filter((recommended) => recommended.user.email !== receiverEmail))
         }
         catch (error) {
             toast.error("Error sending companion request.")
@@ -280,8 +281,8 @@ const UserCompanions = () => {
                 {sortRequesters()
                     ?.filter(r => query === "" || searchResults.some(s => s.username === r.sender.username))
                     .map(request => (
-                    <li key={request.id} onClick={() => goToUserProfile(request.sender.username)}>
-                        <div className={styles.userDetails}>
+                    <li key={request.id}>
+                        <div className={styles.userDetails}  onClick={() => goToUserProfile(request.sender.username)}>
                         <img src={request.sender.profilePictureUrl} alt="User" />
                         <div className={styles.userDetailsInfo}>
                             <h4>{request.sender.firstName} {request.sender.lastName}</h4>
@@ -310,20 +311,21 @@ const UserCompanions = () => {
         {currentUser?.username === username && (
             <div className={styles.suggestionsPanel}>
             <h3>Suggestions</h3>
-            {possibleCompanions && possibleCompanions.length > 0 ? (
+            {recommendedCompanions && recommendedCompanions.length > 0 ? (
                 <ul className={styles.divisionContainer}>
-                {possibleCompanions.map(user => (
-                    <li key={user.email} onClick={() => goToUserProfile(user.username)}>
-                    <div className={styles.userDetails}>
-                        <img src={user.profilePictureUrl} alt="User" />
+                {recommendedCompanions.map(recommendedCompanion => (
+                    <li key={recommendedCompanion.user.email}>
+                    <div className={styles.userDetails}  onClick={() => goToUserProfile(recommendedCompanion.user.username)}>
+                        <img src={recommendedCompanion.user.profilePictureUrl} alt="User" />
                         <div className={styles.userDetailsInfo}>
-                        <h4>{user.firstName} {user.lastName}</h4>
-                        <p>@{user.username}</p>
+                            <h4>{recommendedCompanion.user.firstName} {recommendedCompanion.user.lastName}</h4>
+                            <p>@{recommendedCompanion.user.username}</p>
+                            <p>{recommendedCompanion.reason}</p>
                         </div>
                     </div>
                     <button className={styles.addButton} onClick={(e) => {
                         e.stopPropagation();
-                        handleAddCompanion(user.email);
+                        handleAddCompanion(recommendedCompanion.user.email);
                     }}>Send Request</button>
                     </li>
                 ))}

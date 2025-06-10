@@ -1,6 +1,7 @@
 package com.hasandel01.meetmeoutserver.companion.controller;
 
 
+import com.hasandel01.meetmeoutserver.companion.dto.RecommendedFriendDTO;
 import com.hasandel01.meetmeoutserver.companion.service.CompanionService;
 import com.hasandel01.meetmeoutserver.companion.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
@@ -48,7 +49,7 @@ public class CompanionController {
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<List<UserDTO>> getRecommendedFriends() {
+    public ResponseEntity<List<RecommendedFriendDTO>> getRecommendedFriends() {
         return ResponseEntity.ok(companionService.getRecommendedFriends());
     }
 

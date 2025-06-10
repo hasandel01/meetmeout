@@ -1,12 +1,17 @@
 package com.hasandel01.meetmeoutserver.companion.service.impl;
 
 
+import com.hasandel01.meetmeoutserver.companion.dto.RecommendedFriendDTO;
 import com.hasandel01.meetmeoutserver.companion.model.FriendRequest;
 import com.hasandel01.meetmeoutserver.companion.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.companion.mapper.FriendRequestMapper;
 import com.hasandel01.meetmeoutserver.companion.repository.FriendRequestRepository;
 import com.hasandel01.meetmeoutserver.companion.service.CompanionService;
 import com.hasandel01.meetmeoutserver.enums.BadgeType;
+import com.hasandel01.meetmeoutserver.enums.Categories;
+import com.hasandel01.meetmeoutserver.event.dto.EventDTO;
+import com.hasandel01.meetmeoutserver.event.mapper.EventMapper;
+import com.hasandel01.meetmeoutserver.event.repository.EventRepository;
 import com.hasandel01.meetmeoutserver.exceptions.RequestAlreadyExists;
 import com.hasandel01.meetmeoutserver.notification.service.NotificationService;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
@@ -39,6 +44,7 @@ public class CompanionServiceImpl implements CompanionService {
     private final FriendRequestRepository friendRequestRepository;
     private final NotificationService notificationService;
     private final BadgeService badgeService;
+    private final EventRepository eventRepository;
 
     @Transactional
     public List<UserDTO> getFriends() {
@@ -223,7 +229,83 @@ public class CompanionServiceImpl implements CompanionService {
     }
 
     @Transactional
-    public List<UserDTO> getRecommendedFriends() {
+    public List<RecommendedFriendDTO> getRecommendedFriends() {
+        List<UserDTO> possibleCompanions = getPossibleFriends();
+
+        List<RecommendedFriendDTO> recommendedFriends = new ArrayList<>();
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException("User not found")
+        );
+
+        List<UserDTO> friends = getFriends();
+
+        for (UserDTO companion : possibleCompanions) {
+
+            List<UserDTO> companionFriends = getUserFriends(companion.username());
+
+            List<UserDTO> mutualFriends = friends.stream()
+                    .filter(companionFriends::contains)
+                    .toList();
+
+            boolean hasMutualFriends = !mutualFriends.isEmpty();
+
+            List<EventDTO> mutualEvents = user.getParticipatedEvents().stream()
+                    .filter(event -> companion.participatedEventIds().contains(event.getId()))
+                    .map(EventMapper::toEventDto)
+                    .toList();
+
+
+            boolean hasMutualEvents = !mutualEvents.isEmpty();
+
+            RecommendedFriendDTO.RecommendedFriendDTOBuilder builder = RecommendedFriendDTO.builder()
+                    .user(companion)
+                    .mutualFriends(mutualFriends)
+                    .sharedEvents(mutualEvents);
+
+
+            List<Event> companionEvents = eventRepository.findAllById(companion.participatedEventIds());
+
+            Set<Categories> companionCategories = companionEvents.stream()
+                    .map(Event::getCategory)
+                    .collect(Collectors.toSet());
+
+            List<EventDTO> mutualInterests = user.getParticipatedEvents().stream()
+                    .filter(event -> companionCategories.contains(event.getCategory()))
+                    .map(EventMapper::toEventDto)
+                    .toList();
+
+            boolean hasMutualInterests = !mutualInterests.isEmpty();
+
+            if (hasMutualFriends) {
+                if(mutualFriends.size() > 1)
+                    builder.reason("You have " + mutualFriends.size() + " mutual companions.").priority(0);
+                else
+                    builder.reason("You have " + mutualFriends.size() + " mutual companion.").priority(0);
+            } else if (hasMutualEvents) {
+                if(mutualEvents.size() > 1)
+                    builder.reason("You participated in " + mutualEvents.getLast().title() + " together.").priority(1);
+                else
+                    builder.reason("You participated in " + mutualEvents.getLast().title() + " together and more.")
+                            .priority(1);
+            } else if(hasMutualInterests) {
+                    builder.reason("You have similar interests.").priority(2);
+            }else {
+                builder.reason("")
+                        .priority(3);
+            }
+
+            recommendedFriends.add(builder.build());
+        }
+
+        recommendedFriends.sort(Comparator.comparingInt(RecommendedFriendDTO::priority));
+        return recommendedFriends;
+    }
+
+
+    @Transactional
+    public List<UserDTO> getPossibleFriends() {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -250,6 +332,7 @@ public class CompanionServiceImpl implements CompanionService {
                 .filter(user -> !companionUsernames.contains(user.getUsername()))
                 .map(UserMapper::toUserDTO)
                 .toList();
+
     }
 
     @Transactional

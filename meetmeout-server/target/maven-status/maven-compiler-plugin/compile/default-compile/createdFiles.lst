@@ -3,15 +3,19 @@ com\hasandel01\meetmeoutserver\event\controller\EventParticipantController.class
 com\hasandel01\meetmeoutserver\event\model\Like$LikeBuilder.class
 com\hasandel01\meetmeoutserver\auth\service\AuthenticationService.class
 com\hasandel01\meetmeoutserver\auth\model\ResetPasswordRequest.class
+com\hasandel01\meetmeoutserver\user\repository\UserReviewRepository.class
 com\hasandel01\meetmeoutserver\notification\model\Notification$NotificationBuilder.class
 com\hasandel01\meetmeoutserver\event\dto\AccessTokenDTO.class
 com\hasandel01\meetmeoutserver\companion\service\impl\CompanionServiceImpl.class
 com\hasandel01\meetmeoutserver\companion\mapper\FriendRequestMapper.class
+com\hasandel01\meetmeoutserver\user\mapper\UserReviewMapper.class
 com\hasandel01\meetmeoutserver\event\model\Comment$CommentBuilder.class
 com\hasandel01\meetmeoutserver\companion\model\FriendRequest$Status.class
 com\hasandel01\meetmeoutserver\companion\service\CompanionService.class
 com\hasandel01\meetmeoutserver\event\dto\JoinRequestDTO$JoinRequestDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\model\Event$EventBuilder.class
+com\hasandel01\meetmeoutserver\event\controller\DescriptionRequest.class
+com\hasandel01\meetmeoutserver\wsrelay\WSRelayConfig.class
 com\hasandel01\meetmeoutserver\event\controller\EventChatController.class
 com\hasandel01\meetmeoutserver\companion\dto\FriendRequestDTO$FriendRequestDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\model\JoinEventRequest.class
@@ -42,6 +46,7 @@ com\hasandel01\meetmeoutserver\auth\model\AuthenticationResponse$AuthenticationR
 com\hasandel01\meetmeoutserver\event\scheduler\EventScheduler.class
 com\hasandel01\meetmeoutserver\user\service\impl\BadgeServiceImpl.class
 com\hasandel01\meetmeoutserver\common\config\ApplicationConfig.class
+com\hasandel01\meetmeoutserver\wsrelay\WebSocketNotificationRelayService.class
 com\hasandel01\meetmeoutserver\event\controller\CommentController.class
 com\hasandel01\meetmeoutserver\event\model\Review.class
 com\hasandel01\meetmeoutserver\event\model\Invite$InviteBuilder.class
@@ -61,6 +66,7 @@ com\hasandel01\meetmeoutserver\event\dto\ReviewDTO.class
 com\hasandel01\meetmeoutserver\event\service\EventService.class
 com\hasandel01\meetmeoutserver\user\repository\UserRepository.class
 com\hasandel01\meetmeoutserver\auth\model\AuthenticationResponse.class
+com\hasandel01\meetmeoutserver\user\dto\DarkModeDTO.class
 com\hasandel01\meetmeoutserver\event\dto\InviteDTO$InviteDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\dto\EventChatMessageDTO.class
 com\hasandel01\meetmeoutserver\notification\dto\NotificationDTO$NotificationDTOBuilder.class
@@ -68,6 +74,7 @@ com\hasandel01\meetmeoutserver\enums\BadgeType.class
 com\hasandel01\meetmeoutserver\exceptions\RestrictedUserException.class
 com\hasandel01\meetmeoutserver\event\dto\EventChatMessageDTO$EventChatMessageDTOBuilder.class
 com\hasandel01\meetmeoutserver\notification\controller\NotificationController.class
+com\hasandel01\meetmeoutserver\user\dto\LocationDTO.class
 com\hasandel01\meetmeoutserver\companion\exception\CompanionExceptionHandler.class
 com\hasandel01\meetmeoutserver\common\config\interceptor\AuthChannelInterceptor.class
 com\hasandel01\meetmeoutserver\event\model\JoinEventRequest$JoinEventRequestBuilder.class
@@ -77,6 +84,7 @@ com\hasandel01\meetmeoutserver\event\service\CommentService.class
 com\hasandel01\meetmeoutserver\common\service\CloudStorageService.class
 com\hasandel01\meetmeoutserver\event\dto\JoinRequestDTO.class
 com\hasandel01\meetmeoutserver\auth\exception\GlobalExceptionHandler.class
+com\hasandel01\meetmeoutserver\companion\dto\RecommendedFriendDTO$RecommendedFriendDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\model\Invite.class
 com\hasandel01\meetmeoutserver\user\dto\UserDTO.class
 com\hasandel01\meetmeoutserver\event\service\impl\EventServiceImpl.class
@@ -91,11 +99,14 @@ com\hasandel01\meetmeoutserver\MeetMeOutServerApplication.class
 com\hasandel01\meetmeoutserver\common\config\CloudinaryConfig.class
 com\hasandel01\meetmeoutserver\notification\mapper\NotificationMapper.class
 com\hasandel01\meetmeoutserver\search\GlobalSearchResponse.class
+com\hasandel01\meetmeoutserver\user\dto\UserReviewDTO$UserReviewDTOBuilder.class
 com\hasandel01\meetmeoutserver\user\dto\UserDTO$UserDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\mapper\InviteMapper.class
 com\hasandel01\meetmeoutserver\event\dto\InviteDTO.class
 com\hasandel01\meetmeoutserver\common\config\JwtAuthenticationFilter.class
+com\hasandel01\meetmeoutserver\user\dto\UserReviewDTO.class
 com\hasandel01\meetmeoutserver\event\model\Comment.class
+com\hasandel01\meetmeoutserver\event\dto\FeeUpdateRequest.class
 com\hasandel01\meetmeoutserver\auth\model\AuthenticationRequest.class
 com\hasandel01\meetmeoutserver\event\repository\InviteRepository.class
 com\hasandel01\meetmeoutserver\notification\repository\NotificationRepository.class
@@ -112,9 +123,11 @@ com\hasandel01\meetmeoutserver\event\mapper\EventChatMessageMapper.class
 com\hasandel01\meetmeoutserver\companion\controller\CompanionController.class
 com\hasandel01\meetmeoutserver\user\repository\BadgeRepository.class
 com\hasandel01\meetmeoutserver\enums\EventStatus.class
+com\hasandel01\meetmeoutserver\event\dto\TagUpdateRequest.class
 com\hasandel01\meetmeoutserver\enums\Categories.class
 com\hasandel01\meetmeoutserver\enums\NotificationType.class
 com\hasandel01\meetmeoutserver\auth\service\JwtService.class
+com\hasandel01\meetmeoutserver\event\dto\CapacityUpdateRequest.class
 com\hasandel01\meetmeoutserver\user\mapper\UserMapper.class
 com\hasandel01\meetmeoutserver\event\dto\LikeDTO$LikeDTOBuilder.class
 com\hasandel01\meetmeoutserver\event\service\ReviewService.class
@@ -127,6 +140,8 @@ com\hasandel01\meetmeoutserver\search\SearchController.class
 com\hasandel01\meetmeoutserver\common\config\WebSocketConfig.class
 com\hasandel01\meetmeoutserver\user\model\Badge.class
 com\hasandel01\meetmeoutserver\notification\model\Notification.class
+com\hasandel01\meetmeoutserver\companion\dto\RecommendedFriendDTO.class
+com\hasandel01\meetmeoutserver\user\model\UserReview.class
 com\hasandel01\meetmeoutserver\event\dto\CommentDTO.class
 com\hasandel01\meetmeoutserver\auth\model\AuthenticationRequest$AuthenticationRequestBuilder.class
 com\hasandel01\meetmeoutserver\event\repository\JoinEventRequestRepository.class

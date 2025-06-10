@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class EventChatServiceImpl implements EventChatService {
                 .event(event)
                 .sender(sender.get())
                 .message(message.message())
-                .timestamp(LocalDateTime.now())
+                .timestamp(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .build();
 
         eventChatMessageRepository.save(chatMessage);

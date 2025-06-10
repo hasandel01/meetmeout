@@ -1,10 +1,9 @@
 .settingsContainer {
     position: relative;
-    margin: 20px;
+    margin: 2vw;
     padding: 10px;
     display: flex;
     flex-direction: column;
-    background-color: var(--background-color);
     align-items: center;
     justify-content: center;
     color: var(--primary-color-dark);
@@ -22,6 +21,7 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   padding: 40px;
   border-radius: 10px;
+  background-color: var(--background-color);
 }
 
 .darkModeToggle {

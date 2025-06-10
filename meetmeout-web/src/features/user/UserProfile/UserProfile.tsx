@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { User } from "../../../types/User";
 import axiosInstance from "../../../axios/axios";
 import styles from "./UserProfile.module.css";
-import { faCamera, faCalendar, faLocationDot, faPenToSquare, faStar } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faCalendar, faLocationDot, faPenToSquare, faStar, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
@@ -13,6 +13,7 @@ import { FriendRequest } from "../../../types/FriendRequest";
 import { Event } from "../../../types/Event";
 import qs from 'qs';
 import { calculateDistance } from "../../../utils/calculateDistance";
+import { getOrganizerRatingDescription } from "../../../utils/getOrganizerRatingDescription";
 
 function UserProfile() {
 
@@ -351,6 +352,17 @@ function UserProfile() {
           })
         }
 
+    const handleUserLocationClick = () => {
+        navigate("/", {
+            state: {
+            flyTo: {
+                lat: userLatitude,
+                lng: userLongitude,
+            }
+            }
+        })
+    }
+
     return (
         <div className={styles.userProfile}>
                 {showUserUpdateForm && (
@@ -361,6 +373,14 @@ function UserProfile() {
                 )}
             <div className={styles.userProfileDetails}>
                 <div className={styles.userInfo}>
+                    {((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) && (
+                    <p
+                        className={`${styles.userLocationFixed} ${currentUser?.username === user?.username ? styles.clickable : ''}`}
+                        onClick={currentUser?.username === user?.username ? handleUserLocationClick : undefined}
+                    >
+                        <FontAwesomeIcon icon={faLocationDot} /> {userLocation}
+                    </p>
+                    )}
                     <div className={styles.userProfileHeader}>
                     {currentUser?.username !== username &&
                         <div className={companionStatus?.status === "NONE" ? `${styles.companionStatusSendRequest}` :
@@ -376,30 +396,27 @@ function UserProfile() {
                                     <p>Cancel</p>
                                 </div>}
                         </div>}
-                    {currentUser?.username === username &&
+                    {currentUser?.username === username && 
                         <FontAwesomeIcon
                             icon={faPenToSquare}
                             size="2x"
                             className={styles.updateIcon}
                             onClick={updateProfile}
-                        ></FontAwesomeIcon>}
+                            title="Update Profile"
+                        ></FontAwesomeIcon>
+                        }
                 </div>
-                    <div className={styles.profilePictureAndLocation}>
+                    <div className={styles.profile}>
                         <div className={styles.profilePicture}>
                             <img src={user?.profilePictureUrl} alt="User Profile" />
                             {currentUser && currentUser.username === username && (
                                 <span className={styles.cameraOverlay} onClick={updateProfilePicture}> <FontAwesomeIcon icon={faCamera} size="2x" /></span>
                             )}
                         </div>
-                        {userLatitude && userLongitude && (
-                            ((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) ? (
-                                <p><FontAwesomeIcon icon={faLocationDot} /> {userLocation}</p>
-                            ) : (
-                                <p></p>))}
-                    </div>
-                    <div className={styles.user}>
-                        <h4>{user?.firstName} {user?.lastName}</h4>
-                        <h5>@{user?.username}</h5>
+                        <div className={styles.user}>
+                            <h4>{user?.firstName} {user?.lastName}</h4>
+                            <h5>@{user?.username}</h5>
+                        </div>
                     </div>
                     <div className={styles.about}>
                         <div className={styles.infoCard}>
@@ -419,15 +436,16 @@ function UserProfile() {
                                 <p>{user?.email?.trim() ? user.email : "Not provided."}</p>
                             </div>
                         </div>
+                        <div className={styles.organizerRating}>
+                            <h5>As Organizer</h5>
+                            <hr />
+                            <p><FontAwesomeIcon icon={faThumbsUp} /> {averageRating ?? "N/A"}</p>
+                            <small>{getOrganizerRatingDescription(averageRating,
+                                                                currentUser?.username === user?.username,
+                                                                !!(user?.userReviews && user.userReviews.length > 0))}</small>
+                        </div>
                     </div>
-                    <div className={styles.userReviews}>
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <FontAwesomeIcon
-                                icon={faStar}
-                                style={{ color: averageRating >= star ? "gold" : "grey" }} />
-                        ))}
-                        <p>({user?.userReviews.length})</p>
-                    </div>
+
                 </div>
                 <hr />
                 <div className={styles.tabContainer}>

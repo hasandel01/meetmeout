@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import styles from "./UserUpdateForm.module.css"
 import { User } from "../../../types/User";
 import axiosInstance from "../../../axios/axios";
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
+import isEmail from "validator/lib/isEmail";
 
 interface UserUpdateFormProps {
     currentUser: User;
@@ -15,6 +15,7 @@ interface UserUpdateFormProps {
 const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) => {
 
     const [user, setUser] = useState<User>(currentUser);
+    const [formErrors, setFormErrors] = useState<Partial<Record<keyof User, string>>>({});
 
     useEffect(() => {
 
@@ -31,18 +32,51 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
 
     },[onClose])
 
+    const validateUserProfile = (user: User): Partial<Record<keyof User, string>> => {
+        const errors: Partial<Record<keyof User, string>> = {};
 
-    const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        try {
-            const response = await axiosInstance.post(`/me/update`, user)
-            console.log(response.data)
-            onClose();
-        } catch(error ) {
-                toast.error("Error updating user! E-mail is already registered");
+        if (user.firstName.trim().length < 2 || user.firstName.length > 50) {
+            errors.firstName = "First name must be between 2 and 50 characters.";
         }
-    }
+
+        if (user.lastName.trim().length < 2 || user.lastName.length > 50) {
+            errors.lastName = "Last name must be between 2 and 50 characters.";
+        }
+
+        if (!isEmail(user.email) || user.email.length > 100) {
+            errors.email = "Please enter a valid email address.";
+        }
+
+        if (user.phone && (user.phone.length < 10 || user.phone.length > 15)) {
+            errors.phone = "Phone number must be between 10 and 15 digits.";
+        }
+
+        if (user.about && user.about.length > 400) {
+            errors.about = "About section can be up to 400 characters.";
+        }
+
+        return errors;
+    };
+
+
+
+       const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+
+            const errors = validateUserProfile(user);
+            setFormErrors(errors);
+
+            if (Object.keys(errors).length > 0) return;
+
+            try {
+                await axiosInstance.post(`/me/update`, user);
+                onClose();
+            } catch (error) {
+                setFormErrors(prev => ({ ...prev, email: "This e-mail is already in use." }));
+            }
+        };
+
+
 
 
     useEffect(() => {
@@ -85,6 +119,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     value={user.firstName}
                     onChange={(e) => setUser({...user, firstName: e.target.value})}
                 />
+                {formErrors.firstName && <p className={styles.error}>{formErrors.firstName}</p>}
                 <label>Last Name</label> 
                 <hr/>
                 <input 
@@ -92,6 +127,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     value={user.lastName}
                     onChange={(e) => setUser({...user, lastName: e.target.value})}
                 />
+                {formErrors.lastName && <p className={styles.error}>{formErrors.lastName}</p>}
                 <label>About</label>
                 <hr/>
                 <textarea
@@ -100,6 +136,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     value={user.about}
                     onChange={(e) => setUser({...user, about: e.target.value})}
                 />
+                {formErrors.about && <p className={styles.error}>{formErrors.about}</p>}
                 <label>E-mail</label>
                 <hr/>
                 <input 
@@ -107,6 +144,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     value={user.email}
                     onChange={(e) => setUser({...user, email: e.target.value})}
                 />
+                {formErrors.email && <p className={styles.error}>{formErrors.email}</p>}
                 <label>Phone Number</label>
                 <hr/>
                 <PhoneInput
@@ -114,7 +152,10 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     value={user.phone}
                     onChange={phone => setUser({ ...user, phone })}
                 />
-            <button type="submit"> Save </button>
+                {formErrors.phone && <p className={styles.error}>{formErrors.phone}</p>}
+                <div className={styles.buttonContainer}>
+                <button type="submit">Save</button>
+                </div>            
             </form>
         </div>
     </div>

@@ -5,8 +5,8 @@
 
 :root {
 
-  --primary-color: #15b37e;               
-  --primary-color-dark: #025c42;
+  --primary-color: #2C7DA0;               
+  --primary-color-dark: #012A4A;
   --primary-color-light: #128e65;
 
 
@@ -15,7 +15,7 @@
   --grey-hover: #e0e0e0;
   --border-grey: #ccc; 
 
-  --hover-color: #52ac8f;
+  --hover-color: #468FAF;
   --hover-text-color: #fcfffe;
 
   --background-color: #fcfffe;
@@ -59,16 +59,15 @@ body {
 }
 
 body {
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10' stroke='%23025c42' stroke-width='1' fill='none' opacity='0.3'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10' stroke='%23012A4A' stroke-width='1' fill='none' opacity='0.3'/%3E%3C/svg%3E");
 }
 
 
 body.dark {
-    --background-color: #025c42;
+    --background-color: #012A4A;
     --primary-color-dark: #ffffff;
-    background-color: var(--background-color);
-    background-image: url("data:image/svg+xml,%3Csvg width='60' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10' stroke='%23ffffff' stroke-width='1' fill='none' opacity='0.5'/%3E%3C/svg%3E");
-
+      background-color: #01497C;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 Q 10 0, 20 10 T 40 10 T 60 10' stroke='%23ffffff' stroke-width='1' fill='none' opacity='0.5'/%3E%3C/svg%3E");
     --background-grey: #2c2c2c;
     --text-color-grey: #bbbbbb;
     --border-grey: #444;

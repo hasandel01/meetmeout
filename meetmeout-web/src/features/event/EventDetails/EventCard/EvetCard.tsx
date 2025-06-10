@@ -221,7 +221,7 @@ const EventDetailsCard = ({
             <input
               type="number"
               value={newCapacity}
-              min={event.maximumCapacity}
+              min={event.attendees.length}
               onChange={(e) => setNewCapacity(Number(e.target.value))}
               onBlur={handleUpdateCapacity}
               onKeyDown={(e) => {

@@ -12,7 +12,7 @@
   background-color: var(--background-color);
   border-radius: 6px;
   padding: 12px;
-  width: 50%;
+  width: 40%;
   color: var(--primary-color-dark);
 }
   
@@ -50,7 +50,7 @@ input:disabled {
 
 textarea {
   font-family: 'Inter', 'Segoe UI', sans-serif;
-  height: 240px;
+  height: 120px;
   resize: none;
 }
   
@@ -59,21 +59,20 @@ input:focus, textarea:focus {
   border-color: var(--input-focus);
   box-shadow: 0 0 5px var(--input-focus);
 }
-  
-.buttons {
+
+
+.buttonContainer {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
+  width: 100%;
 }
-  
-button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.2s ease;
+
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
 }
+
   
 button[type="submit"] {
   background-color: var(--button-color);

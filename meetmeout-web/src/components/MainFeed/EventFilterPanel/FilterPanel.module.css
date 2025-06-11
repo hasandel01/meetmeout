@@ -6,9 +6,9 @@
   flex-wrap: wrap;
   background-color: var(--background-color);
   gap: 20px;
-  padding: 16px;
-  border-radius: 8px;
+  padding: 12px;
   box-sizing: border-box;
+  border-bottom: 2px solid var(--primary-color-dark);
 }
 
 .selections {
@@ -74,23 +74,23 @@ input[type="checkbox"]:checked + .slider::before {
 .sort {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
 }
 
 .sort select {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 6px;
+  margin-right: 2vw;
   color: var(--primary-color-dark);
   background-color: var(--background-color);
   font-weight: 500;
   cursor: pointer;
+  border: 1px solid var(--primary-color-dark);
 }
 
 .categoryFilterContainer {
   min-width: 200px;
   flex: 1;
   max-width: 300px;
+  z-index: 999;
 }
 
 .toggleWrapper input {

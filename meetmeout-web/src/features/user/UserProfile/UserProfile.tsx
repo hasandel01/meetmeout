@@ -429,7 +429,7 @@ function UserProfile() {
                         <hr />
                         <div className={styles.contactItem}>
                                 <h6>Phone</h6>
-                                <p>{user?.phone?.trim() ? user.phone : "Not provided."}</p>
+                                <p>{user?.phone?.trim() ? `+` + user.phone : "Not provided."}</p>
                             </div>
                             <div className={styles.contactItem}>
                                 <h6>E-mail</h6>

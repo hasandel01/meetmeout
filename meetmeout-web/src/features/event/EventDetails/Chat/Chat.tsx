@@ -8,6 +8,7 @@ import { useWebSocket } from "../../../../context/WebSocketContext";
 import formatTime from "../../../../utils/formatTime";
 import { Event } from "../../../../types/Event";
 import { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ChatProps {
     event: Event
@@ -25,6 +26,7 @@ const Chat: React.FC<ChatProps> = ({event}) => {
 
     const {client} = useWebSocket(); 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+    const navigate = useNavigate();
 
     const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -104,8 +106,9 @@ const Chat: React.FC<ChatProps> = ({event}) => {
                                 }
                             >
                                 <div className={styles.avatar}>
-                                <img src={message.user.profilePictureUrl} alt="avatar" />
-                                <h4>{message.user.username}</h4>
+                                <img src={message.user.profilePictureUrl} alt="avatar" 
+                                            title={message.user.username}
+                                            onClick={() => navigate(`/user-profile/${message.user.username}`)} />
                                 </div>
                                 <div className={styles.messageBubble}>
                                 <p className={styles.messageText}>{message.message}</p>

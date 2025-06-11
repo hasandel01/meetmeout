@@ -444,17 +444,11 @@ hr {
     color: white;
 }
 
-
-.tabContainer p:hover {
-    cursor: pointer;
-}
-
 .activeTab {
   font-weight: bold;
   transform: scale(1.02);
   border-bottom: 3px solid var(--primary-color-dark);
 }
-
 
 .badgeContainer {
     display: flex;

@@ -10,10 +10,26 @@
   animation: eventPulse 4s infinite;
 }
 
-.markerImageWrapper span {
+.markerImageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.markerIcons {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 50px;
+  pointer-events: none;
+}
+
+.markerIcons span {
+  position: absolute;
+  bottom: -5px;
+  right: -5px;
   font-size: 14px;
   color: white;
   background-color: rgba(0, 0, 0, 0.7);
@@ -21,24 +37,15 @@
   border-radius: 4px;
 }
 
-.markerImageWrapper p {
+.markerIcons p {
   position: absolute;
-  top: -5px;
-  align-items: center;
-  justify-content: center;
-  left: 35%;
-  border-radius: 50%;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
-}
-
-.markerImageWrapper span {
-  pointer-events: auto;
-}
-
-
-.markerImageWrapper:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  padding: 2px;
+  border-radius: 50%;
+  font-size: 12px;
 }
 
 .markerImageWrapper img {
@@ -46,9 +53,13 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
-  overflow: hidden;
 }
 
+
+.markerImageWrapper:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
 
 .finishMarker {
   width: 50px;

@@ -43,9 +43,11 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
         const marker = L.marker([event.latitude, event.longitude], {
           icon: L.divIcon({
             html: `
-              <div class="${styles.markerImageWrapper}" title="${event.isPrivate ? "Private Event" : "Public"}">
-                <span>${icon}</span>
+              <div class="${styles.markerImageWrapper}">
                 <img src="${event.imageUrl}" />
+              </div>
+              <div class="${styles.markerIcons}">
+                <span>${icon}</span>
                 ${event.isPrivate ? '<p>🔒</p>' : ''}
               </div>
             `,
@@ -73,7 +75,9 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
           sticky: true,
         });
 
-        if(!event.isPrivate) {
+        
+        if(!event.isPrivate || (event.isPrivate && event.attendees.some(attendee => attendee.username === currentUser?.username)
+        )){
           marker.on("click", () => {
             navigate(`/event/${event.id}`);
           });

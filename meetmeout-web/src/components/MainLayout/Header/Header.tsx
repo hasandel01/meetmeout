@@ -135,10 +135,13 @@ const Header = () => {
                   onBlur={handleSearchBlur}
                 />
                 {isMobile ? (
-                    <div className={styles.barMenuContainer}>
-                      <FontAwesomeIcon icon={faBars} size='2x'
-                      onClick={() => setShowBarMenu(prev => !prev)}>
-                      </FontAwesomeIcon>
+                  <div className={styles.barMenuContainer}>
+                    {notifications.filter(n => !n.read).length > 0 && (
+                        <div className={styles.barNotificationBadge}>
+                          {notifications.filter(n => !n.read).length}
+                        </div>
+                      )}
+                      <FontAwesomeIcon icon={faBars} size='2x' onClick={() => setShowBarMenu(prev => !prev)} />
                       {showBarMenu &&
                       <div className={styles.barMenu}>
                         <ul>

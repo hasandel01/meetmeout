@@ -163,6 +163,7 @@
     margin: 10px;
     min-width: unset;
     width: 85vw;
+    max-width: unset;
     height: 500px;
   }
 

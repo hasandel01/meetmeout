@@ -150,6 +150,7 @@ const EventComments = forwardRef<HTMLTextAreaElement, EventCommentsProps>(({
                                               value={editedCommentText}
                                               onChange={(e) => setEditedCommentText(e.target.value)}
                                             />
+                                            <p className={styles.editedCommentCounter}>{editedCommentText.length}/500</p>
                                         <div className={styles.editButtons}>
                                             <button onClick={() => saveEditedComment(comment.commentId)}>Save</button>
                                             <button onClick={() => setEditingCommentId(null)}>Cancel</button>
@@ -204,7 +205,7 @@ const EventComments = forwardRef<HTMLTextAreaElement, EventCommentsProps>(({
                                                       }}
                                                       className={styles.commentInput}
                                                     />
-
+                                                    <p className={styles.commentCounter}>{commentString.length}/500</p>
                                               </div>
                                   </div>
                           </div>

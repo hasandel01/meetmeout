@@ -334,32 +334,42 @@ const CreateEventForm = () => {
         return `${hours}:${minutes}`;
     }
 
-
-
     const renderStep = () => {
         switch(step) {
             case 1:
                 return (
                     <div className={styles.eventInfoAndDate}>
+                        <div className={styles.stepIntro}>
+                            <h2>Let's Create Your Event!</h2>
+                            <p>Fill out the details below to bring people together. 
+                                Start by giving your event a title, a short description, and let us know when it's happening.</p>
+                        </div>
                         <div className={styles.inputGroup}>
-                            <h4>Event Information</h4>
+                            <h3>Event Information</h3>
                             <hr/>
-                            <textarea 
-                                maxLength={50}
-                                placeholder="Event Title"
-                                value={event.title}
-                                className={styles.inputTitle}
-                                onChange={(e) => setEvent({...event, title: e.target.value} )} 
-                                required/>
-                            {errors.title && <p className={styles.errorText}>{errors.title}</p>}
-                            <textarea
-                                maxLength={500}
-                                placeholder="Event Description (500 characters max)" 
-                                value={event.description}
-                                className={styles.inputDescription}
-                                onChange={(e) => setEvent( {...event, description: e.target.value } )} 
-                                />
-                            {errors.description && <p className={styles.errorText}>{errors.description}</p>}
+                            <div className={styles.titleAndDescription}>
+                                <h4>Event Title</h4>
+                                <hr/>
+                                <textarea 
+                                    maxLength={50}
+                                    placeholder="Start with a intriguing title."
+                                    value={event.title}
+                                    className={styles.inputTitle}
+                                    onChange={(e) => setEvent({...event, title: e.target.value} )} 
+                                    required/>
+                                {errors.title && <p className={styles.errorText}>{errors.title}</p>}
+                                <h4>Event Description</h4>
+                                <hr/>
+                                <textarea
+                                    maxLength={500}
+                                    placeholder="Inform people about the event..." 
+                                    value={event.description}
+                                    className={styles.inputDescription}
+                                    onChange={(e) => setEvent( {...event, description: e.target.value } )} 
+                                    />
+                                <p className={styles.charCounter}>{event.description.length}/500</p>
+                                {errors.description && <p className={styles.errorText}>{errors.description}</p>}
+                            </div>
                         </div>
                         <div className={styles.inputGroup}>
                             <h4>Event Time</h4>
@@ -375,7 +385,7 @@ const CreateEventForm = () => {
                                     required />
                                 <input 
                                     type='time' 
-                                    placeholder="Event Start Time"
+                                    placeholder="HH:MM (24h)"
                                     value={event.startTime}
                                     onChange={(e) => setEvent( {...event, startTime: e.target.value} )}
                                     min={isToday ? getTimeFormatted(): undefined}
@@ -392,7 +402,7 @@ const CreateEventForm = () => {
                                     required />
                                     <input 
                                     type='time' 
-                                    placeholder="Event End Time"
+                                    placeholder="HH:MM (24h)"
                                     value={event.endTime}
                                     onChange={(e) => setEvent( {...event, endTime: e.target.value} )}
                                     min={event.startTime ? event.startTime : getTimeFormatted()}
@@ -403,7 +413,7 @@ const CreateEventForm = () => {
                         {errors.startTime && <p className={styles.errorText}>{errors.startTime}</p>}
                         {errors.endTime && <p className={styles.errorText}>{errors.endTime}</p>}
                     </div>    
-                )
+               )
             case 2:
                 return (
                     <div className={styles.eventLocationSelectorContainer}>
@@ -483,6 +493,35 @@ const CreateEventForm = () => {
                 return (
                     <>
                     <div className={styles.eventDetails}>
+                        <div className={styles.eventCategoryAndTagsContainer}>
+                            <h4>Select Category anda enter tags to let everyone recognize your event!</h4>
+                            <hr />
+                            <div className={styles.eventCategoryAndTags}>
+                                <div className={styles.categoryTags}>
+                                <h4>Category</h4>
+                                <hr />
+                                <select
+                                    value={event.category}
+                                    onChange={(e) => setEvent({ ...event, category: e.target.value })}
+                                    required
+                                >
+                                    <option value="">Select Category</option>
+                                    {Object.keys(categoryMap).map((key) => {
+                                        const { icon, label } = getCategoryIconLabel(key);
+                                        return (
+                                            <option key={key} value={key}>
+                                                {icon} {label}
+                                            </option>
+                                        );
+                                    })}
+                                </select>
+                                {errors.category && <p className={styles.errorText}>{errors.category}</p>}
+                            </div>
+                            <div className={styles.tags}>
+                                <TagInput tags={event.tags} setTags={(newTags) => setEvent({ ...event, tags: newTags })} />
+                            </div>
+                        </div>
+                            </div>
                         <h4>Event Rules</h4>
                         <hr />
                         <div className={styles.eventRules}>
@@ -512,7 +551,7 @@ const CreateEventForm = () => {
                                 </div>
                             </div>
                             <div className={styles.feeContainer}>
-                                <label>
+                                <label title='Fee applies to participants and can include food, venue or materials."'>
                                     <input
                                     type='checkbox'
                                     value="fee-requirement"
@@ -525,14 +564,17 @@ const CreateEventForm = () => {
                                 <div className={`${event.isFeeRequired ? styles.feeInput : styles.disabledGroup}`}>
                                     <h4>Fee</h4>
                                     <hr />
-                                    <input
-                                        type="number"
-                                        min={1}
-                                        placeholder="Fee"
-                                        value={event.fee}
-                                        onChange={(e) => setEvent({ ...event, fee: parseInt(e.target.value, 10) })}
-                                        disabled={!event.isFeeRequired}
-                                    />
+                                    <div className={styles.tlInputWrapper}>
+                                        <input
+                                            type="number"
+                                            min={1}
+                                            placeholder="Fee"
+                                            value={event.fee}
+                                            onChange={(e) => setEvent({ ...event, fee: parseInt(e.target.value, 10) })}
+                                            disabled={!event.isFeeRequired}
+                                        />
+                                    </div>
+
                                     <textarea
                                         rows={3}
                                         maxLength={300}
@@ -541,39 +583,13 @@ const CreateEventForm = () => {
                                         onChange={(e) => setEvent({...event, feeDescription: e.target.value})}
                                         disabled={!event.isFeeRequired}
                                     />
+                                    <p className={styles.feeDescriptionCounter}>{event.feeDescription.length}/300</p>
                                     </div>
                             </div>
                         </div>
-                        <h4>Select Category anda Enter tags to let everyone know!</h4>
-                        <hr />
-                        <div className={styles.eventCategoryAndTags}>
-                            <div className={styles.categoryTags}>
-                                <h4>Category</h4>
-                                <hr />
-                                <select
-                                    value={event.category}
-                                    onChange={(e) => setEvent({ ...event, category: e.target.value })}
-                                    required
-                                >
-                                    <option value="">Select Category</option>
-                                    {Object.keys(categoryMap).map((key) => {
-                                        const { icon, label } = getCategoryIconLabel(key);
-                                        return (
-                                            <option key={key} value={key}>
-                                                {icon} {label}
-                                            </option>
-                                        );
-                                    })}
-                                </select>
-                                {errors.category && <p className={styles.errorText}>{errors.category}</p>}
-                            </div>
-                            <div className={styles.tags}>
-                                <TagInput tags={event.tags} setTags={(newTags) => setEvent({ ...event, tags: newTags })} />
-                            </div>
-                            </div>
                     </div>
                         <div className={styles.eventPrivacy}>
-                            <h4>Preferences</h4>
+                            <h4>Privacy</h4>
                             <hr />
                             <div className={styles.eventCheckBoxes}>
                                 <label>
@@ -589,7 +605,8 @@ const CreateEventForm = () => {
                                     This event is private. Only invited and accepted users can see it.
                                 </p>
                             }
-                        </div></>
+                        </div>
+                </>
                 )
             case 4:
                 return (
@@ -631,14 +648,13 @@ const CreateEventForm = () => {
                             </div>
                             <div className={styles.previewDetails}>
                             <p>
-                                <FontAwesomeIcon icon={faCalendarAlt} /> {event.startDate} 
-                                {!isStartDateAndEndDateSame(event) && <> – {event.endDate} </>}
+                                <FontAwesomeIcon icon={faCalendarAlt} /> {event.startDate} at {event.startTime}
+                                {!isStartDateAndEndDateSame(event) && ` – ${event.endDate} at ${event.endTime}`}
+                                {isStartDateAndEndDateSame(event) && ` – ${event.endTime}`}
                             </p>
                             <p>
-                                <FontAwesomeIcon icon={faMapMarkerAlt} /> {addressName} - {endAddressName}
-                            </p>
-                            <p>
-                                <FontAwesomeIcon icon={faClock} /> {event.startTime} – {event.endTime}
+                                <FontAwesomeIcon icon={faMapMarkerAlt} /> {addressName} 
+                                {endAddressName && <> - {endAddressName} </>}
                             </p>
                             <p>
                                 <FontAwesomeIcon icon={faFolder} /> {getCategoryIconLabel(event.category).label}
@@ -652,16 +668,16 @@ const CreateEventForm = () => {
                                 </p>
                             )}
                             {event.isFeeRequired && (
-                                <>
+                            <div className={styles.feeBlock}>
                                 <p>
-                                    <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {event.fee} ₺
+                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {event.fee} ₺
                                 </p>
                                 {event.feeDescription && (
-                                    <p style={{ fontStyle: "italic",}}>
-                                    <FontAwesomeIcon icon={faInfoCircle} /> {event.feeDescription}
-                                    </p>
+                                <p className={styles.feeInfo}> 
+                                    <FontAwesomeIcon icon={faInfoCircle} /> Fee Description: {event.feeDescription}
+                                </p>
                                 )}
-                                </>
+                            </div>
                             )}
                             </div>
                     </div>
@@ -679,7 +695,6 @@ const CreateEventForm = () => {
                 <span>Back to Event Details</span>
             </button>}
             <div className={styles.containerAlt}>
-                
                 <div className={styles.stepContainer}>
                     {steps.map( (label,index) => (
                         <div className={styles.stepItem} key={index}>
@@ -691,7 +706,6 @@ const CreateEventForm = () => {
                         </div>
                     ))}
                 </div>
-
                 {renderStep()}
                 <div  className={styles.buttons}>
                     {step > 1 && <button onClick={() =>handleBack()}> Back</button>}

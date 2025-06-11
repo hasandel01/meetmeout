@@ -1,4 +1,3 @@
-// MainFeedMap.tsx
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 import { useEffect, useRef } from "react";
@@ -18,11 +17,13 @@ interface MainFeedMapProps {
 const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
   const map = useMap();
   const navigate = useNavigate();
-  const {currentUser} = useUserContext();
+  const { currentUser } = useUserContext();
   const routeLayers = useRef<L.LayerGroup[]>([]);
 
-    useEffect(() => {
-      routeLayers.current.forEach((layer) => {
+  useEffect(() => {
+    let lastFocusedEventId: number | null = null;
+
+    routeLayers.current.forEach((layer) => {
       map.removeLayer(layer);
     });
     routeLayers.current = [];
@@ -34,26 +35,99 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
       map.setView([coords.lat, coords.lng], 13);
     }
 
+    const allMarkerEls: HTMLDivElement[] = [];
+
     const loadEvents = async () => {
       for (const event of events) {
         if (!event.latitude || !event.longitude) continue;
 
         const { icon } = getCategoryIconLabel(event.category);
 
+        const markerHTML = document.createElement("div");
+        markerHTML.className = styles.markerImageWrapper;
+        markerHTML.innerHTML = `
+          <div class="${styles.markerInnerWrapper} ${styles.dimmedMarker}">
+            <img src="${event.imageUrl}" />
+          </div>
+          <div class="${styles.markerIcons}">
+            <span>${icon}</span>
+            ${event.isPrivate ? '<p>🔒</p>' : ''}
+          </div>
+        `;
+
+        allMarkerEls.push(markerHTML);
+
+        const focusMarker = (el: HTMLDivElement) => {
+          allMarkerEls.forEach((mEl) => {
+            mEl.classList.add(styles.dimmedMarker);
+            mEl.classList.remove(styles.focusedMarker);
+          });
+          el.classList.remove(styles.dimmedMarker);
+          el.classList.add(styles.focusedMarker);
+        };
+
+        markerHTML.addEventListener("mouseenter", () => {
+          focusMarker(markerHTML);
+        });
+
+        markerHTML.addEventListener("click", () => {
+          allMarkerEls.forEach(el => {
+            el.classList.add(styles.dimmedMarker);
+            el.classList.remove(styles.focusedMarker);
+            el.dataset.focused = "false";
+          });
+
+          markerHTML.classList.remove(styles.dimmedMarker);
+          markerHTML.classList.add(styles.focusedMarker);
+          markerHTML.setAttribute("data-event-id", event.id.toString());
+
+          const alreadyFocused = markerHTML.dataset.focused === "true";
+          markerHTML.dataset.focused = "true";
+
+          if (alreadyFocused) {
+            const canAccess = !event.isPrivate || (event.isPrivate && event.attendees.some(a => a.username === currentUser?.username));
+            if (canAccess) {
+              navigate(`/event/${event.id}`);
+            }
+          }
+        });
+
+
         const marker = L.marker([event.latitude, event.longitude], {
-          icon: L.divIcon({
-            html: `
-              <div class="${styles.markerImageWrapper}">
-                <img src="${event.imageUrl}" />
-              </div>
-              <div class="${styles.markerIcons}">
-                <span>${icon}</span>
-                ${event.isPrivate ? '<p>🔒</p>' : ''}
-              </div>
-            `,
-            className: "",
-          }),
+          icon: L.divIcon({ html: markerHTML.outerHTML, className: "" }),
         }).addTo(map);
+
+        marker.on("click", () => {
+          
+            setTimeout(() => {
+
+                const icon = marker.getElement() as HTMLElement;
+                if (!icon) return;
+
+                const alreadyFocused = icon?.dataset.focused === "true";
+
+                document.querySelectorAll(".leaflet-marker-icon").forEach(el => {
+                  el.classList.remove(styles.focusedMarker);
+                  el.classList.add(styles.dimmedMarker);
+                  (el as HTMLElement).dataset.focused = "false";
+                });
+
+                focusMarker(icon as HTMLDivElement);
+
+                icon.classList.remove(styles.dimmedMarker);
+                icon.classList.add(styles.focusedMarker);
+                icon.dataset.focused = "true";
+                
+                if (alreadyFocused) {
+                  const canAccess = !event.isPrivate || (event.isPrivate && event.attendees.some(a => a.username === currentUser?.username));
+                  if (canAccess) {
+                    navigate(`/event/${event.id}`);
+                  }
+                }
+            }, 0);
+
+        });
+
 
         const feeText = event.isFeeRequired ? `${event.fee}$` : "Free";
         const date = new Date(event.startDate).toLocaleDateString("en-GB");
@@ -75,22 +149,10 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
           sticky: true,
         });
 
-        
-        if(!event.isPrivate || (event.isPrivate && event.attendees.some(attendee => attendee.username === currentUser?.username)
-        )){
-          marker.on("click", () => {
-            navigate(`/event/${event.id}`);
-          });
-        }
-
         const layerGroup = L.layerGroup().addTo(map);
-
         layerGroup.addLayer(marker);
 
-        if (
-          event.endLatitude !== event.latitude &&
-          event.endLongitude !== event.longitude
-        ) {
+        if (event.endLatitude !== event.latitude && event.endLongitude !== event.longitude) {
           try {
             const orsType = ORS_ROUTE_MAP[event.routeType as keyof typeof ORS_ROUTE_MAP];
             const response = await axios.post(
@@ -113,8 +175,17 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
               style: {
                 color: "blue",
                 weight: 3,
+                opacity: 0.3,
               },
-            }).addTo(map);
+            });
+
+            marker.on("mouseover", () => {
+              routeLayer.setStyle({ opacity: 1 });
+            });
+
+            marker.on("mouseout", () => {
+              routeLayer.setStyle({ opacity: 0.3 });
+            });
 
             if (routeLayers.current.length === 0) {
               map.fitBounds(routeLayer.getBounds());
@@ -122,21 +193,34 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
 
             layerGroup.addLayer(routeLayer);
 
+            const endMarkerDiv = document.createElement("div");
+            endMarkerDiv.setAttribute("data-finish", event.id.toString());
+            endMarkerDiv.className = styles.finishMarker;
+            endMarkerDiv.innerHTML = `<img src="/finish-flag.png" />`;
+
             const endMarker = L.marker([event.endLatitude, event.endLongitude], {
-              icon: L.divIcon({
-                html: `
-                  <div class="${styles.finishMarker}">
-                    <img src="/finish-flag.png" />
-                  </div>
-                `,
-                className: "",
-              }),
+              icon: L.divIcon({ html: endMarkerDiv.outerHTML, className: "" }),
             }).addTo(map);
 
             endMarker.bindTooltip(`Finish | ${event.title}`, {
-              direction: 'top',
+              direction: "top",
               offset: [20, -20],
-              className: styles.markerToolTip
+              className: styles.markerToolTip,
+            });
+
+            endMarkerDiv.addEventListener("mouseenter", () => {
+              endMarkerDiv.classList.add(styles.finishMarkerAnimated);
+            });
+
+            endMarkerDiv.addEventListener("mouseleave", () => {
+              endMarkerDiv.classList.remove(styles.finishMarkerAnimated);
+            });
+
+            endMarkerDiv.addEventListener("click", () => {
+              endMarkerDiv.classList.add(styles.finishMarkerAnimated);
+              setTimeout(() => {
+                endMarkerDiv.classList.remove(styles.finishMarkerAnimated);
+              }, 4000);
             });
 
             layerGroup.addLayer(endMarker);
@@ -146,35 +230,41 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
         }
 
         routeLayers.current.push(layerGroup);
+
+      marker.on("mouseover", () => {
+        const finish = document.querySelector(`[data-finish="${event.id}"]`);
+        if (finish) finish.classList.add(styles.finishMarkerVisible);
+      });
+
+      marker.on("mouseout", () => {
+        const finish = document.querySelector(`[data-finish="${event.id}"]`);
+        if (finish) finish.classList.remove(styles.finishMarkerVisible);
+      });
+
       }
 
       const userMarker = L.marker([coords.lat, coords.lng], {
         icon: L.divIcon({
-          html: `
-            <div class="${styles.userMarker}">
-              <img src="${currentUser?.profilePictureUrl}" />
-            </div>
-          `,
+          html: `<div class="${styles.userMarker}"><img src="${currentUser?.profilePictureUrl}" /></div>`,
           className: "",
         }),
       }).addTo(map);
 
       userMarker.bindTooltip("You", {
-        direction: 'top',
+        direction: "top",
         offset: [20, -20],
-        className: styles.userToolTip
+        className: styles.userToolTip,
       });
 
       userMarker.on("click", () => {
         navigate(`/user-profile/${currentUser?.username}`);
       });
-
     };
 
     loadEvents();
   }, [events, coords.lat, coords.lng, map, navigate]);
 
-    return null;
-  };
+  return null;
+};
 
 export default MainFeedMap;

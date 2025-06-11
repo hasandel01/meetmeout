@@ -3,7 +3,7 @@
     flex-direction: column;
     background-color: var(--card-border);
     width: 55vw;
-    margin: 0px 30px;
+    margin: 0px 2vw;
     border: 1px solid var(--primary-color-dark);
     border-radius: 0px 0px 6px 6px;
     margin-bottom: 60px;
@@ -101,13 +101,15 @@
   color: red;
 }
 
-.editArea input {
+.editArea {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   width: 100%;
-  padding: 8px;
-  font-size: 14px;
-  margin-top: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 4px;
+  gap: 6px;
+  background-color: var(--background-color);
+  border-radius: 8px;
 }
 
 .editButtons {
@@ -146,6 +148,12 @@
   max-height: 100px;
 }
 
+
+.commentCounter {
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+}
 
 
 @media (max-width: 768px) {

@@ -24,7 +24,7 @@
 }
 
 .eventTab label:hover {
-    background-color: var(--primary-color-light);
+    background-color: var(--primary-color);
     color: var(--background-color);
     cursor: pointer;
 }
@@ -65,7 +65,7 @@
 .inviteButton:hover {
     transform: translateY(-2px);
     font-weight: bolder;
-    color: blue;
+    color: rgb(129, 170, 247);
 }
 
 .editButton {

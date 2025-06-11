@@ -1,3 +1,20 @@
+.custom-marker-wrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  animation: pulseDrop 1.5s infinite;
+}
+
+.animated-blue-marker {
+  filter: drop-shadow(0 0 6px #2196F3);
+}
+
+.blue-pin-svg {
+  width: 48px;
+  height: 48px;
+  animation: gentleBounce 2s ease-in-out infinite;
+}
+
 .mapInputContainer {
   position: relative;
   width: 100%;

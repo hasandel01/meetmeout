@@ -189,9 +189,24 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
       iconAnchor: [24, 48],
     });
 
+    const pinIcon = new L.DivIcon({    
+      className: '',
+      html: `
+        <div class="custom-marker-wrapper">
+          <div class="animated-blue-marker">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" class="blue-pin-svg">
+              <path fill="#1565C0" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>
+            </svg>
+          </div>
+        </div>
+      `,
+      iconSize: [36, 36],
+      iconAnchor: [24, 48],
+      popupAnchor: [0, -48]
+    });
 
     return <div>
-        <Marker position={position}>
+            <Marker position={position} icon={pinIcon}>
                 <Popup>
                   {addressName ? (
                     <div>

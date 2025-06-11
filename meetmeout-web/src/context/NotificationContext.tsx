@@ -43,10 +43,6 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     try {
       unsubscribe = subscribe(`/queue/notifications/${currentUser.username}`, (msg) => {
         const newNotification: Notification = JSON.parse(msg.body);
-        toast.info(`🔔 ${newNotification.title}`, {
-          onClick: () => window.location.href = newNotification.url,
-          autoClose: 5000,
-        });
         setNotifications((prev) => [...prev, newNotification])
       });
     } catch (error) {

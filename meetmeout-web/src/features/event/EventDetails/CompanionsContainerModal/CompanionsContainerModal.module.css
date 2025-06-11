@@ -29,7 +29,7 @@
 .attendeeList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .attendeeCard {
@@ -62,4 +62,22 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+
+.attendeeCard.selected {
+  background-color: var(--primary-color); 
+  color: var(--background-color);
+}
+
+.attendeeCard.selected h5,
+.attendeeCard.selected strong {
+  color: white;
+}
+
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
 }

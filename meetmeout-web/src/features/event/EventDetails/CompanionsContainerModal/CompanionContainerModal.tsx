@@ -18,6 +18,7 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
   const { currentUser } = useUserContext();
   const [companions, setCompanions] = useState<User[]>([]);
   const [invitedUsers, setInvitedUsers] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   const getCompanions = async () => {
     try {
@@ -28,8 +29,18 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
     }
   };
 
+  const getInvitedUsers = async () => {
+    try {
+      const response = await axiosInstance.get(`/events/${event.id}/invited`);
+      setInvitedUsers(response.data);
+      console.log(response.data)
+    } catch (error) {
+      console.error("Error fetching companions:", error);
+    }
+  }
+
   const toggleInvitation = (user: User) => {
-    setInvitedUsers((prev) => {
+    setSelectedUsers((prev) => {
       const alreadyInvited = prev.find((u) => u.username === user.username);
       if (alreadyInvited) {
         return prev.filter((u) => u.username !== user.username);
@@ -56,27 +67,29 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
   useEffect(() => {
     if (event.id !== 0) {
       getCompanions();
+      getInvitedUsers();
     }
   }, [event.id]);
 
   const filteredCompanions = companions.filter(
     (companion) =>
       !joinRequests.some((request) => request.user.username === companion.username) &&
-      !event.attendees.some((attendee) => attendee.username === companion.username)
+      !event.attendees.some((attendee) => attendee.username === companion.username) &&
+      !invitedUsers.some(invitedUser => invitedUser.username === companion.username)
   );
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <h3 className={styles.header}>
-          Invite List ({filteredCompanions.length})
+          Your Companions ({filteredCompanions.length})
         </h3>
         <div className={styles.attendeeList}>
           {filteredCompanions.map((companion) => (
             <div
               key={companion.username}
               className={`${styles.attendeeCard} ${
-                invitedUsers.some((u) => u.username === companion.username) ? styles.selected : ""
+                selectedUsers.some((u) => u.username === companion.username) ? styles.selected : ""
               }`}
               onClick={() => toggleInvitation(companion)}
             >
@@ -89,7 +102,7 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
           ))}
         </div>
         <div className={styles.actions}>
-          <button onClick={sendInvitationLink}>Send Invitation</button>
+          <button onClick={sendInvitationLink}>Send Invitation(s)</button>
           <button className={styles.closeButton} onClick={onClose}>Close</button>
         </div>
       </div>

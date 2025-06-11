@@ -29,7 +29,7 @@ const TagInput = ({tags, setTags}: {tags: string[], setTags: (tags: string[]) =>
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={tags.length >= 4 ? "Tag limit is reached." : "Enter tags...(min 2 max 20 character)"}
+          placeholder={tags.length >= 4 ? "Tag limit is reached." : "Enter tags..."}
           style={{ border: "none", outline: "none" }}
         />
         <div className={styles.tagShow}>
@@ -44,6 +44,7 @@ const TagInput = ({tags, setTags}: {tags: string[], setTags: (tags: string[]) =>
             ))}
             </ul>
         </div>
+        <p className={styles.tagCounter}>{input.length}/20</p>
       </div>
     );
 }

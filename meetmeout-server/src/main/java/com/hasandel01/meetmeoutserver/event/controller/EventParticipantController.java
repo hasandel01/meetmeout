@@ -7,6 +7,7 @@ import com.hasandel01.meetmeoutserver.event.dto.InviteDTO;
 import com.hasandel01.meetmeoutserver.event.dto.JoinRequestDTO;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,11 @@ public class EventParticipantController {
     @GetMapping("/request-sent")
     public ResponseEntity<List<EventDTO>> getAllRequestSentEvents() {
         return ResponseEntity.ok(eventService.getAllRequestSentEvents());
+    }
+
+    @GetMapping("/{eventId}/invited")
+    public ResponseEntity<List<UserDTO>> getAllInvitedEvents(@PathVariable long eventId) {
+        return ResponseEntity.ok(eventService.getAllInvitedUsersForTheEvent(eventId));
     }
 
 }

@@ -14,6 +14,7 @@ import com.hasandel01.meetmeoutserver.event.service.ReviewService;
 import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
 import com.hasandel01.meetmeoutserver.exceptions.RestrictedUserException;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.common.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.notification.service.NotificationService;
@@ -341,6 +342,9 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
 
+        if(commentDTO.comment().isEmpty())
+            throw new RuntimeException("Comment is empty");
+
         Comment comment = Comment.builder()
                 .event(event)
                 .sender(user)
@@ -416,23 +420,31 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         User sender = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
+
+        List<Invite> invites = inviteRepository.findByEvent(event).orElse(Collections.emptyList());
+
+        Set<Long> alreadyInvitedUserIds = invites.stream()
+                .map(invite -> invite.getInvited().getId())
+                .collect(Collectors.toSet());
+
         for(User user: userRepository.findAllById(userIds)) {
 
             String token = UUID.randomUUID().toString();
 
-            Invite invite = Invite.builder()
-                    .invited(user)
-                    .inviter(sender)
-                    .inviteToken(token)
-                    .event(event)
-                    .isAccepted(false)
-                    .build();
+            if (!alreadyInvitedUserIds.contains(user.getId())) {
+                Invite invite = Invite.builder()
+                        .invited(user)
+                        .inviter(sender)
+                        .inviteToken(token)
+                        .event(event)
+                        .isAccepted(false)
+                        .build();
 
-            inviteRepository.save(invite);
+                inviteRepository.save(invite);
 
-            notificationService.sendUserInvitationNotification(invite);
+                notificationService.sendUserInvitationNotification(invite);
+            }
         }
-
         return null;
     }
 
@@ -658,6 +670,23 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         notificationService.sendEventUpdatedNotificationToAttendees(event);
 
         return true;
+    }
+
+    @Transactional
+    public List<UserDTO> getAllInvitedUsersForTheEvent(long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        List<Invite> invites = inviteRepository.findByEvent(event).orElse(new ArrayList<>());
+
+        if(!invites.isEmpty()) {
+            return invites.stream().map(Invite::getInvited).map(UserMapper::toUserDTO)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
+
     }
 }
 

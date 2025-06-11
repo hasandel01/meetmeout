@@ -20,6 +20,7 @@
 .tabHeader button {
   background: none;
   border: none;
+  border-radius: 0px;
   padding: 10px 20px;
   font-weight: bold;
   cursor: pointer;
@@ -123,6 +124,7 @@
     height: 60px;
     object-fit: cover;
     border-radius: 50%;
+    border: 1px solid var(--primary-color-dark)
 }
 
 

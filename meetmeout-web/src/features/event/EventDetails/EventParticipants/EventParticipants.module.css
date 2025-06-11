@@ -6,6 +6,7 @@
     align-items: center;
     padding: 10px;
     border-right: 1px solid var(--primary-color-dark);
+    min-height: 73vh;
 }
 
 .attendees label {
@@ -87,6 +88,7 @@
     gap: 10px;
     background-color: var(--background-color);
     border-top: 1px solid var(--primary-color-dark);
+    min-height: unset;
   }
 
   .attendees h4 {

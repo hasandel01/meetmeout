@@ -61,4 +61,6 @@ public interface EventService {
     Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest);
 
     Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest);
+
+    List<UserDTO> getAllInvitedUsersForTheEvent(long eventId);
 }

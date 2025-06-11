@@ -281,7 +281,7 @@ const EventDetailsCard = ({
                     <div className={styles.feeInfo}>
                       <div className={styles.feeAmount} data-tooltip-id="fee-amount" data-tooltip-content={event.feeDescription}>
                         <FontAwesomeIcon icon={faMoneyBill} />
-                        <span>: {event.fee}$</span>
+                        <span>: {event.fee}₺</span>
                       </div>
                       <Tooltip id="fee-amount"></Tooltip>
                     </div>

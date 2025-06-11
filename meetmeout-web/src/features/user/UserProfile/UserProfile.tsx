@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { User } from "../../../types/User";
 import axiosInstance from "../../../axios/axios";
 import styles from "./UserProfile.module.css";
-import { faCamera, faCalendar, faLocationDot, faPenToSquare, faStar, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faCalendar, faLocationDot, faPenToSquare, faThumbsUp } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";

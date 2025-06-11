@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import {categoryMap, getCategoryIconLabel} from "../../../mapper/CategoryMap"
 import TagInput from './TagInput';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { faCalendarAlt, faClock, faMapMarkerAlt, faUsers, faLock, faTag, faFolder, faMoneyBill, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faMapMarkerAlt, faUsers, faLock, faTag, faFolder, faMoneyBill, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
 import { RouteType } from '../../../types/RouteType';
 import { useBadgeContext } from '../../../context/BadgeContext';

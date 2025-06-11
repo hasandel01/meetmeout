@@ -21,8 +21,7 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
   const routeLayers = useRef<L.LayerGroup[]>([]);
 
   useEffect(() => {
-    let lastFocusedEventId: number | null = null;
-
+    
     routeLayers.current.forEach((layer) => {
       map.removeLayer(layer);
     });

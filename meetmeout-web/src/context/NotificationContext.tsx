@@ -2,7 +2,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "../axios/axios";
 import { Notification } from "../types/Notification";
 import { useWebSocket } from "./WebSocketContext"; // WebSocket contextini ekle
-import { toast } from "react-toastify";
 import { useUserContext } from "./UserContext";
 
 interface NotificationContextType {

@@ -19,4 +19,5 @@ export interface User {
     darkMode: boolean;
     reviews: Review[];
     userReviews: UserReview[];
+    createdAt: string
 }

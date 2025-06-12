@@ -3,6 +3,7 @@ package com.hasandel01.meetmeoutserver.user.dto;
 import com.hasandel01.meetmeoutserver.user.model.UserReview;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Builder
@@ -21,5 +22,6 @@ public record UserDTO(
         Set<BadgeDTO> badges,
         boolean showLocation,
         boolean darkMode,
-        Set<UserReviewDTO> userReviews) {
+        Set<UserReviewDTO> userReviews,
+        LocalDateTime createdAt) {
 }

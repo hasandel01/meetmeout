@@ -21,3 +21,13 @@ export default function formatTime(dateStr: string): string {
     minute: "2-digit"
   });
 }
+
+export function formatMonthYear(dateString: string): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+  });
+}
+

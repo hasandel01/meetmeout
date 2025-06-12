@@ -141,6 +141,12 @@
     width: 94%;
     transition: border-color 0.3s;
     max-height: 100px;
+    color: var(--primary-color-dark);
+    background-color: var(--background-color);
+}
+
+.sendChatMessage textarea::placeholder {
+    color: var(--primary-color-dark);
 }
 
 .sendChatMessage  textarea:disabled {

@@ -23,7 +23,7 @@ public class EventController {
 
 
     @PostMapping
-    public ResponseEntity<Long> createEvent(@Valid @ModelAttribute EventDTO eventDTO) {
+    public ResponseEntity<EventDTO> createEvent(@Valid @ModelAttribute EventDTO eventDTO) {
         return new ResponseEntity<>(eventService.createEvent(eventDTO), HttpStatus.CREATED);
     }
 

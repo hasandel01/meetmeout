@@ -25,7 +25,7 @@ import { DarkModeContextProvider } from './context/DarkModeContex'
 import { LocationProvider } from './context/LocationContex'
 import { useEffect } from 'react'
 import { BadgeContextProvider } from './context/BadgeContext'
-
+import ScrollToTop from './components/ScrollToTop'
 function App() {
 
   useEffect(() => {
@@ -57,6 +57,7 @@ function App() {
                 theme="colored"
             />
     <Router>
+          <ScrollToTop />
         <Routes>
             <Route path="/login" element={<Login/>}/>
             <Route path="/register" element={<Register/>}/>

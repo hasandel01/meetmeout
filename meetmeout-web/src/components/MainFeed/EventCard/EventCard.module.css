@@ -19,11 +19,11 @@
 
 .eventCard.full {
     opacity: 0.75;
-    background-color: #fcf6e4;}
+    background-color: var(--full-event-color);}
 
 .eventCard.ended {
     filter: grayscale(100%);
-    background-color: #f3f4f6;
+    background-color: var(--ended-event-color);
 }
 
 .eventCard img {
@@ -189,7 +189,7 @@ p {
 }
 
 .joinedEnded{
-  background-color: #f3f4f6;
+  background-color: var(--joined-ended-event-color);
   border: 1px solid #d1d5db;
   box-shadow: none;
   opacity: 1;

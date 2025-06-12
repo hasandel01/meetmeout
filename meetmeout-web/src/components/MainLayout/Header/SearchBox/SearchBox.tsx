@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 interface SearchBoxProps {
+  query: string;
+  setQuery: (query: string) => void;
   onSearch: (query: string) => void;
   users: User[];
   events: Event[];
@@ -16,7 +18,8 @@ interface SearchBoxProps {
 }
 
 
-const SearchBox = ({ onSearch, users, events, show, onFocus, onBlur}: SearchBoxProps) => {
+
+const SearchBox = ({ query, setQuery, onSearch, users, events, show, onFocus, onBlur}: SearchBoxProps) => {
 
   const navigate = useNavigate();
 
@@ -26,9 +29,14 @@ const SearchBox = ({ onSearch, users, events, show, onFocus, onBlur}: SearchBoxP
                     <input 
                         type="text" 
                         placeholder="Event, user, tags, category..."
-                        onChange={(e) => onSearch(e.target.value)}
+                        value={query}
+                        onChange={(e) => {
+                          setQuery(e.target.value);
+                          onSearch(e.target.value);
+                        }}
                         onBlur={onBlur}
-                        onFocus={onFocus} />
+                        onFocus={onFocus}
+                      />
                       {show && (
                       <div className={styles.searchResults}>
                         {users.length === 0 && events.length === 0 && (

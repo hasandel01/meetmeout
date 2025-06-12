@@ -53,5 +53,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getAverageRating(username));
     }
 
+    @DeleteMapping("/me")
+    public ResponseEntity<Boolean> deleteMe() {
+        return ResponseEntity.ok(userService.deleteMyself());
+    }
+
 
 }

@@ -51,14 +51,14 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
   };
 
   const sendInvitationLink = async () => {
-    if (invitedUsers.length === 0) {
-      toast.warn("Please select at least one companion.");
+    if (selectedUsers.length === 0) {
       return;
     }
 
     try {
-      await axiosInstance.post(`/events/${event.id}/invite`, invitedUsers);
+      await axiosInstance.post(`/events/${event.id}/invite`, selectedUsers);
       toast.success(invitedUsers.length === 1 ? "Invitation is sent" : "Invitations are sent");
+      onClose();
     } catch (error) {
       toast.error("Error while sending invitation.");
     }
@@ -74,8 +74,7 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
   const filteredCompanions = companions.filter(
     (companion) =>
       !joinRequests.some((request) => request.user.username === companion.username) &&
-      !event.attendees.some((attendee) => attendee.username === companion.username) &&
-      !invitedUsers.some(invitedUser => invitedUser.username === companion.username)
+      !event.attendees.some((attendee) => attendee.username === companion.username)
   );
 
   return (
@@ -89,15 +88,18 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
             <div
               key={companion.username}
               className={`${styles.attendeeCard} ${
-                selectedUsers.some((u) => u.username === companion.username) ? styles.selected : ""
+                selectedUsers.some((u) => u.username === companion.username) ? styles.selected : (
+                    invitedUsers.some(invitedUser => invitedUser.username === companion.username) ?
+                    styles.alreadyInvited : ""
+                )
               }`}
-              onClick={() => toggleInvitation(companion)}
-            >
+              onClick={() => {!invitedUsers.some(invitedUser => invitedUser.username === companion.username) ? toggleInvitation(companion) : undefined}}>
               <img src={companion.profilePictureUrl} alt="Profile" />
               <div>
                 <h5>{companion.firstName} {companion.lastName}</h5>
                 <strong>@{companion.username}</strong>
               </div>
+              <p>{invitedUsers.some(invitedUser => invitedUser.username === companion.username) ? "Invite Sent ✉" : ""}</p>
             </div>
           ))}
         </div>

@@ -19,10 +19,10 @@ public class Invite {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private User invited;
 
-    @OneToOne
+    @ManyToOne
     private User inviter;
 
     @ManyToOne(cascade = CascadeType.PERSIST)

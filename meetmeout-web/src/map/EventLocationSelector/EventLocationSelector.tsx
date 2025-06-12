@@ -261,7 +261,6 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
 }, [activeInput]);
 
 
-
   return (
     <div>
           <div className={styles.mapInputContainer}>
@@ -316,7 +315,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
               </div>
             </div>
             }
-      <div style={{ height: '450px', width: '600px' }}>
+      <div style={{ height: '500px', width: '700px' }}>
         <MapContainer
           center={position}
           zoom={13}

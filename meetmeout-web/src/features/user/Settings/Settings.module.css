@@ -79,3 +79,11 @@ input[type="checkbox"]:checked + .slider {
 input[type="checkbox"]:checked + .slider::before {
   transform: translateX(20px);
 }
+
+.deleteAccount {
+  background-color: var(--error-color);
+}
+
+.deleteAccount:hover {
+  background-color: rgb(201, 3, 3);
+}

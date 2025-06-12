@@ -51,7 +51,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     private final BadgeService badgeService;
 
     @Transactional
-    public Long createEvent(EventDTO event) {
+    public EventDTO createEvent(EventDTO event) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -106,7 +106,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         if(user.getOrganizedEvents().size() == 1)
             badgeService.addBadgeToUser(user, BadgeType.FIRST_ORGANIZER);
 
-        return newEvent.getId();
+        return EventMapper.toEventDto(newEvent);
     }
 
     @Transactional
@@ -687,6 +687,11 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
             return new ArrayList<>();
         }
 
+    }
+
+    @Transactional
+    public List<String> getRecommendedTags() {
+        return new ArrayList<>();
     }
 }
 

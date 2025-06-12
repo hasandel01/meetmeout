@@ -9,9 +9,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -143,4 +145,13 @@ public class User implements UserDetails {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<UserReview> receivedUserReviews = new HashSet<>();
+
+    @CreatedDate
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    @Column
+    private LocalDateTime deletedAt;
 }

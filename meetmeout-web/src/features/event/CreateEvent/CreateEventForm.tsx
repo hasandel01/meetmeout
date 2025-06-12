@@ -214,6 +214,8 @@ const CreateEventForm = () => {
                         }
                     })
 
+                    const newEvent = response.data;
+
                     if(!isDraft) {
                         toast.success("Event created successfully!");
                         showConfetti();
@@ -223,25 +225,25 @@ const CreateEventForm = () => {
 
                     setEvent((prev) => prev.id = response.data)
                     await getMe();
-                    setTimeout(() => navigate(`/event/${event.id}`), 100);
+                    await navigate(`/event/${newEvent.id}`);
 
                 } else {
                     const response = await axiosInstance.post("/events", formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
+                        headers: { 'Content-Type': 'multipart/form-data' }
                     });
 
-                    if(!isDraft) {
+                    const newEvent = response.data;
+
+                    if (!isDraft) {
                         toast.success("Event created successfully!");
                         showConfetti();
                     } else {
                         toast.info("Your draft is saved successfully!");
                     }
 
-                    setEvent((prev) => prev.id = response.data)
+                    setEvent(prev => ({ ...prev, ...newEvent }));
                     await getMe();
-                    setTimeout(() => navigate(`/event/${event.id}`), 100);
+                    navigate(`/event/${newEvent.id}`);
 
                 }
     
@@ -670,7 +672,7 @@ const CreateEventForm = () => {
                             {event.isFeeRequired && (
                             <div className={styles.feeBlock}>
                                 <p>
-                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {event.fee} ₺
+                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {(event.isFeeRequired || event.fee === 0) ? "Free" : event.fee + "₺" }
                                 </p>
                                 {event.feeDescription && (
                                 <p className={styles.feeInfo}> 

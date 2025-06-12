@@ -1,9 +1,12 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import styles from "./CreateEvent.module.css"
+import axiosInstance from '../../../axios/axios';
 
 
 const TagInput = ({tags, setTags}: {tags: string[], setTags: (tags: string[]) => void }) => {
+    
     const [input,setInput] = useState('');
+    const [recommendedTags, setRecommendedTags] = useState<String[]>();
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === "Enter" || e.key === " ") {
@@ -17,6 +20,22 @@ const TagInput = ({tags, setTags}: {tags: string[], setTags: (tags: string[]) =>
 
     const removeTag = (index: number) => {
         setTags(tags.filter((_,i) => i !== index))
+    }
+
+
+    useEffect(() => {
+      getTagRecommendations();
+    },[])
+
+    const getTagRecommendations = async () => {
+
+      try {
+        const response = await axiosInstance.get(`/tags/recommended`)
+          setRecommendedTags(response.data)
+      }
+      catch(error) {
+        console.log(error);
+      }
     }
 
     return (
@@ -43,6 +62,13 @@ const TagInput = ({tags, setTags}: {tags: string[], setTags: (tags: string[]) =>
               </li>
             ))}
             </ul>
+        </div>
+        <div className={styles.recommendedTagsContainer}>
+            {recommendedTags?.map(tag => (
+                <div>
+                    <p>{tag}</p>
+                </div>
+            ))}
         </div>
         <p className={styles.tagCounter}>{input.length}/20</p>
       </div>

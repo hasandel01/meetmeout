@@ -110,7 +110,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     minLength={8}
                                     maxLength={100}
                                     />
-                                {error && <p className={styles.compactError}>{error}</p>}
+                                {error && <p className={styles.errorMessage}>{error}</p>}
                         <p> By signing up, you agree to our Terms of Service and Privacy Policy. </p>
                         <button type="submit" className="register-button" > Sign Up </button>
                     </form> 

@@ -14,6 +14,7 @@ import { Event } from "../../../types/Event";
 import qs from 'qs';
 import { calculateDistance } from "../../../utils/calculateDistance";
 import { getOrganizerRatingDescription } from "../../../utils/getOrganizerRatingDescription";
+import { formatMonthYear } from "../../../utils/formatTime";
 
 function UserProfile() {
 
@@ -373,14 +374,6 @@ function UserProfile() {
                 )}
             <div className={styles.userProfileDetails}>
                 <div className={styles.userInfo}>
-                    {((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) && (
-                    <p
-                        className={`${styles.userLocationFixed} ${currentUser?.username === user?.username ? styles.clickable : ''}`}
-                        onClick={currentUser?.username === user?.username ? handleUserLocationClick : undefined}
-                    >
-                        <FontAwesomeIcon icon={faLocationDot} /> {userLocation}
-                    </p>
-                    )}
                     <div className={styles.userProfileHeader}>
                     {currentUser?.username !== username &&
                         <div className={companionStatus?.status === "NONE" ? `${styles.companionStatusSendRequest}` :
@@ -445,7 +438,16 @@ function UserProfile() {
                                                                 !!(user?.userReviews && user.userReviews.length > 0))}</small>
                         </div>
                     </div>
-
+                </div>
+                <div className={styles.activeAndLocation}>
+                    <h5 className={styles.activeLabel}>Active Since: {formatMonthYear(user?.createdAt ?? "")} 🚀</h5>
+                    {((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) && (
+                    <p
+                        className={`${styles.userLocationFixed} ${currentUser?.username === user?.username ? styles.clickable : ''}`}
+                        onClick={currentUser?.username === user?.username ? handleUserLocationClick : undefined}>
+                        <FontAwesomeIcon icon={faLocationDot} /> {userLocation}
+                </p>
+                )}
                 </div>
                 <hr />
                 <div className={styles.tabContainer}>

@@ -21,4 +21,6 @@ public interface UserService {
     Boolean updateDarkModePreference(Boolean darkMode);
 
     Double getAverageRating(String username);
+
+    Boolean deleteMyself();
 }

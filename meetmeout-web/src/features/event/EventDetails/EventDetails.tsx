@@ -98,14 +98,6 @@ const EventDetails = () => {
       }
     }
 
-
-    useEffect(() => {
-      if (eventIdNumber > 0) {
-        verifyTokenToAccessDetails();
-        getEvent();
-      }
-    }, [eventIdNumber]);
-
     useEffect(() => {
       if(event.latitude && event.longitude) {
         getWeather();
@@ -115,16 +107,61 @@ const EventDetails = () => {
     useEffect(() => {
       getEvent();
     },[event.isDraft])
-  
+
+    useEffect(() => {
+      if (eventIdNumber > 0 && currentUser) {
+        getEvent(); 
+      }
+    }, [eventIdNumber, currentUser]);
+
+
+    useEffect(() => {
+      if (!event.organizer || !currentUser) return;
+
+      if (event.organizer.username === currentUser.username) {
+        setIsUserAllowed(true);
+      } else {
+        verifyTokenToAccessDetails();
+      }
+    }, [event.organizer, currentUser]);
+
+
     const getEvent = async () => {
+      try {
+        const response = await axiosInstance.get(`/events/${eventIdNumber}`);
+        const fetchedEvent = response.data;
+        setEvent(fetchedEvent);
+
+        if (fetchedEvent.organizer?.username === currentUser?.username) {
+          console.log(fetchedEvent.organizer.username)
+          setIsUserAllowed(true);
+        } else {
+          verifyTokenToAccessDetails();
+        }
+
+      } catch (error) {
+        toast.error("Error fetching event data.");
+        navigate("/"); 
+      }
+    };
+
+    const verifyTokenToAccessDetails = async () => {
+    
+    if (!token) return;
 
     try {
-        const response = await axiosInstance.get(`/events/${eventIdNumber}`);
-        setEvent(response.data);
+      await axiosInstance.post(`/events/${eventIdNumber}/verify-access`, {
+        token: token
+        });
+
+        setIsUserAllowed(true);
     } catch(error) {
-      toast.error("Error fetching event data.");
+      toast.error("Error verifying token")
+      navigate("/")
     }
   }
+
+
 
   const getWeather = async () => {
 
@@ -144,19 +181,7 @@ const EventDetails = () => {
 
   }
 
-  const verifyTokenToAccessDetails = async () => {
 
-    try {
-      await axiosInstance.post(`/events/${eventIdNumber}/verify-access`, {
-        token: token
-        });
-
-        setIsUserAllowed(true);
-    } catch(error) {
-      toast.error("Error verifying token")
-      navigate("/")
-    }
-  }
   
 
     const handleLike = async () => {

@@ -35,14 +35,14 @@
 .containerAlt {
     position: relative;
     background-color: var(--background-color);
-    min-width: 700px;
+    min-width: 55vw;
     min-height: 900px;
     padding: 20px;
     border-radius: 3%;
     border: 2px solid var(--primary-color-dark)
 }
 
-.containerAlt h4 {
+.containerAlt h3, h4 {
     color: var(--primary-color-dark);
     margin: 0px;
     font-size: 18px;
@@ -124,7 +124,6 @@
   color: #334155;
   margin: 0;
 }
-
 
 .eventInfoAndDate {
     display: flex;
@@ -226,6 +225,11 @@
 }
 
 
+input[type="date"], input[type="time"] {
+    color: var(--primary-color);
+
+}
+
 /** STEP 2 */
 
 .eventLocationSelectorContainer {
@@ -286,6 +290,8 @@
     font-size: 14px;
     transition: border-color 0.3s ease;
     align-items: left;
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
 }
 
 .eventDetails select, option {
@@ -370,7 +376,7 @@
   top: 50%;
   left: 10px;
   transform: translateY(-50%);
-  color: var(--text-color);
+  color: var(--primary-color-dark);
   font-weight: bold;
   font-size: 16px;
 }
@@ -381,6 +387,8 @@
     overflow-y: hidden;
     font-family: 'Inter', 'Segoe UI', sans-serif;
     border: 1px solid var(--primary-color-dark);
+    background-color: var(--background-color);
+    color: var(--primary-color-dark);
 }
 
 .feeDescriptionCounter {
@@ -516,7 +524,8 @@ input[type="checkbox"] {
 
 .tagInputContainer li label {
     cursor: pointer;
-    background-color: gainsboro;
+    background-color: var(--primary-color);
+    color: var(--background-color);
     border: 1px solid grey;
     border-radius: 6px; 
     padding: 2px 4px;
@@ -737,7 +746,6 @@ p {
     align-items: center;
     border-radius: 18px;
     margin: 20px 60px;
-    width: 70vw;
     gap: 10px;
     padding: 20px;
     border: 2px solid var(--error-color);

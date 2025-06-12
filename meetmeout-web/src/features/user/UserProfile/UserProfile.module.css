@@ -28,12 +28,12 @@
     justify-content: space-between;
 }
 
-.userLocationFixed {
-  position: absolute;
-  bottom: 10px;
-  right: 15px;
-  font-weight: bold;
-  color: var(--primary-color-dark);
+
+.activeAndLocation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
 }
 
 
@@ -222,6 +222,13 @@ hr {
   border: none;
   border-top: 1px solid var(--primary-color-dark);
 }
+
+.infoCard p {
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
 
 .contacts {
   display: flex;
@@ -536,14 +543,15 @@ hr {
   }
 
   .userProfileHeader {
-    top: 0px;
+    top: -2vh;
   }
 
   .userInfo {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    padding: 10px;
+    padding: 0px;
+    margin-top: 5vh;
   }
 
   .about {

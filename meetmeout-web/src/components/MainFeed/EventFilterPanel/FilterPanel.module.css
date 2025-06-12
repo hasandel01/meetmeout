@@ -98,6 +98,8 @@ input[type="checkbox"]:checked + .slider::before {
 }
 
 @media (max-width: 768px) {
+  
+  
   .mainFeedContainerFilter {
     flex-direction: column;
     gap: 20px;
@@ -122,5 +124,48 @@ input[type="checkbox"]:checked + .slider::before {
   .categoryFilterContainer {
     width: 100%;
     z-index: 999;
+  }
+}
+
+.drawerToggleButton {
+  display: none;
+  position: relative;
+  padding: 10px 14px;
+  margin: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: 2px solid var(--primary-color-dark);
+  font-weight: bold;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;
+  height: 100vh;
+  background-color: var(--background-color);
+  padding: 20px;
+  box-shadow: -2px 0 6px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  cursor: pointer;
+  color: var(--primary-color-dark);
+}
+
+@media (max-width: 768px) {
+  .drawerToggleButton {
+    display: block;
+  }
+
+  .mainFeedContainerFilter {
+    display: none;
   }
 }

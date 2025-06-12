@@ -3,12 +3,10 @@ package com.hasandel01.meetmeoutserver.user.mapper;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.event.model.Event;
 import com.hasandel01.meetmeoutserver.user.model.User;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class UserMapper {
 
     public static UserDTO toUserDTO(User user) {
@@ -35,6 +33,7 @@ public class UserMapper {
                         : null
                 )
                 .userReviews(user.getUserReviews().stream().map(UserReviewMapper::userReviewDTO).collect(Collectors.toSet()))
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -138,5 +139,19 @@ public class UserServiceImpl implements UserService {
         List<UserReview> userReviewList = userReviewRepository.findByUser(user);
 
         return userReviewList.stream().mapToDouble(UserReview::getRating).average().orElse(0);
+    }
+
+    @Transactional
+    public Boolean deleteMyself() {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        user.setDeleted(true);
+        user.setDeletedAt(LocalDateTime.now());
+        userRepository.save(user);
+        return true;
     }
 }

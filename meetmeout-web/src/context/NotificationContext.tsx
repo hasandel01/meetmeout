@@ -51,7 +51,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
   return () => {
     clearTimeout(timeout);
-    unsubscribe?.(); // BU ARTIK ÇALIŞIR
+    unsubscribe?.(); 
   };
 }, [isConnected, currentUser?.username]);
 

@@ -1,7 +1,6 @@
 .commentContainer {
     position: relative;
     flex-direction: column;
-    background-color: var(--card-border);
     width: 55vw;
     margin: 0px 2vw;
     border: 1px solid var(--primary-color-dark);
@@ -22,16 +21,21 @@
  }
 
  .commentContainer li {
-    background-color: var(--card-color);
+    background-color: var(--background-color);
  }
 
  .commentItem {
-  border: 2px solid #ddd;
+  border: 2px solid var(--primary-color);
   padding: 20px;
   border-radius: 10px;
   margin-bottom: 12px;
   background-color: var(--background-color);
   position: relative;
+  color: var(--primary-color-dark);
+}
+
+.commentItem span, strong {
+  color: var(--primary-color-dark);
 }
 
 .commentHeader {
@@ -72,7 +76,6 @@
 .commentText {
   font-size: 15px;
   font-weight: 600;
-  color: #333;
   text-align: left;
 }
 
@@ -85,7 +88,6 @@
 }
 
 .actionIcon {
-  color: #444;
   cursor: pointer;
 }
 
@@ -135,6 +137,7 @@
     border: 1px solid var(--primary-color-dark);
 }
 
+
 .commentInput {
   width: 100%;
   border: 1px solid var(--primary-color-dark);
@@ -146,6 +149,12 @@
   min-height: 40px;
   line-height: 1.4;
   max-height: 100px;
+  background-color: var(--background-color);
+  color: var(--primary-color-dark);
+}
+
+.commentInput::placeholder {
+  color: var(--primary-color-dark);
 }
 
 

@@ -13,7 +13,7 @@ import java.util.*;
 public interface EventService {
 
     @Transactional
-    Long createEvent(EventDTO event);
+    EventDTO createEvent(EventDTO event);
 
     Set<EventDTO> getEvents(EventStatus status);
 
@@ -63,4 +63,6 @@ public interface EventService {
     Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest);
 
     List<UserDTO> getAllInvitedUsersForTheEvent(long eventId);
+
+    List<String> getRecommendedTags();
 }

@@ -4,7 +4,9 @@ import com.hasandel01.meetmeoutws.event.Event;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,6 +60,12 @@ public class User   {
     @Column(nullable = false)
     private Boolean darkMode = false;
 
+    @CreatedDate
+    private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
 
+    @Column
+    private LocalDateTime deletedAt;
 }

@@ -253,7 +253,8 @@
   width: 100%;
   max-width: 90px;
   min-width: 80px;
-  background-color: white;
+  background-color: var(--background-color);
+  border: 1px solid var(--primary-color);
   border-radius: 8px;
   padding: 4px;
   text-align: center;

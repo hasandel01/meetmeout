@@ -2,11 +2,13 @@ import styles from "./Settings.module.css"
 import { useUserContext } from "../../../context/UserContext";
 import axiosInstance from "../../../axios/axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
     
     const { currentUser, getMe } = useUserContext();
     const [showLocation, setShowLocation] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (currentUser?.showLocation !== undefined) {
@@ -28,7 +30,6 @@ const Settings = () => {
     
         };
     
-
     const updateLocationPref = async (value: boolean) => {
         try {
             await axiosInstance.put("/me/location-preference", { showLocation: value });
@@ -46,6 +47,22 @@ const Settings = () => {
     const handleDarkModeChange = (value: boolean) => {
         updateDarkMode(value);
     };
+
+
+    const handleDeleteAccount = async () => {
+
+        try {
+            const response = await axiosInstance.delete(`/me`);
+
+            if(response.data) {
+                localStorage.removeItem("accessToken");
+                navigate("/login");
+            }
+
+        }catch(error) {
+            console.log(error)
+        }
+    } 
 
     return (
         <div className={styles.settingsContainer}>
@@ -76,6 +93,13 @@ const Settings = () => {
                         <span className={styles.slider}></span>
                         <span>Show Location</span>
                     </label>
+                </div>
+                <h4>Account</h4>
+                <hr/>
+                <div>
+                  <button className={styles.deleteAccount} onClick={() => handleDeleteAccount()}>
+                        Delete Account
+                  </button>
                 </div>
             </div>
         </div>

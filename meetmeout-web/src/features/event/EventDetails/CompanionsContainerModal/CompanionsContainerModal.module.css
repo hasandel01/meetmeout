@@ -35,15 +35,22 @@
 .attendeeCard {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
   background-color: #f8f8f8;
   padding: 8px;
   border-radius: 8px;
 }
 
+.attendeeCard p {
+  color: var(--primary-color);
+}
+
 .attendeeCard:hover {
   cursor: pointer;
 }
+
+
 
 
 .attendeeCard img {
@@ -75,6 +82,9 @@
   color: white;
 }
 
+.attendeeCard.alreadyInvited {
+  cursor: default;
+}
 
 .actions {
   display: flex;

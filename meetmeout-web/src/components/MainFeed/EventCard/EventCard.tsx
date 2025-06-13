@@ -11,6 +11,7 @@ import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 import EventRatingStars from "../EventRatingStars/EventRatingStars";
 import { calculateDistance } from "../../../utils/calculateDistance";
 import { useState, useEffect } from "react";
+import axiosInstance from "../../../axios/axios";
 
 interface EventCardProps {
     event: Event;
@@ -55,6 +56,20 @@ lng
         const alreadySent = requestSentEvents.some(req => req.id === event.id);
         setRequestSent(alreadySent);
     }, [requestSentEvents, event.id]);
+
+
+    const handleNavigateInvitedEvent = async () => {
+
+        if(!currentUser) return;
+
+        try {
+            const response = await axiosInstance.get(`/events/${event.id}/invitations/${currentUser.id}`)
+            console.log(response)
+            navigate(`/event/${event.id}?token=${response.data.token}`)
+        } catch(error) {
+            console.log(error)
+        }
+    }
 
     return (
         <div className={event.status !== "ENDED" ? (
@@ -178,14 +193,25 @@ lng
                                     event.attendees.some(element => element.username === currentUser?.username)) && event.status !== 'FULL' )&&
                                     <button
                                         disabled={requestSent}
-                                        onClick={(e) => {
+                                        onClick={
+                                            (e) => {
                                             e.stopPropagation();
-                                            handleJoinEvent(event.id)
+
+                                            event.isPrivate &&
+                                                    invitations.some(invitation => invitation.eventId === event.id) ?
+                                                    (
+                                                        handleNavigateInvitedEvent()                                              
+                                                    )
+                                                    : (
+                                                         handleJoinEvent(event.id)
+                                                    )
+
                                             setRequestSent(true);
                                         }} 
-                                        className={styles.joinButton}>
+                                        className={event.isPrivate && invitations.some(invitation => invitation.eventId === event.id) ? 
+                                             styles.alreadyInvited : styles.joinButton}>
                                         {event.isPrivate ? (
-                                            invitations.some(invitation => invitation.eventId === event.id) ? "You are already invited!"
+                                            invitations.some(invitation => invitation.eventId === event.id) ? "You are invited!"
                                             : (
                                                 requestSent ? 
                                                 "Request sent!" :  "Send Join Request!" )

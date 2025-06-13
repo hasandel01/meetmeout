@@ -101,6 +101,8 @@ const CreateEventForm = () => {
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number} | null>(null);
     const [addressName, setAddressName] = useState<string | null>(null);
     const [endAddressName, setEndAddressName] = useState<string | null>(null);
+    const [routeJson, setRouteJson] = useState('');
+
     const {getMe} = useBadgeContext();
 
     const [selectedImageFile, setSelectedImageFile] = useState<File | null>();
@@ -138,7 +140,8 @@ const CreateEventForm = () => {
         endLongitude: 0,
         feeDescription: '',
         routeType: RouteType.CAR,
-        eventPhotoUrls: []
+        eventPhotoUrls: [],
+        routeJson: '',
     });
 
     const showConfetti = () => {
@@ -192,7 +195,7 @@ const CreateEventForm = () => {
                 formData.append("addressName", addressName || '');
                 formData.append("endAddressName", endAddressName || '');
                 formData.append("routeType", routeType);
-
+                formData.append("routeJson", JSON.stringify(routeJson));
 
                 if (selectedImageFile) {
                     
@@ -480,6 +483,7 @@ const CreateEventForm = () => {
                             <EventLocationSelector 
                             latitude={coordinates?.latitude} longitude={coordinates?.longitude} endLatitude={event.endLatitude} endLongitude={event.endLongitude}
                             setCoordinates={setCoordinates} route={routeType ?? RouteType.CAR} 
+                            setRouteJson={setRouteJson}
                             setAddressName={setAddressName} setEndAddressName={setEndAddressName} isThereRoute={event.isThereRoute} setEndCoordinates={coords => {
                                 setEvent({
                                     ...event,

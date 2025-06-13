@@ -14,6 +14,7 @@ public class UserMapper {
         if (user == null) return null;
 
         return UserDTO.builder()
+                .id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .username(user.getUsername())

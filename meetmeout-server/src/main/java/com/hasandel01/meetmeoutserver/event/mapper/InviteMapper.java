@@ -14,6 +14,7 @@ public class InviteMapper {
                 .receiverId(invite.getInvited().getId())
                 .senderId(invite.getInviter().getId())
                 .status(invite.isAccepted())
+                .token(invite.getInviteToken())
                 .build();
     }
 }

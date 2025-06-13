@@ -22,12 +22,19 @@ interface Props {
   longitude?: number;
   endLatitude?: number;
   endLongitude?: number;
+  setRouteJson: (routeJson: string) => void;
 }
 
 
 
-const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName, setEndAddressName, isThereRoute, setEndCoordinates, route,
-  latitude, longitude, endLatitude, endLongitude
+const EventLocationSelector: React.FC<Props> = ({ setCoordinates, 
+  setAddressName, 
+  setEndAddressName, 
+  isThereRoute, 
+  setEndCoordinates, 
+  route,
+  latitude, longitude, endLatitude, endLongitude,
+  setRouteJson
  }) => {
   
   const [clickCount, setClickCount] = useState(0);
@@ -328,7 +335,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates, setAddressName
           />
           <LocationMarker />
           <MapPanner coords={position}/>
-          <RouteDrawer isThereRoute={isThereRoute} start={position} end={endPosition} routeType={route}/>
+          <RouteDrawer setRouteJson={setRouteJson}isThereRoute={isThereRoute} start={position} end={endPosition} routeType={route}/>
         </MapContainer>
       </div>
     </div>

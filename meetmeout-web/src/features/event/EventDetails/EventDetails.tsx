@@ -82,7 +82,8 @@ const EventDetails = () => {
              endLongitude: 0,
              feeDescription: '',
              routeType: '',
-             eventPhotoUrls: []
+             eventPhotoUrls: [],
+             routeJson: ''
          });
     
     const [weather, setWeather] = useState<Weather | null>(null);
@@ -118,7 +119,11 @@ const EventDetails = () => {
     useEffect(() => {
       if (!event.organizer || !currentUser) return;
 
-      if (event.organizer.username === currentUser.username) {
+      if ((event.isPrivate && 
+          event.organizer.username === currentUser.username &&
+           event.attendees.some(attendee => attendee.username === currentUser.username)) ||
+           !event.isPrivate
+        ) {
         setIsUserAllowed(true);
       } else {
         verifyTokenToAccessDetails();
@@ -384,8 +389,8 @@ const EventDetails = () => {
             </> 
       )
       : (
-        <div>
-            <strong>YOU ARE NOT ALLOWED TO SEE THIS PAGE!</strong>
+          <div style={{ position: "fixed", top: "50%", left: "35%", display: "flex", backgroundColor:"white", textAlign: "center"}}>
+            <strong>Oops, you are trying to access an event page that you are not entitled to see. 🥺</strong>
           </div>
       )
       

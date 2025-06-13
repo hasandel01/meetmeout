@@ -4,7 +4,7 @@ export interface UserReview {
     id: number,
     review: string,
     rating: number,
-    user: User,
+    organizer: User,
     reviewer: User,
     createdAt: string
 }

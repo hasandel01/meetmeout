@@ -1,9 +1,12 @@
 package com.hasandel01.meetmeoutserver.user.service;
 
 
+import com.hasandel01.meetmeoutserver.user.dto.TravelAssociateDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 public interface UserService {
@@ -23,4 +26,6 @@ public interface UserService {
     Double getAverageRating(String username);
 
     Boolean deleteMyself();
+
+    List<TravelAssociateDTO> getTravelAssociates(String username);
 }

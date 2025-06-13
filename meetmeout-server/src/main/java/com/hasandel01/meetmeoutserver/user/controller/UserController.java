@@ -3,12 +3,15 @@ package com.hasandel01.meetmeoutserver.user.controller;
 
 import com.hasandel01.meetmeoutserver.user.dto.DarkModeDTO;
 import com.hasandel01.meetmeoutserver.user.dto.LocationDTO;
+import com.hasandel01.meetmeoutserver.user.dto.TravelAssociateDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -58,5 +61,10 @@ public class UserController {
         return ResponseEntity.ok(userService.deleteMyself());
     }
 
+
+    @GetMapping("/top-travel-associates/{username}")
+    public ResponseEntity<List<TravelAssociateDTO>> getTopTravelAssociates(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getTravelAssociates(username));
+    }
 
 }

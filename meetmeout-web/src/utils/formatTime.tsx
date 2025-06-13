@@ -8,6 +8,7 @@ export default function formatTime(dateStr: string): string {
 
   if (isNaN(date.getTime())) return "Invalid date";
 
+  if (diff < 10) return "now";
   if (diff < 60) return `${Math.floor(diff)} seconds ago`;
   if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;

@@ -36,4 +36,5 @@ export interface Event {
     feeDescription: string;
     routeType: string;
     eventPhotoUrls: string[];
+    routeJson: string;
 }

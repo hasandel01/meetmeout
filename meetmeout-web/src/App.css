@@ -50,6 +50,9 @@
   --ended-event-color: #f3f4f6;
   --joined-ended-event-color: #f3f4f6;
 
+  --chat-other-bubble: #f0f0f0;
+  --chat-own-bubble: #d0f0c0;
+
 }
 
 body {
@@ -82,6 +85,8 @@ body.dark {
     --full-event-color: #ad9446;
     --ended-event-color: #bebebe;
     --joined-ended-event-color: #697386;
+    --chat-other-bubble: #a4a4a4;
+    --chat-own-bubble: #aec9a1;
   }
 
 

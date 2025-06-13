@@ -6,6 +6,7 @@ import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -64,5 +65,7 @@ public interface EventService {
 
     List<UserDTO> getAllInvitedUsersForTheEvent(long eventId);
 
-    List<String> getRecommendedTags();
+    List<String> getRecommendedTags(String query, Pageable pageable);
+
+    InviteDTO getInvitationsByInvitedAndEvent(long eventId, long userId);
 }

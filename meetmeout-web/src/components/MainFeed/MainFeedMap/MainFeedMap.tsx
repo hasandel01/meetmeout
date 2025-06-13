@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Event } from "../../../types/Event";
 import { useUserContext } from "../../../context/UserContext";
 import styles from "./MainFeedMap.module.css"
-import axios from "axios";
-import { ORS_ROUTE_MAP } from "../../../types/RouteType";
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
 
 interface MainFeedMapProps {
@@ -127,17 +125,34 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
 
         });
 
+        const emoji =
+        event.routeType === "cycling-regular" ? "🚲" :
+        event.routeType === "foot-walking" ? "🚶‍♂️" :
+        event.routeType === "foot-hiking" ? "🥾" : "🚗";
+
 
         const feeText = event.isFeeRequired ? `${event.fee}$` : "Free";
         const date = new Date(event.startDate).toLocaleDateString("en-GB");
 
         const tooltipHtml = `
-          <div style="text-align: left;">
-            <strong>${event.title}</strong><br/>
-            <small>${date} | ${feeText}</small>
-            <small>${event.attendees.length} attendees</small>
-          </div>
-        `;
+        <div style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          font-family: Arial, sans-serif;
+          padding: 6px 8px;
+          border-radius: 8px;
+          background-color: white;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+          max-width: 200px;
+        ">
+          <div style="font-size: 24px;">${emoji}</div>
+          <div style="font-weight: bold; font-size: 16px; margin-top: 4px;">${event.title}</div>
+          <div style="font-size: 13px; color: #555; margin-top: 2px;">${date} | ${feeText}</div>
+          <div style="font-size: 13px; color: #555;">👥 ${event.attendees.length} attendee${event.attendees.length !== 1 ? "s" : ""}</div>
+        </div>
+      `;
+
 
         marker.bindTooltip(tooltipHtml, {
           direction: "top",
@@ -153,24 +168,8 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
 
         if (event.endLatitude !== event.latitude && event.endLongitude !== event.longitude) {
           try {
-            const orsType = ORS_ROUTE_MAP[event.routeType as keyof typeof ORS_ROUTE_MAP];
-            const response = await axios.post(
-              `https://api.openrouteservice.org/v2/directions/${orsType}/geojson`,
-              {
-                coordinates: [
-                  [event.longitude, event.latitude],
-                  [event.endLongitude, event.endLatitude],
-                ],
-              },
-              {
-                headers: {
-                  Authorization: "5b3ce3597851110001cf6248925c3fd514f949f398497969fac4a052",
-                  "Content-Type": "application/json",
-                },
-              }
-            );
 
-            const routeLayer = L.geoJSON(response.data, {
+            const routeLayer = L.geoJSON(JSON.parse(event.routeJson), {
               style: {
                 color: "blue",
                 weight: 3,

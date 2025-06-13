@@ -37,5 +37,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     """)
     Optional<List<Event>> findByCategory(@Param("query") String query, Pageable pageable);
 
-    List<Event> findByAttendees(Set<User> attendees);
+    @Query(value = "SELECT DISTINCT tag " +
+            "FROM event_tags " +
+            "WHERE LOWER(tag) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "ORDER BY tag", nativeQuery = true)
+    List<String> findAllDistinctTags(@Param("query") String query, Pageable pageable);
 }

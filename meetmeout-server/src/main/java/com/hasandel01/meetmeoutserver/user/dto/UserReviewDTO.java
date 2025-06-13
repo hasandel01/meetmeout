@@ -10,7 +10,7 @@ public record UserReviewDTO (
         Long id,
         String review,
         int rating,
-        UserDTO user,
+        UserDTO organizer,
         UserDTO reviewer,
         LocalDateTime createdAt
 )

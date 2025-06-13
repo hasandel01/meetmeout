@@ -49,5 +49,6 @@ public record EventDTO(
         Set<String> eventPhotoUrls,
         String feeDescription,
         String endAddressName,
-        RouteType routeType) {
+        RouteType routeType,
+        String routeJson) {
 }

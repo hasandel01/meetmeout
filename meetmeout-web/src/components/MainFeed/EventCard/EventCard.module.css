@@ -259,6 +259,22 @@ p {
     transition: background-color 0.2s;
 }
 
+.alreadyInvited {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background-color: var(--accent-color-dark);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    margin: 0 4px;
+    margin-top: 10 px;
+    transition: background-color 0.2s;
+}
+
+
+
 .joinButton:disabled {
     background-color: grey;
     cursor: default;

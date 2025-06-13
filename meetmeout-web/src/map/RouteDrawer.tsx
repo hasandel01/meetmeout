@@ -9,9 +9,10 @@ interface RouteProps {
   end: [number, number];
   routeType: RouteType;
   isThereRoute: boolean;
+  setRouteJson: (routeJson: string) => void;
 }
 
-const RouteDrawer: React.FC<RouteProps> = ({ start, end, routeType, isThereRoute }) => {
+const RouteDrawer: React.FC<RouteProps> = ({ setRouteJson, start, end, routeType, isThereRoute }) => {
   const map = useMap();
   const routeLayerRef = useRef<L.GeoJSON | null>(null)
 
@@ -36,7 +37,6 @@ const RouteDrawer: React.FC<RouteProps> = ({ start, end, routeType, isThereRoute
         return;
       }
 
-
       try {
         const response = await axios({
           method: "post",
@@ -54,7 +54,8 @@ const RouteDrawer: React.FC<RouteProps> = ({ start, end, routeType, isThereRoute
         });
 
         const routeGeoJson = response.data;
-
+        setRouteJson(routeGeoJson);
+        
         const layer = L.geoJSON(routeGeoJson, {
           style: {
             color: "blue",

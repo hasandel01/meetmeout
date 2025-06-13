@@ -116,4 +116,8 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private RouteType routeType;
 
+
+    @Lob
+    private String routeJson;
+
 }

@@ -48,6 +48,7 @@ public class EventMapper {
                 .isFeeRequired(event.isFeeRequired())
                 .fee(event.getFee())
                 .eventPhotoUrls(event.getEventPhotoUrls())
+                .routeJson(event.getRouteJson())
                 .build();
     }
 

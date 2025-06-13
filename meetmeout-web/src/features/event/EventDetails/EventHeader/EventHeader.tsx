@@ -13,7 +13,7 @@ import axiosInstance from "../../../../axios/axios";
 import { useState } from 'react';
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
-
+import  { useRef, useEffect } from 'react';
 
 interface EventHeaderProps {
   event: Event;
@@ -27,9 +27,10 @@ interface EventHeaderProps {
 const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinRequests, setCurrentTab, uploadEventPhotos, setEvent }) => {
 
     const navigate = useNavigate();
-      const [showInviteModal, setShowInviteModal] = useState(false);
-    
+    const [showInviteModal, setShowInviteModal] = useState(false);
+    const [showDeleteEventModel, setShowDeleteEventModal] = useState(false);
 
+    
     const handleLeaveEvent = async () => {
         try {
 
@@ -99,8 +100,52 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
         }
     }
 
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setShowDeleteEventModal(false);
+        }
+    };
+
+    if (showDeleteEventModel) {
+        document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+    }, [showDeleteEventModel]);
+
+
     return (
         <div className={styles.eventHeader}>
+        {showDeleteEventModel &&
+        <div className={styles.deleteEventModalOverlay}>
+            <div className={styles.deleteEventModal} ref={modalRef}>
+                <h4>{(event.organizer?.username === currentUser?.username ) ? "Are you sure to delete the event. This process cannot be undone ⚠️" 
+                : "Are you sure to leave the event? 😥 "}
+                </h4>
+                <div className={styles.deleteEventModalButtons}>
+                    <button
+                    className={styles.confirmButton}
+                    onClick={() => {
+                        setShowDeleteEventModal(false);
+                        handleLeaveEvent();
+                    }}
+                    >
+                    Yes
+                    </button>
+                    <button
+                    className={styles.cancelButton}
+                    onClick={() => setShowDeleteEventModal(false)}
+                    >
+                    Cancel
+                    </button>
+                </div>
+            </div>
+        </div>}
             <div className={styles.eventTab}>
                 <label onClick={() => setCurrentTab(1)}>Info</label>
                 <label onClick={() => setCurrentTab(2)}>Reviews & Photos</label>
@@ -162,7 +207,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                                     <FontAwesomeIcon 
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleLeaveEvent()
+                                            setShowDeleteEventModal(true);
                                         }}
                                         className={styles.editButton} 
                                         icon={faTrash} size="2x" />
@@ -172,7 +217,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                             <>
                             <FontAwesomeIcon onClick={(e) => {
                                             e.stopPropagation();
-                                            handleLeaveEvent()
+                                            setShowDeleteEventModal(true);
                                         }}
                                         className={styles.editButton} icon={faRightFromBracket} size="2x" />
                             </>

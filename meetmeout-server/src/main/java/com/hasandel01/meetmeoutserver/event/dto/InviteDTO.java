@@ -8,6 +8,7 @@ public record InviteDTO(
         Long eventId,
         Long senderId,
         Long receiverId,
-        boolean status
+        boolean status,
+        String token
 ) {
 }

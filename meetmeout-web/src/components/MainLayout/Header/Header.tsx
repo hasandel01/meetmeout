@@ -35,7 +35,7 @@ const Header = () => {
         setShowMenu(!showMenu);
       }  
 
-      const handleSignOut = () => {
+    const handleSignOut = () => {
         localStorage.removeItem("accessToken");
         navigate("/login");
     }

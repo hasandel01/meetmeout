@@ -6,7 +6,8 @@
     align-items: center;
     padding: 10px;
     border-right: 1px solid var(--primary-color-dark);
-    min-height: 73vh;
+    width: 6vw;
+    min-height: 90vh;
 }
 
 .attendees label {
@@ -25,7 +26,7 @@
 }
 
 .attendees ul {
-    padding: 0px;
+    padding: 1vw;
     margin: 0px;
     display: grid;
     grid-template-columns: 2fr;

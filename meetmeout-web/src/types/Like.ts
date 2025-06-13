@@ -30,5 +30,6 @@ export interface Invitation {
     eventId: number,
     senderId: number,
     receiverId: number,
-    status: boolean
+    status: boolean,
+    token: string
 }

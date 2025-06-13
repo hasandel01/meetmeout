@@ -24,6 +24,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService, CommentService, ReviewService {
@@ -96,6 +96,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .routeType(event.routeType())
+                .routeJson(event.routeJson())
                 .build();
 
         user.getOrganizedEvents().add(newEvent);
@@ -690,8 +691,29 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
     @Transactional
-    public List<String> getRecommendedTags() {
-        return new ArrayList<>();
+    public List<String> getRecommendedTags(String query, Pageable pageable) {
+        return eventRepository.findAllDistinctTags(query, pageable);
+    }
+
+    @Transactional
+    public InviteDTO getInvitationsByInvitedAndEvent(long eventId, long userId) {
+
+        User invited = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+
+        Optional<Invite> invite = inviteRepository.findByInvitedAndEvent(invited, event);
+
+        if(invite.isPresent()) {
+            return InviteMapper.toInviteDTO(invite.get());
+        }
+        else {
+            return InviteMapper.toInviteDTO(Invite.builder().build());
+        }
+
     }
 }
 

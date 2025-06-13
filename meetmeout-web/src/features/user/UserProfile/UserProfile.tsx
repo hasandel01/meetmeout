@@ -15,6 +15,7 @@ import qs from 'qs';
 import { calculateDistance } from "../../../utils/calculateDistance";
 import { getOrganizerRatingDescription } from "../../../utils/getOrganizerRatingDescription";
 import { formatMonthYear } from "../../../utils/formatTime";
+import { TravelAssociate } from "../../../types/TravelAssociate";
 
 function UserProfile() {
 
@@ -32,6 +33,8 @@ function UserProfile() {
     const [averageRating, setAverageRating] = useState(0);
     const [organizedEvents, setOrganizedEvents] = useState<Event[]>([]);
     const [attendedEvents, setAttendedEvents] = useState<Event[]>([]);
+    const [travelAssociates,setTravelAssociates] = useState<TravelAssociate[] | null>(null);
+
     const navigate = useNavigate();
 
     const getUserProfile = async () => {
@@ -119,6 +122,7 @@ function UserProfile() {
             fetchAverageRatingForUser();
             getUserOrganizedEventsByIds();
             getUserAttendedEventsByIds();
+            getTopTravelAssocaites();
         }
     }, [user]);
 
@@ -342,6 +346,17 @@ function UserProfile() {
         }
     };
 
+
+    const getTopTravelAssocaites = async () => {
+
+        try {
+            const response = await axiosInstance.get(`/top-travel-associates/${user?.username}`)
+            setTravelAssociates(response.data);
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
      const handleLocationClick = (event: Event) => {
           navigate("/", {
             state: {
@@ -475,10 +490,16 @@ function UserProfile() {
                         <h5>Companions</h5>
                         <h5>({companions.length})</h5>
                     </label>
-
                     <label
                         className={tab === 4 ? styles.activeTab : ''}
                         onClick={() => setTab(4)}
+                    >
+                        <h5>Travel Associates</h5>
+                        <h5>({travelAssociates?.length ?? 0})</h5>
+                    </label>
+                    <label
+                        className={tab === 5 ? styles.activeTab : ''}
+                        onClick={() => setTab(5)}
                     >
                         <h5>Trophies</h5>
                         <h5>({user?.badges.length})</h5>
@@ -596,7 +617,34 @@ function UserProfile() {
                             :
                             <p>This user doesn't have any companions.</p>
                         ))}
-                    {tab === 4 && user?.badges && (
+                    {tab === 4 && (
+                        travelAssociates && travelAssociates.length > 0 ? (
+                            <>
+                            <div className={styles.companionsContainer}>
+                                {travelAssociates.map(associate => (
+                                    <div
+                                        key={associate.user.username}
+                                        className={styles.companion}
+                                        onClick={() => navigate(`/user-profile/${associate.user.username}`)}
+                                    >
+                                        <img src={associate.user.profilePictureUrl} alt="profile" />
+                                        <h6>{associate.user.firstName} {associate.user.lastName}</h6>
+                                        <p>{associate.user.username}</p>
+                                        <small>{associate.number} events together!</small>
+                                    </div>
+                                ))}
+                            </div>
+                            <p style={{ marginTop: '10px', fontWeight: 'bold', color: 'var(--primary-color-dark)' }}>
+                                Total travel companions: {travelAssociates.length}
+                            </p>
+                            </>
+                        ) : (
+                            currentUser?.username === user?.username ?
+                            <p>You don't have any travel associates yet.</p> :
+                            <p>This user doesn't have any travel associates.</p>
+                        )
+                    )}
+                    {tab === 5 && user?.badges && (
                         user.badges.length > 0 ? (
                         <div className={styles.badgeContainer}>
                             <ul>

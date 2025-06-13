@@ -17,7 +17,10 @@ const EventReviews: React.FC<ReviewProps> = ({reviews, currentUser, handleDelete
     return (
         <div className={styles.reviewContainer}>
             <h4> Reviews</h4>
-            {reviews.map((review, index) => ( 
+            {reviews.length === 0 ? (
+              <p className={styles.emptyMessage}>No reviews yet.</p>
+            ) :(
+            reviews.map((review, index) => ( 
                 <div key={index} className={styles.reviewItem}>
                     <div className={styles.reviewHeader}>
                         <div className={styles.senderInfo}>
@@ -49,14 +52,15 @@ const EventReviews: React.FC<ReviewProps> = ({reviews, currentUser, handleDelete
                             />
                             <FontAwesomeIcon
                               icon={faTrash}
-                              className={styles.actionIcon}
+                              className={styles.deleteIcon}
                               onClick={() => handleDeleteReview(review)}
                               title="Delete"
                             />
                           </div>
                         )}
                       </div>
-                    ))}  
+                    ))
+                  )}
             </div>
     )
 

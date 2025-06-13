@@ -12,6 +12,7 @@ header {
     background-color: var(--background-color);
     width: 100%;
     border-bottom: 1px solid var(--primary-color-dark);
+    height: 7vh;
 }
 
 /** LOGO */

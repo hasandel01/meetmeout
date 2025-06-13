@@ -117,6 +117,8 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                 <input 
                     type="text"
                     value={user.firstName}
+                    minLength={2}
+                    maxLength={50}
                     onChange={(e) => setUser({...user, firstName: e.target.value})}
                 />
                 {formErrors.firstName && <p className={styles.error}>{formErrors.firstName}</p>}
@@ -125,6 +127,8 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                 <input 
                     type="text"
                     value={user.lastName}
+                    minLength={2}
+                    maxLength={50}
                     onChange={(e) => setUser({...user, lastName: e.target.value})}
                 />
                 {formErrors.lastName && <p className={styles.error}>{formErrors.lastName}</p>}
@@ -142,6 +146,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                 <input 
                     type="email"
                     value={user.email}
+                    maxLength={100}
                     onChange={(e) => setUser({...user, email: e.target.value})}
                 />
                 {formErrors.email && <p className={styles.error}>{formErrors.email}</p>}

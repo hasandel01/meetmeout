@@ -1,6 +1,8 @@
 package com.hasandel01.meetmeoutserver.user.service.impl;
 
 
+import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.user.dto.TravelAssociateDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
@@ -20,9 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -153,5 +154,44 @@ public class UserServiceImpl implements UserService {
         user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
         return true;
+    }
+
+    @Transactional
+    public List<TravelAssociateDTO> getTravelAssociates(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        Set<Event> participatedEvents =  user.getParticipatedEvents();
+        Map<String, TravelAssociateDTO> associateMap = new HashMap<>();
+
+        for(Event event: participatedEvents) {
+            for(User attendee: event.getAttendees()) {
+
+                if(attendee.getUsername().equals(user.getUsername())) {
+                    continue;
+                }
+
+                String attendeeUsername = attendee.getUsername();
+
+                if (associateMap.containsKey(attendeeUsername)) {
+                    TravelAssociateDTO existing = associateMap.get(attendeeUsername);
+                    existing.setNumber(existing.getNumber() + 1);
+                } else {
+                    associateMap.put(attendeeUsername, TravelAssociateDTO.builder()
+                            .user(UserMapper.toUserDTO(attendee))
+                            .number(1)
+                            .build());
+                }
+
+
+            }
+        }
+
+        List<TravelAssociateDTO> associateList = new ArrayList<>(associateMap.values());
+
+        return  associateList.stream()
+                .sorted(Comparator.comparingInt(TravelAssociateDTO::getNumber).reversed())
+                .collect(Collectors.toList());
     }
 }

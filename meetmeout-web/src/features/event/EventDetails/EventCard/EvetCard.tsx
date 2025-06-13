@@ -368,36 +368,42 @@ const EventDetailsCard = ({
                     </div>
                 </div>
         </div>        
-          {weather && weather.daily && !isMoreThan8DaysLater(event.startDate) ? (
-            <div className={styles.weatherWidget}>
-              <h4>Weather During the Event</h4>
-              <div className={styles.weatherRow}>
-                {getEventDayIndices().map((i) => {
-                  const daily = weather.daily[i];
-                  if (!daily) return null;
-                  const forecastDate = new Date();
-                  forecastDate.setDate(new Date().getDate() + i);
-                  return (
-                    <div className={styles.weatherCard} key={i}>
-                      <p className={styles.weatherDate}>{forecastDate.toLocaleDateString("en-US", options)}</p>
-                      <img
-                        src={`https://openweathermap.org/img/wn/${daily.weather[0].icon}@2x.png`}
-                        alt={daily.summary}
-                        className={styles.weatherIcon}
-                        width="32px"
-                        height="32px"
-                      />
-                      <p className={styles.weatherSummary}>{daily.summary}</p>
-                      <p className={styles.weatherTemp}>{daily.temp.max.toFixed(0)}° / {daily.temp.min.toFixed(0)}°</p>
-                    </div>
-                  );
-                })}
+          {event.status === "ENDED" ? (
+          <div className={styles.weatherWidgetSmall}>
+              <p>This event has already ended. Weather forecast is no longer available.</p>
+            </div>
+            ) : (
+            weather && weather.daily && !isMoreThan8DaysLater(event.startDate) ? (
+              <div className={styles.weatherWidget}>
+                <h4>Weather During the Event</h4>
+                <div className={styles.weatherRow}>
+                  {getEventDayIndices().map((i) => {
+                    const daily = weather.daily[i];
+                    if (!daily) return null;
+                    const forecastDate = new Date();
+                    forecastDate.setDate(new Date().getDate() + i);
+                    return (
+                      <div className={styles.weatherCard} key={i}>
+                        <p className={styles.weatherDate}>{forecastDate.toLocaleDateString("en-US", options)}</p>
+                        <img
+                          src={`https://openweathermap.org/img/wn/${daily.weather[0].icon}@2x.png`}
+                          alt={daily.summary}
+                          className={styles.weatherIcon}
+                          width="32px"
+                          height="32px"
+                        />
+                        <p className={styles.weatherSummary}>{daily.summary}</p>
+                        <p className={styles.weatherTemp}>{daily.temp.max.toFixed(0)}° / {daily.temp.min.toFixed(0)}°</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className={styles.weatherWidget}>
-              <p>Weather forecast will be available 8 days before the event.</p>
-            </div>
+            ) : (
+              <div className={styles.weatherWidgetSmall}>
+                <p>Weather forecast will be available 8 days before the event.</p>
+              </div>
+            )
           )}
         <div className={styles.eventActions}>
           <div className={styles.buttonGroup}>

@@ -17,8 +17,6 @@
     padding: 40px 80px;
     background-color: var(--background-color);
     gap: 20px;
-    height: 50vh;
-    width: 30vw;
     border-radius: 10px;
 }
 
@@ -37,6 +35,18 @@
   font-size: 24px;
   cursor: pointer;
 }
+
+
+.dismissLink {
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: -8px;
+  text-align: right;
+  transition: color 0.2s ease;
+}
+
 
 button {
     background-color: var(--button-color);

@@ -414,19 +414,19 @@ function UserProfile() {
                         ></FontAwesomeIcon>
                         }
                 </div>
-                    <div className={styles.profile}>
-                        <div className={styles.profilePicture}>
-                            <img src={user?.profilePictureUrl} alt="User Profile" />
-                            {currentUser && currentUser.username === username && (
-                                <span className={styles.cameraOverlay} onClick={updateProfilePicture}> <FontAwesomeIcon icon={faCamera} size="2x" /></span>
-                            )}
-                        </div>
-                        <div className={styles.user}>
-                            <h4>{user?.firstName} {user?.lastName}</h4>
-                            <h5>@{user?.username}</h5>
-                        </div>
-                    </div>
                     <div className={styles.about}>
+                        <div className={styles.profile}>
+                            <div className={styles.profilePicture}>
+                                <img src={user?.profilePictureUrl} alt="User Profile" />
+                                {currentUser && currentUser.username === username && (
+                                    <span className={styles.cameraOverlay} onClick={updateProfilePicture}> <FontAwesomeIcon icon={faCamera} size="2x" /></span>
+                                )}
+                            </div>
+                            <div className={styles.user}>
+                                <h4>{user?.firstName} {user?.lastName}</h4>
+                                <h5>@{user?.username}</h5>
+                            </div>
+                        </div>
                         <div className={styles.infoCard}>
                             <h5>About</h5>
                             <hr />

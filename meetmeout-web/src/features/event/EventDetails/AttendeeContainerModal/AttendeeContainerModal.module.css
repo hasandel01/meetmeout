@@ -12,7 +12,7 @@
 }
 
 .modalContent {
-  background: white;
+  background: var(--background-color);
   padding: 24px;
   border-radius: 12px;
   max-height: 80vh;
@@ -36,9 +36,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: #f8f8f8;
+  background-color: var(--background-color);
   padding: 8px;
-  border-radius: 8px;
+  border-bottom: 1px solid var(--primary-color);
 }
 
 .attendeeCard:hover {

@@ -120,8 +120,11 @@ const EventDetails = () => {
       if (!event.organizer || !currentUser) return;
 
       if ((event.isPrivate && 
-          event.organizer.username === currentUser.username &&
-           event.attendees.some(attendee => attendee.username === currentUser.username)) ||
+           event.organizer.username === currentUser.username) 
+           || (
+           event.isPrivate && 
+           event.attendees.some(attendee => attendee.username === currentUser.username)
+           ) ||
            !event.isPrivate
         ) {
         setIsUserAllowed(true);
@@ -138,9 +141,9 @@ const EventDetails = () => {
         setEvent(fetchedEvent);
 
         if (fetchedEvent.organizer?.username === currentUser?.username) {
-          console.log(fetchedEvent.organizer.username)
           setIsUserAllowed(true);
-        } else {
+        } 
+        else {
           verifyTokenToAccessDetails();
         }
 
@@ -302,14 +305,28 @@ const EventDetails = () => {
       }
     }
 
+  const [hasDismissedReview, setHasDismissedReview] = useState(false);
+
+    useEffect(() => {
+      const fetchDismissal = async () => {
+        try {
+          const response = await axiosInstance.get(`/review/${event.id}/dismissal`);
+          setHasDismissedReview(response.data);
+        } catch (error) {
+          console.error("Error checking review dismissal:", error);
+        }
+      };
+
+      if (currentUser) fetchDismissal();
+    }, [event.id, currentUser]);
+
     const areReviewConditionsSatisfied = () => {
-      const isAttendee = event.attendees.some(attendee => attendee.username === currentUser?.username);
+      const isAttendee = event.attendees.some(att => att.username === currentUser?.username);
       const hasNotReviewed = !event.reviews.some(r => r.reviewer.username === currentUser?.username);
       const isEventEnded = event.status === "ENDED";
 
-      return isAttendee && hasNotReviewed && isEventEnded;
-    }
-
+      return isAttendee && hasNotReviewed && isEventEnded && !hasDismissedReview;
+    };
 
   return (
     <div className={styles.eventContainer}>
@@ -328,6 +345,7 @@ const EventDetails = () => {
                 event={event}
                 currentUser={currentUser ?? null}
                 joinRequests={joinRequests}
+                setJoinRequests={setJoinRequests}
                 showAllAttendees={showAllAttendees}
                 setShowAllAttendees={setShowAllAttendees}
                 showAllRequests={showAllRequests}

@@ -38,8 +38,7 @@
     background-color: var(--background-color);
     padding: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 800px;
+    width: 80vw;
 }
 
 .companionsHeader {
@@ -132,6 +131,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    text-align: left;
 }
 
 .userDetailsInfo:hover {
@@ -141,8 +141,20 @@
 .userDetailsInfo h4,
 .userDetailsInfo p {
     margin: 0;
-    color: var(--primary-color-dark);
 }
+
+.userDetailsInfo h4 {
+  color: var(--primary-color-dark);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+  max-height: calc(1.4em * 3);
+}
+
+
 
 .actionButtons {
     display: flex;
@@ -182,6 +194,10 @@
     .companionsContainer {
         flex-direction: column;
         align-items: stretch;
+        width: 90vw;
+    }
+
+    .mainPanel {
         width: 90vw;
     }
 

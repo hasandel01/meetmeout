@@ -146,7 +146,7 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
           box-shadow: 0 2px 6px rgba(0,0,0,0.3);
           max-width: 200px;
         ">
-          <div style="font-size: 24px;">${emoji}</div>
+          <div style="font-size: 24px;">${event.isThereRoute ? emoji : ""}</div>
           <div style="font-weight: bold; font-size: 16px; margin-top: 4px;">${event.title}</div>
           <div style="font-size: 13px; color: #555; margin-top: 2px;">${date} | ${feeText}</div>
           <div style="font-size: 13px; color: #555;">👥 ${event.attendees.length} attendee${event.attendees.length !== 1 ? "s" : ""}</div>

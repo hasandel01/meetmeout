@@ -79,3 +79,32 @@
 .navIcon:hover {
   color: #ccc;
 }
+
+@media (max-width: 768px) {
+  
+  .photoContainer {
+    width: 90vw;
+  }
+  
+  
+  .overlayContent {
+    gap: 16px; 
+    padding: 0 12px; 
+    box-sizing: border-box;
+  }
+
+  .overlayContent img {
+    max-width: 70vw; 
+    max-height: 60vh;
+  }
+
+  .navIcon {
+    font-size: 24px;
+  }
+
+  .closeIcon {
+    top: -32px;
+    right: 8px;
+    font-size: 24px;
+  }
+}

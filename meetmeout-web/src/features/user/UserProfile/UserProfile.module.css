@@ -95,9 +95,8 @@
     position: relative;
     display: flex;
     flex-direction: row;
-    padding: 10px 20px;
+    padding: 1vh;
     width: 100%;
-    gap: 20px;
 }
 
 .user {
@@ -108,7 +107,6 @@
 
 .user h4 {
   font-size: 14px;
-  margin: 0;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 6;
@@ -124,8 +122,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: stretch;
-  width: 80%;
-  gap: 20px;
+  width: 90%;
 }
 
 .clickable {
@@ -135,7 +132,6 @@
 .about h5 {
     font-weight: bold;
 }
-
 
 .updateIcon {
     display: flex;
@@ -150,24 +146,21 @@
     background-color: #d4d3d3;
 }
 
-hr {
-    margin: 16px 0px;
-    border-radius: 2px;
-    background-color: var(--primary-color-dark);
-    width: 100%;
-}
 
 /* PROFILE PICTURE STYLES */
 
 .profile {
     position: relative;
-    cursor: pointer;
+    display: flex;
+    flex-direction: column;
     padding: 10px;
+    min-height: 10vh;
+    width: 15vw;
+    justify-content: center;
+    align-items: center;
+    gap: 1vh;
   }
 
-.profilePictureAndLocation p {
-    margin: 10px 0px;
-}
 
 .profilePicture {
     position: relative;
@@ -215,13 +208,9 @@ hr {
   align-items: flex-start;
   justify-content: flex-start;
   text-align: left;
-  padding: 10px;
-  width: 100%;
-  max-width: 300px;
-  min-width: 300px;
-  min-height: 120px;
+  padding: 5px;
+  width: 20vw;
   background-color: var(--background-color);
-  gap: 10px;
 }
 
 .infoCard hr {
@@ -242,27 +231,19 @@ hr {
   white-space: pre-wrap;
 }
 
-
 .contacts {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 100%;
-  padding: 10px;
-  max-width: 300px;
-  min-width: 300px;
+  padding: 5px;
+  width: 20vw;
   background-color: var(--background-color);
   border-radius: 10px;
 }
 
-.contacts h5 {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
 .contacts hr {
   width: 100%;
-  margin-bottom: 12px;
   border: none;
   border-top: 1px solid var(--primary-color-dark);
 }
@@ -276,7 +257,7 @@ hr {
 
 .contactItem h6 {
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -294,13 +275,10 @@ hr {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 10px;
-  width: 100%;
-  max-width: 300px;
-  min-width: 300px;
+  padding: 5px;
+  width: 20vw;
   background-color: var(--background-color);
   border-radius: 10px;
-  gap: 10px;
   text-align: left;
 }
 
@@ -317,7 +295,14 @@ hr {
 }
 
 
-
+.infoCard,
+.contacts,
+.organizerRating {
+  height: 100%;
+  min-height: 200px;
+  box-sizing: border-box;
+  min-height: 10vh;
+}
 
 
 /** ATTENDEDEVENTS CONTAINER */
@@ -398,8 +383,8 @@ hr {
 
 
 .companionsContainer {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(7,1fr);
     align-items: flex-start;
     border: 1px solid var(--primary-color-dark);
     padding: 20px;
@@ -412,12 +397,22 @@ hr {
     border: 2px solid var(--primary-color-dark)
 }
 
+
 .companion {
-    display: flex;
-    flex-direction: column;
-    margin-right: 20px;
-    padding: 10px;
-    gap: 5px;
+  display: flex;
+  flex-direction: column;
+  margin-right: 20px;
+  padding: 10px;
+  gap: 5px;
+  align-items: center; 
+  text-align: center;
+  width: 10vw;
+}
+
+.companion h6 {
+  word-break: break-word;
+  white-space: pre-wrap;
+  text-align: center;
 }
 
 .companion:hover {
@@ -486,6 +481,8 @@ hr {
 }
 
 .badgeContainer ul {
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
     align-items: center;
     padding: 0;
 }
@@ -591,17 +588,18 @@ hr {
 
   .companionsContainer {
     flex-direction: column;
-    align-items: center;
+    grid-template-columns: repeat(1,1fr);
   }
 
   .companion {
     margin-bottom: 20px;
     align-items: center;
+    width: unset;
   }
 
   .badgeContainer ul {
-    padding-left: 0;
-  }
+    grid-template-columns: repeat(1, 1fr);
+  }  
 
   .badgeContainer li {
     flex-direction: column;
@@ -613,5 +611,16 @@ hr {
     position: static;
     margin-top: 10px;
     text-align: center;
+  }
+
+  .profile,
+  .infoCard,
+  .contacts,
+  .organizerRating {
+    height: 100%;
+    min-height: unset;
+    width: 85vw;
+    box-sizing: border-box;
+    min-height: 10vh;
   }
 }

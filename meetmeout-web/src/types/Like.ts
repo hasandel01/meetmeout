@@ -22,6 +22,7 @@ export interface Review {
     content: string;
     updatedAt: string;
     rating: number;
+    isDismissed: boolean;
 }
 
 

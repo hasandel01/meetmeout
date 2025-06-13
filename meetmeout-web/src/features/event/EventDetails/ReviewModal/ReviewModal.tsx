@@ -21,7 +21,6 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
     const [review, setReview] = useState<Review| null>(null);
     const popupRef = useRef<HTMLDivElement>(null);
 
-
     useEffect(() => {
 
         const handleClickOutside = (event: MouseEvent) => {
@@ -38,7 +37,23 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
 
     },[])
 
+
+      const handleDontShowAgain = async () => {
+        try {
+          await axiosInstance.post(`/review/${event.id}/dismissal`, {});
+        } catch (error) {
+          console.error("Failed to save dismissal");
+        } finally {
+          onClose();
+        }
+      };
+  
     const handleAddReview = async () => {
+
+
+        if (review) {
+            review.isDismissed = true;
+        }
 
         try {
         const response = await axiosInstance.post(`/review/${event.id}`, review);
@@ -54,9 +69,12 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
             reviewer: currentUser,
             content: '',
             updatedAt: '',
-            rating: 0
+            rating: 0,
+            isDismissed: false,
             });
         }
+          
+        onClose(); 
 
         } catch(error) {
             toast.error("Error adding review.");
@@ -84,6 +102,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
                               reviewer: prev?.reviewer || currentUser,
                               content: prev?.content || "",
                               updatedAt: prev?.updatedAt || "",
+                              isDismissed: false,
                               rating: star
                             }));
                           }}
@@ -102,7 +121,8 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
                         reviewer: review.reviewer,
                         updatedAt: review.updatedAt,
                         rating: review.rating,
-                        content: e.target.value
+                        content: e.target.value,
+                        isDismissed: false
                       });
                     }
                   }}
@@ -111,6 +131,9 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
                         handleAddReview()
                   }}
                 ></textarea>
+                <p className={styles.dismissLink} onClick={handleDontShowAgain}>
+                  Don’t show this again
+                </p>
                 <button onClick={() => handleAddReview()}>Submit Review</button>
               </div>
             )}

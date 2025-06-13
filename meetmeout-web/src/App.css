@@ -214,3 +214,14 @@ body.dark {
   right: 20px !important;
   transform: translateY(-50%) !important;
 }
+
+@media (max-width: 768px) {
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+}

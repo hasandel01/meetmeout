@@ -81,7 +81,11 @@
     width: 100%;
   }
 
-  .chatContainer { /* Eğer ayrı bir class varsa Chat için */
+  .chatContainer {
     width: 100%;
+  }
+
+  .reviewsAndPhotos {
+    flex-direction: column;
   }
 }

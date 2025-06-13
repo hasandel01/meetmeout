@@ -2,7 +2,7 @@
     position: relative;
     flex-direction: column;
     width: 55vw;
-    margin: 0px 2vw;
+    margin-left: 1vw;
     border: 1px solid var(--primary-color-dark);
     border-radius: 0px 0px 6px 6px;
     margin-bottom: 60px;

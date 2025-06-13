@@ -3,6 +3,9 @@ html, body {
     overflow-x: hidden;
 }
 
+.noEvents h2{
+  color: var(--primary-color-dark);
+}
 .mainFeedContainer {
     position: relative;
     display: flex;

@@ -103,3 +103,12 @@
 .deleteIcon:hover {
   color: red;
 }
+
+
+@media (max-width: 768px) {
+ 
+  .reviewContainer{
+    width: 90vw;
+  }
+
+}

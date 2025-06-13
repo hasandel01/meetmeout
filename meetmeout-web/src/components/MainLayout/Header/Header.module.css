@@ -12,7 +12,6 @@ header {
     background-color: var(--background-color);
     width: 100%;
     border-bottom: 1px solid var(--primary-color-dark);
-    height: 7vh;
 }
 
 /** LOGO */
@@ -227,12 +226,12 @@ header .userShortcut img {
 
     .barNotificationBadge {
         position: absolute;
-        top: -4px;
-        right: -4px;
+        top: 0%;
+        right: 4px;
         background-color: red;
         color: white;
         font-size: 10px;
-        padding: 2px 6px;
+        padding: 2px 4px;
         border-radius: 50%;
         font-weight: bold;
         z-index: 10;

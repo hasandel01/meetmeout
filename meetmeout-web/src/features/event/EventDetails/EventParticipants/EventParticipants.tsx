@@ -12,6 +12,7 @@ interface Props {
   event: Event;
   currentUser: User | null;
   joinRequests: JoinRequest[];
+  setJoinRequests: (joinRequests: JoinRequest[]) => void;
   showAllAttendees: boolean;
   showAllRequests: boolean;
   setShowAllAttendees: (val: boolean) => void;
@@ -23,6 +24,7 @@ const EventParticipants = ({
   event,
   currentUser,
   joinRequests,
+  setJoinRequests,
   showAllAttendees,
   showAllRequests,
   setShowAllAttendees,
@@ -34,20 +36,32 @@ const EventParticipants = ({
     const others = event.attendees.filter(a => a.username !== event.organizer?.username)
     event.attendees = [organizer, ...others].filter((a): a is User => a !== undefined)
 
+    const updateEventAttendees = (username: string) => {
+      const joinedUser = joinRequests.find(r => r.user.username === username)?.user;
+      if (!joinedUser) return;
+      event.attendees.push(joinedUser);
+    };
+
+    const updateJoinRequests = (username: string) => {
+      setJoinRequests(joinRequests.filter(joinRequest => joinRequest.user.username !== username));
+    }
+
     return (
         <div className={styles.attendees} >
                   <h4>Attendees</h4>
                       <ul>
                         {event.attendees.slice(0,4).map((attendee,index) => 
                           <li key={index} onClick={() => goToUserProfile(attendee.username)}>
-                                {event.organizer?.username === attendee.username &&
-                                <>
-                                  <FontAwesomeIcon icon={faStar} className={styles.organizerIcon}
-                                  data-tooltip-id="organizer-icon" data-tooltip-content="Organizer"></FontAwesomeIcon>
-                                  <Tooltip id="organizer-icon"/>
-                                </>
+                                <div className={styles.pictureContainer}>
+                                  {event.organizer?.username === attendee.username &&
+                                  <>
+                                    <FontAwesomeIcon icon={faStar} className={styles.organizerIcon}
+                                    data-tooltip-id="organizer-icon" data-tooltip-content="Organizer"></FontAwesomeIcon>
+                                    <Tooltip id="organizer-icon"/>
+                                  </>
                                   }
-                                <img src={attendee.profilePictureUrl}></img>
+                                  <img src={attendee.profilePictureUrl}></img>
+                                </div>
                                 <h5>{attendee.firstName}</h5>
                           </li>
                           )}
@@ -77,7 +91,8 @@ const EventParticipants = ({
                               </div>}
                         </ul>
                         {showAllRequests && 
-                        <RequesterContainerModal requests={joinRequests} 
+                        <RequesterContainerModal requests={joinRequests} updateEventAttendees={updateEventAttendees}
+                                                updateJoinRequests={updateJoinRequests}
                                                 onClose={() => setShowAllRequests(false)}></RequesterContainerModal>}
                         </>
                       }                      

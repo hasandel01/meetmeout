@@ -295,7 +295,7 @@ const MainFeed = () => {
                         )
                     )))
                 : (
-                    <div className="no-events">
+                    <div className={styles.noEvents}>
                         {(filteredEvents?.length ?? 0) > 0 ?
                         (
                             <h2>No result based on filters</h2>

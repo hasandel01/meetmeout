@@ -175,7 +175,7 @@ lng
                                                 }}
                                                 />
                                                 <Tooltip id="event_like"/>
-                                            <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
+                                            <p>{event.likes.length > 0 ? `${event.likes.length}` : ""}</p>
                                         </div>
                                         <div className={styles.buttonGroup}>
                                             <FontAwesomeIcon 
@@ -185,7 +185,7 @@ lng
                                                 }}
                                                 icon={faComment} 
                                                 className={styles.commentIcon} />
-                                            <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
+                                            <p>{event.comments.length > 0 ? `${event.comments.length}` : ""}</p>
                                         </div>
                                     </div>
                                     } 

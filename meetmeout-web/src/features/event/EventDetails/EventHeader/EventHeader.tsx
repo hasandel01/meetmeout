@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import confetti from "canvas-confetti";
 import  { useRef, useEffect } from 'react';
+import qs from 'qs';
 
 interface EventHeaderProps {
   event: Event;
@@ -29,6 +30,8 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
     const navigate = useNavigate();
     const [showInviteModal, setShowInviteModal] = useState(false);
     const [showDeleteEventModel, setShowDeleteEventModal] = useState(false);
+    const [showConflictModal, setShowConflictModal] = useState(false);
+    const [conflictingEvents, setConflictingEvents] = useState<Event[]>([]);
 
     
     const handleLeaveEvent = async () => {
@@ -57,31 +60,57 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
      
 
     const isDisabled = (event: Event) => {
-    return event.attendees.some(element => element.username === currentUser?.username)
+        return event.attendees.some(element => element.username === currentUser?.username) || event.attendees.length === event.maximumCapacity 
     }
 
 
     const handleJoinEvent = async (eventId: number) => {
+    
+    try {
+        const response = await axiosInstance.get(`/events/with-ids`, {
+                params: { ids: currentUser.participatedEventIds },
+                    paramsSerializer: (params) => {
+                        return qs.stringify(params, { arrayFormat: 'repeat' });
+                    }
+                });        
+            const userEvents: Event[] = response.data;
+        
+        const conflicts = userEvents.filter(e => {
+            const eStart = new Date(`${e.startDate}T${e.startTime}`);
+            const eEnd = new Date(`${e.endDate}T${e.endTime}`);
+            const currentStart = new Date(`${event.startDate}T${event.startTime}`);
+            const currentEnd = new Date(`${event.endDate}T${event.endTime}`);
 
-        try {
+            return eStart < currentEnd && eEnd > currentStart;
+        });
 
-            const response = await axiosInstance.post(`/events/${eventId}/join`);
-
-            if(response.status === 200) {
-                toast.success("You successfully joined to the event!")
-                      setTimeout(() => {
-                        window.location.reload();
-                    }, 1200);
-            }
-            else {
-                toast.error("You couldn't join to the event.")
-            }
-
-        } catch(error) {
-            toast.error("You couldn't join to the event.")
+        if (conflicts.length > 0) {
+        setConflictingEvents(conflicts);
+        setShowConflictModal(true);
+        return;
         }
 
+        await joinEventRequest(eventId);
+
+    } catch (error) {
+        toast.error("Could not check your calendar.");
     }
+    };
+
+
+    const joinEventRequest = async (eventId: number) => {
+        try {
+            const response = await axiosInstance.post(`/events/${eventId}/join`);
+            if (response.status === 200) {
+            toast.success("You successfully joined the event!");
+            setTimeout(() => window.location.reload(), 1200);
+            } else {
+            toast.error("Couldn’t join the event.");
+            }
+        } catch (error) {
+            toast.error("Couldn’t join the event.");
+        }
+    };
 
     const handlePublishEvent = async () => {
 
@@ -146,6 +175,39 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                 </div>
             </div>
         </div>}
+        {showConflictModal && conflictingEvents.length > 0 && (
+            <div className={styles.deleteEventModalOverlay}>
+                <div className={styles.deleteEventModal} ref={modalRef}>
+                <h4>⚠️ You have overlapping events!</h4>
+                <p>The following events conflict with this one:</p>
+                <ul>
+                    {conflictingEvents.map(evt => (
+                    <li key={evt.id}>
+                        <strong>{evt.title}</strong><br/>
+                        {evt.startDate} {evt.startTime} → {evt.endDate} {evt.endTime}
+                    </li>
+                    ))}
+                </ul>
+                <div className={styles.deleteEventModalButtons}>
+                    <button
+                    className={styles.confirmButton}
+                    onClick={async () => {
+                        setShowConflictModal(false);
+                        await joinEventRequest(event.id);
+                    }}
+                    >
+                    Join Anyway
+                    </button>
+                    <button
+                    className={styles.cancelButton}
+                    onClick={() => setShowConflictModal(false)}
+                    >
+                    Cancel
+                    </button>
+                </div>
+                </div>
+            </div>
+            )}
             <div className={styles.eventTab}>
                 <label onClick={() => setCurrentTab(1)}>Info</label>
                 <label onClick={() => setCurrentTab(2)}>Reviews & Photos</label>
@@ -175,24 +237,29 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
             {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
                 (
                 <div className={styles.secondButtonGroup}>
-                    {event.status !== "ENDED" &&
+                    {event.status !== "ENDED" && event.attendees.length < event.maximumCapacity && (
                         <>
                             <FontAwesomeIcon
-                                data-tooltip-id="invite-icon"
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        showUsersToInvite()
-                                    }}
-                                    className={styles.inviteButton} 
-                                    icon={faUserPlus} size="2x" />
-                                    {showInviteModal && <CompanionsContainerModal
-                                        joinRequests={joinRequests}
-                                        event = {event}
-                                        onClose={() => setShowInviteModal(false)}></CompanionsContainerModal>}
-                                    <Tooltip id="invite-icon" />
-                                            <span data-tooltip-id="invite-icon" data-tooltip-content="Invite Friends"></span>
-                        </> 
-                        }
+                            data-tooltip-id="invite-icon"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                showUsersToInvite();
+                            }}
+                            className={styles.inviteButton}
+                            icon={faUserPlus}
+                            size="2x"
+                            />
+                            {showInviteModal && (
+                            <CompanionsContainerModal
+                                joinRequests={joinRequests}
+                                event={event}
+                                onClose={() => setShowInviteModal(false)}
+                            />
+                            )}
+                            <Tooltip id="invite-icon" />
+                            <span data-tooltip-id="invite-icon" data-tooltip-content="Invite Friends"></span>
+                        </>
+                        )}
                         {(event.organizer?.username === currentUser?.username )? (
                             <>
                                 {event.status !== "ENDED" &&  event.isDraft &&
@@ -228,7 +295,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                                     <button disabled={isDisabled(event)}
                                     onClick={() => handleJoinEvent(event.id)} 
                                     className={styles.joinButton}>
-                                    Join Event 
+                                    {event.attendees.length < event.maximumCapacity ? "Join Event": "Event is Full"} 
                                     </button> 
                                 </div>
                         )}

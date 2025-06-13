@@ -12,7 +12,7 @@
 
 
 .modalContent {
-  background: white;
+  background: var(--background-color);
   padding: 24px;
   border-radius: 12px;
   max-height: 80vh;
@@ -32,17 +32,23 @@
   gap: 12px;
 }
 
-
 .requesterCard {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: #f8f8f8;
+  justify-content: space-between;
+  background-color: var(--background-color);
   padding: 8px;
   border-radius: 8px;
+  border: 1px solid var(--primary-color);
 }
 
-.requesterCard:hover {
+.infoCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.infoCard:hover {
+  text-decoration: underline;
   cursor: pointer;
 }
 
@@ -56,6 +62,11 @@
 .requesterCard strong {
     margin: 0px;
     padding: 0px;
+}
+
+
+.requesterCard button {
+  padding: 1vh 1vw;
 }
 
 .closeButton {

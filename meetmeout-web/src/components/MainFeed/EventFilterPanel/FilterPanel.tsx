@@ -73,6 +73,8 @@ const FilterPanel = ({
           <option value="Most Liked">Most Liked</option>
           <option value="Most Attended">Most Attended</option>
           <option value="Nearest">Nearest</option>
+          <option value="Highly Scored">Highly Scored</option>
+          <option value="Most Reviewed">Most Reviewed</option>
         </select>
       </div>
     </>

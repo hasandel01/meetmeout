@@ -1,6 +1,6 @@
 import styles from "./EventPhotos.module.css";
 import React, { useState } from "react";
-import { Event } from "../../../../types/Event";
+import { Event } from "../../../../../types/Event";
 import { faTimes, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

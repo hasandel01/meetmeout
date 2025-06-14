@@ -237,7 +237,7 @@ const Header = () => {
                 (
                   <>
                   <div className={styles.headerMenu}>
-                  <span
+                    <span
                           onClick={() => {navigate("/"); clearSearch();}}
                           className={`${styles.navItem} ${isActive("/") ? styles.active : ''}`}
                         >

@@ -1,12 +1,12 @@
-import { User } from "../../../../types/User";
+import { User } from "../../../../../types/User";
 import styles from "./EventComments.module.css";
-import formatTime from "../../../../utils/formatTime";
+import formatTime from "../../../../../utils/formatTime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import  { Dispatch, forwardRef, SetStateAction, useEffect } from "react";
 import { useState, useRef } from "react";
-import axiosInstance from "../../../../axios/axios";
-import { Event } from "../../../../types/Event";
+import axiosInstance from "../../../../../axios/axios";
+import { Event } from "../../../../../types/Event";
 
 
 interface EventCommentsProps {

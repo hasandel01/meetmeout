@@ -73,7 +73,8 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                         return qs.stringify(params, { arrayFormat: 'repeat' });
                     }
                 });        
-            const userEvents: Event[] = response.data;
+        
+        const userEvents: Event[] = response.data;
         
         const conflicts = userEvents.filter(e => {
             const eStart = new Date(`${e.startDate}T${e.startTime}`);
@@ -211,6 +212,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
             <div className={styles.eventTab}>
                 <label onClick={() => setCurrentTab(1)}>Info</label>
                 <label onClick={() => setCurrentTab(2)}>Reviews & Photos</label>
+                <label onClick={() => setCurrentTab(3)}>Route & Event Cars</label>
             </div>
             {event.status === "ENDED" && 
               <div className={styles.photoUploadContainer}>

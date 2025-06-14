@@ -1,11 +1,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import axiosInstance from "../../../../axios/axios";
-import { User } from "../../../../types/User";
+import axiosInstance from "../../../../../axios/axios";
+import { User } from "../../../../../types/User";
 import styles from "./ReviewModal.module.css"
-import { Event } from "../../../../types/Event";
+import { Event } from "../../../../../types/Event";
 import { useEffect, useRef, useState } from "react";
-import { Review } from "../../../../types/Like";
+import { Review } from "../../../../../types/Like";
 import {toast} from 'react-toastify';
 
 

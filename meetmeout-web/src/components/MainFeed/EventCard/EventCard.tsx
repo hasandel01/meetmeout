@@ -12,12 +12,15 @@ import EventRatingStars from "../EventRatingStars/EventRatingStars";
 import { calculateDistance } from "../../../utils/calculateDistance";
 import { useState, useEffect } from "react";
 import axiosInstance from "../../../axios/axios";
+import qs from 'qs';
+import { toast } from "react-toastify";
+import { useBadgeContext } from "../../../context/BadgeContext";
+import { useRef } from "react";
 
 interface EventCardProps {
     event: Event;
     currentUser: User | null;
     isDisabled: (event: Event) => boolean;
-    handleJoinEvent: (eventId: number) => void;
     handleLike: (eventId: number) => void;
     invitations: { eventId: number }[];
     requestSentEvents: Event[];
@@ -26,20 +29,9 @@ interface EventCardProps {
     lng?: number;
 }
 
-    const isEventFull =(event: Event):boolean =>  {
-        return event.maximumCapacity <= event.attendees.length;
-    } 
-
-    const isStartDateAndEndDateSame = (event: Event): boolean => {
-        return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
-    };
-
-    
-
 const EventCard = ({
   event,
   currentUser,
-  handleJoinEvent,
   handleLike,
   invitations,
   requestSentEvents,
@@ -48,14 +40,25 @@ const EventCard = ({
 lng
 }: EventCardProps) => {
 
-      const navigate = useNavigate();
-      const distance = calculateDistance(event, lat, lng);
-      const [requestSent, setRequestSent] = useState<boolean>(false);
+    const navigate = useNavigate();
+    const distance = calculateDistance(event, lat, lng);
+    const [requestSent, setRequestSent] = useState<boolean>(false);
+    const [showConflictModal, setShowConflictModal] = useState(false);
+    const [conflictingEvents, setConflictingEvents] = useState<Event[]>([]);
+    const {getMe} = useBadgeContext();
 
     useEffect(() => {
         const alreadySent = requestSentEvents.some(req => req.id === event.id);
         setRequestSent(alreadySent);
     }, [requestSentEvents, event.id]);
+
+    const isEventFull =(event: Event):boolean =>  {
+        return event.maximumCapacity <= event.attendees.length;
+    } 
+
+    const isStartDateAndEndDateSame = (event: Event): boolean => {
+        return new Date(event.startDate).toLocaleDateString() === new Date(event.endDate).toLocaleDateString();
+    };
 
 
     const handleNavigateInvitedEvent = async () => {
@@ -71,6 +74,61 @@ lng
         }
     }
 
+    const modalRef = useRef<HTMLDivElement>(null);
+    
+
+    const handleJoinEvent = async (eventId: number) => {
+
+        try {
+
+            const response = await axiosInstance.get(`/events/with-ids`, {
+                params: { ids: currentUser?.participatedEventIds },
+                    paramsSerializer: (params) => {
+                        return qs.stringify(params, { arrayFormat: 'repeat' });
+                    }
+                });        
+        
+            const userEvents: Event[] = response.data;
+            
+                const conflicts = userEvents.filter(e => {
+                const eStart = new Date(`${e.startDate}T${e.startTime}`);
+                const eEnd = new Date(`${e.endDate}T${e.endTime}`);
+                const currentStart = new Date(`${event?.startDate}T${event?.startTime}`);
+                const currentEnd = new Date(`${event?.endDate}T${event?.endTime}`);
+
+                return eStart < currentEnd && eEnd > currentStart;
+            });
+
+            if (conflicts.length > 0) {
+            setConflictingEvents(conflicts);
+            setShowConflictModal(true);
+            return;
+            }
+
+            await joinEventRequest(eventId);
+
+        } catch(error) {
+            toast.error("You couldn't join to the event.")
+        }
+
+    }
+
+    const joinEventRequest = async (eventId: number) => {
+        try {
+            const response = await axiosInstance.post(`/events/${eventId}/join`);
+            if (response.status === 200) {
+                toast.success("You successfully joined the event!");
+                setRequestSent(true);
+                setTimeout(() => navigate(`/event/${eventId}`), 500);
+                await getMe();
+            } else {
+            toast.error("Couldn’t join the event.");
+            }
+        } catch (error) {
+            toast.error("Couldn’t join the event.");
+        }
+    };
+
     return (
         <div className={event.status !== "ENDED" ? (
                                                 isEventFull(event) ? `${styles.eventCard} ${styles.full}` : `${styles.eventCard}`
@@ -79,7 +137,7 @@ lng
                                                 `${styles.eventCard} ${styles.joinedEnded}` : 
                                                 `${styles.eventCard} ${styles.ended}`
                                     )}
-                                    onClick={ (event.isPrivate && !event.attendees.some(attendee => attendee.username === currentUser?.username) )
+                                    onClick={showConflictModal || (event.isPrivate && !event.attendees.some(attendee => attendee.username === currentUser?.username) )
                                                 ? undefined : () => navigate(`/event/${event.id}`)}>                                   
                                     {event.isPrivate && 
                                     <><FontAwesomeIcon
@@ -206,7 +264,6 @@ lng
                                                          handleJoinEvent(event.id)
                                                     )
 
-                                            setRequestSent(true);
                                         }} 
                                         className={event.isPrivate && invitations.some(invitation => invitation.eventId === event.id) ? 
                                              styles.alreadyInvited : styles.joinButton}>
@@ -217,6 +274,40 @@ lng
                                                 "Request sent!" :  "Send Join Request!" )
                                         ): "Join" }
                                     </button> }
+
+        {showConflictModal && conflictingEvents.length > 0 && (
+                                    <div className={styles.deleteEventModalOverlay}>
+                                        <div className={styles.deleteEventModal} ref={modalRef}>
+                                        <h4>⚠️ You have overlapping events!</h4>
+                                        <p>The following events conflict with this one:</p>
+                                        <ul>
+                                            {conflictingEvents.map(evt => (
+                                            <li key={evt.id}>
+                                                <strong>{evt.title}</strong><br/>
+                                                {evt.startDate} {evt.startTime} → {evt.endDate} {evt.endTime}
+                                            </li>
+                                            ))}
+                                        </ul>
+                                        <div className={styles.deleteEventModalButtons}>
+                                            <button
+                                            className={styles.confirmButton}
+                                            onClick={async () => {
+                                                setShowConflictModal(false);
+                                                await joinEventRequest(event.id);
+                                            }}
+                                            >
+                                            Join Anyway
+                                            </button>
+                                            <button
+                                            className={styles.cancelButton}
+                                            onClick={() => setShowConflictModal(false)}
+                                            >
+                                            Cancel
+                                            </button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                    )}                                        
         </div>
     )       
 }

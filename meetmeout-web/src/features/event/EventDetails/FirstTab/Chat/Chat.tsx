@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Message } from "../../../../types/Message";
+import { Message } from "../../../../../types/Message";
 import styles from "./Chat.module.css"
-import { useUserContext } from "../../../../context/UserContext";
+import { useUserContext } from "../../../../../context/UserContext";
 import {toast} from 'react-toastify';
-import axiosInstance from "../../../../axios/axios";
-import { useWebSocket } from "../../../../context/WebSocketContext";
-import formatTime from "../../../../utils/formatTime";
-import { Event } from "../../../../types/Event";
+import axiosInstance from "../../../../../axios/axios";
+import { useWebSocket } from "../../../../../context/WebSocketContext";
+import formatTime from "../../../../../utils/formatTime";
+import { Event } from "../../../../../types/Event";
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 

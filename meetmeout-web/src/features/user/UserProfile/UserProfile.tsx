@@ -16,6 +16,7 @@ import { calculateDistance } from "../../../utils/calculateDistance";
 import { getOrganizerRatingDescription } from "../../../utils/getOrganizerRatingDescription";
 import { formatMonthYear } from "../../../utils/formatTime";
 import { TravelAssociate } from "../../../types/TravelAssociate";
+import CarContainer from "./CarContainer/CarContainer";
 
 function UserProfile() {
 
@@ -668,7 +669,7 @@ function UserProfile() {
                     )}
                 </div>
             </div>
-
+            {user && <CarContainer user={user} cars={user.cars ?? []}/>}
         </div>
     );
 }

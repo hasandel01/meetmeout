@@ -2,16 +2,16 @@ import styles from "./EventCardDetails.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faLocationDot, faHeart, faComment, faLock, faUserGroup, faMoneyBill,faPenToSquare, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
-import { Event } from "../../../../types/Event";
-import { Weather } from "../../../../types/Forecast";
-import { getCategoryIconLabel } from "../../../../mapper/CategoryMap";
-import { User } from "../../../../types/User";
+import { Event } from "../../../../../types/Event";
+import { Weather } from "../../../../../types/Forecast";
+import { getCategoryIconLabel } from "../../../../../mapper/CategoryMap";
+import { User } from "../../../../../types/User";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from 'react-tooltip';
 import 'react-tooltip/dist/react-tooltip.css';
-import axiosInstance from "../../../../axios/axios";
+import axiosInstance from "../../../../../axios/axios";
 import { useState, useRef, useEffect } from "react";
-import TagInput from "../../CreateEvent/TagInput";
+import TagInput from "../../../CreateEvent/TagInput";
 
 interface Props {
   event: Event;

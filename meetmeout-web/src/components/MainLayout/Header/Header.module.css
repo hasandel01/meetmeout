@@ -8,10 +8,11 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 15px 20px;
     background-color: var(--background-color);
     width: 100%;
     border-bottom: 1px solid var(--primary-color-dark);
+    box-sizing: border-box;
 }
 
 /** LOGO */
@@ -21,13 +22,12 @@ header .logoContainer {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin-left: 15px;
     cursor: pointer;
 }
 
 header .logoContainer img {
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
     background-color: var(--input-background);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -80,7 +80,6 @@ header .headerMenu span:hover {
     padding: 8px;
     border-bottom: 2px solid transparent;
     cursor: pointer;
-    margin-right: 5px;
 }
   
 .navItem.active {
@@ -124,7 +123,6 @@ header .userShortcut {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    margin-right: 40px;
     transition: transform 0.7 ease;
 }
 
@@ -136,7 +134,6 @@ header .userShortcut img {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    margin-right: 15px;
     background-color: var(--input-background);
     border: 3px solid var(--primary-color-dark);
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
@@ -146,7 +143,7 @@ header .userShortcut img {
 .userMenu {
     position: absolute;
     top: 100%;
-    right: 60px;
+    right: 20px;
     display: flex;
     flex-direction: column;
     background-color: var(--background-color);
@@ -170,7 +167,7 @@ header .userShortcut img {
     justify-content: flex-start;
     border-bottom: 1px solid var(--card-border);
     color: var(--primary-color-dark);
-    padding: 15px 25px;
+    padding: 5px 20px;
     font-size: 14px;
     font-weight: bold;
     border-radius: 4px;
@@ -197,13 +194,13 @@ header .userShortcut img {
         top: 0;
         width: 100%;
         z-index: 1000;
+        box-sizing: unset;
     }
     
     header .logoContainer {
         display: flex;
         flex-direction: row;
         cursor: pointer;
-        margin-left: 0px;
     }
     
     header .logoContainer img {
@@ -290,11 +287,11 @@ header .userShortcut img {
     }
 
     .mainContent {
-        padding-top: 70px; /* Header yüksekliği + biraz boşluk */
+        padding-top: 70px;
       }
       
 
-      .headerMenu span:active,
+.headerMenu span:active,
 .barMenu div:active,
 .userShortcut:active,
 .logoContainer:active,

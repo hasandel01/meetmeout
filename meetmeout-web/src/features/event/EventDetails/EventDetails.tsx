@@ -9,15 +9,17 @@ import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
 import { Weather } from "../../../types/Forecast";
 import { useProfileContext } from "../../../context/ProfileContext";
-import Chat from "./Chat/Chat";
+import Chat from "./FirstTab/Chat/Chat";
 import { Review } from "../../../types/Like";
 import EventReviews from "./EventReviews/EventReviews";
-import EventComments from "./EventComments/EventComments";
+import EventComments from "./FirstTab/EventComments/EventComments";
 import EventParticipants from "./EventParticipants/EventParticipants";
 import EventHeader from "./EventHeader/EventHeader";
-import EventDetailsCard from "./EventCard/EvetCard";
-import EventPhotos from "./EventPhotos/EventPhotos";
-import ReviewModal from "./ReviewModal/ReviewModal";
+import EventDetailsCard from "./FirstTab/EventCard/EvetCard";
+import EventPhotos from "./SecondTab/EventPhotos/EventPhotos";
+import ReviewModal from "./SecondTab/ReviewModal/ReviewModal";
+import EventCars from "./ThirdTab/Car/EventCars";
+import EventRoute from "./ThirdTab/Route/EventRoute";
 
 const EventDetails = () => {
 
@@ -366,27 +368,27 @@ const EventDetails = () => {
                       )
                     }
                     {currentTab === 1 &&
-                    <div className={styles.eventCardAndChat}>
-                      <div className={styles.eventCardAndComments}>
-                          <EventDetailsCard
-                                onCommentClick={scrollToComment}
-                                event={event}
-                                setEvent={setEvent}
-                                weather={weather}
-                                currentUser={currentUser ?? null}
-                                options={options}
-                                handleLocationClick={handleLocationClick}
-                                handleLike={handleLike}
-                              />
-                          <EventComments
-                            ref={commentInputRef}
-                            currentUser={currentUser}
-                            event={event}
-                            setEvent={setEvent}
-                          />
+                      <div className={styles.eventCardAndChat}>
+                        <div className={styles.eventCardAndComments}>
+                            <EventDetailsCard
+                                  onCommentClick={scrollToComment}
+                                  event={event}
+                                  setEvent={setEvent}
+                                  weather={weather}
+                                  currentUser={currentUser ?? null}
+                                  options={options}
+                                  handleLocationClick={handleLocationClick}
+                                  handleLike={handleLike}
+                                />
+                            <EventComments
+                              ref={commentInputRef}
+                              currentUser={currentUser}
+                              event={event}
+                              setEvent={setEvent}
+                            />
+                        </div>
+                          <Chat event={event}></Chat>
                       </div>
-                        <Chat event={event}></Chat>
-                    </div>
                     }
                     {currentTab === 2 && (
                       <div className={styles.reviewsAndPhotos}>
@@ -401,6 +403,16 @@ const EventDetails = () => {
                         <EventPhotos
                           event={event}
                         />
+                      </div>
+                    )}
+                    {currentTab == 3 && (
+                      <div className={styles.routeAndCars}>
+                      {currentUser && (
+                        <> 
+                        <EventRoute/>
+                        <EventCars currentUser={currentUser} event={event}/>
+                        </>
+                      )}
                       </div>
                     )}
                 </div>

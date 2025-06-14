@@ -14,7 +14,6 @@ import MapPanner from "./MainFeedMap/MainFeedMapPanner/MainFeedMapPanner";
 import EventCard from "./EventCard/EventCard";
 import FilterPanel from "./EventFilterPanel/FilterPanel";
 import { useLocationContext } from "../../context/LocationContex";
-import { useBadgeContext } from "../../context/BadgeContext";
 import { calculateDistance } from "../../utils/calculateDistance";
 
 const MainFeed = () => {
@@ -32,14 +31,11 @@ const MainFeed = () => {
     const [events, setEvents] = useState<Event[] | null>([]);
     const [filteredEvents, setFilteredEvents] = useState<Event[] |null>();
     const options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    const navigate = useNavigate();
     const {currentUser} = useUserContext();
     const [loading, setLoading] = useState(true);
     const [requestSentEvents, setRequestSentEvents] = useState<Event[]>([]);
     const [invitations, setInvitations] = useState<Invitation[]>([]);
     const {userLatitude, userLongitude } = useLocationContext();
-    const {getMe} = useBadgeContext();
-
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [showPastEvents, setShowPastEvents] = useState(false);
     const [showFreeEvents, setShowFreeEvents] = useState(false);
@@ -155,34 +151,34 @@ const MainFeed = () => {
             return calculateDistance(a, lat, lng) - calculateDistance(b, lat, lng);
             });
             setEvents(sortedEvents);
-        }
-    }
+        } else if(searchString === "Most Reviewed") {
 
+            const sortedEvents = [...events]?.sort((a, b) => {
+                return b.reviews.length - a.reviews.length;
+            })
+            setEvents(sortedEvents)
+        } else if(searchString === "Highly Scored") {
+            
+            const sortedEvents = [...events]?.sort((a, b) => {
+            const avgA =
+            a.reviews.length > 0
+                ? a.reviews.reduce((sum, r) => sum + r.rating, 0) / a.reviews.length
+                : 0;
 
+            const avgB =
+            b.reviews.length > 0
+                ? b.reviews.reduce((sum, r) => sum + r.rating, 0) / b.reviews.length
+                : 0;
 
-    const handleJoinEvent = async (eventId: number) => {
+        return avgB - avgA; 
+    });
 
-        try {
-
-            const response = await axiosInstance.post(`/events/${eventId}/join`);
-
-            if(response.status === 200) {
-
-                if(!response.data) {
-                    toast.success("You joined to the event.")
-                    setTimeout(() => navigate(`/event/${eventId}`), 500);
-                    await getMe();
-                }
-
-            }else {
-                toast.error("You couldn't join to the event.")
-            }
-
-        } catch(error) {
-            toast.error("You couldn't join to the event.")
+    setEvents(sortedEvents);
         }
 
     }
+
+
 
     const isDisabled = (event: Event) => {
         return requestSentEvents.some(requestSentEvents => requestSentEvents.id === event.id) || invitations.some(invitation => invitation.eventId === event.id)
@@ -284,7 +280,6 @@ const MainFeed = () => {
                                 event={event}
                                 currentUser={currentUser ?? null}
                                 isDisabled={isDisabled}
-                                handleJoinEvent={handleJoinEvent}
                                 handleLike={handleLike}
                                 invitations={invitations}
                                 requestSentEvents={requestSentEvents}

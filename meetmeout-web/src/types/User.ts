@@ -1,6 +1,7 @@
 import { Badge } from "./Badge";
 import { Review } from "./Like";
 import { UserReview } from "./UserReviews";
+import { Car } from "./Car";
 
 export interface User {
     id: number;
@@ -19,5 +20,6 @@ export interface User {
     darkMode: boolean;
     reviews: Review[];
     userReviews: UserReview[];
-    createdAt: string
+    createdAt: string;
+    cars: Car[];
 }

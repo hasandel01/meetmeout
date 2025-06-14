@@ -15,9 +15,11 @@ import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
 import com.hasandel01.meetmeoutserver.exceptions.RestrictedUserException;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
+import com.hasandel01.meetmeoutserver.user.model.ReviewDismissal;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.common.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.notification.service.NotificationService;
+import com.hasandel01.meetmeoutserver.user.repository.ReviewDismissalRepository;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import com.hasandel01.meetmeoutserver.user.service.BadgeService;
 import jakarta.transaction.Transactional;
@@ -49,6 +51,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     private final JoinEventRequestRepository joinEventRequestRepository;
     private final InviteRepository inviteRepository;
     private final BadgeService badgeService;
+    private final ReviewDismissalRepository reviewDismissalRepository;
 
     @Transactional
     public EventDTO createEvent(EventDTO event) {
@@ -326,6 +329,51 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
             reviewRepository.delete(review);
         else
             throw new RuntimeException("You are not the reviewer of this review");
+
+        return null;
+    }
+
+    @Transactional
+    public Boolean getReviewDismissal(long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
+        List<ReviewDismissal> dismissals = reviewDismissalRepository.findByReviewerAndEvent(user,event);
+
+        return !dismissals.isEmpty();
+    }
+
+    @Override
+    public Void setDissmissalToTrue(long eventId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        List<ReviewDismissal> dismissals = reviewDismissalRepository.findByReviewerAndEvent(user,event);
+
+        if(dismissals.isEmpty()) {
+            ReviewDismissal dismissal = ReviewDismissal
+                    .builder()
+                    .dismissed(true)
+                    .event(event)
+                    .reviewer(user)
+                    .build();
+
+            reviewDismissalRepository.save(dismissal);
+        } else {
+            return null;
+        }
 
         return null;
     }

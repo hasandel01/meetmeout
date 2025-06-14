@@ -12,7 +12,6 @@ public record ReviewDTO (
     UserDTO reviewer,
     String content,
     LocalDateTime updatedAt,
-    int rating
-) {
+    int rating) {
 
 }

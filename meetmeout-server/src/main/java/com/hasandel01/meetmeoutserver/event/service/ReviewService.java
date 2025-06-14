@@ -10,4 +10,8 @@ public interface ReviewService {
     ReviewDTO addReviewToEvent(@Valid long eventId, ReviewDTO reviewDTO);
 
     Void deleteReviewFromEvent(long reviewId);
+
+    Boolean getReviewDismissal(long eventId);
+
+    Void setDissmissalToTrue(long eventId);
 }

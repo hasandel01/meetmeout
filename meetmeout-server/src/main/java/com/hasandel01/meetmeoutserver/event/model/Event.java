@@ -1,7 +1,9 @@
 package com.hasandel01.meetmeoutserver.event.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
+import com.hasandel01.meetmeoutserver.user.model.Car;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -116,8 +118,13 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private RouteType routeType;
 
-
     @Lob
     private String routeJson;
+
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<EventCar> eventCars = new HashSet<>();
 
 }

@@ -112,7 +112,7 @@ public class NotificationService {
                 .notificationType(NotificationType.FRIEND_REQUEST)
                 .sender(sender)
                 .receiver(event.getOrganizer())
-                .title("<3")
+                .title("💝")
                 .body(sender.getUsername() + " liked your event.")
                 .url("/event/" + event.getId())
                 .read(false)

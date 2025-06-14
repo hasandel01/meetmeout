@@ -154,4 +154,9 @@ public class User implements UserDetails {
 
     @Column
     private LocalDateTime deletedAt;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Car> cars = new HashSet<>();
 }

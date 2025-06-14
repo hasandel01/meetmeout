@@ -42,4 +42,22 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/{eventId}/dismissal")
+    public ResponseEntity<Boolean> getReviewDismissal(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(reviewService.getReviewDismissal(eventId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/{eventId}/dismissal")
+    public ResponseEntity<Void> setReviewDismissal(@PathVariable long eventId) {
+        try {
+            return ResponseEntity.ok(reviewService.setDissmissalToTrue(eventId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

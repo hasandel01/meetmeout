@@ -1,5 +1,6 @@
 package com.hasandel01.meetmeoutserver.user.dto;
 
+import com.hasandel01.meetmeoutserver.user.model.Car;
 import com.hasandel01.meetmeoutserver.user.model.UserReview;
 import lombok.Builder;
 
@@ -23,5 +24,6 @@ public record UserDTO(
         boolean showLocation,
         boolean darkMode,
         Set<UserReviewDTO> userReviews,
-        LocalDateTime createdAt) {
+        LocalDateTime createdAt,
+        Set<CarDTO> cars) {
 }

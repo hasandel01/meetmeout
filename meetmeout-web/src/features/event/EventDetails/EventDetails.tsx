@@ -11,15 +11,15 @@ import { Weather } from "../../../types/Forecast";
 import { useProfileContext } from "../../../context/ProfileContext";
 import Chat from "./FirstTab/Chat/Chat";
 import { Review } from "../../../types/Like";
-import EventReviews from "./EventReviews/EventReviews";
+import EventReviews from "./SecondTab/EventReviews/EventReviews";
 import EventComments from "./FirstTab/EventComments/EventComments";
 import EventParticipants from "./EventParticipants/EventParticipants";
 import EventHeader from "./EventHeader/EventHeader";
 import EventDetailsCard from "./FirstTab/EventCard/EvetCard";
 import EventPhotos from "./SecondTab/EventPhotos/EventPhotos";
-import ReviewModal from "./SecondTab/ReviewModal/ReviewModal";
-import EventCars from "./ThirdTab/Car/EventCars";
+import ReviewModal from "./ReviewModal/ReviewModal";
 import EventRoute from "./ThirdTab/Route/EventRoute";
+import CarAssignmentBoard from "./ThirdTab/Car/CarAssignmentBoard";
 
 const EventDetails = () => {
 
@@ -352,7 +352,6 @@ const EventDetails = () => {
                 setShowAllAttendees={setShowAllAttendees}
                 showAllRequests={showAllRequests}
                 setShowAllRequests={setShowAllRequests}
-                goToUserProfile={goToUserProfile}
               />
               )}
                 <div className={styles.eventDetailsContainer}>
@@ -409,8 +408,8 @@ const EventDetails = () => {
                       <div className={styles.routeAndCars}>
                       {currentUser && (
                         <> 
-                        <EventRoute/>
-                        <EventCars currentUser={currentUser} event={event}/>
+                        <EventRoute event={event} />
+                        <CarAssignmentBoard currentUser={currentUser} event={event}/>
                         </>
                       )}
                       </div>

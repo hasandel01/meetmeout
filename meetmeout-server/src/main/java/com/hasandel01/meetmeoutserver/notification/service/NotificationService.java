@@ -135,7 +135,6 @@ public class NotificationService {
         notification.setRead(true);
         notificationRepository.save(notification);
 
-
         return null;
     }
 
@@ -224,4 +223,24 @@ public class NotificationService {
         }
     }
 
+
+
+    public void sendKickNotificationToUser(User attendee, Event event) {
+
+        Notification notification = Notification.builder()
+                .notificationType(NotificationType.USER_KICKED)
+                .title("You are kicked from an event. 🦵")
+                .body(event.getOrganizer().getUsername() + " has kicked you from event " + event.getTitle())
+                .url("/event/" + event.getId())
+                .sender(event.getOrganizer())
+                .receiver(attendee)
+                .read(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
+
+    }
 }

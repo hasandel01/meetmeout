@@ -72,4 +72,9 @@ public class EventParticipantController {
     public ResponseEntity<InviteDTO> getInvitation(@PathVariable long eventId, @PathVariable long userId) {
         return ResponseEntity.ok(eventService.getInvitationsByInvitedAndEvent(eventId,userId));
     }
+
+    @DeleteMapping("/{eventId}/kick/{userId}")
+    public ResponseEntity<Void> kickUserFromEvent(@PathVariable long eventId, @PathVariable long userId) {
+        return ResponseEntity.ok(eventService.kickUser(eventId,userId));
+    }
 }

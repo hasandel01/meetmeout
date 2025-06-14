@@ -1,145 +1,78 @@
-import React, { useEffect, useState } from "react";
-import styles from "./EventCars.module.css";
-import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
+import {User} from "../../../../../types/User";
 import { Event } from "../../../../../types/Event";
-import { EventCar } from "../../../../../types/Car";
-import { User } from "../../../../../types/User";
+import styles from "./EventCars.module.css";
+import { useState } from "react";
 import axiosInstance from "../../../../../axios/axios";
+import { Car } from "../../../../../types/Car";
+import { EventCar } from "../../../../../types/Car";
 
-interface CarAssignmentBoardProps {
-    event: Event;
+interface EventCarsProps {
     currentUser: User;
-}
+    event: Event;
+    eventCars: EventCar[];
+} 
 
-const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentUser }) => {
-    const [unassigned, setUnassigned] = useState<User[]>([]);
-    const [eventCars, setEventCars] = useState<EventCar[]>([]);
-    const [assignments, setAssignments] = useState<Record<number, User[]>>({});
+const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars }) => {
+    const [showCarsModal, setShowCarsModal] = useState(false);
+    const [selectedCars, setSelectedCars] = useState<Car[]>([]);
 
-    const getEventCars = async () => {
-        try {
-            const response = await axiosInstance.get(`/events/car/${event.id}`);
-            setEventCars(response.data);
-
-            const map: Record<number, User[]> = {};
-            response.data.forEach((ec: EventCar) => {
-                map[ec.id] = ec.passengers ?? [];
-            });
-            setAssignments(map);
-
-            const assignedIds = new Set(response.data.flatMap((ec: EventCar) => ec.passengers.map(p => p.id)));
-            const notAssigned = event.attendees.filter(att => !assignedIds.has(att.id));
-            setUnassigned(notAssigned);
-        } catch (error) {
-            console.error("Error fetching event cars", error);
-        }
-    };
-
-    useEffect(() => {
-        if (event) getEventCars();
-    }, [event]);
-
-    const onDragEnd = (result: DropResult) => {
-        const { source, destination, draggableId } = result;
-        if (!destination) return;
-
-        const draggedId = parseInt(draggableId);
-
-        if (source.droppableId === "unassigned") {
-            const draggedUser = unassigned.find(u => u.id === draggedId);
-            if (!draggedUser) return;
-
-            const carId = parseInt(destination.droppableId);
-            const cap = eventCars.find(ec => ec.id === carId)?.car.capacity ?? 0;
-
-            if (assignments[carId]?.length >= cap) return;
-
-            setUnassigned(prev => prev.filter(u => u.id !== draggedId));
-            setAssignments(prev => ({ ...prev, [carId]: [...prev[carId], draggedUser] }));
+    const handleSelectCar = (car: Car) => {
+        const alreadySelected = selectedCars.find(c => c.id === car.id);
+        if (alreadySelected) {
+            setSelectedCars(selectedCars.filter(c => c.id !== car.id));
         } else {
-            const sourceCarId = parseInt(source.droppableId);
-            const draggedUser = assignments[sourceCarId].find(u => u.id === draggedId);
-            if (!draggedUser) return;
-
-            if (destination.droppableId === "unassigned") {
-                setAssignments(prev => ({ ...prev, [sourceCarId]: prev[sourceCarId].filter(u => u.id !== draggedId) }));
-                setUnassigned(prev => [...prev, draggedUser]);
-            } else {
-                const targetCarId = parseInt(destination.droppableId);
-                const cap = eventCars.find(ec => ec.id === targetCarId)?.car.capacity ?? 0;
-
-                if (assignments[targetCarId]?.length >= cap) return;
-
-                setAssignments(prev => ({
-                    ...prev,
-                    [sourceCarId]: prev[sourceCarId].filter(u => u.id !== draggedId),
-                    [targetCarId]: [...prev[targetCarId], draggedUser]
-                }));
-            }
+            setSelectedCars([...selectedCars, car]);
         }
     };
 
-    const handleSave = async () => {
-    try {
-        for (const [eventCarId, passengers] of Object.entries(assignments)) {
-            const passengerIds = passengers.map(p => p.id);
-
-            await axiosInstance.post(`/events/car/${eventCarId}/passengers`, passengerIds);
+    const handleJoinWithCars = async () => {
+        if (selectedCars.length === 0) return;
+        try {
+            await axiosInstance.post(`/events/car/${event.id}/add`, selectedCars);
+            console.log("Gönderilen arabalar:", selectedCars);
+        } catch (error) {
+            console.error("Error sending cars:", error);
         }
-        alert("Saved!");
-    } catch (error) {
-        console.error("Save failed", error);
-    }
-};
-
-
+    };
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <div className={styles.board}>
-                <Droppable droppableId="unassigned">
-                    {(provided) => (
-                        <div className={styles.unassigned} ref={provided.innerRef} {...provided.droppableProps}>
-                            <h3>Unassigned Attendees</h3>
-                            {unassigned.map((user, index) => (
-                                <Draggable draggableId={user.id.toString()} index={index} key={user.id}>
-                                    {(provided) => (
-                                        <div className={styles.userCard} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                            <img src={user.profilePictureUrl} />
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </div>
-                    )}
-                </Droppable>
-
-                <div className={styles.cars}>
-                    {eventCars.map(eventCar => (
-                        <Droppable droppableId={eventCar.id.toString()} key={eventCar.id}>
-                            {(provided) => (
-                                <div className={styles.carColumn} ref={provided.innerRef} {...provided.droppableProps}>
-                                    <h4>{eventCar.car.make} {eventCar.car.model} ({eventCar.car.capacity})</h4>
-                                    {assignments[eventCar.id]?.map((user, index) => (
-                                        <Draggable draggableId={user.id.toString()} index={index} key={user.id}>
-                                            {(provided) => (
-                                                <div className={styles.userCard} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                    <img src={user.profilePictureUrl} />
-                                                </div>
-                                            )}
-                                        </Draggable>
-                                    ))}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
-                    ))}
-                </div>
-            </div>
-            <button onClick={handleSave} className={styles.saveButton}>💾 Save Assignments</button>
-        </DragDropContext>
+        <div className={styles.eventCarsContainer}>
+            {event?.attendees?.some(attendee => attendee.username === currentUser?.username) &&
+                currentUser?.cars?.filter(car => !eventCars.some(eventCar => eventCar.car.id === car.id)).length > 0 ? (
+                    <>
+                        <label onClick={() => setShowCarsModal(prev => !prev)}>
+                            🚗 Do you want to use your car(s) in this event?
+                        </label>
+                        {showCarsModal && (
+                            <div className={styles.carList}>
+                                {currentUser.cars
+                                .filter(car => !eventCars.some(eventCar => eventCar.car.id === car.id))
+                                .map(car => (
+                                    <div
+                                        key={car.id}
+                                        className={`${styles.carCard} ${selectedCars.some(c => c.id === car.id) ? styles.selected : ""}`}
+                                        onClick={() => handleSelectCar(car)}
+                                    >
+                                        <h4>{car.make} {car.model}</h4>
+                                        <p>Year: {car.year}</p>
+                                        <p>Capacity: {car.capacity}</p>
+                                    </div>
+                                ))}
+                                <button
+                                    className={styles.joinWithCarButton}
+                                    onClick={handleJoinWithCars}
+                                    disabled={selectedCars.length === 0}
+                                >
+                                    Join with Selected Car(s)
+                                </button>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <p> You don't have any car to assing to this event.</p>
+                )}
+        </div>
     );
 };
 
-export default CarAssignmentBoard;
+export default EventCars;

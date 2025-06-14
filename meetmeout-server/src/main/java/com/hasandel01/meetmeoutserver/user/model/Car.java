@@ -3,8 +3,12 @@ package com.hasandel01.meetmeoutserver.user.model;
 
 import com.hasandel01.meetmeoutserver.event.model.EventCar;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.Year;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,12 +20,20 @@ import java.util.Set;
 public class Car {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @Size(min = 2, max = 20)
     private String make;
+
+    @Size(min = 2, max = 20)
     private String model;
+
+    @Min(1900)
     private int year;
+
+    @Min(2)
+    @Max(20)
     private int capacity;
 
     @ManyToOne

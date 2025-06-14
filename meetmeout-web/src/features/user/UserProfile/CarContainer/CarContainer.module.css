@@ -1,7 +1,13 @@
 .carContainer {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
+    margin: 20px;
     width: 90vw;
     background-color: var(--background-color);
+    border: 1px solid var(--primary-color-dark);
+    border-radius: 12px;
+    color: var(--primary-color-dark);
 }
 
 .carCard {
@@ -9,17 +15,22 @@
     border-radius: 8px;
     padding: 10px;
     margin-top: 10px;
-    background-color: var(--card-color);
+    background-color: var(--background-color);
 }
 
 .addButton {
     margin: 10px 0;
     padding: 8px 12px;
     background-color: var(--primary-color-dark);
-    color: white;
+    color: var(--background-color);
     border: none;
     border-radius: 6px;
     cursor: pointer;
+}
+
+.addButton:hover {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .modalBackdrop {
@@ -37,12 +48,12 @@
 
 .modalContent {
     background-color: var(--background-color);
-    padding: 20px;
+    padding: 30px;
     border-radius: 10px;
     width: 300px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 20px;
 }
 
 .modalActions {
@@ -63,4 +74,13 @@
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
+}
+
+
+.saveButton:hover {
+    background-color: rgb(85, 166, 190);
+}
+
+.cancelButton:hover {
+    background-color: rgb(114, 19, 19);
 }

@@ -16,8 +16,14 @@
 .reviewsAndPhotos {
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
-    width: 94vw;
+    justify-content: space-between;
+    width: 90vw;
+}
+
+.routeAndCars {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /** INVITE MODAL */

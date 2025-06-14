@@ -1,0 +1,59 @@
+.reviewModal {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.2);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.reviewPopup {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 80px;
+    background-color: var(--background-color);
+    gap: 20px;
+    border-radius: 10px;
+}
+
+.reviewPopup textarea {
+    resize: none;
+    padding-bottom: 100px;
+}
+
+.reviewStars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.starIcon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+
+.dismissLink {
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: -8px;
+  text-align: right;
+  transition: color 0.2s ease;
+}
+
+
+button {
+    background-color: var(--button-color);
+    border-radius: var(--button-border-radius);
+    padding: var(--button-padding);
+    font-size: 14px;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

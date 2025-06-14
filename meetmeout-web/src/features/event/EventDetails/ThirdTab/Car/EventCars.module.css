@@ -1,80 +1,74 @@
-.board {
-    display: flex;
-    flex-direction: row;
-    gap: 2rem;
-    padding: 2rem;
-    flex-wrap: wrap;
-    justify-content: center;
+.eventCarsContainer {
+  margin: 20px 0;
+  padding: 10px;
+  border: 1px solid var(--primary-color-dark);
+  font-family: inherit;
+  background-color: var(--background-color);
 }
 
-.unassigned {
-    background-color: #f9f9f9;
-    border: 2px dashed #ccc;
-    border-radius: 16px;
-    padding: 1rem;
-    width: 200px;
-    min-height: 250px;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.05);
-    transition: background-color 0.3s ease;
+.eventCarsContainer label {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--primary-color-dark);
 }
 
-.cars {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
+.carList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
 }
 
-.carColumn {
-    background-color: #eaf7ff;
-    border: 2px solid #007acc;
-    border-radius: 24px;
-    padding: 1rem;
-    width: 220px;
-    min-height: 250px;
-    text-align: center;
-    box-shadow: 0 0 12px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease;
+.carCard {
+  border: 2px solid var(--primary-color-dark);
+  border-radius: 8px;
+  padding: 10px;
+  width: 180px;
+  background-color: var(--background-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
 }
 
-.carColumn:hover {
-    transform: translateY(-4px);
+.carCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-.userCard {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin: 0.5rem auto;
-    border: 2px solid #ccc;
-    transition: border 0.3s ease;
+.carCard.selected {
+  background-color: var(--primary-color-light);
+  border-color: var(--accent-color);
 }
 
-.userCard img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
+.carCard h4 {
+  margin: 0 0 5px;
+  font-size: 16px;
 }
 
-.userCard:hover {
-    border: 2px solid #007acc;
-    cursor: grab;
+.carCard p {
+  margin: 2px 0;
+  font-size: 14px;
 }
 
-.saveButton {
-    margin-top: 2rem;
-    padding: 0.8rem 1.5rem;
-    background-color: #007acc;
-    color: white;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.joinWithCarButton {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background-color: var(--accent-color);
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
-.saveButton:hover {
-    background-color: #005fa3;
+.joinWithCarButton:hover:not(:disabled) {
+  background-color: var(--accent-color-dark);
+}
+
+.joinWithCarButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

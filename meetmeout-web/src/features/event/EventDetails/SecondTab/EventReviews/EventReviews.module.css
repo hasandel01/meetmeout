@@ -1,0 +1,114 @@
+.reviewContainer {
+  background-color: var(--background-color);
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 40vw;
+}
+
+.reviewContainer h4 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 6px;
+}
+
+.reviewItem {
+  border: 1px solid var(--primary-color);
+  border-radius: 12px;
+  padding: 16px;
+  background-color: var(--background-color);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+  color: var(--primary-color-dark);
+}
+
+.reviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.senderInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.senderInfo img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-color);
+}
+
+.username {
+  font-weight: bold;
+}
+
+.timestamp {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.reviewContent {
+  padding: 8px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.reviewStars {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.starIcon {
+  font-size: 18px;
+  color: gray;
+}
+
+.reviewActions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.actionIcon {
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.actionIcon:hover {
+  color: #007bff;
+}
+
+
+.deleteIcon {
+  font-size: 16px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.deleteIcon:hover {
+  color: red;
+}
+
+
+@media (max-width: 768px) {
+ 
+  .reviewContainer{
+    width: 90vw;
+  }
+
+}

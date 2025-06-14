@@ -763,5 +763,22 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         }
 
     }
+
+    @Transactional
+    public Void kickUser(long eventId, long userId) {
+
+        User attendee = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        event.getAttendees().remove(attendee);
+        eventRepository.save(event);
+
+        notificationService.sendKickNotificationToUser(attendee,event);
+
+        return null;
+    }
 }
 

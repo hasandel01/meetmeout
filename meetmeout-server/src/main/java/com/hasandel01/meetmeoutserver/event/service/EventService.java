@@ -68,4 +68,6 @@ public interface EventService {
     List<String> getRecommendedTags(String query, Pageable pageable);
 
     InviteDTO getInvitationsByInvitedAndEvent(long eventId, long userId);
+
+    Void kickUser(long eventId, long userId);
 }

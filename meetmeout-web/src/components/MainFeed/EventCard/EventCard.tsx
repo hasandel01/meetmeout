@@ -117,9 +117,14 @@ lng
         try {
             const response = await axiosInstance.post(`/events/${eventId}/join`);
             if (response.status === 200) {
-                toast.success("You successfully joined the event!");
-                setRequestSent(true);
-                setTimeout(() => navigate(`/event/${eventId}`), 500);
+            
+                if(event.isPrivate) {
+                    setRequestSent(true)
+                } {
+                    toast.success("You successfully joined the event!");
+                    setTimeout(() => navigate(`/event/${eventId}`), 500);
+                }
+                
                 await getMe();
             } else {
             toast.error("Couldn’t join the event.");

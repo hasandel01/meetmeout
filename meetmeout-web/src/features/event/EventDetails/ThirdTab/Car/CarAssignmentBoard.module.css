@@ -1,0 +1,97 @@
+.board {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.unassigned {
+    background-color: #f9f9f9;
+    border: 2px dashed #ccc;
+    border-radius: 16px;
+    padding: 1rem;
+    width: 200px;
+    min-height: 250px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    transition: background-color 0.3s ease;
+}
+
+.cars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.carColumn {
+    background-color: #eaf7ff;
+    border: 2px solid #007acc;
+    border-radius: 24px;
+    padding: 1rem;
+    width: 220px;
+    min-height: 250px;
+    text-align: center;
+    box-shadow: 0 0 12px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+
+.carColumn:hover {
+    transform: translateY(-4px);
+}
+
+.userCard {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0.5rem auto;
+    border: 2px solid #ccc;
+    transition: border 0.3s ease;
+}
+
+.userCard img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.userCard:hover {
+    border: 2px solid #007acc;
+    cursor: grab;
+}
+
+.saveButton {
+    margin-top: 2rem;
+    padding: 0.8rem 1.5rem;
+    background-color: #007acc;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.saveButton:hover {
+    background-color: #005fa3;
+}
+
+.attendeeWarning {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 16px 20px;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-align: center;
+  margin: 2rem auto;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

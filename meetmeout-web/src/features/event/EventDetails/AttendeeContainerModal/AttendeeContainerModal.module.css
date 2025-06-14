@@ -34,17 +34,23 @@
 
 .attendeeCard {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
   gap: 12px;
   background-color: var(--background-color);
   padding: 8px;
   border-bottom: 1px solid var(--primary-color);
 }
 
-.attendeeCard:hover {
-  cursor: pointer;
+.infoCard {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
+.infoCard:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 .attendeeCard img {
   width: 40px;

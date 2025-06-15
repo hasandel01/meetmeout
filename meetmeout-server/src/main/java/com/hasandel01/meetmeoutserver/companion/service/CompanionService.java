@@ -4,6 +4,7 @@ package com.hasandel01.meetmeoutserver.companion.service;
 import com.hasandel01.meetmeoutserver.companion.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.companion.dto.RecommendedFriendDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface CompanionService {
 
     Boolean removeCompanion(String companionEmail);
 
-    List<RecommendedFriendDTO> getRecommendedFriends();
+    List<RecommendedFriendDTO> getRecommendedFriends(Pageable pageable);
 
     List<UserDTO> getUsersThatFriendRequestIsAlreadySent();
 

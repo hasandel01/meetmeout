@@ -78,7 +78,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     label="First Name"
                                     required
                                     minLength={2}
-                                    maxLength={50}
+                                    maxLength={30}
                                     />
                                 <FormInput
                                     icon={faIdCard}
@@ -88,7 +88,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     label="Last Name"
                                     required
                                     minLength={2}
-                                    maxLength={50}
+                                    maxLength={30}
                                     />
                                 <FormInput
                                     icon={faLock}

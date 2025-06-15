@@ -8,25 +8,21 @@ import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.event.mapper.*;
 import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
-import com.hasandel01.meetmeoutserver.event.service.CommentService;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
-import com.hasandel01.meetmeoutserver.event.service.ReviewService;
 import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
 import com.hasandel01.meetmeoutserver.exceptions.RestrictedUserException;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
-import com.hasandel01.meetmeoutserver.user.model.ReviewDismissal;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.common.service.CloudStorageService;
 import com.hasandel01.meetmeoutserver.notification.service.NotificationService;
-import com.hasandel01.meetmeoutserver.user.repository.ReviewDismissalRepository;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import com.hasandel01.meetmeoutserver.user.service.BadgeService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -39,19 +35,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class EventServiceImpl implements EventService, CommentService, ReviewService {
+public class EventServiceImpl implements EventService {
 
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
     private final CloudStorageService cloudStorageService;
     private final NotificationService notificationService;
     private final LikeRepository likeRepository;
-    private final ReviewRepository reviewRepository;
-    private final CommentRepository commentRepository;
     private final JoinEventRequestRepository joinEventRequestRepository;
     private final InviteRepository inviteRepository;
     private final BadgeService badgeService;
-    private final ReviewDismissalRepository reviewDismissalRepository;
 
     @Transactional
     public EventDTO createEvent(EventDTO event) {
@@ -102,9 +95,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
                 .routeJson(event.routeJson())
                 .build();
 
-        user.getOrganizedEvents().add(newEvent);
         newEvent = eventRepository.save(newEvent);
-
         notificationService.sendEventCreatedNotificationToCompanions(user,newEvent);
 
         if(user.getOrganizedEvents().size() == 1)
@@ -142,7 +133,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     public EventDTO getEventById(long eventId) {
 
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
         return EventMapper.toEventDto(event);
     }
@@ -289,133 +280,6 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return null;
     }
 
-    @Transactional
-    public ReviewDTO addReviewToEvent(@Valid long eventId, ReviewDTO reviewDTO) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-
-        Review review = Review.builder()
-                .reviewer(user)
-                .event(event)
-                .content(reviewDTO.content())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .rating(reviewDTO.rating())
-                .build();
-
-        return ReviewMapper.toReviewDTO(reviewRepository.save(review));
-
-    }
-
-    @Transactional
-    public Void deleteReviewFromEvent(long reviewId) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
-
-
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
-
-        if(user.getUsername().equals(review.getReviewer().getUsername()))
-            reviewRepository.delete(review);
-        else
-            throw new RuntimeException("You are not the reviewer of this review");
-
-        return null;
-    }
-
-    @Transactional
-    public Boolean getReviewDismissal(long eventId) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-
-        List<ReviewDismissal> dismissals = reviewDismissalRepository.findByReviewerAndEvent(user,event);
-
-        return !dismissals.isEmpty();
-    }
-
-    @Override
-    public Void setDissmissalToTrue(long eventId) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
-        List<ReviewDismissal> dismissals = reviewDismissalRepository.findByReviewerAndEvent(user,event);
-
-        if(dismissals.isEmpty()) {
-            ReviewDismissal dismissal = ReviewDismissal
-                    .builder()
-                    .dismissed(true)
-                    .event(event)
-                    .reviewer(user)
-                    .build();
-
-            reviewDismissalRepository.save(dismissal);
-        } else {
-            return null;
-        }
-
-        return null;
-    }
-
-
-    @Transactional
-    public CommentDTO addComment(@Valid long eventId, CommentDTO commentDTO) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User Not Found"));
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-
-
-        if(commentDTO.comment().isEmpty())
-            throw new RuntimeException("Comment is empty");
-
-        Comment comment = Comment.builder()
-                .event(event)
-                .sender(user)
-                .comment(commentDTO.comment())
-                .sentAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-
-        commentRepository.save(comment);
-
-        return CommentMapper.toCommentDTO(comment);
-    }
-
-    public Void deleteComment(long commentId) {
-
-        Optional<Comment> comment = commentRepository.findById(commentId);
-
-        comment.ifPresent(commentRepository::delete);
-
-        return null;
-    }
-
 
     @Transactional
     public List<JoinRequestDTO> getAllJoinRequests(long eventId) {
@@ -447,9 +311,8 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         List<EventDTO> eventDTOS = new ArrayList<>();
 
-        joinEventRequest.forEach(joinEventRequest1 -> {
-            eventDTOS.add(EventMapper.toEventDto(joinEventRequest1.getEvent()));
-        });
+        joinEventRequest.forEach(joinEventRequest1 ->
+                eventDTOS.add(EventMapper.toEventDto(joinEventRequest1.getEvent())));
 
         return eventDTOS;
 
@@ -561,20 +424,7 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         return user.getParticipatedEvents().stream().map(EventMapper::toEventDto).collect(Collectors.toSet());
     }
 
-    @Transactional
-    public Void updateComment(long commentId, CommentDTO comment) {
 
-        Comment comment1 = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
-
-        comment1.setComment(comment.comment());
-        comment1.setUpdatedAt(LocalDateTime.now());
-
-        commentRepository.save(comment1);
-
-        return null;
-
-    }
 
 
     @Transactional
@@ -588,15 +438,21 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         eventRepository.save(event);
 
-        return cloudStorageService.uploadEventPictures(files);
-
+        return photoUrls;
     }
 
     @Transactional
     public EventDTO updateEvent(long eventId, EventDTO eventDTO) throws EventNotFoundException {
 
+
+
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!event.getOrganizer().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only the organizer can update this event");
+        }
 
         String url = event.getImageUrl();
 
@@ -629,33 +485,6 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     }
 
     @Transactional
-    public ReviewDTO updateReview(long reviewId, ReviewDTO newReview) {
-
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new RuntimeException("Review not found"));
-
-
-        review.setContent(newReview.content());
-        review.setRating(newReview.rating());
-
-        reviewRepository.save(review);
-
-        return ReviewMapper.toReviewDTO(review);
-    }
-
-    @Transactional
-    public Double getAverageRating(long eventId) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
-        List<Review> reviewList = reviewRepository.findByEvent(event);
-
-        return !reviewList.isEmpty() ?
-                reviewList.stream().mapToDouble(Review::getRating).sum()/ reviewList.size() : 0;
-    }
-
-    @Transactional
     public List<EventDTO> getEventsByIds(Set<Long> eventIds) {
         return eventRepository.findAllById(eventIds)
                 .stream()
@@ -681,6 +510,10 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!event.getOrganizer().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only the organizer can update this event");
+        }
 
         event.setDescription(description.description());
         eventRepository.save(event);
@@ -692,10 +525,13 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
     @Transactional
     public Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest) {
 
-        System.out.println("UPDATEE" +
-                "");
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!event.getOrganizer().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only the organizer can update this event");
+        }
 
         event.setTags(tagUpdateRequest.tags());
         eventRepository.save(event);
@@ -712,6 +548,12 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         if(event.getAttendees().size() > capacityUpdateRequest.maxCapacity() && event.isCapacityRequired())
             throw new RuntimeException("Capacity is full");
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!event.getOrganizer().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only the organizer can update this event");
+        }
+
 
         event.setCapacityRequired(capacityUpdateRequest.isCapacityRequired());
         event.setMaximumCapacity(capacityUpdateRequest.maxCapacity());
@@ -772,6 +614,15 @@ public class EventServiceImpl implements EventService, CommentService, ReviewSer
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!event.getOrganizer().getUsername().equals(username)) {
+            throw new AccessDeniedException("Only the organizer can update this event");
+        }
+
+        if (!event.getAttendees().contains(attendee)) {
+            throw new IllegalArgumentException("User is not an attendee of this event.");
+        }
 
         event.getAttendees().remove(attendee);
         eventRepository.save(event);

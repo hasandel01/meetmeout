@@ -1,6 +1,7 @@
 package com.hasandel01.meetmeoutserver.event.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.hasandel01.meetmeoutserver.enums.Categories;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.user.model.Car;
@@ -44,7 +45,7 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private Categories category;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "event_tags", joinColumns = @JoinColumn(name = "event_id"))
     @Column(name = "tag")
     private Set<String> tags;
@@ -65,6 +66,7 @@ public class Event {
     @JoinColumn(name = "organizer_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private User organizer;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

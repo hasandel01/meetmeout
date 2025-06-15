@@ -580,7 +580,7 @@ function UserProfile() {
                         organizedEvents.length > 0 ? (
                         <div className={styles.eventsContainer}>
                             {organizedEvents.map(event => (
-                                <div className={styles.eventCard} key={event.id}>
+                              <div className={`${styles.eventCard} ${new Date(event.endDate) < new Date() ? styles.pastEvent : ''}`} key={event.id}>
                                 <div className={styles.eventImage}>
                                     <img src={event.imageUrl} alt={event.title} />
                                 </div>
@@ -613,6 +613,18 @@ function UserProfile() {
                                     )}
                                     </div>
                                 </div>
+                                  <div className={styles.eventRatings}>
+                                        <p>
+                                        Avg Rating: {
+                                            event.reviews && event.reviews.length > 0
+                                            ? (event.reviews.reduce((sum, review) => sum + review.rating, 0) / event.reviews.length).toFixed(1)
+                                            : 'N/A'
+                                        }
+                                        </p>
+                                        {userReviews.find(r => r.event.id === event.id) && (
+                                        <p>Organizer Rating: {userReviews.find(r => r.event.id === event.id)?.rating}</p>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
                             </div>

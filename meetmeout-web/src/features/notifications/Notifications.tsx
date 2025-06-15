@@ -12,7 +12,7 @@
       const handleNotificationStatus = async (notificationId: number, url: string) => {
           
           try {
-              await axiosInstance.put(`/notifications/change-notification-status/${notificationId}`);
+              await axiosInstance.put(`/notifications/status/${notificationId}`);
               await fetchNotifications();
           } catch (error) {
               console.error('Error fetching notifications:', error);

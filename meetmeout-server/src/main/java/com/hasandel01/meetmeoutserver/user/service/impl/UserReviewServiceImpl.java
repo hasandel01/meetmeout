@@ -3,10 +3,8 @@ package com.hasandel01.meetmeoutserver.user.service.impl;
 
 import com.hasandel01.meetmeoutserver.event.model.Event;
 import com.hasandel01.meetmeoutserver.event.repository.EventRepository;
-import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
-import com.hasandel01.meetmeoutserver.user.controller.UserReviewRequest;
+import com.hasandel01.meetmeoutserver.user.dto.UserReviewRequest;
 import com.hasandel01.meetmeoutserver.user.dto.UserReviewDTO;
-import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
 import com.hasandel01.meetmeoutserver.user.mapper.UserReviewMapper;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.user.model.UserReview;

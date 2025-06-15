@@ -14,7 +14,7 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/check-user")
+    @PostMapping("/exists")
     public ResponseEntity<Boolean> checkUser(@RequestBody CheckUserRequest request) {
         return ResponseEntity.ok(authenticationService.checkUser(request));
     }
@@ -40,8 +40,8 @@ public class AuthenticationController {
     }
 
 
-    @PostMapping("/send-password-reset-link/{email}")
-    public ResponseEntity<String> sendPasswordResetLink(@PathVariable String email) {
+    @PostMapping("/password-reset-link")
+    public ResponseEntity<String> sendPasswordResetLink(@RequestParam("email") String email) {
         return ResponseEntity.ok(authenticationService.sendPasswordResetLink(email));
     }
 

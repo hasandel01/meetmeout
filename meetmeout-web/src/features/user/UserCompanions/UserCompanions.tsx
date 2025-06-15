@@ -38,12 +38,18 @@ const UserCompanions = () => {
     };
 
     const getAllPossibleCompanions = async () => {
-        try {
-            const response = await axiosInstance.get(`/companions/recommendations`);
-            setRecommendedCompanions(response.data);
-        } catch (error) {
-        }
-    };
+    try {
+        const response = await axiosInstance.get(`/companions/recommendations`, {
+            params: {
+                page: 0,
+                size: 10
+            }
+        });
+        setRecommendedCompanions(response.data);
+    } catch (error) {
+        toast.error("Could not fetch suggestions");
+    }
+};
 
     const getCompanions = async () => {
         try {

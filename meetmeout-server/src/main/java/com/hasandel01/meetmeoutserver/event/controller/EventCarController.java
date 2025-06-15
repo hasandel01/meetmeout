@@ -22,9 +22,9 @@ public class EventCarController {
         return ResponseEntity.ok(eventCarService.addCarsToEvent(eventId,cars));
     }
 
-    @GetMapping("/{evenId}")
-    public ResponseEntity<List<EventCarDTO>> getCar(@PathVariable long evenId) {
-        return ResponseEntity.ok(eventCarService.getAllTheCarsForTheEvent(evenId));
+    @GetMapping("/{eventId}")
+    public ResponseEntity<List<EventCarDTO>> getCar(@PathVariable long eventId) {
+        return ResponseEntity.ok(eventCarService.getAllTheCarsForTheEvent(eventId));
     }
 
     @PostMapping("/{eventCarId}/passengers")

@@ -57,11 +57,6 @@ public class EventController {
         return ResponseEntity.ok(eventService.uploadPhotos(files,eventId));
     }
 
-    @GetMapping("/{eventId}/average-rating")
-    public ResponseEntity<Double> getAverageRatingForEvent(@PathVariable long eventId) {
-        return ResponseEntity.ok(eventService.getAverageRating(eventId));
-    }
-
     @GetMapping("/with-ids")
     public ResponseEntity<List<EventDTO>> getEventsByIds(@RequestParam("ids") Set<Long> ids) {
         return ResponseEntity.ok(eventService.getEventsByIds(ids));

@@ -31,10 +31,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 30)
     private String firstName;
 
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 30)
     private String lastName;
 
     @Size(min = 3, max = 30)

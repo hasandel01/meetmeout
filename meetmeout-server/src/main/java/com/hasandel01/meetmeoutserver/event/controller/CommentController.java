@@ -17,29 +17,17 @@ public class CommentController {
 
     @PostMapping("/{eventId}")
     public ResponseEntity<CommentDTO> addComment(@Valid @PathVariable long eventId, @RequestBody CommentDTO comment) {
-        try {
             return ResponseEntity.ok(commentService.addComment(eventId, comment));
-        }catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
     }
 
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable long commentId) {
-        try {
             return ResponseEntity.ok(commentService.deleteComment(commentId));
-        }catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
     }
 
     @PutMapping("/{commentId}")
     public ResponseEntity<Void> updateComment(@PathVariable long commentId, @RequestBody CommentDTO comment) {
-        try {
             return ResponseEntity.ok(commentService.updateComment(commentId, comment));
-        }catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().build();
-        }
     }
 }

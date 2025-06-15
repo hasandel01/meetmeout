@@ -204,11 +204,19 @@ lng
                                                 ))}
                                             </ul>
                                         </div>
-                                        {event.organizer && (
-                                                <div className={styles.eventOrganizer}>
-                                                    <img src={event.organizer.profilePictureUrl} alt={event.organizer.profilePictureUrl} className="event-organizer-image" />
-                                                    <p>{event.organizer.firstName} {event.organizer.lastName}</p>
-                                                </div>
+                                        {event.organizer ? (
+                                        <div className={styles.eventOrganizer}>
+                                            <img
+                                            src={event.organizer.profilePictureUrl || "/default-profile.png"}
+                                            alt={event.organizer.profilePictureUrl || "Organizer"}
+                                            className="event-organizer-image"
+                                            />
+                                            <p>{event.organizer.firstName} {event.organizer.lastName}</p>
+                                        </div>
+                                        ) : (
+                                        <div className={styles.eventOrganizer}>
+                                            <p><i>Organizer not available</i></p>
+                                        </div>
                                         )}
                                     </div>
                                     {event.status === "ENDED" && (

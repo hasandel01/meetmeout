@@ -11,7 +11,11 @@ const ForgotPassword: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await authAxios.post(`/auth/send-password-reset-link/${email}`)
+            await authAxios.post(`/auth/password-reset-link`, null, {
+                params: {
+                    email: email
+                }
+            })
         } catch (error) {
             console.error(error);
         }

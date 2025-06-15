@@ -51,8 +51,6 @@ public interface EventService {
 
     EventDTO updateEvent(long eventId, EventDTO eventDTO);
 
-    Double getAverageRating(long eventId);
-
     List<EventDTO> getEventsByIds(Set<Long> eventIds);
 
     Boolean publishEvent(Long eventId);

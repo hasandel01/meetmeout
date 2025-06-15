@@ -21,8 +21,8 @@ import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import com.hasandel01.meetmeoutserver.user.service.BadgeService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,7 +34,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CompanionServiceImpl implements CompanionService {
@@ -229,9 +228,16 @@ public class CompanionServiceImpl implements CompanionService {
     }
 
     @Transactional
-    public List<RecommendedFriendDTO> getRecommendedFriends() {
-        List<UserDTO> possibleCompanions = getPossibleFriends();
+    public List<RecommendedFriendDTO> getRecommendedFriends(Pageable pageable) {
 
+        List<UserDTO> possibleCompanions = getPossibleFriends(pageable);
+
+        Map<String, List<UserDTO>> friendCache = new HashMap<>();
+
+        for (UserDTO userDTO : possibleCompanions) {
+            List<UserDTO> friendsOfUser = getUserDTOS(userDTO.username());
+            friendCache.put(userDTO.username(), friendsOfUser);
+        }
         List<RecommendedFriendDTO> recommendedFriends = new ArrayList<>();
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -243,7 +249,7 @@ public class CompanionServiceImpl implements CompanionService {
 
         for (UserDTO companion : possibleCompanions) {
 
-            List<UserDTO> companionFriends = getUserFriends(companion.username());
+            List<UserDTO> companionFriends = friendCache.getOrDefault(companion.username(), Collections.emptyList());
 
             List<UserDTO> mutualFriends = friends.stream()
                     .filter(companionFriends::contains)
@@ -303,15 +309,11 @@ public class CompanionServiceImpl implements CompanionService {
         return recommendedFriends;
     }
 
-
     @Transactional
-    public List<UserDTO> getPossibleFriends() {
+    public List<UserDTO> getPossibleFriends(Pageable pageable) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         User currentUser = (User) userDetailsService.loadUserByUsername(username);
-
-        List<User> users = userRepository.findAll();
 
         List<UserDTO> companions = getFriends();
 
@@ -327,7 +329,7 @@ public class CompanionServiceImpl implements CompanionService {
         Set<String> companionUsernames =
                 companions.stream().map(UserDTO::username).collect(Collectors.toSet());
 
-        return users.stream()
+        return userRepository.findAll(pageable).stream()
                 .filter(user -> !user.getId().equals(currentUser.getId()))
                 .filter(user -> !companionUsernames.contains(user.getUsername()))
                 .map(UserMapper::toUserDTO)

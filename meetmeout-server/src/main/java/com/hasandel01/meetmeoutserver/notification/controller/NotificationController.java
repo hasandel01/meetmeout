@@ -21,21 +21,13 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public Page<NotificationDTO> getNotifications(Pageable pageable) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return notificationService.getNotificationsForUser(username,pageable);
-
+    public ResponseEntity<Page<NotificationDTO>> getNotifications(Pageable pageable) {
+        return ResponseEntity.ok(notificationService.getNotificationsForUser(pageable));
     }
 
-    @PutMapping("/change-notification-status/{notificationId}")
-    public ResponseEntity<Void> updateNotificationStatusToRead(@PathVariable Long notificationId) {
-        try {
-            return ResponseEntity.ok(notificationService.changeStatusToRead(notificationId));
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @PutMapping("/status/{notificationId}")
+    public ResponseEntity<Boolean> updateNotificationStatusToRead(@PathVariable Long notificationId) {
+        return ResponseEntity.ok(notificationService.changeStatusToRead(notificationId));
     }
-
 
 }

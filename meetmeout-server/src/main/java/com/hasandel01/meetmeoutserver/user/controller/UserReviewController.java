@@ -1,7 +1,7 @@
 package com.hasandel01.meetmeoutserver.user.controller;
 
 import com.hasandel01.meetmeoutserver.user.dto.UserReviewDTO;
-import com.hasandel01.meetmeoutserver.user.model.UserReview;
+import com.hasandel01.meetmeoutserver.user.dto.UserReviewRequest;
 import com.hasandel01.meetmeoutserver.user.service.UserReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

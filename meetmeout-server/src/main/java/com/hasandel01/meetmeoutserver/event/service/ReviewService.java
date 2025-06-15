@@ -14,4 +14,6 @@ public interface ReviewService {
     Boolean getReviewDismissal(long eventId);
 
     Void setDissmissalToTrue(long eventId);
+
+    Double getAverageRating(long eventId);
 }

@@ -4,12 +4,13 @@ import com.hasandel01.meetmeoutserver.auth.model.*;
 import com.hasandel01.meetmeoutserver.auth.service.AuthenticationService;
 import com.hasandel01.meetmeoutserver.auth.service.JwtService;
 import com.hasandel01.meetmeoutserver.common.service.EmailSenderService;
+import com.hasandel01.meetmeoutserver.exceptions.EmailNotFoundException;
+import com.hasandel01.meetmeoutserver.exceptions.InvalidTokenException;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,11 +26,8 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final JwtService jwtService;
-
     private final AuthenticationManager authenticationManager;
     private final EmailSenderService emailSenderService;
 
@@ -112,7 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 () -> new UsernameNotFoundException("User not found"));
 
         if(!jwtService.isTokenValid(refreshToken, user)) {
-            throw new RuntimeException("Invalid refresh token");
+            throw new InvalidTokenException("Invalid refresh token");
         }
 
         var newAccessToken = jwtService.generateToken(user);
@@ -127,7 +124,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String sendPasswordResetLink(String email) {
 
         User user = userRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User not found"));
+                () -> new EmailNotFoundException("User not found with email: " + email));
 
         String resetPasswordToken = UUID.randomUUID().toString();
 
@@ -145,7 +142,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String resetPassword(ResetPasswordRequest request) {
 
         User user = userRepository.findByResetPasswordToken(request.getResetPasswordToken())
-                .orElseThrow(() -> new RuntimeException("Invalid token. User not found!"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token. User not found!"));
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setResetPasswordToken("");
@@ -156,7 +153,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     public String verifyEmail(String token) {
         User user = userRepository.findByVerificationToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
+                .orElseThrow(() -> new InvalidTokenException("Invalid token. User not found!"));
 
         user.setEmailVerified(true);
         user.setVerificationToken(null);

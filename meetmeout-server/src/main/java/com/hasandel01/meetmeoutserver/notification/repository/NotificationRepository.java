@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    
+
     Page<Notification> findByReceiverUsernameOrderByIdDesc(String username, Pageable pageable);
 
     @Modifying

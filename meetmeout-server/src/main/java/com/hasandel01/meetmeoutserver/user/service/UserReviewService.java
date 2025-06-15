@@ -1,8 +1,7 @@
 package com.hasandel01.meetmeoutserver.user.service;
 
-import com.hasandel01.meetmeoutserver.user.controller.UserReviewRequest;
+import com.hasandel01.meetmeoutserver.user.dto.UserReviewRequest;
 import com.hasandel01.meetmeoutserver.user.dto.UserReviewDTO;
-import com.hasandel01.meetmeoutserver.user.model.UserReview;
 
 import java.util.List;
 

@@ -34,7 +34,9 @@ public class EventCarServiceImpl implements EventCarService {
     private final RideAssignmentRepository rideAssignmentRepository;
     private final NotificationService notificationService;
 
+    @Transactional
     public Boolean addCarsToEvent(long eventId, List<CarDTO> cars) {
+
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
@@ -71,10 +73,19 @@ public class EventCarServiceImpl implements EventCarService {
         }
 
         if (eventCarsToSave.isEmpty()) {
-            return false;
+            throw new RuntimeException("No valid cars to add. They may be already added or not owned by user.");
         }
 
         eventCarRepository.saveAll(eventCarsToSave);
+
+        if (isOrganizer) {
+            for (EventCar eventCar : eventCarsToSave) {
+                User carOwner = eventCar.getCar().getOwner();
+                if (!carOwner.getUsername().equals(username)) {
+                    notificationService.sendCarAddedNotificationToOwner(carOwner, event);
+                }
+            }
+        }
         return true;
     }
 
@@ -167,8 +178,9 @@ public class EventCarServiceImpl implements EventCarService {
         }
 
         eventCarRepository.saveAll(eventCarsToSave);
-        notificationService.sendCarApprovalNotificationToOrganizer(eventCarsToSave.getFirst(),
-                eventCarsToSave.getFirst().getCar().getOwner());
+        eventCarsToSave.forEach(car ->
+                notificationService.sendCarApprovalNotificationToOrganizer(car, car.getCar().getOwner()));
+
         return true;
     }
 

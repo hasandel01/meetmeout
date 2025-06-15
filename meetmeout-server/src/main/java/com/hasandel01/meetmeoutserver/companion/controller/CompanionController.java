@@ -6,6 +6,7 @@ import com.hasandel01.meetmeoutserver.companion.service.CompanionService;
 import com.hasandel01.meetmeoutserver.companion.dto.FriendRequestDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,8 +50,8 @@ public class CompanionController {
     }
 
     @GetMapping("/recommendations")
-    public ResponseEntity<List<RecommendedFriendDTO>> getRecommendedFriends() {
-        return ResponseEntity.ok(companionService.getRecommendedFriends());
+    public ResponseEntity<List<RecommendedFriendDTO>> getRecommendations(Pageable pageable) {
+        return ResponseEntity.ok(companionService.getRecommendedFriends(pageable));
     }
 
     @GetMapping("/request-sent")

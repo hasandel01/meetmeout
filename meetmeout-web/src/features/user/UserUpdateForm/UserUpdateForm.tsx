@@ -35,11 +35,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
     const validateUserProfile = (user: User): Partial<Record<keyof User, string>> => {
         const errors: Partial<Record<keyof User, string>> = {};
 
-        if (user.firstName.trim().length < 2 || user.firstName.length > 50) {
+        if (user.firstName.trim().length < 2 || user.firstName.length > 30) {
             errors.firstName = "First name must be between 2 and 50 characters.";
         }
 
-        if (user.lastName.trim().length < 2 || user.lastName.length > 50) {
+        if (user.lastName.trim().length < 2 || user.lastName.length > 30) {
             errors.lastName = "Last name must be between 2 and 50 characters.";
         }
 
@@ -118,7 +118,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     type="text"
                     value={user.firstName}
                     minLength={2}
-                    maxLength={50}
+                    maxLength={30}
                     onChange={(e) => setUser({...user, firstName: e.target.value})}
                 />
                 {formErrors.firstName && <p className={styles.error}>{formErrors.firstName}</p>}
@@ -128,7 +128,7 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                     type="text"
                     value={user.lastName}
                     minLength={2}
-                    maxLength={50}
+                    maxLength={30}
                     onChange={(e) => setUser({...user, lastName: e.target.value})}
                 />
                 {formErrors.lastName && <p className={styles.error}>{formErrors.lastName}</p>}

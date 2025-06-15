@@ -157,8 +157,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
+        User defaultUser = userRepository.findByUsername("default")
+                .orElseThrow(() -> new IllegalStateException("System misconfigured: default user not found"));
+
+
         for (Event organized : user.getOrganizedEvents()) {
-            organized.setOrganizer(null);
+            organized.setOrganizer(defaultUser);
         }
 
         user.getCars().clear();

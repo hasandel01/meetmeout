@@ -133,21 +133,21 @@ const EventDetails = () => {
 
 
     useEffect(() => {
-      if (!event.organizer || !currentUser) return;
+      if (!currentUser) return;
 
-      if ((event.isPrivate && 
-           event.organizer.username === currentUser.username) 
-           || (
-           event.isPrivate && 
-           event.attendees.some(attendee => attendee.username === currentUser.username)
-           ) ||
-           !event.isPrivate
-        ) {
+      const isAttendee = event.attendees.some(attendee => attendee.username === currentUser.username);
+      const isOrganizer = event.organizer?.username === currentUser.username;
+
+      if (
+        (event.isPrivate && (isOrganizer || isAttendee)) ||
+        !event.isPrivate
+      ) {
         setIsUserAllowed(true);
       } else {
         verifyTokenToAccessDetails();
       }
     }, [event.organizer, currentUser]);
+
 
 
     const getEvent = async () => {

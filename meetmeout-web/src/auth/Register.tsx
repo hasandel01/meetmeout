@@ -20,7 +20,7 @@ const Register = () => {
             e.preventDefault();
             setFormSubmitted(true);
     
-            const response = await authAxios.post('/auth/check-user', {email}
+            const response = await authAxios.post('/auth/exists', {email}
             );
     
             if (response.data === true) {

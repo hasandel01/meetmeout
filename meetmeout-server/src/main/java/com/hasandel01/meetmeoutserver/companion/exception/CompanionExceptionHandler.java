@@ -2,7 +2,6 @@ package com.hasandel01.meetmeoutserver.companion.exception;
 
 
 import com.hasandel01.meetmeoutserver.exceptions.RequestAlreadyExists;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

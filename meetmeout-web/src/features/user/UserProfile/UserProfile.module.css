@@ -624,3 +624,9 @@
     min-height: 10vh;
   }
 }
+
+
+.pastEvent {
+  opacity: 0.6;
+  filter: grayscale(0.3);
+}

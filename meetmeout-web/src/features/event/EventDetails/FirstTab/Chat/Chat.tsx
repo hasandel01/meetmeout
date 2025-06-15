@@ -79,7 +79,7 @@ const Chat: React.FC<ChatProps> = ({event}) => {
       const getMessagesForEvent = async () => {
     
         try {
-          const response = await axiosInstance.get(`/get-chat-messages/${event.id}`)
+          const response = await axiosInstance.get(`/chat/messages/${event.id}`)
             setMessages(response.data); 
         } catch(error) {
           toast.error("Error getting event messages")

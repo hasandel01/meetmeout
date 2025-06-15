@@ -11,7 +11,7 @@ const EventRatingStars = ({ eventId }: { eventId: number }) => {
     useEffect(() => {
         const fetchAverageRating = async () => {
             try {
-                const response = await axiosInstance.get(`/events/${eventId}/average-rating`);
+                const response = await axiosInstance.get(`/review/${eventId}/average-rating`);
                 if (response.status === 200) {
                     setAverage(response.data);
                 } else {

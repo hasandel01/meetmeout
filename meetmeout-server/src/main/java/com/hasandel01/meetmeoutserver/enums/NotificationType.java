@@ -13,4 +13,6 @@ public enum NotificationType {
     EVENT_INVITE_RESPONSE,
     EVENT_UPDATE,
     USER_KICKED,
+    CAR_ADDED,
+    CAR_REQUEST
 }

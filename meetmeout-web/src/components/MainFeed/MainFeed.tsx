@@ -51,7 +51,7 @@ const MainFeed = () => {
 
     if (!showPastEvents) {
         result = result.filter(ev => {
-        const eventDate = new Date(`${ev.startDate}T${ev.startTime}`);
+        const eventDate = new Date(`${ev.endDate}T${ev.endTime}`);
         return eventDate >= new Date();
         });
     }

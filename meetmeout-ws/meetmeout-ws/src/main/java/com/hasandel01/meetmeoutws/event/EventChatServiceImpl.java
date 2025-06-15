@@ -8,9 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -46,14 +44,4 @@ public class EventChatServiceImpl implements EventChatService {
         return EventChatMessageMapper.toEventChatMessageDTO(chatMessage);
     }
 
-    public List<EventChatMessageDTO> getChatMessagesForEvent(Long eventId) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found " + eventId));
-
-        List<EventChatMessage> eventChatMessages = eventChatMessageRepository.findByEvent(event);
-
-        return eventChatMessages.stream().map(EventChatMessageMapper::toEventChatMessageDTO).collect(Collectors.toList());
-
-    }
 }

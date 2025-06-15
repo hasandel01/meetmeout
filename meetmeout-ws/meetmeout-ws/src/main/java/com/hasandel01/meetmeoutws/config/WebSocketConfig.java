@@ -46,12 +46,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         String token = authHeaders.get(0).replace("Bearer ", "");
                         try {
                             String username = jwtService.getSubject(token);
-                            accessor.setUser(() -> username); // Principal objesi gibi davranır
+                            accessor.setUser(() -> username);
                             accessor.getSessionAttributes().put("username", username);
                             System.out.println("✅ WebSocket bağlandı: " + username);
                         } catch (Exception e) {
                             System.out.println("❌ Token doğrulama hatası: " + e.getMessage());
-                            return null; // bağlantıyı kes
+                            return null;
                         }
                     } else {
                         System.out.println("⚠️ Authorization header yok!");

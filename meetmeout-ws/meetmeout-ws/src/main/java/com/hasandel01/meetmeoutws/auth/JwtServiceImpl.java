@@ -38,10 +38,6 @@ public class JwtServiceImpl implements JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public boolean isTokenExpired(String token) {
-        return getExpiration(token).before(new Date());
-    }
-
     public Date getExpiration(String token) {
         return parseToken(token, Claims::getExpiration);
     }

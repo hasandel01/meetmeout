@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final EmailSenderService emailSenderService;
 
     @Value("${profile.pictureUrl}")
-    private String publicUrl;
+    private String defaultProfilePictureUrl;
 
     @Value("${app.frontend.url}")
     private String baseUrl;
@@ -54,7 +54,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .lastName(registerRequest.getLastName())
                     .password(passwordEncoder.encode(registerRequest.getPassword()))
                     .email(registerRequest.getEmail())
-                    .profilePictureUrl(publicUrl)
+                    .profilePictureUrl(defaultProfilePictureUrl)
                     .about("")
                     .verificationToken(verificationToken)
                     .emailVerified(false)

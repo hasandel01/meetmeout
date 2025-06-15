@@ -26,6 +26,7 @@
 }
 
 .carColumn {
+    position: relative;
     background-color: #eaf7ff;
     border: 2px solid #007acc;
     border-radius: 24px;
@@ -94,4 +95,88 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+
+/** DELETE CAR MODAL */
+
+.removeBtn {
+  position: absolute;
+  top: -20px;
+  right: -40px;
+  background: transparent;
+  border: none;
+  color: red;
+  font-size: 20px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.modalBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContent {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modalButtons button {
+  margin: 10px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+
+.unassignedReadonly {
+  min-width: 200px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px dashed #ccc;
+  border-radius: 12px;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .board {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cars {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .carColumn,
+  .unassigned,
+  .unassignedReadonly {
+    width: 90vw;
+  }
+
+  .saveButton {
+    width: 90vw;
+    font-size: 16px;
+  }
+
+  .userCard img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modalContent {
+    width: 90vw;
+  }
 }

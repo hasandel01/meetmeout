@@ -17,6 +17,7 @@ public class EventCarMapper {
                 .passengers(eventCar.getRideAssignments().stream()
                         .map(ride -> UserMapper.toUserDTO(ride.getPassenger()))
                         .collect(Collectors.toList()))
+                .approved(eventCar.isApproved())
                 .build();
     }
 

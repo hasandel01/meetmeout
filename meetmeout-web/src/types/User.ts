@@ -1,6 +1,5 @@
 import { Badge } from "./Badge";
 import { Review } from "./Like";
-import { UserReview } from "./UserReviews";
 import { Car } from "./Car";
 
 export interface User {
@@ -19,7 +18,6 @@ export interface User {
     showLocation: boolean;
     darkMode: boolean;
     reviews: Review[];
-    userReviews: UserReview[];
     createdAt: string;
     cars: Car[];
 }

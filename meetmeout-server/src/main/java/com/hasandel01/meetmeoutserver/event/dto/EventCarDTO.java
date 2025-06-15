@@ -13,4 +13,5 @@ public class EventCarDTO {
     private Long id;
     private CarDTO car;
     private List<UserDTO> passengers;
+    private boolean approved;
 }

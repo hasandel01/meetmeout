@@ -1,0 +1,57 @@
+.pendingContainer {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  background-color: #fdfdfd;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 16px;
+  overflow-x: hidden;
+}
+
+.pendingCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  gap: 10px;
+  flex-wrap: wrap;
+  word-break: break-word;
+}
+
+.pendingCard > div {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.pendingCard button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.pendingCard button:hover {
+  background-color: #45a049;
+}
+
+@media (max-width: 768px) {
+  .pendingCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pendingCard button {
+    width: 100%;
+    margin-top: 8px;
+  }
+}

@@ -64,4 +64,9 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
     List<FriendRequest> findAllByUserInvolved(@Param("user") User user);
 
     Optional<FriendRequest> findBySenderAndReceiverOrReceiverAndSender(User sender, User receiver, User receiver1, User sender1);
+
+    @Modifying
+    @Query("DELETE FROM FriendRequest fr WHERE fr.sender.id = :userId OR fr.receiver.id = :userId")
+    void deleteAllByUserInvolved(@Param("userId") Long userId);
+
 }

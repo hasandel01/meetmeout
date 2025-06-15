@@ -32,5 +32,22 @@ public class EventCarController {
         return ResponseEntity.ok(eventCarService.addPassengers(eventCarId, ids));
     }
 
+    @DeleteMapping("/{eventCarId}")
+    public ResponseEntity<Boolean> deleteEventCar(@PathVariable long eventCarId) {
+        return ResponseEntity.ok(eventCarService.deleteEventCar(eventCarId));
+    }
+
+    @PostMapping("/{eventId}/request")
+    public ResponseEntity<Boolean> requestCarForApproval(@PathVariable long eventId, @RequestBody List<CarDTO> cars) {
+        return ResponseEntity.ok(eventCarService.requestCarsToEvent(eventId, cars));
+    }
+
+    @PutMapping("/{eventCarId}/approve")
+    public ResponseEntity<Void> approveEventCar(@PathVariable long eventCarId) {
+        eventCarService.approveEventCar(eventCarId);
+        return ResponseEntity.ok().build();
+    }
+
+
 
 }

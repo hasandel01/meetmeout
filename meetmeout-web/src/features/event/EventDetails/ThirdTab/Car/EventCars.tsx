@@ -5,6 +5,7 @@ import { useState } from "react";
 import axiosInstance from "../../../../../axios/axios";
 import { Car } from "../../../../../types/Car";
 import { EventCar } from "../../../../../types/Car";
+import {toast} from 'react-toastify';
 
 interface EventCarsProps {
     currentUser: User;
@@ -27,11 +28,19 @@ const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars }) 
 
     const handleJoinWithCars = async () => {
         if (selectedCars.length === 0) return;
+
         try {
-            await axiosInstance.post(`/events/car/${event.id}/add`, selectedCars);
-            console.log("Gönderilen arabalar:", selectedCars);
+            const isOrganizer = currentUser.username === event.organizer?.username;
+
+            const url = isOrganizer
+            ? `/events/car/${event.id}/add` 
+            : `/events/car/${event.id}/request`; 
+
+            await axiosInstance.post(url, selectedCars);
+            toast.success(isOrganizer ? "Car(s) added!" : "Request sent for approval.");
+
         } catch (error) {
-            console.error("Error sending cars:", error);
+            console.error("Car join error:", error);
         }
     };
 

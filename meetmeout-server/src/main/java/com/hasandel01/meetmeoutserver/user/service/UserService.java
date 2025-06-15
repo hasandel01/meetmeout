@@ -28,4 +28,6 @@ public interface UserService {
     Boolean deleteMyself();
 
     List<TravelAssociateDTO> getTravelAssociates(String username);
+
+    List<UserDTO> getUsersByIds(List<Long> ids);
 }

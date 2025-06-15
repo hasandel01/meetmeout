@@ -33,7 +33,6 @@ public class UserMapper {
                                 .collect(Collectors.toSet())
                         : null
                 )
-                .userReviews(user.getUserReviews().stream().map(UserReviewMapper::userReviewDTO).collect(Collectors.toSet()))
                 .createdAt(user.getCreatedAt())
                 .cars(user.getCars().stream().map(CarMapper::toCarDTO).collect(Collectors.toSet()))
                 .build();

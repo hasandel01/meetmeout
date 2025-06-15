@@ -67,4 +67,10 @@ public class UserController {
         return ResponseEntity.ok(userService.getTravelAssociates(username));
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<UserDTO>> getUsersByIds(@RequestParam List<Long> ids) {
+        return ResponseEntity.ok(userService.getUsersByIds(ids));
+    }
+
+
 }

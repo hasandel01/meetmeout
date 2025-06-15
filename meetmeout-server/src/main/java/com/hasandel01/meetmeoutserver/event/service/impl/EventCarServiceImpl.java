@@ -9,6 +9,7 @@ import com.hasandel01.meetmeoutserver.event.repository.EventCarRepository;
 import com.hasandel01.meetmeoutserver.event.repository.EventRepository;
 import com.hasandel01.meetmeoutserver.event.repository.RideAssignmentRepository;
 import com.hasandel01.meetmeoutserver.event.service.EventCarService;
+import com.hasandel01.meetmeoutserver.notification.service.NotificationService;
 import com.hasandel01.meetmeoutserver.user.dto.CarDTO;
 import com.hasandel01.meetmeoutserver.user.model.Car;
 import com.hasandel01.meetmeoutserver.user.model.User;
@@ -31,15 +32,13 @@ public class EventCarServiceImpl implements EventCarService {
     private final EventCarRepository eventCarRepository;
     private final CarRepository carRepository;
     private final RideAssignmentRepository rideAssignmentRepository;
+    private final NotificationService notificationService;
 
-    @Transactional
     public Boolean addCarsToEvent(long eventId, List<CarDTO> cars) {
-
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -49,20 +48,23 @@ public class EventCarServiceImpl implements EventCarService {
                 .toList();
 
         List<EventCar> existingCars = eventCarRepository.findByEvent(event);
-
         Set<Long> alreadyAddedCarIds = existingCars.stream()
                 .map(ec -> ec.getCar().getId())
                 .collect(Collectors.toSet());
 
         List<EventCar> eventCarsToSave = new ArrayList<>();
 
+        boolean isOrganizer = event.getOrganizer().getUsername().equals(username);
+
         for (Car car : carsToAdd) {
-            if (!alreadyAddedCarIds.contains(car.getId())
-                    && car.getOwner().getUsername().equals(user.getUsername())) {
+            if (!alreadyAddedCarIds.contains(car.getId()) &&
+                    car.getOwner().getUsername().equals(user.getUsername())) {
+
                 eventCarsToSave.add(
                         EventCar.builder()
                                 .event(event)
                                 .car(car)
+                                .approved(isOrganizer)
                                 .build()
                 );
             }
@@ -75,6 +77,7 @@ public class EventCarServiceImpl implements EventCarService {
         eventCarRepository.saveAll(eventCarsToSave);
         return true;
     }
+
 
 
     @Transactional
@@ -112,5 +115,80 @@ public class EventCarServiceImpl implements EventCarService {
         eventCarRepository.save(eventCar);
         return true;
     }
+
+    @Transactional
+    public Boolean deleteEventCar(long eventCarId) {
+
+        EventCar eventCar = eventCarRepository.findById(eventCarId)
+                .orElseThrow(() -> new RuntimeException("Event car not found"));
+
+        eventCarRepository.delete(eventCar);
+
+        return true;
+    }
+
+    @Transactional
+    public Boolean requestCarsToEvent(long eventId, List<CarDTO> cars) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Car> carsToAdd = cars.stream()
+                .map(dto -> carRepository.findById(dto.id())
+                        .orElseThrow(() -> new RuntimeException("Car not found: " + dto.id())))
+                .toList();
+
+        List<EventCar> existingCars = eventCarRepository.findByEvent(event);
+        Set<Long> alreadyAddedCarIds = existingCars.stream()
+                .map(ec -> ec.getCar().getId())
+                .collect(Collectors.toSet());
+
+        List<EventCar> eventCarsToSave = new ArrayList<>();
+
+        for (Car car : carsToAdd) {
+            if (!alreadyAddedCarIds.contains(car.getId())
+                    && car.getOwner().getUsername().equals(user.getUsername())) {
+                eventCarsToSave.add(
+                        EventCar.builder()
+                                .event(event)
+                                .car(car)
+                                .approved(false)
+                                .build()
+                );
+            }
+        }
+
+        if (eventCarsToSave.isEmpty()) {
+            return false;
+        }
+
+        eventCarRepository.saveAll(eventCarsToSave);
+        notificationService.sendCarApprovalNotificationToOrganizer(eventCarsToSave.getFirst(),
+                eventCarsToSave.getFirst().getCar().getOwner());
+        return true;
+    }
+
+    @Transactional
+    public void approveEventCar(long eventCarId) {
+        EventCar eventCar = eventCarRepository.findById(eventCarId)
+                .orElseThrow(() -> new RuntimeException("EventCar not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!eventCar.getEvent().getOrganizer().getUsername().equals(username)) {
+            throw new RuntimeException("Only the organizer can approve cars.");
+        }
+
+        if (eventCar.isApproved()) {
+            return;
+        }
+
+        eventCar.setApproved(true);
+        eventCarRepository.save(eventCar);
+    }
+
 
 }

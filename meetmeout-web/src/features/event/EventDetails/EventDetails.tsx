@@ -8,7 +8,6 @@ import { JoinRequest } from "../../../types/JoinRequest";
 import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
 import { Weather } from "../../../types/Forecast";
-import { useProfileContext } from "../../../context/ProfileContext";
 import Chat from "./FirstTab/Chat/Chat";
 import { Review } from "../../../types/Like";
 import EventReviews from "./SecondTab/EventReviews/EventReviews";
@@ -17,9 +16,10 @@ import EventParticipants from "./EventParticipants/EventParticipants";
 import EventHeader from "./EventHeader/EventHeader";
 import EventDetailsCard from "./FirstTab/EventCard/EvetCard";
 import EventPhotos from "./SecondTab/EventPhotos/EventPhotos";
-import ReviewModal from "./ReviewModal/ReviewModal";
 import EventRoute from "./ThirdTab/Route/EventRoute";
 import CarAssignmentBoard from "./ThirdTab/Car/CarAssignmentBoard";
+import ReviewWizardModal from "./ReviewModals/ReviewWizardModal";
+import { UserReview } from "../../../types/UserReviews";
 
 const EventDetails = () => {
 
@@ -35,10 +35,24 @@ const EventDetails = () => {
   const [joinRequests, setJoinRequests] = useState<JoinRequest[]>([]);
   const [showAllAttendees, setShowAllAttendees] = useState(false);
   const [showAllRequests, setShowAllRequests] = useState(false);
-  const {goToUserProfile} = useProfileContext();
   const [currentTab, setCurrentTab] = useState<number>(1);
-  const [showReviewModal, setShowReviewModal] = useState(true);
+  const [userReviews, setUserReviews] = useState<UserReview[]>([]);
 
+    const fetchUserReviews = async () => {
+        if (!currentUser?.id) return;
+        try {
+            const response = await axiosInstance.get(`/user-reviews/of/${currentUser.id}`);
+            setUserReviews(response.data);
+        } catch (error) {
+            console.error("Failed to fetch user reviews:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (currentUser) {
+            fetchUserReviews();
+        }
+    }, [currentUser]);
 
         const handleLocationClick = () => {
           navigate("/", {
@@ -322,6 +336,9 @@ const EventDetails = () => {
       if (currentUser) fetchDismissal();
     }, [event.id, currentUser]);
 
+
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
     const areReviewConditionsSatisfied = () => {
       const isAttendee = event.attendees.some(att => att.username === currentUser?.username);
       const hasNotReviewed = !event.reviews.some(r => r.reviewer.username === currentUser?.username);
@@ -330,18 +347,42 @@ const EventDetails = () => {
       return isAttendee && hasNotReviewed && isEventEnded && !hasDismissedReview;
     };
 
+    const shouldShowOrganizerReview = () => {
+        const isAttendee = event.attendees.some(att => att.username === currentUser?.username);
+        const isNotOrganizer = currentUser?.username !== event.organizer?.username;
+        const isEventEnded = event.status === "ENDED";
+        const alreadyReviewed = currentUser && userReviews.some(
+          ur => ur.reviewer.id === currentUser.id && ur.event.id === event.id
+        );
+
+        return isAttendee && isNotOrganizer && isEventEnded && !alreadyReviewed;
+      };
+
+  useEffect(() => {
+  const shouldShowFirstStep = areReviewConditionsSatisfied();
+  const shouldShowSecondStep = shouldShowOrganizerReview();
+
+  if (currentUser && (shouldShowFirstStep || shouldShowSecondStep)) {
+    setShowReviewModal(true);
+  }
+}, [event, currentUser]);
+
+
+
   return (
     <div className={styles.eventContainer}>
       {isUserAllowed ? (
         <>
-          {currentUser && showReviewModal && areReviewConditionsSatisfied() && (
-            <ReviewModal
-              event={event}
-              currentUser={currentUser}
-              setEvent={setEvent}
-              onClose={() => setShowReviewModal(false)}
-            />
-          )}
+          {currentUser && showReviewModal && (
+              <ReviewWizardModal
+                event={event}
+                setEvent={setEvent}
+                currentUser={currentUser}
+                onClose={() => setShowReviewModal(false)}
+                showFirstStep={areReviewConditionsSatisfied()}
+                showSecondStep={shouldShowOrganizerReview()}
+              />
+            )} 
             {currentUser && (
               <EventParticipants
                 event={event}

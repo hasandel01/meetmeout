@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.notification.service;
 
 import com.hasandel01.meetmeoutserver.enums.NotificationType;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.event.model.EventCar;
 import com.hasandel01.meetmeoutserver.event.model.Invite;
 import com.hasandel01.meetmeoutserver.notification.dto.NotificationDTO;
 import com.hasandel01.meetmeoutserver.notification.mapper.NotificationMapper;
@@ -242,5 +243,24 @@ public class NotificationService {
         NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
         webSocketRelay.send(dto);
 
+    }
+
+    public void sendCarApprovalNotificationToOrganizer(EventCar eventCar, User carOwner) {
+
+        Notification notification = Notification.builder()
+                .notificationType(NotificationType.USER_KICKED)
+                .title("Is your event available for new cars?")
+                .body(eventCar.getEvent().getOrganizer().getUsername()
+                        + " wants to add car(s) to event " + eventCar.getEvent().getTitle())
+                .url("/event/" + eventCar.getEvent().getId())
+                .sender(carOwner)
+                .receiver(eventCar.getEvent().getOrganizer())
+                .read(false)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        notificationRepository.save(notification);
+        NotificationDTO dto = NotificationMapper.toNotificationDTO(notification);
+        webSocketRelay.send(dto);
     }
 }

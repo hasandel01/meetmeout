@@ -1,7 +1,10 @@
 package com.hasandel01.meetmeoutserver.user.service.impl;
 
 
+import com.hasandel01.meetmeoutserver.companion.model.FriendRequest;
+import com.hasandel01.meetmeoutserver.companion.repository.FriendRequestRepository;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.notification.repository.NotificationRepository;
 import com.hasandel01.meetmeoutserver.user.dto.TravelAssociateDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
@@ -38,6 +41,10 @@ public class UserServiceImpl implements UserService {
     private final EmailSenderService emailSenderService;
 
     private final UserReviewRepository userReviewRepository;
+
+    private final FriendRequestRepository friendRequestRepository;
+
+    private final NotificationRepository notificationRepository;
 
     @Transactional
     public UserDTO getMe() {
@@ -150,9 +157,23 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        user.setDeleted(true);
-        user.setDeletedAt(LocalDateTime.now());
-        userRepository.save(user);
+        for (Event organized : user.getOrganizedEvents()) {
+            organized.setOrganizer(null);
+        }
+
+        user.getCars().clear();
+
+        for (Event event : user.getParticipatedEvents()) {
+            event.getAttendees().remove(user);
+        }
+
+        user.getBadges().clear();
+
+        friendRequestRepository.deleteAllByUserInvolved(user.getId());
+
+        notificationRepository.deleteAllReceiverNotifications(user.getId());
+
+        userRepository.delete(user);
         return true;
     }
 
@@ -194,4 +215,13 @@ public class UserServiceImpl implements UserService {
                 .sorted(Comparator.comparingInt(TravelAssociateDTO::getNumber).reversed())
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public List<UserDTO> getUsersByIds(List<Long> ids) {
+        List<User> users = userRepository.findAllById(ids);
+        return users.stream()
+                .map(UserMapper::toUserDTO)
+                .toList();
+    }
+
 }

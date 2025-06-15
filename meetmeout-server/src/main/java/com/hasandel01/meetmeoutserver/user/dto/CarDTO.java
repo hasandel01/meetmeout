@@ -10,6 +10,6 @@ public record CarDTO(
     String model,
     int year,
     int capacity,
-    Long userId
+    long userId
 ){
 }

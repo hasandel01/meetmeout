@@ -61,7 +61,6 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user }) => {
                     <p><strong>Capacity:</strong> {car.capacity}</p>
                 </div>
             ))}
-
             {showModal && (
                 <div className={styles.modalBackdrop}>
                     <div className={styles.modalContent}>

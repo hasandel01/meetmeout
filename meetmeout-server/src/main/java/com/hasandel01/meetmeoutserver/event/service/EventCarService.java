@@ -13,4 +13,10 @@ public interface EventCarService {
     List<EventCarDTO> getAllTheCarsForTheEvent(long evenId);
 
     Boolean addPassengers(long eventCarId, List<Long> ids);
+
+    Boolean deleteEventCar(long eventCarId);
+
+    Boolean requestCarsToEvent(long eventId, List<CarDTO> cars);
+
+    void approveEventCar(long eventCarId);
 }

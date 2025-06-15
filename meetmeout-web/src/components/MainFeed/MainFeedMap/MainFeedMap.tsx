@@ -197,7 +197,7 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
             endMarkerDiv.innerHTML = `<img src="/end-flag.png" />`;
 
             const endMarker = L.marker([event.endLatitude, event.endLongitude], {
-              icon: L.divIcon({ html: endMarkerDiv.outerHTML, className: "" }),
+              icon: L.divIcon({ html: endMarkerDiv.outerHTML, className: "" , iconAnchor: [24,12]} ),
             }).addTo(map);
 
             endMarker.bindTooltip(`Finish | ${event.title}`, {

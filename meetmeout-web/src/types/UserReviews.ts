@@ -1,3 +1,4 @@
+import { Event } from "./Event";
 import { User } from "./User";
 
 export interface UserReview {
@@ -6,5 +7,6 @@ export interface UserReview {
     rating: number,
     organizer: User,
     reviewer: User,
+    event: Event,
     createdAt: string
 }

@@ -81,6 +81,11 @@ lng
 
         try {
 
+            if (!currentUser?.participatedEventIds || currentUser.participatedEventIds.length === 0) {
+                await joinEventRequest(eventId);
+                return;
+            }
+
             const response = await axiosInstance.get(`/events/with-ids`, {
                 params: { ids: currentUser?.participatedEventIds },
                     paramsSerializer: (params) => {

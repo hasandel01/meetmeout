@@ -29,4 +29,8 @@ public class EventCar {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<RideAssignment> rideAssignments = new HashSet<>();
+
+    @Column(nullable = false)
+    private boolean approved = false;
+
 }

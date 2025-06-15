@@ -21,4 +21,5 @@ export interface EventCar {
     id: number;
     car: Car;
     passengers: User[];
+    approved: boolean;
 }

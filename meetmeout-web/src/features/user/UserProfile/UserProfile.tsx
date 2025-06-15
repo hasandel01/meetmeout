@@ -17,6 +17,7 @@ import { getOrganizerRatingDescription } from "../../../utils/getOrganizerRating
 import { formatMonthYear } from "../../../utils/formatTime";
 import { TravelAssociate } from "../../../types/TravelAssociate";
 import CarContainer from "./CarContainer/CarContainer";
+import { UserReview } from "../../../types/UserReviews";
 
 function UserProfile() {
 
@@ -35,6 +36,7 @@ function UserProfile() {
     const [organizedEvents, setOrganizedEvents] = useState<Event[]>([]);
     const [attendedEvents, setAttendedEvents] = useState<Event[]>([]);
     const [travelAssociates,setTravelAssociates] = useState<TravelAssociate[] | null>(null);
+    const [userReviews, setUserReviews] = useState<UserReview[]>([]);
 
     const navigate = useNavigate();
 
@@ -46,6 +48,25 @@ function UserProfile() {
             console.error("Error fetching user profile:", error);
         }
     };
+
+
+    const fetchUserReviews = async () => {
+        if (!user?.id) return;
+        try {
+            const response = await axiosInstance.get(`/user-reviews/of/${user.id}`);
+            setUserReviews(response.data);
+        } catch (error) {
+            console.error("Failed to fetch user reviews:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (user) {
+            fetchUserReviews();
+        }
+    }, [user]);
+
+
 
     const getAddressFromCoords = async () => {
 
@@ -450,8 +471,9 @@ function UserProfile() {
                             <hr />
                             <p><FontAwesomeIcon icon={faThumbsUp} /> {averageRating ?? "N/A"}</p>
                             <small>{getOrganizerRatingDescription(averageRating,
-                                                                currentUser?.username === user?.username,
-                                                                !!(user?.userReviews && user.userReviews.length > 0))}</small>
+                                currentUser?.username === user?.username,
+                                userReviews.length > 0)
+                            }</small>
                         </div>
                     </div>
                 </div>

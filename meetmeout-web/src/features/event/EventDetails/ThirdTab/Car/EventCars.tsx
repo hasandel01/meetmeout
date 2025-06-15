@@ -1,7 +1,7 @@
 import {User} from "../../../../../types/User";
 import { Event } from "../../../../../types/Event";
 import styles from "./EventCars.module.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axiosInstance from "../../../../../axios/axios";
 import { Car } from "../../../../../types/Car";
 import { EventCar } from "../../../../../types/Car";

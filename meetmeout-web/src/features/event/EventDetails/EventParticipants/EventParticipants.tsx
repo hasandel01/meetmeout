@@ -7,7 +7,6 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "react-tooltip";
 import AttendeeContainerModal from "../AttendeeContainerModal/AttendeeContainerModal";
 import RequesterContainerModal from "../RequesterContainerModal/RequesterContainerModal";
-import { useState } from "react";
 
 interface Props {
   event: Event;

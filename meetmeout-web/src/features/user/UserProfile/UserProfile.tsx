@@ -703,7 +703,7 @@ function UserProfile() {
                     )}
                 </div>
             </div>
-            {user && <CarContainer user={user} cars={user.cars ?? []}/>}
+            {user && currentUser?.username === user.username && <CarContainer user={user} cars={user.cars ?? []}/>}
         </div>
     );
 }

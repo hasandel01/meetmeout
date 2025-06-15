@@ -50,4 +50,17 @@ public class CarServiceImpl implements CarService {
 
         return CarMapper.toCarDTO(newCar);
     }
+
+    @Transactional
+    public Void deleteCarFromUser(long userId) {
+
+        //TODO
+
+        return null;
+    }
+
+    @Override
+    public Void updateCar(long userId, CarDTO carDTO) {
+        return null;
+    }
 }

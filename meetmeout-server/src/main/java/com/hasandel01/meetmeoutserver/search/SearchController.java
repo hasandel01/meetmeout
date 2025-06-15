@@ -51,6 +51,7 @@ public class SearchController {
                 .findByUsernameContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase
                         (query, query, query, pageable)
                 .stream()
+                .filter(user -> !user.getUsername().equals("default"))
                 .map(UserMapper::toUserDTO)
                 .collect(Collectors.toSet());
 

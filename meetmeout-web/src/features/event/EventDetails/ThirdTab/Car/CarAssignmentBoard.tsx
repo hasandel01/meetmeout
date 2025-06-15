@@ -122,7 +122,7 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
           <>
             <DragDropContext onDragEnd={onDragEnd}>
               <div className={styles.board}>
-                {/* UNASSIGNED */}
+
                 <Droppable droppableId="unassigned">
                   {(provided) => (
                     <div className={styles.unassigned} ref={provided.innerRef} {...provided.droppableProps}>
@@ -141,7 +141,6 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
                   )}
                 </Droppable>
 
-                {/* CAR COLUMNS */}
                 <div className={styles.cars}>
                   {eventCars.map(eventCar => (
                     <Droppable droppableId={eventCar.id.toString()} key={eventCar.id}>
@@ -174,7 +173,6 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
               <button onClick={handleSave} className={styles.saveButton}>💾 Save Assignments</button>
             </DragDropContext>
 
-            {/* Modal & Ekler */}
             {carToRemove && (
               <div className={styles.modalBackdrop}>
                 <div className={styles.modalContent}>
@@ -194,7 +192,6 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
             <PendingCarRequests event={event} />
           </>
         ) : (
-          // 🔒 Organizator değilse sadece görüntüleme
           <div className={styles.board}>
             <div className={styles.unassignedReadonly}>
               <h3>Unassigned Attendees</h3>
@@ -218,6 +215,7 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
                 </div>
               ))}
             </div>
+            <EventCars eventCars={eventCars} currentUser={currentUser} event={event} />
           </div>
         )}
       </div>

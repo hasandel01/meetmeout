@@ -42,12 +42,17 @@ input, textarea {
   border: 1px solid var(--input-border);
   border-radius: 8px;
   font-size: 14px;
-  background-color: var(--input-background);
+  background-color: var(--background-color);
   transition: border-color 0.3s ease;
+  color: var(--primary-color-dark);
+}
+
+textarea::placeholder {
+  color: var(--primary-color-dark);
 }
 
 input:disabled {
-  background-color: var(--card-border);
+  background-color: var(--primary-color);
 }
 
 textarea {

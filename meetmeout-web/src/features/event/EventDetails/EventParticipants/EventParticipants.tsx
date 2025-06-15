@@ -30,82 +30,89 @@ const EventParticipants = ({
   setShowAllAttendees,
   setShowAllRequests,
 }: Props) => {
+  const organizer = event.attendees.find(a => a.username === event.organizer?.username);
+  const others = event.attendees.filter(a => a.username !== event.organizer?.username);
+  const attendees: User[] = [organizer, ...others].filter((a): a is User => a !== undefined);
 
-    const organizer = event.attendees.find(a => a.username === event.organizer?.username)
-    const others = event.attendees.filter(a => a.username !== event.organizer?.username)
-    event.attendees = [organizer, ...others].filter((a): a is User => a !== undefined)
-    const [attendees, setAttendees] = useState<User[]>(event.attendees);
+  const updateEventAttendees = (username: string) => {
+    const joinedUser = joinRequests.find(r => r.user.username === username)?.user;
+    if (!joinedUser) return;
+    event.attendees.push(joinedUser);
+  };
 
-    const updateEventAttendees = (username: string) => {
-      const joinedUser = joinRequests.find(r => r.user.username === username)?.user;
-      if (!joinedUser) return;
-      event.attendees.push(joinedUser);
-    };
+  const updateJoinRequests = (username: string) => {
+    setJoinRequests(joinRequests.filter(joinRequest => joinRequest.user.username !== username));
+  };
 
-    const updateJoinRequests = (username: string) => {
-      setJoinRequests(joinRequests.filter(joinRequest => joinRequest.user.username !== username));
-    }
+  return (
+    <div className={styles.attendees}>
+      <h4>Attendees</h4>
+      <ul>
+        {attendees.slice(0, 4).map((attendee, index) => (
+          <li key={index} onClick={() => setShowAllAttendees(true)}>
+            <div className={styles.pictureContainer}>
+              {event.organizer?.username === attendee.username && (
+                <>
+                  <FontAwesomeIcon
+                    icon={faStar}
+                    className={styles.organizerIcon}
+                    data-tooltip-id="organizer-icon"
+                    data-tooltip-content="Organizer"
+                  />
+                  <Tooltip id="organizer-icon" />
+                </>
+              )}
+              <img src={attendee.profilePictureUrl} alt="profile" />
+            </div>
+            <h5>{attendee.firstName}</h5>
+          </li>
+        ))}
+        {attendees.length > 4 && (
+          <div className={styles.andMoreAvatar} onClick={() => setShowAllAttendees(true)}>
+            <strong> + {attendees.length - 4} </strong>
+          </div>
+        )}
+      </ul>
 
-    return (
-        <div className={styles.attendees} >
-                  <h4>Attendees</h4>
-                      <ul>
-                        {attendees.slice(0,4).map((attendee,index) => 
-                          <li key={index} onClick={() => setShowAllAttendees(true)}>
-                                <div className={styles.pictureContainer}>
-                                  {event.organizer?.username === attendee.username &&
-                                  <>
-                                    <FontAwesomeIcon icon={faStar} className={styles.organizerIcon}
-                                    data-tooltip-id="organizer-icon" data-tooltip-content="Organizer"></FontAwesomeIcon>
-                                    <Tooltip id="organizer-icon"/>
-                                  </>
-                                  }
-                                  <img src={attendee.profilePictureUrl}></img>
-                                </div>
-                                <h5>{attendee.firstName}</h5>
-                          </li>
-                          )}
-                          {attendees.length > 4 &&
-                            <div className={styles.andMoreAvatar}
-                                onClick={() => setShowAllAttendees(true)}>
-                              <strong> + {event.attendees.length - 4} </strong>
-                            </div>
-                          }
-                      </ul>
-                      {showAllAttendees && currentUser && (
-                        <AttendeeContainerModal
-                          attendees={attendees}
-                          setAttendees={setAttendees}
-                          currentUser={currentUser}
-                          event={event}
-                          onClose={() => setShowAllAttendees(false)}
-                        />
-                      )}
-                      {event.organizer?.username === currentUser?.username &&
-                      <>
-                      <h4>Requesters</h4>
-                            <ul>
-                              {joinRequests.slice(0.4).map((request, index) => 
-                                  <li key={index} onClick={() => setShowAllRequests(true)}>
-                                    <img src={request.user.profilePictureUrl} />
-                                    <h5>{request.user.firstName}</h5>
-                                  </li>
-                              )}
-                              {joinRequests.length > 4 && 
-                              <div className={styles.andMoreAvatar}
-                                   onClick={() => setShowAllRequests(true)}
-                                >
-                                  <strong>+ {joinRequests.length - 4} more</strong>
-                              </div>}
-                        </ul>
-                        {showAllRequests && 
-                        <RequesterContainerModal requests={joinRequests} updateEventAttendees={updateEventAttendees}
-                                                updateJoinRequests={updateJoinRequests}
-                                                onClose={() => setShowAllRequests(false)}></RequesterContainerModal>}
-                        </>
-                      }                      
-                </div>
-    )
-}
+      {showAllAttendees && currentUser && (
+        <AttendeeContainerModal
+          attendees={attendees}
+          setAttendees={() => {}} // Artık dışarıdan setState alınmıyor
+          currentUser={currentUser}
+          event={event}
+          onClose={() => setShowAllAttendees(false)}
+        />
+      )}
+
+      {event.organizer?.username === currentUser?.username && (
+        <>
+          <h4>Requesters</h4>
+          <ul>
+            {joinRequests.slice(0, 4).map((request, index) => (
+              <li key={index} onClick={() => setShowAllRequests(true)}>
+                <img src={request.user.profilePictureUrl} alt="requester" />
+                <h5>{request.user.firstName}</h5>
+              </li>
+            ))}
+            {joinRequests.length > 4 && (
+              <div className={styles.andMoreAvatar} onClick={() => setShowAllRequests(true)}>
+                <strong>+ {joinRequests.length - 4} more</strong>
+              </div>
+            )}
+          </ul>
+
+          {showAllRequests && (
+            <RequesterContainerModal
+              requests={joinRequests}
+              updateEventAttendees={updateEventAttendees}
+              updateJoinRequests={updateJoinRequests}
+              onClose={() => setShowAllRequests(false)}
+            />
+          )}
+        </>
+      )}
+    </div>
+  );
+};
 
 export default EventParticipants;

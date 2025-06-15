@@ -213,9 +213,9 @@
   background-color: var(--background-color);
 }
 
-.infoCard hr {
+hr {
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   border: none;
   border-top: 1px solid var(--primary-color-dark);
 }

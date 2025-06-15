@@ -676,7 +676,7 @@ const CreateEventForm = () => {
                             {event.isFeeRequired && (
                             <div className={styles.feeBlock}>
                                 <p>
-                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {(!event.isFeeRequired || event.fee === 0) ? "Free" : event.fee + "₺" }
+                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {(event.isFeeRequired || event.fee === 0) ? "Free" : event.fee + "₺" }
                                 </p>
                                 {event.feeDescription && (
                                 <p className={styles.feeInfo}> 

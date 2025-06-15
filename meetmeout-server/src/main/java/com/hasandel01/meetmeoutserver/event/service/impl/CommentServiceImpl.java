@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 @Service
@@ -61,8 +62,8 @@ public class CommentServiceImpl implements CommentService {
                 .event(event)
                 .sender(user)
                 .comment(commentDTO.comment())
-                .sentAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .sentAt(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
+                .updatedAt(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .build();
 
         commentRepository.save(comment);

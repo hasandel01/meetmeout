@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -62,8 +63,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .reviewer(user)
                 .event(event)
                 .content(reviewDTO.content())
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
+                .updatedAt(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
                 .rating(reviewDTO.rating())
                 .build();
 

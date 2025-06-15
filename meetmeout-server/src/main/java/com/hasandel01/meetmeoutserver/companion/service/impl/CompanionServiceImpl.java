@@ -331,6 +331,7 @@ public class CompanionServiceImpl implements CompanionService {
 
         return userRepository.findAll(pageable).stream()
                 .filter(user -> !user.getId().equals(currentUser.getId()))
+                .filter(user -> !user.getUsername().equals("default"))
                 .filter(user -> !companionUsernames.contains(user.getUsername()))
                 .map(UserMapper::toUserDTO)
                 .toList();

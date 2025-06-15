@@ -155,6 +155,11 @@ const UserUpdateForm: React.FC<UserUpdateFormProps> = ({currentUser, onClose}) =
                 <PhoneInput
                     country={'tr'}
                     value={user.phone}
+                      inputStyle={{
+                        color: 'var(--primary-color-dark)',
+                        borderColor: 'var(--primary-color-dark)',
+                        backgroundColor: 'transparent', 
+                    }}
                     onChange={phone => setUser({ ...user, phone })}
                 />
                 {formErrors.phone && <p className={styles.error}>{formErrors.phone}</p>}

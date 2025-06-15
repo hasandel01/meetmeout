@@ -1,7 +1,7 @@
 import {User} from "../../../../../types/User";
 import { Event } from "../../../../../types/Event";
 import styles from "./EventCars.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axiosInstance from "../../../../../axios/axios";
 import { Car } from "../../../../../types/Car";
 import { EventCar } from "../../../../../types/Car";
@@ -26,6 +26,12 @@ const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars }) 
         }
     };
 
+    const isUserAttendee = event.attendees.some(att => att.username === currentUser?.username);
+    const availableCars = currentUser?.cars?.filter(
+        car => !eventCars.some(eventCar => eventCar.car.id === car.id)
+    ) || [];
+
+
     const handleJoinWithCars = async () => {
         if (selectedCars.length === 0) return;
 
@@ -46,40 +52,37 @@ const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars }) 
 
     return (
         <div className={styles.eventCarsContainer}>
-            {event?.attendees?.some(attendee => attendee.username === currentUser?.username) &&
-                currentUser?.cars?.filter(car => !eventCars.some(eventCar => eventCar.car.id === car.id)).length > 0 ? (
-                    <>
-                        <label onClick={() => setShowCarsModal(prev => !prev)}>
-                            🚗 Do you want to use your car(s) in this event?
-                        </label>
-                        {showCarsModal && (
-                            <div className={styles.carList}>
-                                {currentUser.cars
-                                .filter(car => !eventCars.some(eventCar => eventCar.car.id === car.id))
-                                .map(car => (
-                                    <div
-                                        key={car.id}
-                                        className={`${styles.carCard} ${selectedCars.some(c => c.id === car.id) ? styles.selected : ""}`}
-                                        onClick={() => handleSelectCar(car)}
-                                    >
-                                        <h4>{car.make} {car.model}</h4>
-                                        <p>Year: {car.year}</p>
-                                        <p>Capacity: {car.capacity}</p>
-                                    </div>
-                                ))}
-                                <button
-                                    className={styles.joinWithCarButton}
-                                    onClick={handleJoinWithCars}
-                                    disabled={selectedCars.length === 0}
+            {event.attendees.length > 0 && isUserAttendee && availableCars.length > 0 ? (
+                <>                    
+                    <label onClick={() => setShowCarsModal(prev => !prev)}>
+                        🚗 Do you want to use your car(s) in this event?
+                    </label>
+                    {showCarsModal && (
+                        <div className={styles.carList}>
+                            {availableCars.map(car => (
+                                <div
+                                    key={car.id}
+                                    className={`${styles.carCard} ${selectedCars.some(c => c.id === car.id) ? styles.selected : ""}`}
+                                    onClick={() => handleSelectCar(car)}
                                 >
-                                    Join with Selected Car(s)
-                                </button>
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <p> You don't have any car to assing to this event.</p>
-                )}
+                                    <h4>{car.make} {car.model}</h4>
+                                    <p>Year: {car.year}</p>
+                                    <p>Capacity: {car.capacity}</p>
+                                </div>
+                            ))}
+                            <button
+                                className={styles.joinWithCarButton}
+                                onClick={handleJoinWithCars}
+                                disabled={selectedCars.length === 0}
+                            >
+                                Join with Selected Car(s)
+                            </button>
+                        </div>
+                    )}
+                </>
+            ) : (
+                <p> You don't have any car to assign to this event.</p>
+            )}
         </div>
     );
 };

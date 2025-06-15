@@ -136,7 +136,7 @@
     border: 1px solid var(--primary-color-dark);
     font-size: 14px;
     resize: none;
-    width: 94%;
+    width: 100%;
     transition: border-color 0.3s;
     max-height: 100px;
     color: var(--primary-color-dark);

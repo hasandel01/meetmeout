@@ -46,6 +46,10 @@
     z-index: 1000;
 }
 
+input::placeholder {
+    color: var(--primary-color-dark);
+}
+
 .modalContent {
     background-color: var(--background-color);
     padding: 30px;

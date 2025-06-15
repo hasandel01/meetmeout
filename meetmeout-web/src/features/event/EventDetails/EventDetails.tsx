@@ -126,10 +126,11 @@ const EventDetails = () => {
     },[event.isDraft])
 
     useEffect(() => {
-      if (eventIdNumber > 0 && currentUser) {
-        getEvent(); 
+      if (eventIdNumber > 0) {
+        getEvent();
       }
-    }, [eventIdNumber, currentUser]);
+    }, [eventIdNumber]);
+
 
 
     useEffect(() => {
@@ -325,6 +326,7 @@ const EventDetails = () => {
 
     useEffect(() => {
       const fetchDismissal = async () => {
+        if (event.id === 0 || !currentUser) return;
         try {
           const response = await axiosInstance.get(`/review/${event.id}/dismissal`);
           setHasDismissedReview(response.data);
@@ -333,8 +335,9 @@ const EventDetails = () => {
         }
       };
 
-      if (currentUser) fetchDismissal();
+      fetchDismissal();
     }, [event.id, currentUser]);
+
 
 
   const [showReviewModal, setShowReviewModal] = useState(false);

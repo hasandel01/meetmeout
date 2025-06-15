@@ -77,8 +77,6 @@ public class NotificationServiceImpl implements NotificationService {
         }
     }
 
-
-
     public void sendFriendRequestNotification(User sender, User receiver) {
 
         Notification notification = Notification.builder()
@@ -87,7 +85,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .receiver(receiver)
                 .title("A new friend request.")
                 .body(sender.getUsername() + " has sent you a companion request")
-                .url("/" + receiver.getUsername() + "/companions")
+                .url("/" + receiver.getUsername() + "/companions?page=2")
                 .read(false)
                 .createdAt(LocalDateTime.now())
                 .build();

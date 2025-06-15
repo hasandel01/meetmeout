@@ -10,4 +10,8 @@ public interface CarService {
     Set<CarDTO> getUsersCar(long userId);
 
     CarDTO addCarToUser(long userId, CarDTO carDTO);
+
+    Void deleteCarFromUser(long userId);
+
+    Void updateCar(long userId, CarDTO carDTO);
 }

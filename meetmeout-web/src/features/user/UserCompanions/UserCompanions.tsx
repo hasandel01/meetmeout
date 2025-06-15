@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import axiosInstance from "../../../axios/axios";
 import {User} from "../../../types/User";
 import { useEffect, useState } from "react";
@@ -12,12 +11,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useBadgeContext } from "../../../context/BadgeContext";
 import { RecommendedFriendDTO } from "../../../types/RecommendedFriend";
+import { useParams, useSearchParams } from "react-router-dom";
+
+
 
 const UserCompanions = () => {
 
+    const [searchParams] = useSearchParams();
+    const initialPage = Number(searchParams.get("page") || "1");
     const { username } = useParams<{ username: string }>();
     const {currentUser} = useUserContext();
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(initialPage);
     const [companions, setCompanions] = useState<User[]>([]);
     const [recommendedCompanions, setRecommendedCompanions] = useState<RecommendedFriendDTO[] | null>(null);
     const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);

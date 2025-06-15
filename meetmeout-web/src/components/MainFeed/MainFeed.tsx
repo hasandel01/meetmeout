@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import axiosInstance from "../../axios/axios";
 import { useState } from "react";
 import { Event } from "../../types/Event";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation} from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUserContext } from "../../context/UserContext";
 import { Invitation } from "../../types/Like";

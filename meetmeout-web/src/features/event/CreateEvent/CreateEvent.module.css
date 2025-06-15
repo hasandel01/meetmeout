@@ -814,6 +814,7 @@ p {
   align-items: flex-start;
   width: 80%;
   height: 200px;
+  text-align: left;
 }
 
 .previewImage {

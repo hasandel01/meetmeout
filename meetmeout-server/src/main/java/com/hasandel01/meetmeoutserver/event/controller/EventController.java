@@ -90,4 +90,9 @@ public class EventController {
         return ResponseEntity.ok(eventService.capacityUpdate(eventId,capacityUpdateRequest));
     }
 
+    @PutMapping("/{eventId}/privacy")
+    public ResponseEntity<Boolean> updatePrivacy(@PathVariable Long eventId) {
+        return ResponseEntity.ok(eventService.changePrivacy(eventId));
+    }
+
 }

@@ -21,7 +21,7 @@ public class EventScheduler {
 
     private final EventRepository eventRepository;
 
-    @Scheduled(cron = "0 */15 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     @Transactional
     public void updateFinishedEvents() {
         log.info("Scheduler is started.");

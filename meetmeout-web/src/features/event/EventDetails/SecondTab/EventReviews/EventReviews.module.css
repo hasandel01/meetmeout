@@ -105,6 +105,120 @@
 }
 
 
+/** EDIT REVIEW MODAL */
+
+.deleteEventModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.deleteEventModal {
+  background-color: var(--background-color);
+  color: var(--primary-color-dark);
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
+}
+
+.deleteEventModalButtons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.confirmButton {
+  background-color: #d9534f;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancelButton {
+  background-color: #ccc;
+  color: black;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
+.confirmButton:hover {
+  background-color: #c9302c; 
+}
+
+.cancelButton:hover {
+  background-color: #999; 
+}
+
+
+.editReviewModalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.editReviewModal {
+  background-color: var(--background-color);
+  color: var(--primary-color-dark);
+  padding: 24px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.2);
+  position: relative;
+}
+
+.editTextarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  resize: none;
+  background-color: var(--background-color);
+  color: var(--primary-color-dark);
+}
+
+.counterInput {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid var(--primary-color);
+}
+
+.reviewModalButtons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto;
+}
+
+
 @media (max-width: 768px) {
  
   .reviewContainer{

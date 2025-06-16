@@ -30,6 +30,7 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
     const hasFlyTo = sessionStorage.getItem("flyTo");
     if (!hasFlyTo) {
       map.setView([coords.lat, coords.lng], 13);
+      sessionStorage.removeItem("flyTo");
     }
 
     const allMarkerEls: HTMLDivElement[] = [];
@@ -185,7 +186,7 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
               routeLayer.setStyle({ opacity: 0.3 });
             });
 
-            if (routeLayers.current.length === 0) {
+            if (routeLayers.current.length === 0 && !hasFlyTo) {
               map.fitBounds(routeLayer.getBounds());
             }
 

@@ -9,7 +9,6 @@ import { useUserContext } from "../../../context/UserContext";
 import axios from "axios";
 import { Weather } from "../../../types/Forecast";
 import Chat from "./FirstTab/Chat/Chat";
-import { Review } from "../../../types/Like";
 import EventReviews from "./SecondTab/EventReviews/EventReviews";
 import EventComments from "./FirstTab/EventComments/EventComments";
 import EventParticipants from "./EventParticipants/EventParticipants";
@@ -98,7 +97,7 @@ const EventDetails = () => {
              endLongitude: 0,
              feeDescription: '',
              routeType: '',
-             eventPhotoUrls: [],
+             eventPhotos: [],
              routeJson: ''
          });
     
@@ -281,46 +280,13 @@ const EventDetails = () => {
       });
       setEvent(prev => ({
         ...prev,
-        eventPhotoUrls: [...prev.eventPhotoUrls, ...response.data]
+        eventPhotoUrls: [...prev.eventPhotos, ...response.data]
       }));
       toast.success("Photos uploaded successfully!");
     } catch (error) {
       toast.error("Error uploading photos.");
     }
   }
-
- 
-
-    const handleDeleteReview = async (review: Review) => {
-      try {
-
-       await axiosInstance.delete(`/delete-review/${review.reviewId}`);
-        
-        setEvent(prev => ({
-          ...prev,
-          reviews: prev.reviews.filter(r => r.reviewId !== review.reviewId)
-        }))
-
-      }catch(error) {
-        toast.error("Error deleting review.");
-      }
-    }
-
-    const handleEditReview = async (review: Review) => {
-      try {
-
-        const response = await axiosInstance.put(`/update-review/${review.reviewId}`, review);
-
-        setEvent(prev => ({
-          ...prev,
-          reviews: prev.reviews.map(r => r.reviewId === review.reviewId ? response.data : r)
-        }))
-
-
-      }catch(error) {
-        toast.error("Error editing review.");
-      }
-    }
 
   const [hasDismissedReview, setHasDismissedReview] = useState(false);
 
@@ -439,8 +405,8 @@ const EventDetails = () => {
                           <EventReviews
                             reviews={event.reviews}
                             currentUser={currentUser}
-                            handleDeleteReview={handleDeleteReview}
-                            handleEditReview={handleEditReview}
+                            event={event}
+                            setEvent={setEvent}
                           />
                         )}
                         <EventPhotos

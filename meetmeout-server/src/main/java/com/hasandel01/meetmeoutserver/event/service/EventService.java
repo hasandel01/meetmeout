@@ -68,4 +68,6 @@ public interface EventService {
     InviteDTO getInvitationsByInvitedAndEvent(long eventId, long userId);
 
     Void kickUser(long eventId, long userId);
+
+    Boolean changePrivacy(Long eventId);
 }

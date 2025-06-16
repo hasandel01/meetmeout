@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.event.mapper;
 
 import com.hasandel01.meetmeoutserver.event.dto.EventDTO;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.event.model.EventPhoto;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
 
 import java.util.List;
@@ -47,7 +48,8 @@ public class EventMapper {
                 .createdAt(event.getCreatedAt())
                 .isFeeRequired(event.isFeeRequired())
                 .fee(event.getFee())
-                .eventPhotoUrls(event.getEventPhotoUrls())
+                .eventPhotos(event.getEventPhotos().stream()
+                        .map(EventPhotoMapper::toEventPhotoDTO).collect(Collectors.toSet()))
                 .routeJson(event.getRouteJson())
                 .build();
     }

@@ -1,6 +1,6 @@
 import styles from "./EventCardDetails.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faLocationDot, faHeart, faComment, faLock, faUserGroup, faMoneyBill,faPenToSquare, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faLocationDot, faHeart, faComment, faUserGroup, faMoneyBill,faPenToSquare, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from '@fortawesome/free-regular-svg-icons';
 import { Event } from "../../../../../types/Event";
 import { Weather } from "../../../../../types/Forecast";
@@ -12,6 +12,7 @@ import 'react-tooltip/dist/react-tooltip.css';
 import axiosInstance from "../../../../../axios/axios";
 import { useState, useRef, useEffect } from "react";
 import TagInput from "../../../CreateEvent/TagInput";
+import EventPrivacy from "./EventPrivacy/EventPrivacy";
 
 interface Props {
   event: Event;
@@ -193,15 +194,7 @@ const EventDetailsCard = ({
 
   return (
     <div className={styles.eventCard}>
-      <div className={styles.lockContainer}>
-        {event.isPrivate && <>
-          <FontAwesomeIcon
-            icon={faLock}
-            className={styles.lockIcon}
-            data-tooltip-id="private_event_tooltip" data-tooltip-content="Private Event" />
-          <Tooltip id="private_event_tooltip"/> </>
-        } 
-      </div>
+        {currentUser && <EventPrivacy currentUser={currentUser} event={event} setEvent={setEvent}/>} 
         {event.isCapacityRequired &&
         <div
         className={styles.attendeeContainer}

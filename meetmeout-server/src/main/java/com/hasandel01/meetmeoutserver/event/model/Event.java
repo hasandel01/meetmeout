@@ -115,15 +115,17 @@ public class Event {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private Set<String> eventPhotoUrls = new HashSet<>();
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<EventPhoto> eventPhotos = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     private RouteType routeType;
 
     @Lob
     private String routeJson;
-
-
+    
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

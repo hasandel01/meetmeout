@@ -101,7 +101,6 @@ button[type="button"]:hover {
 }
 
 
-/* Mobil görünümde özel davranış */
 @media (max-width: 768px) {
   .formContainer {
     width: 90vw;
@@ -115,9 +114,6 @@ button[type="button"]:hover {
     align-items: flex-start;
   }
 
-  input {
-    color: var(--text-color);
-  }
 }
 
   

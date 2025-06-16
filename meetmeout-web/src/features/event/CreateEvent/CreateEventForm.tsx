@@ -140,7 +140,7 @@ const CreateEventForm = () => {
         endLongitude: 0,
         feeDescription: '',
         routeType: RouteType.CAR,
-        eventPhotoUrls: [],
+        eventPhotos: [],
         routeJson: '',
     });
 
@@ -339,6 +339,16 @@ const CreateEventForm = () => {
         return `${hours}:${minutes}`;
     }
 
+    const getMaxDateFormatted = () => {
+        const today = new Date();
+        today.setFullYear(today.getFullYear() + 5);
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+
     const renderStep = () => {
         switch(step) {
             case 1:
@@ -387,6 +397,7 @@ const CreateEventForm = () => {
                                     value={event.startDate}
                                     onChange={(e) => setEvent( {...event, startDate: e.target.value} )}
                                     min={getTodayFormatted()}
+                                    max={getMaxDateFormatted()}
                                     required />
                                 <input 
                                     type='time' 
@@ -394,6 +405,7 @@ const CreateEventForm = () => {
                                     value={event.startTime}
                                     onChange={(e) => setEvent( {...event, startTime: e.target.value} )}
                                     min={isToday ? getTimeFormatted(): undefined}
+                                    max={getMaxDateFormatted()}
                                     required />
                             </div>
                             <div className={styles.timeInput}>
@@ -676,7 +688,7 @@ const CreateEventForm = () => {
                             {event.isFeeRequired && (
                             <div className={styles.feeBlock}>
                                 <p>
-                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {(event.isFeeRequired || event.fee === 0) ? "Free" : event.fee + "₺" }
+                                <FontAwesomeIcon icon={faMoneyBill} /> Entry Fee: {(!event.isFeeRequired || event.fee === 0) ? "Free" : event.fee + "₺" }
                                 </p>
                                 {event.feeDescription && (
                                 <p className={styles.feeInfo}> 

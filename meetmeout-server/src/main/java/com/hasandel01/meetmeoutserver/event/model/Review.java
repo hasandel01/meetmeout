@@ -5,6 +5,7 @@ import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,7 @@ public class Review {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private Long id;
 
-    @Length(max = 400)
+    @Size(min = 1, max = 300)
     private String content;
 
     @Min(1)

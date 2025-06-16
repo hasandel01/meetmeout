@@ -188,7 +188,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates,
       html: `
         <div class="massive-finish-marker-wrapper">
           <div class="massive-finish-marker">
-            <img class="flag-img" src="/end-flag.png" />
+            <img class="flag-img" src="/end-flag." />
           </div>
         </div>
       `,
@@ -213,6 +213,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates,
     });
 
     return <div>
+            {position[0] !== 41.0082 && position[1] !== 28.9784 &&
             <Marker position={position} icon={pinIcon}>
                 <Popup>
                   {addressName ? (
@@ -226,6 +227,7 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates,
                   )}
                 </Popup>
               </Marker>
+              }
               {isThereRoute && endPosition[0] !== 0 && endPosition[1] !== 0 && (
                 <Marker icon={finishIcon} position={endPosition}>
                   <Popup>

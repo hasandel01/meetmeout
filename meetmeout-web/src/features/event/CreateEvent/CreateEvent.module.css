@@ -994,14 +994,8 @@ p {
     }
 
     .inputDescription {
-        color: var(--text-color) !important;
         height: 20vh;
     }
-
-    .inputTitle {
-        color: var(--text-color) !important;
-    }
-
 
     .timeInput {
         display: flex;

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Event } from "../../../../../types/Event";
 import { faTimes, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import formatTime from "../../../../../utils/formatTime";
 
 interface EventPhotosProps {
   event: Event;
@@ -14,17 +15,35 @@ const EventPhotos: React.FC<EventPhotosProps> = ({ event }) => {
   const openOverlay = (index: number) => setSelectedIndex(index);
   const closeOverlay = () => setSelectedIndex(null);
 
-  const showPrev = () => setSelectedIndex((prev) => (prev! - 1 + event.eventPhotoUrls.length) % event.eventPhotoUrls.length);
-  const showNext = () => setSelectedIndex((prev) => (prev! + 1) % event.eventPhotoUrls.length);
+  const showPrev = () => setSelectedIndex((prev) => (prev! - 1 + event.eventPhotos.length) % event.eventPhotos.length);
+  const showNext = () => setSelectedIndex((prev) => (prev! + 1) % event.eventPhotos.length);
 
   return (
     <div className={styles.photoContainer}>
       <h4>Photos</h4>
-          {Array.isArray(event.eventPhotoUrls) && event.eventPhotoUrls.length > 0 ? (
+          {Array.isArray(event.eventPhotos) && event.eventPhotos.length > 0 ? (
             <div className={styles.photoGrid}>
-              {event.eventPhotoUrls.map((url, index) => (
-                <img key={index} src={url} alt={`Photo ${index + 1}`} onClick={() => openOverlay(index)} />
-              ))}
+              <div>
+              </div>
+                {event.eventPhotos.map((photo, index) => (
+                  <div key={index} className={styles.photoCard}>
+                    <div className={styles.uploaderInfo}>
+                      <img
+                        src={photo.uploadedByProfilePictureUrl}
+                        alt={photo.uploadedByUsername}
+                        className={styles.avatar}
+                      />
+                      <p className={styles.username}>{photo.uploadedByUsername}</p>
+                    </div>
+                    <img
+                      src={photo.url}
+                      alt={`Photo ${index + 1}`}
+                      className={styles.photo}
+                      onClick={() => openOverlay(index)}
+                    />
+                    {photo.uploadedDateTime && formatTime(photo.uploadedDateTime)}
+                  </div>
+                ))}
             </div>
           ) : (
             <p className={styles.emptyMessage}>No photos yet.</p>
@@ -34,7 +53,7 @@ const EventPhotos: React.FC<EventPhotosProps> = ({ event }) => {
               <div className={styles.overlayContent}>
                 <FontAwesomeIcon icon={faTimes} className={styles.closeIcon} onClick={closeOverlay} />
                 <FontAwesomeIcon icon={faChevronLeft} className={styles.navIcon} onClick={showPrev} />
-                <img src={event.eventPhotoUrls[selectedIndex]} alt={`Preview ${selectedIndex + 1}`} />
+                <img src={event.eventPhotos[selectedIndex].url} alt={`Preview ${selectedIndex + 1}`} />
                 <FontAwesomeIcon icon={faChevronRight} className={styles.navIcon} onClick={showNext} />
               </div>
             </div>

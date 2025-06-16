@@ -33,6 +33,52 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
+.photoCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.uploaderInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.username {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #555;
+  font-weight: 500;
+}
+
+.photo {
+  width: 140px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.photo:hover {
+  transform: scale(1.03);
+}
+
+
 .overlay {
   position: fixed;
   top: 0;

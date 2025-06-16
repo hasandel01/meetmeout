@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,7 @@ public class EventServiceImpl implements EventService {
                 .category(event.category())
                 .tags(event.tags())
                 .imageUrl(imageUrl)
-                .eventPhotoUrls(event.eventPhotoUrls())
+                .eventPhotos(new HashSet<>())
                 .fee(event.fee())
                 .feeDescription(event.feeDescription())
                 .isFeeRequired(event.isFeeRequired())
@@ -424,22 +425,33 @@ public class EventServiceImpl implements EventService {
         return user.getParticipatedEvents().stream().map(EventMapper::toEventDto).collect(Collectors.toSet());
     }
 
-
-
-
     @Transactional
     public Set<String> uploadPhotos(@Valid MultipartFile[] files, long eventId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
+        User uploader = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
         Set<String> photoUrls = cloudStorageService.uploadEventPictures(files);
-        event.setEventPhotoUrls(photoUrls);
+
+        for (String url : photoUrls) {
+            EventPhoto photo = EventPhoto.builder()
+                    .url(url)
+                    .event(event)
+                    .uploadedBy(uploader)
+                    .uploadDateTime(LocalDateTime.now(ZoneId.of("Europe/Istanbul")))
+                    .build();
+            event.getEventPhotos().add(photo);
+        }
 
         eventRepository.save(event);
-
         return photoUrls;
     }
+
 
     @Transactional
     public EventDTO updateEvent(long eventId, EventDTO eventDTO) throws EventNotFoundException {
@@ -630,6 +642,18 @@ public class EventServiceImpl implements EventService {
         notificationService.sendKickNotificationToUser(attendee,event);
 
         return null;
+    }
+
+    @Override
+    public Boolean changePrivacy(Long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        event.setPrivate(!event.isPrivate());
+        eventRepository.save(event);
+
+        return true;
     }
 }
 

@@ -46,7 +46,7 @@ public record EventDTO(
         boolean isFeeRequired,
         double fee,
         LocalDateTime createdAt,
-        Set<String> eventPhotoUrls,
+        Set<EventPhotoDTO> eventPhotos,
         String feeDescription,
         String endAddressName,
         RouteType routeType,

@@ -7,6 +7,10 @@ import com.hasandel01.meetmeoutserver.enums.EventStatus;
 import com.hasandel01.meetmeoutserver.user.model.Car;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
@@ -80,9 +84,15 @@ public class Event {
     private Set<User> attendees = new HashSet<>();
 
     private boolean isCapacityRequired;
+
+    @Max(10000)
+    @Min(1)
     private int maximumCapacity;
 
     private boolean isFeeRequired;
+
+    @DecimalMin("0.0")
+    @DecimalMax("1000000.0")
     private double fee;
 
     @Length(max = 300)
@@ -124,6 +134,7 @@ public class Event {
     private RouteType routeType;
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     private String routeJson;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

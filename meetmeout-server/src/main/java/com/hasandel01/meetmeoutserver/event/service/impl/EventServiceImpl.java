@@ -2,6 +2,7 @@ package com.hasandel01.meetmeoutserver.event.service.impl;
 
 
 import com.hasandel01.meetmeoutserver.enums.BadgeType;
+import com.hasandel01.meetmeoutserver.enums.InviteStatus;
 import com.hasandel01.meetmeoutserver.event.controller.DescriptionRequest;
 import com.hasandel01.meetmeoutserver.event.dto.*;
 import com.hasandel01.meetmeoutserver.enums.EventStatus;
@@ -10,6 +11,7 @@ import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
 import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
+import com.hasandel01.meetmeoutserver.exceptions.InvalidTokenException;
 import com.hasandel01.meetmeoutserver.exceptions.RestrictedUserException;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import com.hasandel01.meetmeoutserver.user.mapper.UserMapper;
@@ -29,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -150,12 +153,16 @@ public class EventServiceImpl implements EventService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-        Invite invite = inviteRepository.findByInvitedAndEvent(user,event)
-                .orElse(null);
+        Optional<Invite> invite = inviteRepository.findByInvitedAndEventAndStatus(user,event,InviteStatus.PENDING);
 
-        if(event.isPrivate() && invite == null) {
+        if(event.isPrivate() && invite.isEmpty()) {
             return sendJoinEventRequest(event);
         } else {
+
+            if (invite.isPresent() && invite.get().getStatus() == InviteStatus.PENDING) {
+                invite.get().setStatus(InviteStatus.ACCEPTED);
+                inviteRepository.save(invite.get());
+            }
 
             user.getParticipatedEvents().add(event);
             event.getAttendees().add(user);
@@ -240,6 +247,14 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
         event.getAttendees().remove(user);
+
+        inviteRepository.findByInvitedAndEvent(user, event).ifPresent(invite -> {
+            if (invite.getStatus() == InviteStatus.ACCEPTED) {
+                invite.setStatus(InviteStatus.EXPIRED);
+                inviteRepository.save(invite);
+            }
+        });
+
         if(event.getAttendees().size() != event.getMaximumCapacity())
             event.setStatus(EventStatus.ONGOING);
 
@@ -337,6 +352,7 @@ public class EventServiceImpl implements EventService {
         List<Invite> invites = inviteRepository.findByEvent(event).orElse(Collections.emptyList());
 
         Set<Long> alreadyInvitedUserIds = invites.stream()
+                .filter(invite -> invite.getStatus() == InviteStatus.PENDING || invite.getStatus() == InviteStatus.ACCEPTED)
                 .map(invite -> invite.getInvited().getId())
                 .collect(Collectors.toSet());
 
@@ -350,7 +366,7 @@ public class EventServiceImpl implements EventService {
                         .inviter(sender)
                         .inviteToken(token)
                         .event(event)
-                        .isAccepted(false)
+                        .status(InviteStatus.PENDING)
                         .build();
 
                 inviteRepository.save(invite);
@@ -374,6 +390,7 @@ public class EventServiceImpl implements EventService {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
 
         if(event.getAttendees().contains(user)) {
             return null;
@@ -581,7 +598,8 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        List<Invite> invites = inviteRepository.findByEvent(event).orElse(new ArrayList<>());
+        List<Invite> invites = inviteRepository.findByEventAndStatus(event,InviteStatus.PENDING)
+                .orElse(new ArrayList<>());
 
         if(!invites.isEmpty()) {
             return invites.stream().map(Invite::getInvited).map(UserMapper::toUserDTO)
@@ -637,6 +655,14 @@ public class EventServiceImpl implements EventService {
         }
 
         event.getAttendees().remove(attendee);
+
+        inviteRepository.findByInvitedAndEvent(attendee, event).ifPresent(invite -> {
+            if (invite.getStatus() == InviteStatus.ACCEPTED) {
+                invite.setStatus(InviteStatus.EXPIRED);
+                inviteRepository.save(invite);
+            }
+        });
+
         eventRepository.save(event);
 
         notificationService.sendKickNotificationToUser(attendee,event);
@@ -654,6 +680,12 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
 
         return true;
+    }
+
+    @Transactional
+    public InviteDTO getInviteDetails(String token) {
+        return inviteRepository.findByInviteToken(token)
+                .stream().map(InviteMapper::toInviteDTO).findFirst().orElse(null);
     }
 }
 

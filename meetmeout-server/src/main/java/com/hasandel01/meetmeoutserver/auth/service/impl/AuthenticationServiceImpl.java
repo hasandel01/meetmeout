@@ -37,6 +37,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Value("${app.frontend.url}")
     private String baseUrl;
 
+
     public AuthenticationResponse register(RegisterRequest registerRequest) {
 
         User user = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);

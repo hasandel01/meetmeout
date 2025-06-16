@@ -13,7 +13,7 @@ public class InviteMapper {
                 .eventId(invite.getEvent().getId())
                 .receiverId(invite.getInvited().getId())
                 .senderId(invite.getInviter().getId())
-                .status(invite.isAccepted())
+                .status(invite.getStatus())
                 .token(invite.getInviteToken())
                 .build();
     }

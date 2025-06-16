@@ -29,8 +29,9 @@ public class Car {
     @Size(min = 2, max = 20)
     private String model;
 
+    @Column(name = "car_year")
     @Min(1900)
-    private int year;
+    private Integer year;
 
     @Min(2)
     @Max(25)

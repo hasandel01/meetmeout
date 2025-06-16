@@ -1,5 +1,6 @@
 package com.hasandel01.meetmeoutserver.event.model;
 
+import com.hasandel01.meetmeoutserver.enums.InviteStatus;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,6 @@ public class Invite {
     @Column(unique = true)
     private String inviteToken;
 
-    private boolean isAccepted;
-
+    @Enumerated(EnumType.STRING)
+    private InviteStatus status;
 }

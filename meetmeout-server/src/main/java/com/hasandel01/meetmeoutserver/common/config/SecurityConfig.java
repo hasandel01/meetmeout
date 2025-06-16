@@ -30,6 +30,21 @@ public class SecurityConfig {
     private String frontendUrl;
 
     @Bean
+    @Order(-1)
+    public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher("/actuator/**")
+                .authorizeHttpRequests(auth -> auth
+                        .anyRequest().permitAll()
+                )
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        return http.build();
+    }
+
+
+    @Bean
     @Order(0)
     public SecurityFilterChain wsSecurity(HttpSecurity http) throws Exception {
         http

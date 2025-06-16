@@ -70,4 +70,6 @@ public interface EventService {
     Void kickUser(long eventId, long userId);
 
     Boolean changePrivacy(Long eventId);
+
+    InviteDTO getInviteDetails(String token);
 }

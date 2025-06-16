@@ -42,4 +42,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "WHERE LOWER(tag) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "ORDER BY tag", nativeQuery = true)
     List<String> findAllDistinctTags(@Param("query") String query, Pageable pageable);
+
+
+    @Query("""
+    SELECT ev FROM Event ev WHERE ev.status='ONGOING' OR ev.status='FULL'
+    """)
+    List<Event> findOngoingAndFullEvents();
 }

@@ -5,6 +5,9 @@ import com.hasandel01.meetmeoutserver.event.dto.AccessTokenDTO;
 import com.hasandel01.meetmeoutserver.event.dto.EventDTO;
 import com.hasandel01.meetmeoutserver.event.dto.InviteDTO;
 import com.hasandel01.meetmeoutserver.event.dto.JoinRequestDTO;
+import com.hasandel01.meetmeoutserver.event.mapper.InviteMapper;
+import com.hasandel01.meetmeoutserver.event.model.Invite;
+import com.hasandel01.meetmeoutserver.event.repository.InviteRepository;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +49,11 @@ public class EventParticipantController {
     @PostMapping("/{eventId}/invite")
     public ResponseEntity<Void> sendInvitation(@RequestBody List<UserDTO> users, @PathVariable long eventId) {
         return ResponseEntity.ok(eventService.sendInvitationToUsers(users,eventId));
+    }
+
+    @GetMapping("/invite-details")
+    public ResponseEntity<InviteDTO> getInviteDetails(@RequestParam String token) {
+        return ResponseEntity.ok(eventService.getInviteDetails(token));
     }
 
     @GetMapping("/invitations")

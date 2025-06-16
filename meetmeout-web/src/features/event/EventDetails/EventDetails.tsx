@@ -38,6 +38,9 @@ const EventDetails = () => {
   const [currentTab, setCurrentTab] = useState<number>(1);
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+
+
 
     const fetchUserReviews = async (organizerId: number) => {
       try {
@@ -148,6 +151,7 @@ const EventDetails = () => {
 
       } catch (error) {
         toast.error("Error fetching event data.");
+        setIsCheckingAccess(false);
         navigate("/"); 
       }
     };
@@ -191,6 +195,7 @@ const EventDetails = () => {
 
     if (isOrganizer || isAttendee || isPublic) {
       setIsUserAllowed(true);
+      setIsCheckingAccess(false);
       return;
     }
 
@@ -208,16 +213,20 @@ const EventDetails = () => {
           invite.status === "ACCEPTED"
         ) {
           setIsUserAllowed(true);
+          setIsCheckingAccess(false);
         } else {
-          toast.error("Bu davet artık geçerli değil.");
+          toast.error("This invitation is no longer valid.");
+          setIsCheckingAccess(false);
           navigate("/");
         }
       } catch (error) {
-        toast.error("Davet kontrolü başarısız.");
+        toast.error("Invitation check is failed.");
+        setIsCheckingAccess(false);
         navigate("/");
       }
     } else {
-      toast.error("Bu etkinliğe erişim izniniz yok.");
+      toast.error("You don't have the rights to show this page.");
+      setIsCheckingAccess(false);
       navigate("/");
     }
   };
@@ -401,7 +410,9 @@ const EventDetails = () => {
 
   return (
     <div className={styles.eventContainer}>
-      {isUserAllowed ? (
+      {isCheckingAccess ? (
+          <div className={styles.spinner}></div>
+      ) : isUserAllowed ? (
         <>
           {currentUser && showReviewModal && (
               <ReviewWizardModal
@@ -490,8 +501,8 @@ const EventDetails = () => {
             </> 
       )
       : (
-          <div style={{ position: "fixed", top: "50%", left: "35%", display: "flex", backgroundColor:"white", textAlign: "center"}}>
-            <strong>Oops, you are trying to access an event page that you are not entitled to see. 🥺</strong>
+          <div style={{ position: "fixed", top: "50%", left: "35%", display: "flex", backgroundColor:"white", color:"blue", textAlign: "center"}}>
+            <p>You don't have the rights to view this page.</p>
           </div>
       )
       

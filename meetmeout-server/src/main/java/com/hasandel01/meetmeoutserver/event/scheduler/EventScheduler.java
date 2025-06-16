@@ -25,7 +25,7 @@ public class EventScheduler {
 
     private final InviteRepository inviteRepository;
 
-    @Scheduled(cron = "*/15 * * * * *")
+    @Scheduled(cron = "0 */2 * * * *")
     @Transactional
     public void updateFinishedEvents() {
         log.info("Scheduler is started.");
@@ -50,7 +50,7 @@ public class EventScheduler {
 
     @PostConstruct
     public void init() {
-        log.info("🚀 EventScheduler yüklendi!");
+        log.info("🚀 EventScheduler started");
     }
 
 

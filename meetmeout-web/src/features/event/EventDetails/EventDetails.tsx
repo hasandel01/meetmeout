@@ -19,6 +19,7 @@ import EventRoute from "./ThirdTab/Route/EventRoute";
 import CarAssignmentBoard from "./ThirdTab/Car/CarAssignmentBoard";
 import ReviewWizardModal from "./ReviewModals/ReviewWizardModal";
 import { UserReview } from "../../../types/UserReviews";
+import { Invitation } from "../../../types/Like";
 
 const EventDetails = () => {
 
@@ -134,29 +135,7 @@ const EventDetails = () => {
       getEvent();
     },[event.isDraft])
 
-    useEffect(() => {
-      if (eventIdNumber > 0) {
-        getEvent();
-      }
-    }, [eventIdNumber]);
 
-
-
-    useEffect(() => {
-      if (!currentUser) return;
-
-      const isAttendee = event.attendees.some(attendee => attendee.username === currentUser.username);
-      const isOrganizer = event.organizer?.username === currentUser.username;
-
-      if (
-        (event.isPrivate && (isOrganizer || isAttendee)) ||
-        !event.isPrivate
-      ) {
-        setIsUserAllowed(true);
-      } else {
-        verifyTokenToAccessDetails();
-      }
-    }, [event.organizer, currentUser]);
 
 
 
@@ -166,35 +145,85 @@ const EventDetails = () => {
         const fetchedEvent = response.data;
         setEvent(fetchedEvent);
 
-        if (fetchedEvent.organizer?.username === currentUser?.username) {
-          setIsUserAllowed(true);
-        } 
-        else {
-          verifyTokenToAccessDetails();
-        }
-
       } catch (error) {
         toast.error("Error fetching event data.");
         navigate("/"); 
       }
     };
 
-    const verifyTokenToAccessDetails = async () => {
-    
-    if (!token) return;
+    const [inviteDetails, setInviteDetails] = useState<Invitation | null>(null);
 
+    useEffect(() => {
+      if (token) {
+        fetchInviteDetails();
+      }
+    }, [token]);
+
+      useEffect(() => {
+      if (eventIdNumber > 0 && (!token || inviteDetails)) {
+        getEvent();
+      }
+    }, [eventIdNumber, inviteDetails]);
+
+
+
+    const fetchInviteDetails = async () => {
+    if (!token) return;
     try {
-      await axiosInstance.post(`/events/${eventIdNumber}/verify-access`, {
-        token: token
+      const response = await axiosInstance.get(`/events/invite-details`, {
+        params: { token },
+      });
+      setInviteDetails(response.data);
+    } catch (error) {
+      console.error("Error fetching invite details:", error);
+    }
+  };
+
+  
+  useEffect(() => {
+    const checkAccess = async () => {
+    const isOrganizer = event.organizer?.username === currentUser?.username;
+    const isAttendee = event.attendees.some(att => att.username === currentUser?.username);
+    const isPublic = !event.isPrivate;
+
+    if (isOrganizer || isAttendee || isPublic) {
+      setIsUserAllowed(true);
+      return;
+    }
+
+    if (token) {
+      try {
+        const response = await axiosInstance.get(`/events/invite-details`, {
+          params: { token },
         });
 
-        setIsUserAllowed(true);
-    } catch(error) {
-      toast.error("Error verifying token")
-      navigate("/")
-    }
-  }
+        const invite = response.data;
+        setInviteDetails(invite);
 
+        if (
+          invite.status === "PENDING" ||
+          invite.status === "ACCEPTED"
+        ) {
+          setIsUserAllowed(true);
+        } else {
+          toast.error("Bu davet artık geçerli değil.");
+          navigate("/");
+        }
+      } catch (error) {
+        toast.error("Davet kontrolü başarısız.");
+        navigate("/");
+      }
+    } else {
+      toast.error("Bu etkinliğe erişim izniniz yok.");
+      navigate("/");
+    }
+  };
+
+  if (event.organizer && currentUser && (!token || inviteDetails)) {
+    checkAccess();
+  }
+  
+}, [event.organizer, currentUser]);
 
 
   const getWeather = async () => {

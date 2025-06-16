@@ -26,11 +26,20 @@ export interface Review {
 }
 
 
+export enum InviteStatus {
+    PENDING = "PENDING",
+    ACCEPTED = "ACCEPTED",
+    DECLINED = "DECLINED",
+    EXPIRED = "EXPIRED"
+}
+
 export interface Invitation {
     id: number,
     eventId: number,
     senderId: number,
     receiverId: number,
-    status: boolean,
+    status: InviteStatus,
     token: string
 }
+
+

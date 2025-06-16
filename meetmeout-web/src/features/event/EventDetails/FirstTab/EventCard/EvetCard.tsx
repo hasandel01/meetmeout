@@ -401,20 +401,16 @@ const EventDetailsCard = ({
             )
           )}
         <div className={styles.eventActions}>
-          <div className={styles.buttonGroup}>
+          <div className={styles.buttonGroup} onClick={() => handleLike()}>
             <FontAwesomeIcon
               icon={event.likes.some(u => u.username === currentUser?.username) ? faHeart : regularHeart}
               className={styles.heartIcon}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleLike();
-              }}
             />
-            <span>{event.likes.length > 0 ? `${event.likes.length}` : ""}</span>
+            <p>{event.likes.length > 0 ? `${event.likes.length}` : ""}</p>
           </div>
-          <div className={styles.buttonGroup}>
-            <FontAwesomeIcon icon={faComment} className={styles.commentIcon} onClick={(e) => { e.stopPropagation(); onCommentClick()}} />
-            <span>{event.comments.length > 0 ? `${event.comments.length}` : ""}</span>
+          <div className={styles.buttonGroup} onClick={() =>  onCommentClick()}>
+            <FontAwesomeIcon icon={faComment} className={styles.commentIcon}  />
+            <p>{event.comments.length > 0 ? `${event.comments.length}` : ""}</p>
           </div>
         </div>
       </div>

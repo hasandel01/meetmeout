@@ -451,6 +451,10 @@
     cursor: pointer;
 }
 
+.buttonGroup span {
+      color: var(--primary-color-dark);
+}
+
 .buttonGroup:hover {
     background-color: #f1f1f1;
     transform: translateY(-2px);

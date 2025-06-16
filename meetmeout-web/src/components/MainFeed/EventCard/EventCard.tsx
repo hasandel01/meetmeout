@@ -16,13 +16,14 @@ import qs from 'qs';
 import { toast } from "react-toastify";
 import { useBadgeContext } from "../../../context/BadgeContext";
 import { useRef } from "react";
+import { Invitation, InviteStatus } from "../../../types/Like";
 
 interface EventCardProps {
     event: Event;
     currentUser: User | null;
     isDisabled: (event: Event) => boolean;
     handleLike: (eventId: number) => void;
-    invitations: { eventId: number }[];
+    invitations: Invitation[];
     requestSentEvents: Event[];
     dateOptions: Intl.DateTimeFormatOptions;
     lat?: number;
@@ -274,7 +275,7 @@ lng
                                             e.stopPropagation();
 
                                             event.isPrivate &&
-                                                    invitations.some(invitation => invitation.eventId === event.id) ?
+                                                    invitations.some(invitation => invitation.eventId === event.id && invitation.status === InviteStatus.PENDING) ?
                                                     (
                                                         handleNavigateInvitedEvent()                                              
                                                     )
@@ -286,7 +287,8 @@ lng
                                         className={event.isPrivate && invitations.some(invitation => invitation.eventId === event.id) ? 
                                              styles.alreadyInvited : styles.joinButton}>
                                         {event.isPrivate ? (
-                                            invitations.some(invitation => invitation.eventId === event.id) ? "You are invited!"
+                                            invitations.some(invitation => invitation.eventId === event.id && invitation.status === InviteStatus.PENDING)                                            
+                                            ? "You are invited!"
                                             : (
                                                 requestSent ? 
                                                 "Request sent!" :  "Send Join Request!" )

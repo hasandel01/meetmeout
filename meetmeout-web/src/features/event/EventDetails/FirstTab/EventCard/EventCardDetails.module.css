@@ -22,15 +22,6 @@
     font-size: 14px;
 }
 
-/** LOCK ICON */
-
-.lockIcon {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 22px;
-    color: var(--primary-color-dark);
-}
 
 /** ATTENDEE CONTAINER **/
 

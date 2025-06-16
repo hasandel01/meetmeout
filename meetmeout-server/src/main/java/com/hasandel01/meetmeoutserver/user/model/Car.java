@@ -33,7 +33,7 @@ public class Car {
     private int year;
 
     @Min(2)
-    @Max(20)
+    @Max(25)
     private int capacity;
 
     @ManyToOne

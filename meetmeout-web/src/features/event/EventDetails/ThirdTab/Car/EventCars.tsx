@@ -11,9 +11,10 @@ interface EventCarsProps {
     currentUser: User;
     event: Event;
     eventCars: EventCar[];
+    onOptimisticCarAdd: (newCars: EventCar[]) => void;
 } 
 
-const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars }) => {
+const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars, onOptimisticCarAdd }) => {
     const [showCarsModal, setShowCarsModal] = useState(false);
     const [selectedCars, setSelectedCars] = useState<Car[]>([]);
 
@@ -41,6 +42,17 @@ const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars }) 
             const url = isOrganizer
             ? `/events/car/${event.id}/add` 
             : `/events/car/${event.id}/request`; 
+
+              if (isOrganizer) {
+                const optimisticEventCars = selectedCars.map(car => ({
+                id: Math.floor(Math.random() * 1000000), 
+                car: { ...car, userId: currentUser.id },
+                passengers: [],
+                approved: true
+                }));
+
+                onOptimisticCarAdd(optimisticEventCars); 
+              }
 
             await axiosInstance.post(url, selectedCars);
             toast.success(isOrganizer ? "Car(s) added!" : "Request sent for approval.");

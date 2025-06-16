@@ -28,15 +28,21 @@ public class CarController {
         return ResponseEntity.ok(carService.addCarToUser(userId,carDTO));
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteCar(@PathVariable("userId") long userId) {
-        return ResponseEntity.ok(carService.deleteCarFromUser(userId));
+    @DeleteMapping("/{carId}")
+    public ResponseEntity<Boolean> deleteCar(@PathVariable("carId") long carId) {
+        return ResponseEntity.ok(carService.deleteCarFromUser(carId));
     }
 
     @PutMapping("/{userId}/update")
     public ResponseEntity<Void> updateCar(@PathVariable("userId") long userId,
                                           @RequestBody CarDTO carDTO) {
         return ResponseEntity.ok(carService.updateCar(userId,carDTO));
+    }
+
+
+    @GetMapping("/{carId}/delete-permission")
+    public ResponseEntity<Boolean> deletePermission(@PathVariable("carId") long carId) {
+        return ResponseEntity.ok(carService.deletePermission(carId));
     }
 
 }

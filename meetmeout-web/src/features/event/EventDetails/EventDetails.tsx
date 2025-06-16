@@ -23,7 +23,7 @@ import { UserReview } from "../../../types/UserReviews";
 const EventDetails = () => {
 
   const {currentUser} = useUserContext();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [isUserAllowed, setIsUserAllowed] = useState(false);
   const token = searchParams.get("token");
   const eventId = useParams<({eventId: string})>()
@@ -37,21 +37,24 @@ const EventDetails = () => {
   const [currentTab, setCurrentTab] = useState<number>(1);
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
 
-    const fetchUserReviews = async () => {
-        if (!currentUser?.id) return;
-        try {
-            const response = await axiosInstance.get(`/user-reviews/of/${currentUser.id}`);
-            setUserReviews(response.data);
-        } catch (error) {
-            console.error("Failed to fetch user reviews:", error);
-        }
+    const fetchUserReviews = async (organizerId: number) => {
+      try {
+        const response = await axiosInstance.get(`/user-reviews/of/${organizerId}`);
+        console.log(response.data)
+        setUserReviews(response.data);
+      } catch (error) {
+        console.error("Failed to fetch organizer reviews:", error);
+      }
     };
 
+
     useEffect(() => {
-        if (currentUser) {
-            fetchUserReviews();
-        }
-    }, [currentUser]);
+    const tabFromURL = Number(searchParams.get("tab"));
+      if ([1, 2, 3].includes(tabFromURL)) {
+        setCurrentTab(tabFromURL);
+      }
+    }, []);
+
 
         const handleLocationClick = () => {
           navigate("/", {
@@ -113,6 +116,13 @@ const EventDetails = () => {
         commentInputRef.current.focus();
       }
     }
+
+    
+    useEffect(() => {
+    if (event.organizer?.id) {
+      fetchUserReviews(event.organizer.id);
+    }
+  }, [event.organizer]);
 
     useEffect(() => {
       if(event.latitude && event.longitude) {
@@ -320,22 +330,37 @@ const EventDetails = () => {
         const isAttendee = event.attendees.some(att => att.username === currentUser?.username);
         const isNotOrganizer = currentUser?.username !== event.organizer?.username;
         const isEventEnded = event.status === "ENDED";
-        const alreadyReviewed = currentUser && userReviews.some(
-          ur => ur.reviewer.id === currentUser.id && ur.event.id === event.id
-        );
+          const alreadyReviewed = currentUser && userReviews.some(
+            ur =>
+              ur.reviewer.id === currentUser.id &&
+              ur.organizer.id === event.organizer?.id &&
+              ur.event.id === event.id
+          );
 
         return isAttendee && isNotOrganizer && isEventEnded && !alreadyReviewed;
       };
 
-  useEffect(() => {
-  const shouldShowFirstStep = areReviewConditionsSatisfied();
-  const shouldShowSecondStep = shouldShowOrganizerReview();
+      useEffect(() => {
+        if (!event || !currentUser || event.id === 0 || userReviews.length === 0) return;
 
-  if (currentUser && (shouldShowFirstStep || shouldShowSecondStep)) {
-    setShowReviewModal(true);
-  }
-}, [event, currentUser]);
+        const shouldShowFirstStep = areReviewConditionsSatisfied();
+        const shouldShowSecondStep = shouldShowOrganizerReview();
 
+        if (shouldShowFirstStep || shouldShowSecondStep) {
+          setShowReviewModal(true);
+        }
+      }, [event, currentUser, userReviews]);
+
+
+
+    const handleTabChange = (tabNumber: number) => {
+      setCurrentTab(tabNumber);
+      setSearchParams(prev => {
+        const newParams = new URLSearchParams(prev);
+        newParams.set("tab", tabNumber.toString());
+        return newParams;
+      });
+    };
 
 
   return (
@@ -371,7 +396,7 @@ const EventDetails = () => {
                       setEvent={setEvent}
                       currentUser={currentUser}
                       joinRequests={joinRequests}
-                      setCurrentTab={setCurrentTab}
+                      setCurrentTab={handleTabChange}
                       uploadEventPhotos={uploadEventPhotos}
                     />
                       )

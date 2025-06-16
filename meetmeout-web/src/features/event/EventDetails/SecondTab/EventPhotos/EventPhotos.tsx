@@ -41,7 +41,7 @@ const EventPhotos: React.FC<EventPhotosProps> = ({ event }) => {
                       className={styles.photo}
                       onClick={() => openOverlay(index)}
                     />
-                    {photo.uploadedDateTime && formatTime(photo.uploadedDateTime)}
+                    <p>{photo.uploadedDateTime && formatTime(photo.uploadedDateTime)}</p>
                   </div>
                 ))}
             </div>

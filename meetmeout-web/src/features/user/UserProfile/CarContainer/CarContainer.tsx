@@ -3,6 +3,7 @@ import styles from "./CarContainer.module.css";
 import { Car } from '../../../../types/Car';
 import axiosInstance from '../../../../axios/axios';
 import { User } from '../../../../types/User';
+import {toast} from "react-toastify";
 
 interface CarContainerProps {
     cars: Car[];
@@ -10,6 +11,7 @@ interface CarContainerProps {
 }
 
 const CarContainer: React.FC<CarContainerProps> = ({ cars, user }) => {
+    
     const [newCar, setNewCar] = useState<Partial<Car>>({});
     const [showModal, setShowModal] = useState(false);
     const [localCars, setLocalCars] = useState<Car[]>(cars);
@@ -48,18 +50,54 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user }) => {
     };
 
 
+    const handleDeleteCar = async (car: Car) => {
+
+        if(await isCarAssigned(car)) return;
+
+        try {
+            await axiosInstance.delete(`/cars/${car.id}`);
+            setLocalCars(prev => prev.filter(c => c.id !== car.id)); 
+        } catch (error: any) {
+            if (error.response?.data?.message) {
+                alert(error.response.data.message);
+            } else {
+                alert("Car cannot be deleted. It may be linked to an event.");
+            }
+        }
+    };
+
+
+    const isCarAssigned = async (car: Car) => {
+        try {
+            const response = await axiosInstance.get(`/cars/${car.id}/delete-permission`)
+
+            if(response.data) {
+                toast.error("Car is assigned to an ongoing event. You can only delete cars used in completed or unassigned events.");
+                return true;
+            }
+
+            return false;
+
+        }catch(error) {
+            console.log(error)
+        }
+    }
+
+
     return (
         <div className={styles.carContainer}>
             <h3>Your Cars</h3>
             <button className={styles.addButton} onClick={() => setShowModal(true)}>+ Add New Car</button>
-
             {localCars.map((car, index) => (
                 <div key={index} className={styles.carCard}>
-                    <p><strong>Make:</strong> {car.make}</p>
-                    <p><strong>Model:</strong> {car.model}</p>
-                    <p><strong>Year:</strong> {car.year}</p>
-                    <p><strong>Capacity:</strong> {car.capacity}</p>
+                    <div> 
+                        <h4>{car.make} {car.model} (<strong>{car.year}</strong>)</h4>
+                        <strong>Capacity: {car.capacity}</strong>
+
+                    </div>
+                    <button className={styles.deleteButton} onClick={() => handleDeleteCar(car)}>🗑 Delete</button>
                 </div>
+                
             ))}
             {showModal && (
                 <div className={styles.modalBackdrop}>
@@ -89,7 +127,7 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user }) => {
                             type="number"
                             placeholder="Capacity"
                             min={2}
-                            max={20}
+                            max={25}
                             value={newCar.capacity || ''}
                             onChange={e => setNewCar({ ...newCar, capacity: parseInt(e.target.value) })}
                             />

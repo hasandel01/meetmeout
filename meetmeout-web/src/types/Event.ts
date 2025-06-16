@@ -1,6 +1,7 @@
 
 import { User } from './User';
 import { Like, Comment, Review} from './Like';
+import { EventPhotos } from './EventPhotos';
 
 export interface Event {
     id: number;
@@ -35,6 +36,6 @@ export interface Event {
     endLongitude: number;
     feeDescription: string;
     routeType: string;
-    eventPhotoUrls: string[];
+    eventPhotos: EventPhotos[];
     routeJson: string;
 }

@@ -14,9 +14,11 @@ import { useState, useRef, useEffect } from "react";
 import TagInput from "../../../CreateEvent/TagInput";
 import EventPrivacy from "./EventPrivacy/EventPrivacy";
 
+import { Dispatch, SetStateAction } from "react";
+
 interface Props {
   event: Event;
-  setEvent: (event: Event) => void;
+  setEvent: Dispatch<SetStateAction<Event>>;
   weather: Weather | null; 
   currentUser: User | null;
   options: Intl.DateTimeFormatOptions;

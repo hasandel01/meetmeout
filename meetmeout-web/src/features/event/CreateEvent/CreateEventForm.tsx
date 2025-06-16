@@ -716,7 +716,7 @@ const CreateEventForm = () => {
                 <div className={styles.stepContainer}>
                     {steps.map( (label,index) => (
                         <div className={styles.stepItem} key={index}>
-                            <div className={`${styles.stepCircle} ${step === index + 1 ? styles.stepCircleActive :''}`}>
+                            <div className={`${styles.stepCircle} ${step === index + 1 ? styles.stepCircleActive :''}`} onClick={() => setStep(index + 1)}>
                                 {index + 1}
                             </div>
                             <span className={styles.stepLabel}>{label}</span>

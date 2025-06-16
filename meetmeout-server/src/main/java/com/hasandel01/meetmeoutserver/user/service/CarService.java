@@ -11,7 +11,9 @@ public interface CarService {
 
     CarDTO addCarToUser(long userId, CarDTO carDTO);
 
-    Void deleteCarFromUser(long userId);
+    Boolean deleteCarFromUser(long userId);
 
     Void updateCar(long userId, CarDTO carDTO);
+
+    Boolean deletePermission(long carId);
 }

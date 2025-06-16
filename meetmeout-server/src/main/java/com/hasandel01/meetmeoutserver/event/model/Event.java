@@ -125,7 +125,7 @@ public class Event {
 
     @Lob
     private String routeJson;
-    
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

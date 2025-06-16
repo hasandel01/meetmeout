@@ -80,6 +80,7 @@
   font-weight: bold;
   margin-bottom: 0.5rem;
   transition: all 0.3s;
+  cursor: pointer;
 }
 
 .stepCircleActive {

@@ -32,7 +32,6 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
     const [showDeleteEventModel, setShowDeleteEventModal] = useState(false);
     const [showConflictModal, setShowConflictModal] = useState(false);
     const [conflictingEvents, setConflictingEvents] = useState<Event[]>([]);
-
     
     const handleLeaveEvent = async () => {
         try {
@@ -221,7 +220,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                 <label onClick={() => setCurrentTab(2)}>Reviews & Photos</label>
                 <label onClick={() => setCurrentTab(3)}>Route & Event Cars</label>
             </div>
-            {event.status === "ENDED" && 
+            {event.status === "ENDED" && event.attendees.some(attendee => attendee.username === currentUser.username) &&
               <div className={styles.photoUploadContainer}>
                 <input
                   type="file"
@@ -300,13 +299,16 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
                         )}
                         </div>
                             ) : (
-                                <div className={styles.secondButtonGroup}>
-                                    <button disabled={isDisabled(event)}
-                                    onClick={() => handleJoinEvent(event.id)} 
-                                    className={styles.joinButton}>
-                                    {event.attendees.length < event.maximumCapacity ? "Join Event": "Event is Full"} 
-                                    </button> 
-                                </div>
+                                    <div className={styles.secondButtonGroup}>
+                                    {event.status !== "ENDED" &&
+
+                                        <button disabled={isDisabled(event)}
+                                        onClick={() => handleJoinEvent(event.id)} 
+                                        className={styles.joinButton}>
+                                        {event.attendees.length < event.maximumCapacity ? "Join Event": "Event is Full"} 
+                                        </button> 
+                                    }
+                                    </div>
                         )}
                   </div>
     );

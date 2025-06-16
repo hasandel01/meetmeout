@@ -52,7 +52,7 @@
 .markerIcons p {
   position: absolute;
   top: -6px;
-  left: 50%;
+  left: 55%;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   padding: 2px;

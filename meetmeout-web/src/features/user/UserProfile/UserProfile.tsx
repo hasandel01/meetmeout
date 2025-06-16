@@ -469,11 +469,20 @@ function UserProfile() {
                         <div className={styles.organizerRating}>
                             <h5>As Organizer</h5>
                             <hr />
-                            <p><FontAwesomeIcon icon={faThumbsUp} /> {averageRating ?? "N/A"}</p>
-                            <small>{getOrganizerRatingDescription(averageRating,
+                            <div className={styles.ratingBox}>
+                                <span className={styles.averageValue}>
+                                {averageRating.toFixed(1)}
+                                <span className={styles.outOf}>/5</span>
+                                </span>
+                                <span className={styles.starIcon}>⭐</span>
+                            </div>
+                            <small className={styles.ratingDescription}>
+                                {getOrganizerRatingDescription(
+                                averageRating,
                                 currentUser?.username === user?.username,
-                                userReviews.length > 0)
-                            }</small>
+                                userReviews.length > 0
+                                )}
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -526,6 +535,13 @@ function UserProfile() {
                     >
                         <h5>Trophies</h5>
                         <h5>({user?.badges.length})</h5>
+                    </label>
+                    <label
+                        className={tab === 6 ? styles.activeTab : ''}
+                        onClick={() => setTab(6)}
+                    >
+                        <h5>Cars</h5>
+                        <h5>({user?.cars.length})</h5>
                     </label>
                     </div>
 
@@ -701,9 +717,9 @@ function UserProfile() {
                             <p>No trophies unlocked.</p>
                         )
                     )}
+                    {tab === 6 && user?.cars && user && currentUser?.username === user.username && <CarContainer user={user} cars={user.cars ?? []}/>}
                 </div>
             </div>
-            {user && currentUser?.username === user.username && <CarContainer user={user} cars={user.cars ?? []}/>}
         </div>
     );
 }

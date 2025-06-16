@@ -533,6 +533,39 @@ hr {
 }
 
 
+.ratingBox {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.averageValue {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--primary-color-dark);
+}
+
+.outOf {
+  font-size: 16px;
+  font-weight: 500;
+  color: #888;
+  margin-left: 4px;
+}
+
+.starIcon {
+  font-size: 24px;
+  color: gold;
+}
+
+.ratingDescription {
+  color: var(--primary-color);
+  font-size: 14px;
+}
+
+
 
 @media (max-width: 768px) {
   .userProfile {

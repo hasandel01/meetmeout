@@ -28,10 +28,6 @@
   cursor: pointer;
 }
 
-.photoGrid img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-}
 
 .photoCard {
   display: flex;
@@ -40,7 +36,7 @@
   gap: 8px;
   border-radius: 8px;
   padding: 10px;
-  background-color: #f9f9f9;
+  background-color: var(--primary-color);
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
@@ -48,6 +44,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+      color: white;
+
+}
+
+.photoCard p {
+  color: white;
 }
 
 .avatar {
@@ -55,14 +57,14 @@
   height: 36px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #ccc;
+  border: 2px solid var(--primary-color-dark);
 }
 
 .username {
   margin-top: 4px;
   font-size: 13px;
-  color: #555;
   font-weight: 500;
+  color: white;
 }
 
 .photo {

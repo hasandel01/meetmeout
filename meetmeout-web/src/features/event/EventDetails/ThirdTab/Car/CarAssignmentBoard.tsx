@@ -75,7 +75,10 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
             if (assignments[carId]?.length >= cap) return;
 
             setUnassigned(prev => prev.filter(u => u.id !== draggedId));
-            setAssignments(prev => ({ ...prev, [carId]: [...prev[carId], draggedUser] }));
+              setAssignments(prev => ({
+            ...prev,
+            [carId]: [...(prev[carId] ?? []), draggedUser] 
+          }));
         } else {
             const sourceCarId = parseInt(source.droppableId);
             const draggedUser = assignments[sourceCarId].find(u => u.id === draggedId);
@@ -147,23 +150,38 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
                       {(provided) => (
                         <div className={styles.carColumn} ref={provided.innerRef} {...provided.droppableProps}>
                           <h4>
-                            {eventCar.car.make} {eventCar.car.model} ({eventCar.car.capacity})
+                            {eventCar.car.make} {eventCar.car.model}
                             {eventCar.car.userId === currentUser.id && (
                               <button className={styles.removeBtn} onClick={() => handleRemoveClick(eventCar)}>
                                 ❌
                               </button>
                             )}
                           </h4>
-                          {assignments[eventCar.id]?.map((user, index) => (
-                            <Draggable draggableId={user.id.toString()} index={index} key={user.id}>
-                              {(provided) => (
-                                <div className={styles.userCard} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                  <img src={user.profilePictureUrl} />
-                                </div>
-                              )}
-                            </Draggable>
-                          ))}
-                          {provided.placeholder}
+                          <div className={styles.slotContainer}>
+                            {Array.from({ length: eventCar.car.capacity }).map((_, i) => {
+                              const user = assignments[eventCar.id]?.[i];
+                              return (
+                                <Draggable
+                                  key={user?.id ?? `empty-${i}`}
+                                  draggableId={user ? user.id.toString() : `empty-${eventCar.id}-${i}`}
+                                  index={i}
+                                  isDragDisabled={!user}
+                                >
+                                  {(provided) => (
+                                    <div
+                                      className={styles.carSlot}
+                                      ref={provided.innerRef}
+                                      {...(user ? provided.draggableProps : {})}
+                                      {...(user ? provided.dragHandleProps : {})}
+                                    >
+                                      {user && <img src={user.profilePictureUrl} />}
+                                    </div>
+                                  )}
+                                </Draggable>
+                              );
+                            })}
+                            {provided.placeholder}
+                          </div>
                         </div>
                       )}
                     </Droppable>
@@ -188,7 +206,17 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
               </div>
             )}
 
-            <EventCars eventCars={eventCars} currentUser={currentUser} event={event} />
+            <EventCars eventCars={eventCars} currentUser={currentUser} event={event}
+              onOptimisticCarAdd={(newCars) => {
+                  setEventCars(prev => [...prev, ...newCars]);
+                  setAssignments(prev => {
+                    const updated = { ...prev };
+                    newCars.forEach(car => {
+                      updated[car.id] = [];
+                    });
+                    return updated;
+                  });
+              }} />
             <PendingCarRequests event={event} />
           </>
         ) : (
@@ -215,7 +243,17 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
                 </div>
               ))}
             </div>
-            <EventCars eventCars={eventCars} currentUser={currentUser} event={event} />
+            <EventCars eventCars={eventCars} currentUser={currentUser} event={event}   
+                onOptimisticCarAdd={(newCars) => {
+                  setEventCars(prev => [...prev, ...newCars]);
+                  setAssignments(prev => {
+                    const updated = { ...prev };
+                    newCars.forEach(car => {
+                      updated[car.id] = []; 
+                    });
+                    return updated;
+                  });
+                }} />
           </div>
         )}
       </div>

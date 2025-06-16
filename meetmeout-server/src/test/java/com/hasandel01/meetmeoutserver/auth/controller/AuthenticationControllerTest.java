@@ -1,6 +1,7 @@
 package com.hasandel01.meetmeoutserver.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hasandel01.meetmeoutserver.auth.model.AuthenticationRequest;
 import com.hasandel01.meetmeoutserver.auth.model.RegisterRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.datasource.password=",
         "spring.jpa.hibernate.ddl-auto=create-drop"
 })
-class AuthenticationControllerIntegrationTest {
+class AuthenticationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,5 +46,33 @@ class AuthenticationControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").exists());
     }
+
+    @Test
+    void authenticate_shouldReturnAccessTokenForValidUser() throws Exception {
+
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("testuser");
+        registerRequest.setPassword("testpass123");
+        registerRequest.setEmail("test@example.com");
+
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isOk());
+
+        AuthenticationRequest authRequest = AuthenticationRequest.builder()
+                .username("testuser")
+                .password("testpass123")
+                .build();
+
+
+        mockMvc.perform(post("/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists());
+    }
+
+
 }
 

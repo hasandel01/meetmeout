@@ -37,6 +37,7 @@ const EventDetails = () => {
   const [showAllRequests, setShowAllRequests] = useState(false);
   const [currentTab, setCurrentTab] = useState<number>(1);
   const [userReviews, setUserReviews] = useState<UserReview[]>([]);
+  const [loading, setLoading] = useState(false);
 
     const fetchUserReviews = async (organizerId: number) => {
       try {
@@ -179,6 +180,8 @@ const EventDetails = () => {
     }
   };
 
+  const hasCheckedAccess = useRef(false);
+
   
   useEffect(() => {
     const checkAccess = async () => {
@@ -219,7 +222,8 @@ const EventDetails = () => {
     }
   };
 
-  if (event.organizer && currentUser && (!token || inviteDetails)) {
+   if (!hasCheckedAccess.current && event.organizer && currentUser && (!token || inviteDetails)) {
+    hasCheckedAccess.current = true;
     checkAccess();
   }
   
@@ -242,10 +246,7 @@ const EventDetails = () => {
       console.log((error as any).message);
     }
 
-  }
-
-
-  
+  }  
 
     const handleLike = async () => {
       if (!currentUser) return;
@@ -306,12 +307,16 @@ const EventDetails = () => {
   }
 
   const uploadEventPhotos = async (eventId: number, photos: File[]) => {
+    
     const formData = new FormData();
     photos.forEach(photo => {
       formData.append('files', photo);
     });
 
     try {
+
+      setLoading(true);
+
       const response = await axiosInstance.post(`/events/${eventId}/photos`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -319,11 +324,13 @@ const EventDetails = () => {
       });
       setEvent(prev => ({
         ...prev,
-        eventPhotoUrls: [...prev.eventPhotos, ...response.data]
+        eventPhotos: [...prev.eventPhotos, ...response.data]
       }));
       toast.success("Photos uploaded successfully!");
     } catch (error) {
       toast.error("Error uploading photos.");
+    } finally {
+        setLoading(false);
     }
   }
 
@@ -479,6 +486,7 @@ const EventDetails = () => {
                       </div>
                     )}
                 </div>
+                {loading && <div className={styles.spinner} />}
             </> 
       )
       : (

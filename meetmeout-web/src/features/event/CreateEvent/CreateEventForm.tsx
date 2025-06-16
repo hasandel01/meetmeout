@@ -83,6 +83,7 @@ const CreateEventForm = () => {
         } else if (currentStep === 3) {
           if (!event.maximumCapacity || event.maximumCapacity < 1) newErrors.maximumCapacity = "Capacity must be at least 1.";
           if (!event.category) newErrors.category = "Please select a category.";
+          if(event.fee > 1000000) newErrors.fee = "Maximum fee is 1000000"
         }
     
         setErrors(newErrors);
@@ -585,14 +586,15 @@ const CreateEventForm = () => {
                                     <div className={styles.tlInputWrapper}>
                                         <input
                                             type="number"
-                                            min={1}
+                                            min={0}
+                                            step={0.01}
+                                            max={1000000}
                                             placeholder="Fee"
                                             value={event.fee}
-                                            onChange={(e) => setEvent({ ...event, fee: parseInt(e.target.value, 10) })}
+                                            onChange={(e) => setEvent({ ...event, fee: parseFloat(e.target.value) })}
                                             disabled={!event.isFeeRequired}
                                         />
                                     </div>
-
                                     <textarea
                                         rows={3}
                                         maxLength={300}
@@ -605,6 +607,7 @@ const CreateEventForm = () => {
                                     </div>
                             </div>
                         </div>
+                        {errors.fee && <p className={styles.errorText}>{errors.fee}</p>}
                     </div>
                         <div className={styles.eventPrivacy}>
                             <h4>Privacy</h4>

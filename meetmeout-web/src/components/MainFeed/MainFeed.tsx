@@ -251,6 +251,7 @@ const MainFeed = () => {
                 <MapContainer
                 center={[41.0082, 28.9784]}
                 zoom={13}
+                zoomControl={false}
                 className={styles.map}
                 style={{ height: "500px", width: "96%", marginBottom: "20px", borderRadius: "12px", border: "2px solid #012A4A"}}
                 >

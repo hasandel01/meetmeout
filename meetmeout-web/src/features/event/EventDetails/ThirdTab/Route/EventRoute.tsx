@@ -66,8 +66,8 @@ const EventRoute: React.FC<EventRouteProps> = ({ event }) => {
   return (
     <MapContainer
       center={centerCoord}
-      zoom={13}
-      scrollWheelZoom={false}
+      zoom={12}
+      zoomControl={false}
       style={{ height: "400px", width: "400px", borderRadius: "10px", border: "2px solid #2C7DA0" }}
     >
       <TileLayer

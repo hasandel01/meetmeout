@@ -8,9 +8,10 @@ import {toast} from "react-toastify";
 interface CarContainerProps {
     cars: Car[];
     user: User;
+    currentUser: User;
 }
 
-const CarContainer: React.FC<CarContainerProps> = ({ cars, user }) => {
+const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) => {
     
     const [newCar, setNewCar] = useState<Partial<Car>>({});
     const [showModal, setShowModal] = useState(false);
@@ -86,19 +87,24 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user }) => {
 
     return (
         <div className={styles.carContainer}>
-            <h3>Your Cars</h3>
-            <button className={styles.addButton} onClick={() => setShowModal(true)}>+ Add New Car</button>
-            {localCars.map((car, index) => (
-                <div key={index} className={styles.carCard}>
-                    <div> 
-                        <h4>{car.make} {car.model} (<strong>{car.year}</strong>)</h4>
-                        <strong>Capacity: {car.capacity}</strong>
-
-                    </div>
-                    <button className={styles.deleteButton} onClick={() => handleDeleteCar(car)}>🗑 Delete</button>
-                </div>
-                
-            ))}
+            {currentUser?.username === user.username ? (
+                <>
+                    <button className={styles.addButton} 
+                            onClick={() => setShowModal(true)}>+ Add New Car
+                    </button>
+                    {localCars.map((car, index) => (
+                        <div key={index} className={styles.carCard}>
+                            <div> 
+                                <h4>{car.make} {car.model} (<strong>{car.year}</strong>)</h4>
+                                <strong>Capacity: {car.capacity}</strong>
+                            </div>
+                            <button className={styles.deleteButton} onClick={() => handleDeleteCar(car)}>🗑 Delete</button>
+                        </div>
+                    ))}
+                </>
+            ) : (
+                <p>Cars by default only show to owners.</p>
+            )}
             {showModal && (
                 <div className={styles.modalBackdrop}>
                     <div className={styles.modalContent}>

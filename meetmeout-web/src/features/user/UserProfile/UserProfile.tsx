@@ -476,13 +476,13 @@ function UserProfile() {
                                 </span>
                                 <span className={styles.starIcon}>⭐</span>
                             </div>
-                            <small className={styles.ratingDescription}>
+                            <p className={styles.ratingDescription}>
                                 {getOrganizerRatingDescription(
                                 averageRating,
                                 currentUser?.username === user?.username,
                                 userReviews.length > 0
                                 )}
-                            </small>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -717,7 +717,7 @@ function UserProfile() {
                             <p>No trophies unlocked.</p>
                         )
                     )}
-                    {tab === 6 && user?.cars && user && currentUser?.username === user.username && <CarContainer user={user} cars={user.cars ?? []}/>}
+                    {tab === 6 && user?.cars && user && currentUser && <CarContainer user={user} cars={user.cars ?? []} currentUser={currentUser}/>}
                 </div>
             </div>
         </div>

@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     https: {
-      key: fs.readFileSync('./src/certs/192.168.1.42-key.pem'),
-      cert: fs.readFileSync('./src/certs/192.168.1.42.pem'),
+      key: fs.readFileSync('./src/certs/192.168.1.35-key.pem'),
+      cert: fs.readFileSync('./src/certs/192.168.1.35.pem'),
     },
-    host: '192.168.1.42',
+    host: '192.168.1.35',
     port: 5173,
   },
   define: {

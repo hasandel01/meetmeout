@@ -1016,7 +1016,6 @@ p {
 
       input[type="date"],
         input[type="time"] {
-            color: var(--text-color);
             width: 100%;
             font-size: 18px;
             appearance: auto;
@@ -1052,10 +1051,6 @@ p {
             margin: 0;
             border-radius: 0;
             overflow: hidden;
-        }
-
-        .eventDetails input, select, textarea {
-            color: var(--text-color);
         }
 
         .eventRules {

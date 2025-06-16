@@ -7,6 +7,7 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip } from "react-tooltip";
 import AttendeeContainerModal from "../AttendeeContainerModal/AttendeeContainerModal";
 import RequesterContainerModal from "../RequesterContainerModal/RequesterContainerModal";
+import { useState } from "react";
 
 interface Props {
   event: Event;
@@ -31,7 +32,7 @@ const EventParticipants = ({
 }: Props) => {
   const organizer = event.attendees.find(a => a.username === event.organizer?.username);
   const others = event.attendees.filter(a => a.username !== event.organizer?.username);
-  const attendees: User[] = [organizer, ...others].filter((a): a is User => a !== undefined);
+  const [attendees, setAttendees] = useState<User[]>([organizer, ...others].filter((a): a is User => a !== undefined));
 
   const updateEventAttendees = (username: string) => {
     const joinedUser = joinRequests.find(r => r.user.username === username)?.user;
@@ -76,7 +77,7 @@ const EventParticipants = ({
       {showAllAttendees && currentUser && (
         <AttendeeContainerModal
           attendees={attendees}
-          setAttendees={() => {}} // Artık dışarıdan setState alınmıyor
+          setAttendees={setAttendees}
           currentUser={currentUser}
           event={event}
           onClose={() => setShowAllAttendees(false)}

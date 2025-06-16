@@ -7,6 +7,7 @@ import { User } from "../../../../../types/User";
 import axiosInstance from "../../../../../axios/axios";
 import EventCars from "./EventCars";
 import PendingCarRequests from "./PendingCarRequests";
+import {toast} from "react-toastify";
 
 interface CarAssignmentBoardProps {
     event: Event;
@@ -31,7 +32,7 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
         setCarToRemove(null);
         getEventCars(); 
     } catch (err) {
-        console.error("Silme hatası:", err);
+        console.error("Error when deleting:", err);
     }
     };
 
@@ -109,9 +110,14 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
 
             await axiosInstance.post(`/events/car/${eventCarId}/passengers`, passengerIds);
         }
-        alert("Saved!");
+
+            toast.success("Assignments saved successfully! 🚗");
+            setTimeout(() => {
+              window.location.reload();
+            }, 1500);
     } catch (error) {
-        console.error("Save failed", error);
+            console.error("Save failed", error);
+            toast.error("Failed to save assignments. Please try again.");
     }
 };
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import styles from "./AttendeeContainerModal.module.css";
 import { User } from "../../../../types/User";
 import { useProfileContext } from "../../../../context/ProfileContext";
@@ -10,22 +10,20 @@ interface Props {
   currentUser: User;
   onClose: () => void;
   attendees: User[];
-  setAttendees: (updated: User[]) => void;
+  setAttendees: Dispatch<SetStateAction<User[]>>
 }
-
 
 const AttendeeContainerModal: React.FC<Props> = ({ event, onClose, currentUser, attendees, setAttendees}) => {
 
   const {goToUserProfile} = useProfileContext();
 
   const handleKickUser = async (attendee: User) => {
-    const newList = attendees.filter(a => a.username !== attendee.username);
-    setAttendees(newList);
 
     try {
       await axiosInstance.delete(`/events/${event.id}/kick/${attendee.id}`);
+      setAttendees(prev => prev.filter(att => att.username !== attendee.username));
     } catch (error) {
-      setAttendees([...newList, attendee]);
+      console.log(error)
     }
   };
 

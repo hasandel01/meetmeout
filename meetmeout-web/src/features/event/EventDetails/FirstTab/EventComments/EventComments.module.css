@@ -208,7 +208,6 @@
   .addComment {
     flex-direction: column;
     align-items: stretch;
-    width: 90vw;
   }
 
   .addComment textarea {

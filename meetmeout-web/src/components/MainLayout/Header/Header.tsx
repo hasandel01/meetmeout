@@ -37,6 +37,7 @@ const Header = () => {
 
     const handleSignOut = () => {
         localStorage.removeItem("accessToken");
+        document.body.classList.remove("dark");
         navigate("/login");
     }
     

@@ -43,18 +43,8 @@ const EventCars: React.FC<EventCarsProps> = ({ currentUser, event, eventCars, on
             ? `/events/car/${event.id}/add` 
             : `/events/car/${event.id}/request`; 
 
-              if (isOrganizer) {
-                const optimisticEventCars = selectedCars.map(car => ({
-                id: Math.floor(Math.random() * 1000000), 
-                car: { ...car, userId: currentUser.id },
-                passengers: [],
-                approved: true
-                }));
-
-                onOptimisticCarAdd(optimisticEventCars); 
-              }
-
-            await axiosInstance.post(url, selectedCars);
+            const response = await axiosInstance.post(url, selectedCars);
+            onOptimisticCarAdd(response.data);
             toast.success(isOrganizer ? "Car(s) added!" : "Request sent for approval.");
 
         } catch (error) {

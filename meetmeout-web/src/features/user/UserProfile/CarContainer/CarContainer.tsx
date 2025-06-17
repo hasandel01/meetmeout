@@ -41,7 +41,7 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
         }
 
         try {
-            const response = await axiosInstance.post(`/cars/${user.id}/add`, newCar);
+            const response = await axiosInstance.post(`/cars/${user.id}`, newCar);
             setLocalCars(prev => [...prev, response.data]);
             setShowModal(false);
             setNewCar({});
@@ -92,7 +92,8 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
                     <button className={styles.addButton} 
                             onClick={() => setShowModal(true)}>+ Add New Car
                     </button>
-                    {localCars.map((car, index) => (
+                    {localCars.length > 0 ?
+                    (localCars.map((car, index) => (
                         <div key={index} className={styles.carCard}>
                             <div> 
                                 <h4>{car.make} {car.model} (<strong>{car.year}</strong>)</h4>
@@ -100,9 +101,13 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
                             </div>
                             <button className={styles.deleteButton} onClick={() => handleDeleteCar(car)}>🗑 Delete</button>
                         </div>
-                    ))}
+                    )))
+                    : (
+                        <strong>You don't have any cars.</strong>
+                    )}
                 </>
-            ) : (
+                )
+                 : (
                 <p>Cars by default only show to owners.</p>
             )}
             {showModal && (

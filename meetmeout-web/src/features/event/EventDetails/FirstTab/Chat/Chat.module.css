@@ -8,7 +8,7 @@
     width: 100%;
     max-width: 30vw;
     padding: 20px;
-    border-radius: 0px 6px 6px 0px;
+    border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     color: var(--primary-color-dark);
     
@@ -161,7 +161,7 @@
 
 .emptyChatMessage {
   text-align: center;
-  color: #999;
+  color: var(--primary-color-dark);
   padding: 40px 0;
   font-style: italic;
   font-size: 14px;

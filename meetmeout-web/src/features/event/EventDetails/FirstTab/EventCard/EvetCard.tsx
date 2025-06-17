@@ -56,7 +56,7 @@ const EventDetailsCard = ({
   const [newCapacity, setNewCapacity] = useState(event.maximumCapacity);
 
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     
@@ -254,17 +254,29 @@ const EventDetailsCard = ({
                     </div>
                     <h2>{event.title}</h2>
                   </div>
-                  <div className={styles.descriptionContainer}>
+                  <div className={styles.descriptionContainer} ref={textareaRef}>
                     <div className={styles.descriptionHeader}>
                       <label>Description</label>
-                      {currentUser?.username === event.organizer?.username &&
-                      <FontAwesomeIcon icon={faPenToSquare} className={styles.editDescription} onClick={() => setIsEditingDescription(true)} />}
+                        {currentUser?.username === event.organizer?.username && (
+                            isEditingDescription ? (
+                              <FontAwesomeIcon
+                                icon={faCheck}
+                                className={styles.editDescription}
+                                onClick={handleDescrtiptionChange}
+                              />
+                            ) : (
+                              <FontAwesomeIcon
+                                icon={faPenToSquare}
+                                className={styles.editDescription}
+                                onClick={() => setIsEditingDescription(true)}
+                              />
+                            )
+                          )}
                     </div>
                     <hr/>
                     {isEditingDescription ? (
                       <div className={styles.editDescriptionContainer}>
                         <textarea
-                            ref={textareaRef}
                             value={editedDescription} 
                             maxLength={500}
                             onChange={(e) => setEditedDescription(e.target.value)} />
@@ -327,8 +339,7 @@ const EventDetailsCard = ({
                         <p>{event.addressName}</p>
                         <Tooltip id="location-tooltip"></Tooltip>
                       </div>
-                    </div>
-                    <div className={styles.tags} ref={tagsEditRef}>
+                        <div className={styles.tags} ref={tagsEditRef}>
                           <div className={styles.tagsHeader}>
                             <label>Tags</label>
                             {currentUser?.username === event.organizer?.username && (
@@ -349,7 +360,7 @@ const EventDetailsCard = ({
                           </div>
                           <hr />
                           {isEditingTags ? (
-                            <div  className={styles.tagsEdit}>
+                            <div className={styles.tagsEdit}>
                               <TagInput tags={editedTags} setTags={setEditedTags} />
                             </div>
                           ) : (
@@ -361,6 +372,7 @@ const EventDetailsCard = ({
                               ))}
                             </ul>
                           )}
+                    </div>
                     </div>
                 </div>
         </div>        

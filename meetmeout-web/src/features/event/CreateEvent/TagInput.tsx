@@ -9,8 +9,10 @@ const TagInput = ({ tags, setTags }: { tags: string[], setTags: (tags: string[])
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" || e.key === " ") {
+    if (e.key === "Enter" || e.code === "Enter" || e.keyCode === 13) {
       e.preventDefault();
+      e.stopPropagation();
+      (e.nativeEvent as any).stopImmediatePropagation(); // 🔐 bu kritik
       if (input.trim() !== '' && !tags.includes(input.trim()) && input.length > 2 && input.length < 31) {
         setTags([...tags, input.trim()]);
         setInput('');
@@ -18,6 +20,7 @@ const TagInput = ({ tags, setTags }: { tags: string[], setTags: (tags: string[])
       }
     }
   };
+
 
   const getTagRecommendations = async (query: string) => {
     try {
@@ -90,7 +93,6 @@ const TagInput = ({ tags, setTags }: { tags: string[], setTags: (tags: string[])
           ))}
         </div>
       )}
-
       <p className={styles.tagCounter}>{input.length}/20</p>
     </div>
   );

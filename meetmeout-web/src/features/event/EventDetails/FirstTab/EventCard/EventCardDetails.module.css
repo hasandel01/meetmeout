@@ -5,11 +5,10 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    margin-left: 1vw;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: 1px solid var(--primary-color-dark);
     background-color: var(--background-color);
-    border-radius: 6px 0px 0px 0px;
+    border-radius: 6px 6px 0px 0px;
     width: 55vw;
     height: 160vh;
 }
@@ -209,11 +208,11 @@
   gap: 6px;
   font-size: 16px;
   font-weight: bold;
-  color: #388e3c;
+  color: var(--primary-color-dark);
 }
 
 .feeInfo svg {
-  color: #689f38;
+  color: var(--primary-color-dark);
 }
 
 .feeInfo span {
@@ -361,6 +360,7 @@
     width: 100%;
     margin-top: 30px;
     align-items: flex-start;
+    border-left: 4px solid var(--primary-color-dark);
 }
 .tags label {
     font-weight: bold;
@@ -391,11 +391,20 @@
     border-radius: 6px;
     padding: 6px 12px;
     font-size: 12px;
-    color: green;
+    color: var(--primary-color-dark);
     background-color: var(--background-color);
     border: 1px solid var(--primary-color-dark);
     font-weight: bold;
 }
+
+.tagsEdit {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  min-height: 25vh;
+  width: 25vw;
+}
+
 
 
 /** EventStatus **/
@@ -512,9 +521,9 @@
     width: 100vw;
     margin: unset;
     height: auto;
-    margin-left: 0;
     padding: unset;
     align-items: center;
+    border-radius: unset;
   }
 
   .eventDetails {
@@ -551,6 +560,10 @@
     justify-content: left;
     padding: 10px 0;
     width: 100%;
+  }
+
+  .tagsEdit {
+    width: 80vw;
   }
 
   .feeInfo {

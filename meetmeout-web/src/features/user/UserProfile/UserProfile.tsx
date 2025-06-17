@@ -23,7 +23,7 @@ function UserProfile() {
 
     const { username } = useParams<{ username: string; }>();
     const [user, setUser] = useState<User | null>(null);
-    const { currentUser, getMe } = useUserContext();
+    const {currentUser, getMe } = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [showUserUpdateForm, setShowUserUpdateForm] = useState(false);
     const { userLatitude, userLongitude } = useLocationContext();
@@ -205,8 +205,10 @@ function UserProfile() {
 
     useEffect(() => {
 
-        if (companionStatus?.status === "PENDING")
+        if (companionStatus?.status === "PENDING" && companionStatus.sender.id === currentUser?.id)
             setStatusLabel("REQUEST SENT ✓");
+        else if(companionStatus?.status === "PENDING" && companionStatus.receiver.id === currentUser?.id)
+            setStatusLabel("ACCEPT REQUEST")
         else if (companionStatus?.status === "ACCEPTED")
             setStatusLabel("COMPANION ✔");
         else if (companionStatus?.status === "NONE")
@@ -243,6 +245,9 @@ function UserProfile() {
             sendFriendRequest();
         else if (companionStatus?.status === "PENDING")
             setShowCancel(prev => !prev);
+
+        if(companionStatus?.status === "PENDING" && companionStatus.receiver.id === currentUser?.id) 
+            handleAcceptRequest(companionStatus.sender.email);
     };
 
     const handleUserUpdate = async () => {
@@ -291,6 +296,23 @@ function UserProfile() {
         } catch (error) {
         }
     };
+
+    
+    const handleAcceptRequest = async (senderEmail: string) => {
+        
+        try {
+            await axiosInstance.post(`/companions/${senderEmail}/accept`, null);
+            setCompanionStatus(
+                companionStatus
+                    ? { ...companionStatus, status: "ACCEPTED" }
+                    : { id: "", status: "ACCEPTED", sender: user as User, receiver: currentUser as User }
+            );
+            await getMe();
+        } catch (error) {
+            console.log("Error while adding friend.")
+        }
+    }
+
 
     useEffect(() => {
 
@@ -413,8 +435,15 @@ function UserProfile() {
                 <div className={styles.userInfo}>
                     <div className={styles.userProfileHeader}>
                     {currentUser?.username !== username &&
-                        <div className={companionStatus?.status === "NONE" ? `${styles.companionStatusSendRequest}` :
-                            (companionStatus?.status === "ACCEPTED" ? `${styles.companionStatusAccepted}` : `${styles.companionStatusRequestSent}`)}
+                        <div className={
+                            companionStatus?.status === "NONE"
+                                ? `${styles.companionStatusSendRequest}`
+                                : companionStatus?.status === "PENDING" && companionStatus.receiver.id === currentUser?.id
+                                    ? `${styles.companionAcceptRequest}`
+                                    : companionStatus?.status === "ACCEPTED"
+                                        ? `${styles.companionStatusAccepted}`
+                                        : `${styles.companionStatusRequestSent}`
+                        }
                             onClick={() => handleLabelClick()}>
                             <p>{statusLabel}</p>
                             {companionStatus?.status === "ACCEPTED" && showRemove &&

@@ -39,9 +39,14 @@
 
 .companionStatusSendRequest {
     border: 1px solid var(--primary-color-dark);
+    background-color: var(--primary-color);
     border-radius: 6px;
     padding: 6px 12px;
     transition: 0.2s ease-in-out;
+}
+
+.companionStatusSendRequest p {
+  color: white;
 }
 
 .companionStatusSendRequest:hover {
@@ -59,6 +64,19 @@
     font-weight: bold;
 }
 
+.companionAcceptRequest {
+    border: 1px solid var(--primary-color-dark);
+    background-color: var(--primary-color);
+    border-radius: 6px;
+    padding: 6px 12px;
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.companionAcceptRequest p {
+  color: white;
+}
+
 .companionStatusAccepted {
     border: 1px solid var(--border-grey);
     color: var(--text-color-grey);
@@ -74,20 +92,26 @@
 }
 
 .removeCompanion {
-    position: absolute;
-    display: flex;
-    margin: 4px 0px;
-    color: red;
-
-}
-
-.removeCompanion p {
-    color: red;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  background-color: white;
+  padding: 8px 12px;
+  border: 1px solid red;
+  border-radius: 6px;
+  color: red;
+  font-weight: bold;
+  font-size: 14px;
+  min-width: 100px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  cursor: pointer;
 }
 
 .removeCompanion:hover {
-    cursor: pointer;
-    text-decoration: underline;
+  background-color: rgba(255, 0, 0, 0.1);
+  text-decoration: underline;
 }
 
 

@@ -48,6 +48,7 @@ const CreateEventForm = () => {
 
     const validateStep = (currentStep: number) => {
     
+
         if (currentStep === 1) {
           if(!event.title.trim()) newErrors.title = "Title is required.";
           if(!event.startDate.trim()) newErrors.date = "Start date is required.";
@@ -81,7 +82,9 @@ const CreateEventForm = () => {
         } else if (currentStep === 2) {
           if (!coordinates) newErrors.location = "Please select a location on the map.";
         } else if (currentStep === 3) {
-          if (!event.maximumCapacity || event.maximumCapacity < 1) newErrors.maximumCapacity = "Capacity must be at least 1.";
+          if (!event.isCapacityRequired 
+            && event.maximumCapacity > 10000 
+            && event.maximumCapacity < 1) newErrors.maximumCapacity = "Capacity must be at least 1.";
           if (!event.category) newErrors.category = "Please select a category.";
           if(event.fee > 1000000) newErrors.fee = "Maximum fee is 1000000"
         }
@@ -120,7 +123,7 @@ const CreateEventForm = () => {
         tags: [],
         isPrivate: false,
         isDraft: false,
-        maximumCapacity: 1,
+        maximumCapacity: 10000,
         status: 'ONGOING',
         attendees: [],
         organizer: null,
@@ -157,15 +160,33 @@ const CreateEventForm = () => {
     
             try {
 
+                    if (!isDraft) {
+                        const allSteps = [1, 2, 3];
+                        for (let s of allSteps) {
+                            const isValid = validateStep(s);
+                            if (!isValid) {
+                                toast.error("Please complete all required fields before creating the event.");
+                                setStep(s); 
+                                return;
+                            }
+                        }
+                    }
+
+                    const now = Date.now();
+                    const start = new Date(`${event.startDate}T${event.startTime}`);
+                    if (start.getTime() < now && !isDraft) {
+                        toast.error("While you were filling out the event form, the time past. " +
+                             "You can't create an event in the past. Please update ⚠️ ");
+                        return;
+                    }
+
+
                 if(coordinates?.latitude === 0 || coordinates?.longitude === 0) {
                     toast.error("Please select a location on the map so that others can join your event! 📍")
                     return;
                 }
 
                 setEvent(prev => ({...prev, isDraft: isDraft}))
-
-                if(!event.isCapacityRequired)
-                    event.maximumCapacity = 2147483647;
 
                 const formData = new FormData();
                 formData.append("title", event.title);
@@ -406,7 +427,6 @@ const CreateEventForm = () => {
                                     value={event.startTime}
                                     onChange={(e) => setEvent( {...event, startTime: e.target.value} )}
                                     min={isToday ? getTimeFormatted(): undefined}
-                                    max={getMaxDateFormatted()}
                                     required />
                             </div>
                             <div className={styles.timeInput}>
@@ -417,6 +437,7 @@ const CreateEventForm = () => {
                                     value={event.endDate}
                                     onChange={(e) => setEvent( {...event, endDate: e.target.value} )}
                                     min={getTodayFormatted()}
+                                    max={getMaxDateFormatted()}
                                     required />
                                     <input 
                                     type='time' 
@@ -702,6 +723,7 @@ const CreateEventForm = () => {
                             )}
                             </div>
                     </div>
+                    {newErrors.date && <p>{newErrors.date}</p>}
                 </div>
                 );
             default: return null
@@ -719,7 +741,7 @@ const CreateEventForm = () => {
                 <div className={styles.stepContainer}>
                     {steps.map( (label,index) => (
                         <div className={styles.stepItem} key={index}>
-                            <div className={`${styles.stepCircle} ${step === index + 1 ? styles.stepCircleActive :''}`} onClick={() => setStep(index + 1)}>
+                            <div className={`${styles.stepCircle} ${step === index + 1 ? styles.stepCircleActive :''}`}   onClick={() => setStep(index + 1)}>
                                 {index + 1}
                             </div>
                             <span className={styles.stepLabel}>{label}</span>

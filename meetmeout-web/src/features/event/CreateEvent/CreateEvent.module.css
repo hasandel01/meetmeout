@@ -264,7 +264,6 @@ input[type="date"], input[type="time"] {
 .eventLocationSelector {
     width: 100%;
     max-width: 600px;
-    height: 500px;
     padding: 40px 40px;
     overflow: hidden;
     border-radius: 12px;
@@ -1046,7 +1045,7 @@ p {
 
           .eventLocationSelector {
             width: 90vw;
-            height: 80vh;
+            height: 60vh;
             padding: 0;
             margin: 0;
             border-radius: 0;

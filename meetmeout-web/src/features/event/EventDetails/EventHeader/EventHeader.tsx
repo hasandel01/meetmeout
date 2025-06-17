@@ -37,8 +37,13 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
         try {
 
         await axiosInstance.post(`/events/${event.id}/leave`);
-        navigate("/")
-
+        
+        if(event.organizer?.username === currentUser.username)
+            toast.success("You successfully deleted your event.");
+        else
+            toast.success("You successfully leave the event.")
+        
+        setTimeout(() => navigate("/"), 500);
 
         } catch(error) {
             toast.error("Error leaving event.")

@@ -324,13 +324,14 @@ const EventLocationSelector: React.FC<Props> = ({ setCoordinates,
               </div>
             </div>
             }
-      <div style={{ height: '500px', width: '700px' }}>
+      <div className={styles.mapContainerClass}>
         <MapContainer
           center={position}
           zoom={13}
+          zoomControl={false}
           scrollWheelZoom={true}
-          style={{ height: '100%', width: '100%' }}
-        >
+          className={styles.mapContainer}
+          >
           <TileLayer
             url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
             attribution='&copy; OpenStreetMap contributors'

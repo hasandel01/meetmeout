@@ -1,3 +1,14 @@
+.mapContainerClass {
+    height: 70vh; 
+    width: 600px;
+}
+
+.mapContainer {
+    height: 100%; 
+    width: 100%;
+    border: 2px solid var(--primary-color);
+}
+  
 .custom-marker-wrapper {
   position: relative;
   width: 48px;
@@ -21,7 +32,6 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
-  background-color: #2196F3;
 }
 
 .inputWrapper {
@@ -101,6 +111,13 @@
 }
 
 @media (max-width: 768px) {
+
+  .mapContainerClass {
+    height: 50vh;
+    width: 100%;
+    max-width: 85vw;
+  }
+
   .mapInputContainer {
     flex-direction: row;
     width: 100%;
@@ -127,4 +144,5 @@
     margin-top: 10px;
     border-radius: 10px;
   }
+
 }

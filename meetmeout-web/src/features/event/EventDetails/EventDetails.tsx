@@ -140,9 +140,6 @@ const EventDetails = () => {
     },[event.isDraft])
 
 
-
-
-
     const getEvent = async () => {
       try {
         const response = await axiosInstance.get(`/events/${eventIdNumber}`);

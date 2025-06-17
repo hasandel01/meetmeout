@@ -54,7 +54,6 @@ public class CommentServiceImpl implements CommentService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-
         if(commentDTO.comment().isEmpty())
             throw new RuntimeException("Comment is empty");
 

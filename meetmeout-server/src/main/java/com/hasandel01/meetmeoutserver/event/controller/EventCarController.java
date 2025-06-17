@@ -18,7 +18,7 @@ public class EventCarController {
     private final EventCarService eventCarService;
 
     @PostMapping("/{eventId}/add")
-    public ResponseEntity<Boolean> addCars(@PathVariable long eventId, @RequestBody List<CarDTO> cars) {
+    public ResponseEntity<List<EventCarDTO>> addCars(@PathVariable long eventId, @RequestBody List<CarDTO> cars) {
         return ResponseEntity.ok(eventCarService.addCarsToEvent(eventId,cars));
     }
 

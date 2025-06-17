@@ -70,4 +70,30 @@ public class CloudStorageServiceImpl implements CloudStorageService {
         }
     }
 
+    @Override
+    public void deletePicture(String publicUrl) {
+
+        String pictureId = extractPublicIdFromUrl(publicUrl);
+
+        try {
+            System.out.println("Delete picture: " + pictureId);
+            cloudinary.uploader().destroy(pictureId, ObjectUtils.asMap(
+                    "resource_type", "image"
+            ));
+        } catch (IOException e) {
+            throw new RuntimeException("Delete profile picture failed", e);
+        }
+    }
+
+    public static String extractPublicIdFromUrl(String url) {
+        String[] parts = url.split("/upload/");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid Cloudinary URL");
+        }
+
+        String withoutVersion = parts[1].replaceFirst("^v[0-9]+/", "");
+        return withoutVersion.replaceAll("\\.[^.]+$", "");
+    }
+
+
 }

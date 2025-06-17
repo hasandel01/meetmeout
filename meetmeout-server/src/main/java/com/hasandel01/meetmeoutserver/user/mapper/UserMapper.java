@@ -35,6 +35,8 @@ public class UserMapper {
                 )
                 .createdAt(user.getCreatedAt())
                 .cars(user.getCars().stream().map(CarMapper::toCarDTO).collect(Collectors.toSet()))
+                .userLatitude(user.getUserLatitude())
+                .userLongitude(user.getUserLongitude())
                 .build();
     }
 

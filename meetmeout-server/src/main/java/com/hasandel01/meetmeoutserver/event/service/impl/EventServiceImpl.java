@@ -267,6 +267,15 @@ public class EventServiceImpl implements EventService {
             List<JoinEventRequest> joinEventRequests = joinEventRequestRepository.findByEvent(event)
                     .orElseThrow(() -> new RuntimeException("Event not found"));
             joinEventRequestRepository.deleteAll(joinEventRequests);
+
+            cloudStorageService.deletePicture(event.getImageUrl());
+
+            for(EventPhoto photo: event.getEventPhotos()) {
+                photo.setUploadedBy(null);
+                cloudStorageService.deletePicture(photo.getUrl());
+                event.getEventPhotos().remove(photo);
+            }
+
             eventRepository.delete(event);
         }
         return null;
@@ -583,9 +592,15 @@ public class EventServiceImpl implements EventService {
             throw new AccessDeniedException("Only the organizer can update this event");
         }
 
-
         event.setCapacityRequired(capacityUpdateRequest.isCapacityRequired());
         event.setMaximumCapacity(capacityUpdateRequest.maxCapacity());
+
+        if(event.getMaximumCapacity() == event.getAttendees().size())
+                event.setStatus(EventStatus.FULL);
+        else
+                event.setStatus(EventStatus.ONGOING);
+
+
         eventRepository.save(event);
         notificationService.sendEventUpdatedNotificationToAttendees(event);
 

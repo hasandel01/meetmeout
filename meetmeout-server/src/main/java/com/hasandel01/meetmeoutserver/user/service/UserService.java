@@ -30,4 +30,6 @@ public interface UserService {
     List<TravelAssociateDTO> getTravelAssociates(String username);
 
     List<UserDTO> getUsersByIds(List<Long> ids);
+
+    void updateUserLocation(Long userId, Double lat, Double lon);
 }

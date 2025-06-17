@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate, useParams } from "react-router-dom";
 import UserUpdateForm from "../UserUpdateForm/UserUpdateForm";
 import { useUserContext } from "../../../context/UserContext";
-import { useLocationContext } from "../../../context/LocationContex";
 import axios from "axios";
 import { FriendRequest } from "../../../types/FriendRequest";
 import { Event } from "../../../types/Event";
@@ -18,6 +17,7 @@ import { formatMonthYear } from "../../../utils/formatTime";
 import { TravelAssociate } from "../../../types/TravelAssociate";
 import CarContainer from "./CarContainer/CarContainer";
 import { UserReview } from "../../../types/UserReviews";
+import { useLocationContext } from "../../../context/LocationContex";
 
 function UserProfile() {
 
@@ -26,7 +26,6 @@ function UserProfile() {
     const {currentUser, getMe } = useUserContext();
     const [companions, setCompanions] = useState<User[]>([]);
     const [showUserUpdateForm, setShowUserUpdateForm] = useState(false);
-    const { userLatitude, userLongitude } = useLocationContext();
     const [userLocation, setUserLocation] = useState<string | null>(null);
     const [companionStatus, setCompanionStatus] = useState<FriendRequest | null>(null);
     const [statusLabel, setStatusLabel] = useState('');
@@ -37,6 +36,7 @@ function UserProfile() {
     const [attendedEvents, setAttendedEvents] = useState<Event[]>([]);
     const [travelAssociates,setTravelAssociates] = useState<TravelAssociate[] | null>(null);
     const [userReviews, setUserReviews] = useState<UserReview[]>([]);
+    const {userLatitude, userLongitude} = useLocationContext();
 
     const navigate = useNavigate();
 
@@ -72,7 +72,7 @@ function UserProfile() {
 
 
         try {
-            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${userLatitude}&lon=${userLongitude}&format=json`);
+            const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${user?.userLatitude}&lon=${user?.userLongitude}&format=json`);
 
             const address = response.data.address as {
                 road?: string;
@@ -129,11 +129,11 @@ function UserProfile() {
     }, [username]);
 
     useEffect(() => {
-        if (userLatitude && userLongitude) {
+        if (user && user.userLatitude && user.userLongitude) {
             getAddressFromCoords();
         }
     },
-        [userLatitude, userLongitude]);
+        [user?.userLatitude, user?.userLongitude]);
 
 
 
@@ -416,8 +416,8 @@ function UserProfile() {
         navigate("/", {
             state: {
             flyTo: {
-                lat: userLatitude,
-                lng: userLongitude,
+                lat: user?.userLatitude,
+                lng: user?.userLongitude,
             }
             }
         })
@@ -519,8 +519,8 @@ function UserProfile() {
                     <h5 className={styles.activeLabel}>Active Since: {formatMonthYear(user?.createdAt ?? "")} 🚀</h5>
                     {((currentUser?.username !== user?.username && user?.showLocation) || (currentUser?.username === user?.username)) && (
                     <p
-                        className={`${styles.userLocationFixed} ${currentUser?.username === user?.username ? styles.clickable : ''}`}
-                        onClick={currentUser?.username === user?.username ? handleUserLocationClick : undefined}>
+                        className={`${styles.userLocationFixed} ${styles.clickable}`}
+                        onClick={handleUserLocationClick}>
                         <FontAwesomeIcon icon={faLocationDot} /> {userLocation}
                 </p>
                 )}

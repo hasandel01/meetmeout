@@ -4,6 +4,12 @@ package com.hasandel01.meetmeoutserver.user.service.impl;
 import com.hasandel01.meetmeoutserver.companion.model.FriendRequest;
 import com.hasandel01.meetmeoutserver.companion.repository.FriendRequestRepository;
 import com.hasandel01.meetmeoutserver.event.model.Event;
+import com.hasandel01.meetmeoutserver.event.model.EventPhoto;
+import com.hasandel01.meetmeoutserver.event.model.Invite;
+import com.hasandel01.meetmeoutserver.event.model.RideAssignment;
+import com.hasandel01.meetmeoutserver.event.repository.EventPhotoRepository;
+import com.hasandel01.meetmeoutserver.event.repository.InviteRepository;
+import com.hasandel01.meetmeoutserver.event.repository.RideAssignmentRepository;
 import com.hasandel01.meetmeoutserver.notification.repository.NotificationRepository;
 import com.hasandel01.meetmeoutserver.user.dto.TravelAssociateDTO;
 import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
@@ -45,6 +51,12 @@ public class UserServiceImpl implements UserService {
     private final FriendRequestRepository friendRequestRepository;
 
     private final NotificationRepository notificationRepository;
+
+    private final EventPhotoRepository eventPhotoRepository;
+
+    private final InviteRepository inviteRepository;
+
+    private final RideAssignmentRepository rideAssignmentRepository;
 
     @Transactional
     public UserDTO getMe() {
@@ -177,6 +189,27 @@ public class UserServiceImpl implements UserService {
 
         notificationRepository.deleteAllReceiverNotifications(user.getId());
 
+        List<EventPhoto> eventPhotos = eventPhotoRepository.findByUploadedBy(user);
+
+        if(!eventPhotos.isEmpty()) {
+
+            for(EventPhoto photo : eventPhotos) {
+                cloudStorageService.deletePicture(photo.getUrl());
+                eventPhotoRepository.delete(photo);
+            }
+
+        }
+        cloudStorageService.deletePicture(user.getProfilePictureUrl());
+
+        List<Invite> invitesContainsUser = inviteRepository.findAllUserRelatedInvites(user.getId());
+
+        inviteRepository.deleteAll(invitesContainsUser);
+
+        List<RideAssignment> rideAssignments = rideAssignmentRepository.findByPassenger(user);
+
+        rideAssignmentRepository.deleteAll(rideAssignments);
+
+
         userRepository.delete(user);
         return true;
     }
@@ -226,6 +259,17 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(UserMapper::toUserDTO)
                 .toList();
+    }
+
+    @Override
+    public void updateUserLocation(Long userId, Double lat, Double lon) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+
+        user.setUserLatitude(lat);
+        user.setUserLongitude(lon);
+        userRepository.save(user);
     }
 
 }

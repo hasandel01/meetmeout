@@ -36,4 +36,11 @@ public interface InviteRepository  extends JpaRepository<Invite, Long> {
     Optional<List<Invite>> findByEventAndStatus(Event event, InviteStatus status);
 
     Optional<Invite> findByInvitedAndEventAndStatus(User invited, Event event, InviteStatus status);
+
+
+    @Query("""
+        SELECT invite FROM Invite invite WHERE invite.invited.id= :userId OR invite.inviter.id= :userId
+   
+        """)
+    List<Invite> findAllUserRelatedInvites(@Param("userId") Long userId);
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface EventCarService {
 
-    Boolean addCarsToEvent(long eventId, List<CarDTO> cars);
+    List<EventCarDTO> addCarsToEvent(long eventId, List<CarDTO> cars);
 
     List<EventCarDTO> getAllTheCarsForTheEvent(long evenId);
 

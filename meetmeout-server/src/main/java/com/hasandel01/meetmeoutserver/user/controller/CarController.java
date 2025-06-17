@@ -22,7 +22,7 @@ public class CarController {
         return ResponseEntity.ok(carService.getUsersCar(userId));
     }
 
-    @PostMapping("/{userId}/add")
+    @PostMapping("/{userId}")
     public ResponseEntity<CarDTO> addCar(@PathVariable("userId") long userId,
                                          @RequestBody CarDTO carDTO) {
         return ResponseEntity.ok(carService.addCarToUser(userId,carDTO));

@@ -5,8 +5,6 @@ import com.hasandel01.meetmeoutserver.user.dto.CarDTO;
 import com.hasandel01.meetmeoutserver.user.model.Car;
 import com.hasandel01.meetmeoutserver.user.model.User;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class CarMapper {
 
@@ -33,15 +31,4 @@ public class CarMapper {
                 .build();
     }
 
-    public static List<CarDTO> toCarDTOList(List<Car> cars) {
-        return cars.stream()
-                .map(CarMapper::toCarDTO)
-                .collect(Collectors.toList());
-    }
-
-    public static List<Car> toCarList(List<CarDTO> carDTOs, User user) {
-        return carDTOs.stream()
-                .map(dto -> toCar(dto, user))
-                .collect(Collectors.toList());
-    }
 }

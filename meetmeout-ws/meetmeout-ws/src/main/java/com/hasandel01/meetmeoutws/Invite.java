@@ -31,6 +31,4 @@ public class Invite {
     @Column(unique = true)
     private String inviteToken;
 
-    private boolean isAccepted;
-
 }

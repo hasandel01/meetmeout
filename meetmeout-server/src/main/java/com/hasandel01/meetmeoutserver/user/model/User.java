@@ -57,6 +57,11 @@ public class User implements UserDetails {
     @Length(max = 400)
     private String about;
 
+    private double userLatitude;
+
+
+    private double userLongitude;
+
     @Transient
     private Set<User> companions = new HashSet<>();
 

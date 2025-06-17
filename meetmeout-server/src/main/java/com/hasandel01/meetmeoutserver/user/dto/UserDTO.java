@@ -22,5 +22,7 @@ public record UserDTO(
         boolean showLocation,
         boolean darkMode,
         LocalDateTime createdAt,
-        Set<CarDTO> cars) {
+        Set<CarDTO> cars,
+        double userLatitude,
+        double userLongitude) {
 }

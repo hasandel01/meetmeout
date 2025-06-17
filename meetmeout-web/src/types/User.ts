@@ -20,4 +20,6 @@ export interface User {
     reviews: Review[];
     createdAt: string;
     cars: Car[];
+    userLatitude: number;
+    userLongitude: number;
 }

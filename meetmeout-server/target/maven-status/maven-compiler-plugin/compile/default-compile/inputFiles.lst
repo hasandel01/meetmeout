@@ -42,6 +42,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\mapper\JoinRequestMapper.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\companion\controller\CompanionController.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\mapper\EventChatMessageMapper.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\dto\UserLocationDTO.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\dto\UserReviewRequest.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\mapper\CommentMapper.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\exceptions\RestrictedUserException.java
@@ -123,6 +124,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\dto\InviteDTO.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\mapper\RideAssignmentMapper.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\wsrelay\WSRelayConfig.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\repository\EventPhotoRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\common\config\interceptor\AuthHandshakeInterceptor.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\companion\repository\FriendRequestRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\service\impl\EventServiceImpl.java

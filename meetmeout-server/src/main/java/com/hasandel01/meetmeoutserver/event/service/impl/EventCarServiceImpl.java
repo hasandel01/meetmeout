@@ -35,7 +35,7 @@ public class EventCarServiceImpl implements EventCarService {
     private final NotificationService notificationService;
 
     @Transactional
-    public Boolean addCarsToEvent(long eventId, List<CarDTO> cars) {
+    public List<EventCarDTO> addCarsToEvent(long eventId, List<CarDTO> cars) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
@@ -66,6 +66,7 @@ public class EventCarServiceImpl implements EventCarService {
                         EventCar.builder()
                                 .event(event)
                                 .car(car)
+                                .rideAssignments(new HashSet<>())
                                 .approved(isOrganizer)
                                 .build()
                 );
@@ -76,7 +77,7 @@ public class EventCarServiceImpl implements EventCarService {
             throw new RuntimeException("No valid cars to add. They may be already added or not owned by user.");
         }
 
-        eventCarRepository.saveAll(eventCarsToSave);
+        List<EventCar> savedCars= eventCarRepository.saveAll(eventCarsToSave);
 
         if (isOrganizer) {
             for (EventCar eventCar : eventCarsToSave) {
@@ -86,7 +87,7 @@ public class EventCarServiceImpl implements EventCarService {
                 }
             }
         }
-        return true;
+        return savedCars.stream().map(EventCarMapper::toEventCarDTO).collect(Collectors.toList());
     }
 
 

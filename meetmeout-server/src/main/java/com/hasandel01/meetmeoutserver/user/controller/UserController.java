@@ -1,10 +1,7 @@
 package com.hasandel01.meetmeoutserver.user.controller;
 
 
-import com.hasandel01.meetmeoutserver.user.dto.DarkModeDTO;
-import com.hasandel01.meetmeoutserver.user.dto.LocationDTO;
-import com.hasandel01.meetmeoutserver.user.dto.TravelAssociateDTO;
-import com.hasandel01.meetmeoutserver.user.dto.UserDTO;
+import com.hasandel01.meetmeoutserver.user.dto.*;
 import com.hasandel01.meetmeoutserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +67,12 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getUsersByIds(@RequestParam List<Long> ids) {
         return ResponseEntity.ok(userService.getUsersByIds(ids));
+    }
+
+    @PutMapping("/{userId}/location")
+    public ResponseEntity<?> updateLocation(@PathVariable Long userId, @RequestBody UserLocationDTO locationDTO) {
+            userService.updateUserLocation(userId, locationDTO.getLatitude(), locationDTO.getLongitude());
+        return ResponseEntity.ok().build();
     }
 
 

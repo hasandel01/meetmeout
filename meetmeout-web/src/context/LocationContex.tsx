@@ -32,12 +32,10 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     });
                 }
 
-                }
-
-                
+                }  
             )
         }
-    },[])
+    },[currentUser])
 
     return (
         <LocationContext.Provider value={{userLatitude, userLongitude }}>

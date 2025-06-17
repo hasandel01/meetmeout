@@ -1,2 +1,3 @@
-com\hasandel01\meetmeoutserver\auth\controller\AuthenticationControllerIntegrationTest.class
+com\hasandel01\meetmeoutserver\auth\controller\AuthenticationControllerTest.class
+com\hasandel01\meetmeoutserver\event\controller\EventControllerTest.class
 com\hasandel01\meetmeoutserver\MeetmeoutServerApplicationTests.class

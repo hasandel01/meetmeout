@@ -123,6 +123,7 @@ com\hasandel01\meetmeoutserver\event\dto\EventCarDTO$EventCarDTOBuilder.class
 com\hasandel01\meetmeoutserver\common\config\interceptor\AuthHandshakeInterceptor.class
 com\hasandel01\meetmeoutserver\common\config\SecurityConfig.class
 com\hasandel01\meetmeoutserver\auth\model\CheckUserRequest.class
+com\hasandel01\meetmeoutserver\event\repository\EventPhotoRepository.class
 com\hasandel01\meetmeoutserver\companion\dto\FriendRequestDTO.class
 com\hasandel01\meetmeoutserver\event\service\impl\EventCarServiceImpl.class
 com\hasandel01\meetmeoutserver\event\mapper\CommentMapper.class

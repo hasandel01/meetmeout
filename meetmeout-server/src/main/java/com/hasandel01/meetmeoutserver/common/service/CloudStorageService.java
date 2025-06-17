@@ -13,4 +13,5 @@ public interface CloudStorageService {
 
     Set<String> uploadEventPictures(MultipartFile[] files);
 
+    void deletePicture(String pictureId);
 }

@@ -38,7 +38,6 @@ public class CarServiceImpl implements CarService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-
         Car newCar = Car.builder()
                 .make(carDTO.make())
                 .model(carDTO.model())
@@ -48,9 +47,9 @@ public class CarServiceImpl implements CarService {
                 .build();
 
         user.getCars().add(newCar);
-        userRepository.save(user);
+        Car savedCar = carRepository.save(newCar);
 
-        return CarMapper.toCarDTO(newCar);
+        return CarMapper.toCarDTO(savedCar);
     }
 
     @Transactional

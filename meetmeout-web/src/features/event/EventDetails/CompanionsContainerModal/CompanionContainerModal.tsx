@@ -95,9 +95,9 @@ const CompanionsContainerModal: React.FC<Props> = ({ event, onClose, joinRequest
               }`}
               onClick={() => {!invitedUsers.some(invitedUser => invitedUser.username === companion.username) ? toggleInvitation(companion) : undefined}}>
               <img src={companion.profilePictureUrl} alt="Profile" />
-              <div>
+              <div className={styles.userInfo}>
                 <h5>{companion.firstName} {companion.lastName}</h5>
-                <strong>@{companion.username}</strong>
+                <h5>@{companion.username}</h5>
               </div>
               <p>{invitedUsers.some(invitedUser => invitedUser.username === companion.username) ? "Invite Sent ✉" : ""}</p>
             </div>

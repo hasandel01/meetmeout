@@ -2,6 +2,7 @@
   margin: 20px 0;
   padding: 10px;
   border: 1px solid var(--primary-color-dark);
+  border-radius: 6px;
   font-family: inherit;
   background-color: var(--background-color);
 }

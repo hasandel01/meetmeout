@@ -36,7 +36,7 @@
 .attendeeCard {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   background-color: var(--background-color);
   padding: 8px;
@@ -53,13 +53,21 @@
 }
 
 
-
-
 .attendeeCard img {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+
+.attendeeCard:hover {
+  text-decoration: underline;
+}
+
+.userInfo h5 {
+  margin: 0px;
+  padding: 0px;
 }
 
 .closeButton {

@@ -122,11 +122,12 @@ lng
     const joinEventRequest = async (eventId: number) => {
         try {
             const response = await axiosInstance.post(`/events/${eventId}/join`);
+            
             if (response.status === 200) {
             
                 if(event.isPrivate) {
                     setRequestSent(true)
-                } {
+                } else {
                     toast.success("You successfully joined the event!");
                     setTimeout(() => navigate(`/event/${eventId}`), 500);
                 }

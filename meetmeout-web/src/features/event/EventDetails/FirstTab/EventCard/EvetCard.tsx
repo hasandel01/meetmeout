@@ -113,7 +113,8 @@ const EventDetailsCard = ({
 
 
   const handleUpdateCapacity = async () => {
-    if (newCapacity <= event.maximumCapacity) return;
+    
+    if (newCapacity < event.attendees.length) return;
 
     try {
       await axiosInstance.put(`/events/${event.id}/capacity`, { maxCapacity: newCapacity, isCapacityRequired: true });

@@ -41,7 +41,9 @@ const AttendeeContainerModal: React.FC<Props> = ({ event, onClose, currentUser, 
                   <strong>@{attendee.username}</strong>
                 </div>
                 </div>
-              {(event.organizer && event.organizer.username && currentUser.username === event.organizer.username) && attendee.username !== currentUser.username && (
+              {(event.organizer && event.organizer.username && 
+              currentUser.username === event.organizer.username && attendee.username !== currentUser.username &&
+              event.status !== "ENDED") && (
                 <button onClick={() => handleKickUser(attendee)}>Kick</button>
               )}
             </div>

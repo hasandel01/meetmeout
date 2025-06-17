@@ -117,8 +117,11 @@ input::placeholder {
 @media (max-width: 768px) {
     
     .carContainer {
-        width: 92vw;
         padding: 10px;
         margin: 5px 0px;
+    }
+
+    .addButton {
+        width:unset;
     }
 }

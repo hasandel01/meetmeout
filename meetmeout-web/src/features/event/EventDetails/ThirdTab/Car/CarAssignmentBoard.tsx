@@ -60,6 +60,25 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
     if (event) getEventCars();
   }, [event]);
 
+
+  useEffect(() => {
+  if (!eventCars.length) return;
+
+  const newAssignments: Record<number, User[]> = {};
+
+  eventCars.forEach((car) => {
+    newAssignments[car.id] = assignments[car.id] ?? [];
+  });
+
+  setAssignments(newAssignments);
+
+  const assignedIds = new Set(Object.values(newAssignments).flat().map(u => u.id));
+  const notAssigned = event.attendees.filter(att => !assignedIds.has(att.id));
+  setUnassigned(notAssigned);
+}, [eventCars]);
+
+
+
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
     if (!destination) return;
@@ -212,7 +231,7 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
               return (
                 <div key={eventCar.id} className={styles.carColumn}>
                   <h4>
-                    {eventCar.car.make} {eventCar.car.model}
+                    {eventCar.car.make} {eventCar.car.model} ({eventCar.car.year})
                     {isOwner && (
                       <button className={styles.removeBtn} onClick={() => handleRemoveClick(eventCar)}>❌</button>
                     )}
@@ -252,13 +271,6 @@ const CarAssignmentBoard: React.FC<CarAssignmentBoardProps> = ({ event, currentU
         event={event}
         onOptimisticCarAdd={(newCars) => {
           setEventCars(prev => [...prev, ...newCars]);
-          setAssignments(prev => {
-            const updated = { ...prev };
-            newCars.forEach(car => {
-              updated[car.id] = [];
-            });
-            return updated;
-          });
         }}
       />
 

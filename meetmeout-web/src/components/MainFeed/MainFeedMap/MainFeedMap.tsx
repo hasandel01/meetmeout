@@ -6,17 +6,19 @@ import { Event } from "../../../types/Event";
 import { useUserContext } from "../../../context/UserContext";
 import styles from "./MainFeedMap.module.css"
 import { getCategoryIconLabel } from "../../../mapper/CategoryMap";
+import { useLocationContext } from "../../../context/LocationContex";
 
 interface MainFeedMapProps {
   events: Event[];
-  coords: { lat: number; lng: number };
 }
 
-const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
+const MainFeedMap = ({ events }: MainFeedMapProps) => {
   const map = useMap();
   const navigate = useNavigate();
   const { currentUser } = useUserContext();
   const routeLayers = useRef<L.LayerGroup[]>([]);
+
+  const {userLatitude, userLongitude} = useLocationContext();
 
   useEffect(() => {
     
@@ -25,11 +27,11 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
     });
     routeLayers.current = [];
 
-    if (!map || !coords.lat || !coords.lng) return;
+    if (!map || !userLatitude || !userLongitude) return;
 
     const hasFlyTo = sessionStorage.getItem("flyTo");
     if (!hasFlyTo) {
-      map.setView([coords.lat, coords.lng], 13);
+      map.setView([userLatitude, userLongitude], 13);
       sessionStorage.removeItem("flyTo");
     }
 
@@ -242,7 +244,8 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
 
       }
 
-      const userMarker = L.marker([coords.lat, coords.lng], {
+
+      const userMarker = L.marker([userLatitude, userLongitude], {
         icon: L.divIcon({
           html: `<div class="${styles.userMarker}"><img src="${currentUser?.profilePictureUrl}" /></div>`,
           className: "",
@@ -261,7 +264,8 @@ const MainFeedMap = ({ events, coords }: MainFeedMapProps) => {
     };
 
     loadEvents();
-  }, [events, coords.lat, coords.lng, map, navigate]);
+  }, [events, userLatitude, userLongitude, map, navigate]);
+  
 
   return null;
 };

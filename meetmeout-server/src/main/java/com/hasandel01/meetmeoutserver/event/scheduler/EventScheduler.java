@@ -47,11 +47,4 @@ public class EventScheduler {
 
             }
     }
-
-    @PostConstruct
-    public void init() {
-        log.info("🚀 EventScheduler started");
-    }
-
-
 }

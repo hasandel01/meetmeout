@@ -40,8 +40,6 @@ const EventDetails = () => {
   const [loading, setLoading] = useState(false);
   const [isCheckingAccess, setIsCheckingAccess] = useState(true);
 
-
-
     const fetchUserReviews = async (organizerId: number) => {
       try {
         const response = await axiosInstance.get(`/user-reviews/of/${organizerId}`);
@@ -341,30 +339,51 @@ const EventDetails = () => {
   }
 
   const [hasDismissedReview, setHasDismissedReview] = useState(false);
+  const [dismissedReviewLoaded, setDismissedReviewLoaded] = useState(false);
 
-    useEffect(() => {
-      const fetchDismissal = async () => {
-        if (event.id === 0 || !currentUser) return;
-        try {
-          const response = await axiosInstance.get(`/review/${event.id}/dismissal`);
-          setHasDismissedReview(response.data);
-        } catch (error) {
-          console.error("Error checking review dismissal:", error);
-        }
-      };
+  useEffect(() => {
+    const fetchDismissal = async () => {
+      if (event.id === 0 || !currentUser) return;
+      try {
+        const response = await axiosInstance.get(`/review/${event.id}/dismissal`);
+        setHasDismissedReview(response.data);
+      } catch (error) {
+        console.error("Error checking review dismissal:", error);
+      } finally {
+        setDismissedReviewLoaded(true);
+      }
+    };
+    fetchDismissal();
+  }, [event.id, currentUser]);
 
-      fetchDismissal();
-    }, [event.id, currentUser]);
 
 
+  const [hasDismissedOrganizerReview, setHasDismissedOrganizerReview] = useState(false);
+  const [dismissedOrganizerReviewLoaded, setDismissedOrganizerReviewLoaded] = useState(false);
 
-  const [showReviewModal, setShowReviewModal] = useState(false);
+  useEffect(() => {
+    const fetchDismissal = async () => {
+      if (event.id === 0 || !currentUser) return;
+      try {
+        const response = await axiosInstance.get(`/user-reviews/${event.id}/dismissal`);
+        setHasDismissedOrganizerReview(response.data);
+      } catch (error) {
+        console.error("Error checking organizer review dismissal:", error);
+      } finally {
+        setDismissedOrganizerReviewLoaded(true);
+      }
+    };
+    fetchDismissal();
+  }, [event.id, currentUser]);
 
-    const areReviewConditionsSatisfied = () => {
+
+      const [showReviewModal, setShowReviewModal] = useState(false);
+
+      const areReviewConditionsSatisfied = () => {
       const isAttendee = event.attendees.some(att => att.username === currentUser?.username);
       const hasNotReviewed = !event.reviews.some(r => r.reviewer.username === currentUser?.username);
       const isEventEnded = event.status === "ENDED";
-
+      
       return isAttendee && hasNotReviewed && isEventEnded && !hasDismissedReview;
     };
 
@@ -379,11 +398,13 @@ const EventDetails = () => {
               ur.event.id === event.id
           );
 
-        return isAttendee && isNotOrganizer && isEventEnded && !alreadyReviewed;
+        return isAttendee && isNotOrganizer && isEventEnded && !alreadyReviewed && !hasDismissedOrganizerReview;
       };
 
       useEffect(() => {
-        if (!event || !currentUser || event.id === 0 || userReviews.length === 0) return;
+        if (!event || !currentUser || event.id === 0) return;
+
+        if (!dismissedReviewLoaded || !dismissedOrganizerReviewLoaded) return;
 
         const shouldShowFirstStep = areReviewConditionsSatisfied();
         const shouldShowSecondStep = shouldShowOrganizerReview();
@@ -391,8 +412,7 @@ const EventDetails = () => {
         if (shouldShowFirstStep || shouldShowSecondStep) {
           setShowReviewModal(true);
         }
-      }, [event, currentUser, userReviews]);
-
+      }, [event, currentUser, dismissedReviewLoaded, dismissedOrganizerReviewLoaded]);
 
 
     const handleTabChange = (tabNumber: number) => {

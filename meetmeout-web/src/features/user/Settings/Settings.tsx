@@ -9,6 +9,7 @@ const Settings = () => {
     const { currentUser, getMe } = useUserContext();
     const [showLocation, setShowLocation] = useState<boolean>(false);
     const navigate = useNavigate();
+    const [showAccountDeleteModal, setShowAccountDeleteModal] = useState(false);
 
     useEffect(() => {
         if (currentUser?.showLocation !== undefined) {
@@ -66,6 +67,22 @@ const Settings = () => {
 
     return (
         <div className={styles.settingsContainer}>
+            {showAccountDeleteModal && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modal}>
+                    <h3>Are you sure?</h3>
+                    <p>This will permanently delete your account. This action cannot be undone.</p>
+                    <div className={styles.modalButtons}>
+                        <button className={styles.confirmButton} onClick={handleDeleteAccount}>
+                        Delete
+                        </button>
+                        <button className={styles.cancelButton} onClick={() => setShowAccountDeleteModal(false)}>
+                        Cancel
+                        </button>
+                    </div>
+                    </div>
+                </div>
+                )}
             <div className={styles.settings}>
                 <h4>Preferences</h4>
                 <hr/>
@@ -97,7 +114,7 @@ const Settings = () => {
                 <h4>Account</h4>
                 <hr/>
                 <div>
-                  <button className={styles.deleteAccount} onClick={() => handleDeleteAccount()}>
+                  <button className={styles.deleteAccount} onClick={() => setShowAccountDeleteModal(true)}>
                         Delete Account
                   </button>
                 </div>

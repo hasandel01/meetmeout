@@ -80,6 +80,17 @@ button:hover {
   background-color: #43a047;
 }
 
+.dismissLink {
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: -8px;
+  text-align: right;
+  transition: color 0.2s ease;
+}
+
+
 @media (max-width: 480px) {
   .reviewPopup {
     padding: 16px;

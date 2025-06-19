@@ -9,7 +9,7 @@ import com.hasandel01.meetmeoutserver.event.repository.EventRepository;
 import com.hasandel01.meetmeoutserver.event.repository.ReviewRepository;
 import com.hasandel01.meetmeoutserver.event.service.ReviewService;
 import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
-import com.hasandel01.meetmeoutserver.user.model.ReviewDismissal;
+import com.hasandel01.meetmeoutserver.event.model.ReviewDismissal;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.user.repository.ReviewDismissalRepository;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -93,52 +94,6 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Transactional
-    public Boolean getReviewDismissal(long eventId) {
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-
-        List<ReviewDismissal> dismissals = reviewDismissalRepository.findByReviewerAndEvent(user,event);
-
-        return !dismissals.isEmpty();
-    }
-
-
-    @Override
-    public Void setDissmissalToTrue(long eventId) {
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
-
-        List<ReviewDismissal> dismissals = reviewDismissalRepository.findByReviewerAndEvent(user,event);
-
-        if(dismissals.isEmpty()) {
-            ReviewDismissal dismissal = ReviewDismissal
-                    .builder()
-                    .dismissed(true)
-                    .event(event)
-                    .reviewer(user)
-                    .build();
-
-            reviewDismissalRepository.save(dismissal);
-        } else {
-            return null;
-        }
-
-        return null;
-    }
-
-    @Transactional
     public Double getAverageRating(long eventId) {
 
         Event event = eventRepository.findById(eventId)
@@ -149,5 +104,54 @@ public class ReviewServiceImpl implements ReviewService {
         return !reviewList.isEmpty() ?
                 reviewList.stream().mapToDouble(Review::getRating).sum()/ reviewList.size() : 0;
     }
+
+    @Transactional
+    public Boolean getReviewDismissal(long eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
+        Optional<ReviewDismissal> reviewDismissal = reviewDismissalRepository.findByReviewerAndEvent(user,event);
+
+        System.out.println(reviewDismissal.isPresent());
+        
+
+        return reviewDismissal.isPresent();
+    }
+
+    @Transactional
+    public Void setDissmissalToTrue(long eventId) {
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        Optional<ReviewDismissal> existingReviewDismissal = reviewDismissalRepository.findByReviewerAndEvent(user,event);
+
+        if(existingReviewDismissal.isPresent()) {
+            throw new RuntimeException("There is an exception.");
+        } else {
+            ReviewDismissal reviewDismissal = ReviewDismissal.builder()
+                    .dismissedAt(LocalDateTime.now())
+                    .dismissed(true)
+                    .reviewer(user)
+                    .event(event)
+                    .build();
+
+            reviewDismissalRepository.save(reviewDismissal);
+        }
+        return null;
+    }
+
+
 
 }

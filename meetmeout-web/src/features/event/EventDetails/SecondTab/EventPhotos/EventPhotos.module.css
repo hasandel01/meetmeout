@@ -120,6 +120,41 @@
   color: #ccc;
 }
 
+.groupedPhotoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.userPhotoGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #ccc;
+}
+
+.userInfoRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.userInfoRow .username {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primary-color-dark);
+}
+
+.userPhotoGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+
+
+
 @media (max-width: 768px) {
   
   .photoContainer {

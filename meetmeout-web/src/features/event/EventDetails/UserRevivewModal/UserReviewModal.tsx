@@ -32,6 +32,17 @@ const UserReviewModal: React.FC<UserReviewModalProps> = ({ event, currentUser, o
     }
   };
 
+
+        const handleDontShowAgain = async () => {
+        try {
+          await axiosInstance.post(`/user-reviews/${event.id}/dismissal`, {});
+        } catch (error) {
+          console.error("Failed to save dismissal");
+        } finally {
+          onClose();
+        }
+      };
+
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -53,7 +64,7 @@ const UserReviewModal: React.FC<UserReviewModalProps> = ({ event, currentUser, o
     <div className={styles.reviewModal}>
       <div className={styles.reviewPopup} ref={popupRef}>
         <h4>Organizer Review</h4>
-        <p>{event.organizer?.firstName} {event.organizer?.lastName} için değerlendirmenizi bırakın:</p>
+        <p>Please leave a review for {event.organizer?.firstName} {event.organizer?.lastName}:</p>
 
         <div className={styles.reviewStars}>
           {[1, 2, 3, 4, 5].map((star) => (
@@ -68,12 +79,12 @@ const UserReviewModal: React.FC<UserReviewModalProps> = ({ event, currentUser, o
 
         <textarea
           maxLength={300}
-          placeholder="Görüşünüzü yazın..."
+          placeholder="Write your review..."
           value={review.review}
           onChange={(e) => setReview(prev => ({ ...prev, review: e.target.value }))}
         />
-
-        <button onClick={handleSubmit}>Gönder</button>
+        <p className={styles.dismissLink} onClick={handleDontShowAgain}>Don’t show this again</p>
+        <button onClick={handleSubmit}>Send</button>
       </div>
     </div>
   );

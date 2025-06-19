@@ -134,7 +134,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository.save(user);
         emailSenderService.sendEmail(user.getEmail(),
                 "Password reset link",
-                "Click the link to reset your password: " + baseUrl + "/verify?token=" + resetPasswordToken);
+                "Click the link to reset your password: " + baseUrl + "/reset-password?token=" + resetPasswordToken);
 
 
         return "Password reset link sent to your email.";

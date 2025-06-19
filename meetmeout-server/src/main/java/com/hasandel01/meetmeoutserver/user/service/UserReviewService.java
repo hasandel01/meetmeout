@@ -14,4 +14,8 @@ public interface UserReviewService {
     void deleteUserReview(long reviewId);
 
     List<UserReviewDTO> getReviewsForUser(long userId);
+
+    Boolean getReviewDismissal(long eventId);
+
+    Void setDissmissalToTrue(long eventId);
 }

@@ -41,4 +41,16 @@ public class UserReviewController {
         return ResponseEntity.ok(userReviewService.getReviewsForUser(userId));
     }
 
+
+    @GetMapping("/{eventId}/dismissal")
+    public ResponseEntity<Boolean> getReviewDismissal(@PathVariable long eventId) {
+        return ResponseEntity.ok(userReviewService.getReviewDismissal(eventId));
+    }
+
+    @PostMapping("/{eventId}/dismissal")
+    public ResponseEntity<Void> setReviewDismissal(@PathVariable long eventId) {
+        return ResponseEntity.ok(userReviewService.setDissmissalToTrue(eventId));
+    }
+
+
 }

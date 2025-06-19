@@ -249,7 +249,8 @@ public class CompanionServiceImpl implements CompanionService {
 
         for (UserDTO companion : possibleCompanions) {
 
-            List<UserDTO> companionFriends = friendCache.getOrDefault(companion.username(), Collections.emptyList());
+            List<UserDTO> companionFriends = friendCache.getOrDefault(companion.username(),
+                        Collections.emptyList());
 
             List<UserDTO> mutualFriends = friends.stream()
                     .filter(companionFriends::contains)
@@ -305,7 +306,11 @@ public class CompanionServiceImpl implements CompanionService {
             recommendedFriends.add(builder.build());
         }
 
-        recommendedFriends.sort(Comparator.comparingInt(RecommendedFriendDTO::priority));
+        recommendedFriends.sort(Comparator.comparingInt(RecommendedFriendDTO::priority).thenComparing(
+                (a,b) -> Integer.compare(
+                        b.mutualFriends().size(), a.mutualFriends().size()
+                )
+        ));
         return recommendedFriends;
     }
 

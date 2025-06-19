@@ -113,7 +113,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({event, currentUser, setEvent, 
                 <textarea
                   placeholder="Write your review here..."
                   value={review?.content}
-                  maxLength={400}
+                  maxLength={300}
                   onChange={(e) => {
                     if (review) {
                       setReview({

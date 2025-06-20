@@ -18,6 +18,7 @@ import { TravelAssociate } from "../../../types/TravelAssociate";
 import CarContainer from "./CarContainer/CarContainer";
 import { UserReview } from "../../../types/UserReviews";
 import { useLocationContext } from "../../../context/LocationContex";
+import { toast } from "react-toastify";
 
 function UserProfile() {
 
@@ -44,9 +45,8 @@ function UserProfile() {
         try {
             const response = await axiosInstance.get(`/${username}`);
             setUser(response.data);
-            console.log(response.data)
         } catch (error) {
-            console.error("Error fetching user profile:", error);
+            toast.error("Error fetching user profile.");
         }
     };
 
@@ -57,7 +57,7 @@ function UserProfile() {
             const response = await axiosInstance.get(`/user-reviews/of/${user.id}`);
             setUserReviews(response.data);
         } catch (error) {
-            console.error("Failed to fetch user reviews:", error);
+            toast.error("Failed to fetch user reviews.");
         }
     };
 
@@ -115,7 +115,6 @@ function UserProfile() {
     const getCompanions = async () => {
         try {
             const response = await axiosInstance.get(`/companions/${username}`);
-            console.log("Companion profile fetched successfully:", response.data);
             setCompanions(response.data);
         }
         catch (error) {
@@ -198,7 +197,6 @@ function UserProfile() {
         try {
             const response = await axiosInstance.get(`/companions/${username}/status`);
             setCompanionStatus(response.data);
-            console.log(response.data);
         } catch (error) {
         }
 

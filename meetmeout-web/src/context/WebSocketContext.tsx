@@ -18,7 +18,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const maxReconnectAttempts = 5;
 
   const subscribe = (destination: string, callback: (message: IMessage) => void, headers?: StompHeaders) => {
-   if (!clientRef.current || !clientRef.current.connected) {
+    if (!clientRef.current || !clientRef.current.connected) {
       console.warn("❌ Tried to subscribe, but WebSocket is not connected yet.");
       return () => {};
     }
@@ -35,19 +35,10 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
 
   useEffect(() => {
     const initializeWebSocket = () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        toast.error("Access token not found");
-        return;
-      }
-      
       const socketUrl = `${import.meta.env.VITE_SOCKET_BASE_URL.replace("https", "wss")}/ws`;
 
       const client = new Client({
         webSocketFactory: () => new WebSocket(socketUrl),
-          connectHeaders: {
-            Authorization: `Bearer ${token}`,
-        },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
@@ -55,16 +46,16 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         onConnect: () => {
           setIsConnected(true);
           reconnectAttempts.current = 0;
-          console.log("WebSocket connected");
+          console.log("✅ WebSocket connected");
         },
 
         onDisconnect: () => {
           setIsConnected(false);
-          console.log("WebSocket disconnected");
+          console.log("🔌 WebSocket disconnected");
         },
 
         onStompError: (frame) => {
-          console.error("STOMP error:", frame.headers.message);
+          console.error("❌ STOMP error:", frame.headers.message);
           if (frame.headers.message?.includes("401")) {
             toast.error("Authentication failed - please login again");
             client.deactivate();
@@ -72,7 +63,7 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
         },
 
         onWebSocketError: (event) => {
-          console.error("WebSocket error:", event);
+          console.error("🛑 WebSocket error:", event);
           reconnectAttempts.current += 1;
           if (reconnectAttempts.current >= maxReconnectAttempts) {
             toast.error("WebSocket connection failed after multiple attempts");

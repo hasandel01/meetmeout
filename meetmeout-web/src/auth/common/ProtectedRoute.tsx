@@ -1,20 +1,18 @@
-import {Navigate} from 'react-router-dom';
-
+import { Navigate } from 'react-router-dom';
+import { useUserContext } from '../../context/UserContext';
 
 interface ProtectedRouteProps {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-   
-    const token = localStorage.getItem('accessToken');
-    const isAuthenticated = token !== null && token.trim() !== "";    
+  const { currentUser, isLoading } = useUserContext();
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />; 
-    }
+  if (isLoading) return <div>Loading...</div>;
 
-    return <>{children}</>;
+  if (!currentUser) return <Navigate to="/login" replace />;
+
+  return <>{children}</>;
 };
 
 

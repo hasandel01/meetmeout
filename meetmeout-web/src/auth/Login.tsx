@@ -14,28 +14,19 @@ const Login = ()  => {
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
-
+        e.preventDefault();
         try {
-
-            e.preventDefault();
-
-            const response = await authAxios.post('/auth/authenticate', {
-                username: username,
-                password: password,
+            await authAxios.post('/auth/authenticate', {
+                username,
+                password,
             });
 
-            const { accessToken, refreshToken } = response.data;
-
-            console.log(response.data);
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
             navigate('/');
-
         } catch (err) {
             console.error(err);
             setError('Invalid username or password');
         }
-    }
+    };
 
     return (
         <div className={styles.formContainer}>

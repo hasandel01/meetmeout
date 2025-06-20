@@ -35,10 +35,16 @@ const Header = () => {
         setShowMenu(!showMenu);
       }  
 
-    const handleSignOut = () => {
-        localStorage.removeItem("accessToken");
-        document.body.classList.remove("dark");
-        navigate("/login");
+    const handleSignOut = async () => {
+
+        try {
+            await axiosInstance.post("/auth/logout");
+            document.body.classList.remove("dark");
+            navigate("/login");
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+
     }
     
     const globalSearch  = async (query: string) => {

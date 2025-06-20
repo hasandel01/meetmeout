@@ -66,8 +66,8 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword/>}/>
             <Route path="/"
             element={
+            <UserContextProvider>
             <ProtectedRoute>
-              <UserContextProvider>
                   <ProfileContextProvider>
                     <WebSocketProvider>
                       <DarkModeContextProvider>
@@ -81,8 +81,9 @@ function App() {
                       </DarkModeContextProvider>
                     </WebSocketProvider>
                   </ProfileContextProvider>
-              </UserContextProvider>
-            </ProtectedRoute>}>    
+            </ProtectedRoute>
+          </UserContextProvider>
+          }>    
             <Route path="/" element={
               <ProtectedRoute>
                 <MainFeed/>

@@ -23,7 +23,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOrigins("*");
+        registry.addEndpoint("/ws")
+                .addInterceptors(new WebSocketSecurityInterceptor(jwtService))
+                .setAllowedOrigins("*");
     }
 
     @Override
@@ -40,21 +42,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    var authHeaders = accessor.getNativeHeader("Authorization");
-
-                    if (authHeaders != null && !authHeaders.isEmpty()) {
-                        String token = authHeaders.get(0).replace("Bearer ", "");
-                        try {
-                            String username = jwtService.getSubject(token);
-                            accessor.setUser(() -> username);
-                            accessor.getSessionAttributes().put("username", username);
-                            System.out.println("✅ WebSocket bağlandı: " + username);
-                        } catch (Exception e) {
-                            System.out.println("❌ Token doğrulama hatası: " + e.getMessage());
-                            return null;
-                        }
+                    String username = (String) accessor.getSessionAttributes().get("username");
+                    if (username != null) {
                     } else {
-                        System.out.println("⚠️ Authorization header yok!");
+                        System.out.println("❌ Username not found, conenction refused.");
                         return null;
                     }
                 }
@@ -63,4 +54,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             }
         });
     }
+
 }

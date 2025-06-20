@@ -58,7 +58,6 @@ const UserCompanions = () => {
     const getCompanions = async () => {
         try {
             const response = await axiosInstance.get(`/companions/${username}`);
-            console.log("Companion profile fetched successfully:", response.data);
             setCompanions(response.data);
         }
         catch (error) {

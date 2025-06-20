@@ -9,6 +9,8 @@ import com.hasandel01.meetmeoutserver.exceptions.InvalidTokenException;
 import com.hasandel01.meetmeoutserver.exceptions.UserIsRegisteredException;
 import com.hasandel01.meetmeoutserver.user.model.User;
 import com.hasandel01.meetmeoutserver.user.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -100,24 +102,36 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return user.isPresent();
     }
 
-    public AuthenticationResponse validateRefreshToken(RefreshTokenRequest request) {
+    public RefreshResponse validateRefreshToken(HttpServletRequest request) {
 
-        String refreshToken = request.getRefreshToken();
+        String refreshToken = null;
+
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("refresh".equals(cookie.getName())) {
+                    refreshToken = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (refreshToken == null) {
+            throw new InvalidTokenException("Refresh token is missing in cookies");
+        }
 
         String username = jwtService.getSubject(refreshToken);
 
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new UsernameNotFoundException("User not found"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        if(!jwtService.isTokenValid(refreshToken, user)) {
+        if (!jwtService.isTokenValid(refreshToken, user)) {
             throw new InvalidTokenException("Invalid refresh token");
         }
 
         var newAccessToken = jwtService.generateToken(user);
-        return AuthenticationResponse
-                .builder()
+
+        return RefreshResponse.builder()
                 .accessToken(newAccessToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 

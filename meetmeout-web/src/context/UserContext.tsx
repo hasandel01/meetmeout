@@ -6,6 +6,7 @@ import {toast} from 'react-toastify';
 export interface UserContextType {
     currentUser?: User;
     getMe: () => void;
+    isLoading: boolean;
 }
 
 const UserContext = createContext<UserContextType|undefined>(undefined);
@@ -13,6 +14,7 @@ const UserContext = createContext<UserContextType|undefined>(undefined);
 export const UserContextProvider = ({children}: {children: React.ReactNode}) => {
 
     const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(true);
 
     const getMe = async () => {
         
@@ -21,6 +23,8 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
             setCurrentUser(response.data);
         } catch(error) {
             toast.error("Error fetching user data.");
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -30,7 +34,7 @@ export const UserContextProvider = ({children}: {children: React.ReactNode}) => 
     },[currentUser])
 
     return (
-        <UserContext.Provider value={{currentUser, getMe}}>
+        <UserContext.Provider value={{currentUser, getMe, isLoading}}>
             {children}
         </UserContext.Provider>
     )

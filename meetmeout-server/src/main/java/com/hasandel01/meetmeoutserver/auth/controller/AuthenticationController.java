@@ -2,6 +2,9 @@ package com.hasandel01.meetmeoutserver.auth.controller;
 
 import com.hasandel01.meetmeoutserver.auth.model.*;
 import com.hasandel01.meetmeoutserver.auth.service.AuthenticationService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +28,41 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest,
+                                          HttpServletResponse response) {
+
+        AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
+
+        Cookie clearAccessToken = new Cookie("jwt", "");
+        clearAccessToken.setHttpOnly(true);
+        clearAccessToken.setSecure(true);
+        clearAccessToken.setPath("/");
+        clearAccessToken.setMaxAge(0);
+        response.addCookie(clearAccessToken);
+
+        Cookie clearRefreshToken = new Cookie("refresh", "");
+        clearRefreshToken.setHttpOnly(true);
+        clearRefreshToken.setSecure(true);
+        clearRefreshToken.setPath("/");
+        clearRefreshToken.setMaxAge(0);
+        response.addCookie(clearRefreshToken);
+
+        Cookie accessTokenCookie = new Cookie("jwt", authResponse.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);
+        accessTokenCookie.setSecure(true);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        Cookie refreshTokenCookie = new Cookie("refresh", authResponse.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(30 * 24 * 60 * 60);
+
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok("Login successful");
     }
 
     @PostMapping("/verify-email")
@@ -35,8 +71,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<AuthenticationResponse> getRefreshToken(@RequestBody RefreshTokenRequest request) {
-        return ResponseEntity.ok(authenticationService.validateRefreshToken(request));
+    public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        RefreshResponse refreshResponse = authenticationService.validateRefreshToken(request);
+
+        Cookie newAccessTokenCookie = new Cookie("jwt", refreshResponse.getAccessToken());
+        newAccessTokenCookie.setHttpOnly(true);
+        newAccessTokenCookie.setSecure(true);
+        newAccessTokenCookie.setPath("/");
+        newAccessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        response.addCookie(newAccessTokenCookie);
+
+        return ResponseEntity.ok(refreshResponse);
     }
 
 
@@ -49,5 +94,26 @@ public class AuthenticationController {
     public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
         return ResponseEntity.ok(authenticationService.resetPassword(request));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie clearAccessToken = new Cookie("jwt", "");
+        clearAccessToken.setHttpOnly(true);
+        clearAccessToken.setSecure(true);
+        clearAccessToken.setPath("/");
+        clearAccessToken.setMaxAge(0);
+
+        Cookie clearRefreshToken = new Cookie("refresh", "");
+        clearRefreshToken.setHttpOnly(true);
+        clearRefreshToken.setSecure(true);
+        clearRefreshToken.setPath("/");
+        clearRefreshToken.setMaxAge(0);
+
+        response.addCookie(clearAccessToken);
+        response.addCookie(clearRefreshToken);
+
+        return ResponseEntity.ok().build();
+    }
+
 
 }

@@ -1,5 +1,5 @@
 import axiosInstance from "../../axios/axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { Event } from "../../types/Event";
 import styles from "./MyCalendar.module.css";
@@ -71,6 +71,21 @@ const MyCalendar = () => {
         })
     }
 
+    const calendarRef = useRef<FullCalendar | null>(null);
+
+    useEffect(() => {
+        const calendarApi = calendarRef.current?.getApi();
+        if (!calendarApi) return;
+
+        const isMobile = window.innerWidth < 768;
+        const targetView = isMobile ? "timeGridThreeDay" : "timeGridWeek";
+
+        if (calendarApi.view.type !== targetView) {
+            calendarApi.changeView(targetView);
+        }
+        }, []);
+
+
 
     const formattedEvents = events?.map(ev => ({
         title: ev.title,
@@ -97,6 +112,7 @@ const MyCalendar = () => {
                 <h4>📌 Here is your calendar. You can keep track of your events! 🗓️</h4>
             </div>
             <FullCalendar
+              ref={calendarRef}
             plugins={[timeGridPlugin, dayGridPlugin, interactionPlugin]}
             initialView="timeGridWeek"
             initialDate={initialDate}
@@ -111,6 +127,24 @@ const MyCalendar = () => {
             allDaySlot={false}
             events={formattedEvents}
             height="90vh"
+            views={{
+                timeGridThreeDay: {
+                type: "timeGrid",
+                duration: { days: 3 },
+                buttonText: "3 Day"
+                }
+            }}
+            windowResize={() => {
+                const calendarApi = calendarRef.current?.getApi();
+                if (!calendarApi) return;
+
+                const isMobile = window.innerWidth < 768;
+                const targetView = isMobile ? "timeGridThreeDay" : "timeGridWeek";
+
+                if (calendarApi.view.type !== targetView) {
+                calendarApi.changeView(targetView);
+                }
+            }}
             eventContent={(arg) => (
                 <div className={styles.eventItem} onClick={() => navigate(`/event/${arg.event.extendedProps.eventId}`)}>
                     <span className={styles.eventTitle}>{arg.event.title}</span>
@@ -120,18 +154,6 @@ const MyCalendar = () => {
                         }>
                         <FontAwesomeIcon icon={faLocationDot} className={styles.icon} />
                             <p>{arg.event.extendedProps.addressName}</p>
-                    </div>
-                    <div className={styles.tags}>
-                        <ul>
-                            {arg.event.extendedProps.tags.slice(0, 2).map((tag: string, index: number) => (
-                                <li key={index}>
-                                    <span>
-                                        #{tag} 
-                                    </span>
-                                    {index === 1 ? " ..." : ""}
-                                </li>
-                            ))}
-                        </ul>
                     </div>
                 </div>
             )}

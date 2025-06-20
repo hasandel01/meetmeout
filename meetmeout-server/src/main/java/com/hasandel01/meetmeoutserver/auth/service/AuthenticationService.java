@@ -1,6 +1,9 @@
 package com.hasandel01.meetmeoutserver.auth.service;
 
 import com.hasandel01.meetmeoutserver.auth.model.*;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.sql.Ref;
 
 /**
  * Interface for handling user authentication and account-related operations.
@@ -24,20 +27,20 @@ public interface AuthenticationService {
     AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest);
 
     /**
+     * Validates the provided refresh token and returns a new access token.
+     *
+     * @param request the refresh token request
+     * @return an authentication response with a new access token
+     */
+    RefreshResponse validateRefreshToken(HttpServletRequest request);
+
+    /**
      * Checks if a user exists based on the provided email.
      *
      * @param request the request containing the email to check
      * @return true if the user exists, false otherwise
      */
     Boolean checkUser(CheckUserRequest request);
-
-    /**
-     * Validates the provided refresh token and returns a new access token.
-     *
-     * @param request the refresh token request
-     * @return an authentication response with a new access token
-     */
-    AuthenticationResponse validateRefreshToken(RefreshTokenRequest request);
 
     /**
      * Sends a password reset link to the specified email address.

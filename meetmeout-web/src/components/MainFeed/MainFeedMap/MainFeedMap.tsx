@@ -265,7 +265,7 @@ const MainFeedMap = ({ events }: MainFeedMapProps) => {
 
     loadEvents();
   }, [events, userLatitude, userLongitude, map, navigate]);
-  
+   
 
   return null;
 };

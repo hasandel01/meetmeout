@@ -119,7 +119,7 @@ public class ReviewServiceImpl implements ReviewService {
         Optional<ReviewDismissal> reviewDismissal = reviewDismissalRepository.findByReviewerAndEvent(user,event);
 
         System.out.println(reviewDismissal.isPresent());
-        
+
 
         return reviewDismissal.isPresent();
     }

@@ -7,6 +7,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\Invite.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\repository\JoinEventRequestRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\auth\model\ResetPasswordRequest.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\model\OrganizerReviewDismissal.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\Like.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\EventPhoto.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\controller\EventChatController.java
@@ -28,6 +29,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\common\config\ApplicationConfig.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\service\ReviewService.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\mapper\CarMapper.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\auth\model\RefreshResponse.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\repository\ReviewRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\notification\repository\NotificationRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\service\EventService.java
@@ -50,6 +52,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\EventChatMessage.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\enums\Categories.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\auth\service\JwtService.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\repository\OrganizerReviewDismissalRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\repository\EventCarRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\repository\UserRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\enums\EventStatus.java
@@ -87,6 +90,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\repository\LikeRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\model\Car.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\mapper\UserReviewMapper.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\ReviewDismissal.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\common\config\interceptor\AuthChannelInterceptor.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\repository\CommentRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\dto\UserReviewDTO.java
@@ -129,7 +133,6 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\companion\repository\FriendRequestRepository.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\service\impl\EventServiceImpl.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\controller\CarController.java
-C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\model\ReviewDismissal.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\mapper\EventMapper.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\controller\EventParticipantController.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\EventCar.java

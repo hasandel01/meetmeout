@@ -40,7 +40,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private String baseUrl;
 
 
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
+    public void register(RegisterRequest registerRequest) {
 
         User user = userRepository.findByEmail(registerRequest.getEmail()).orElse(null);
 
@@ -71,9 +71,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             userRepository.save(user);
         }
 
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        return AuthenticationResponse.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+        jwtService.generateToken(user);
+        jwtService.generateRefreshToken(user);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {

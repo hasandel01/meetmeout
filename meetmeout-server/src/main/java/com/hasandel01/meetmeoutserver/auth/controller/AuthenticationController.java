@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,19 +24,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> registerUser(@RequestBody RegisterRequest registerRequest) {
-        return ResponseEntity.ok(authenticationService.register(registerRequest));
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
+        authenticationService.register(registerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Registration was successfull.");
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequest authenticationRequest,
                                           HttpServletResponse response) {
-
         AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
-
         clearCookie(response, "jwt");
         clearCookie(response, "refresh");
-
         addCookie(response, "jwt", authResponse.getAccessToken(), 7 * 24 * 60 * 60);
         addCookie(response, "refresh", authResponse.getRefreshToken(), 30 * 24 * 60 * 60);
 
@@ -51,9 +50,7 @@ public class AuthenticationController {
     @PostMapping("/refresh-token")
     public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         RefreshResponse refreshResponse = authenticationService.validateRefreshToken(request);
-
         addCookie(response, "jwt", refreshResponse.getAccessToken(), 7 * 24 * 60 * 60);
-
         return ResponseEntity.ok(refreshResponse);
     }
 

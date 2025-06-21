@@ -106,7 +106,6 @@ com\hasandel01\meetmeoutserver\auth\model\AuthenticationRequest$AuthenticationRe
 com\hasandel01\meetmeoutserver\user\dto\CarDTO.class
 com\hasandel01\meetmeoutserver\event\repository\JoinEventRequestRepository.class
 com\hasandel01\meetmeoutserver\exceptions\RequestAlreadyExists.class
-com\hasandel01\meetmeoutserver\user\model\ReviewDismissal$ReviewDismissalBuilder.class
 com\hasandel01\meetmeoutserver\event\repository\LikeRepository.class
 com\hasandel01\meetmeoutserver\event\controller\EventParticipantController.class
 com\hasandel01\meetmeoutserver\user\repository\UserReviewRepository.class
@@ -194,4 +193,3 @@ com\hasandel01\meetmeoutserver\notification\model\Notification.class
 com\hasandel01\meetmeoutserver\event\controller\EventCarController.class
 com\hasandel01\meetmeoutserver\user\model\Car.class
 com\hasandel01\meetmeoutserver\companion\dto\RecommendedFriendDTO.class
-com\hasandel01\meetmeoutserver\user\model\ReviewDismissal.class

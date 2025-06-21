@@ -16,7 +16,7 @@ public interface AuthenticationService {
      * @param registerRequest the registration request containing user details
      * @return an authentication response with JWT tokens
      */
-    AuthenticationResponse register(RegisterRequest registerRequest);
+    void register(RegisterRequest registerRequest);
 
     /**
      * Authenticates a user with username and password.

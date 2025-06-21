@@ -43,7 +43,6 @@ const EventDetails = () => {
     const fetchUserReviews = async (organizerId: number) => {
       try {
         const response = await axiosInstance.get(`/user-reviews/of/${organizerId}`);
-        console.log(response.data)
         setUserReviews(response.data);
       } catch (error) {
         console.error("Failed to fetch organizer reviews:", error);
@@ -241,10 +240,7 @@ const EventDetails = () => {
         axios
         .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${event.latitude}&lon=${event.longitude}&exclude=minutely,hourly&appid=${apiKey}&units=metric`, {
         });
-
-        console.log(response.data);
         setWeather(response.data);
-
     }catch(error) {
       toast.error("Error getting weather info");
       console.log((error as any).message);

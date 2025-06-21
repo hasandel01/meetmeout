@@ -13,7 +13,6 @@ com\hasandel01\meetmeoutws\config\WebSocketSecurityInterceptor.class
 com\hasandel01\meetmeoutws\notification\service\NotificationService.class
 com\hasandel01\meetmeoutws\FriendRequest$FriendRequestBuilder.class
 com\hasandel01\meetmeoutws\user\UserReviewDTO.class
-com\hasandel01\meetmeoutws\auth\AuthHandshakeInterceptor.class
 com\hasandel01\meetmeoutws\notification\model\Notification$NotificationBuilder.class
 com\hasandel01\meetmeoutws\relay\RelayController.class
 com\hasandel01\meetmeoutws\user\UserDTO.class

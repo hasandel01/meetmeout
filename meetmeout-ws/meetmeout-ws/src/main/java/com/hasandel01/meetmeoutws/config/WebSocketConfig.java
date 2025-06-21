@@ -25,7 +25,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
                 .addInterceptors(new WebSocketSecurityInterceptor(jwtService))
-                .setAllowedOrigins("*");
+                .setAllowedOrigins("https://meetmeout.vercel.app/");
     }
 
     @Override

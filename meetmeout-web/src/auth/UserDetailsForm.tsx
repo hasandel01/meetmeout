@@ -41,7 +41,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                 password: password,
             });
     
-            if (response.status === 200) {
+            if (response.status === 201) {
                 navigate('/login');
             } else {
                 toast.error('Error registering user!');

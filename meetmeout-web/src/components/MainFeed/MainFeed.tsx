@@ -259,7 +259,7 @@ const MainFeed = () => {
                     attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <MainFeedMap events={filteredEvents || []} coords={{ lat: userLatitude ?? 41.0082, lng: userLongitude ?? 28.9784 }} />
+                <MainFeedMap events={filteredEvents || []} />
                 {flyTo && <MapPanner coords={flyTo} />}
                 </MapContainer>
         </div>

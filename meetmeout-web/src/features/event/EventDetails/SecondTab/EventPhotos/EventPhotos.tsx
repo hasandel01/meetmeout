@@ -47,7 +47,7 @@ const EventPhotos: React.FC<EventPhotosProps> = ({ event }) => {
                 <span className={styles.username}>{username}</span>
               </div>
               <div className={styles.userPhotoGrid}>
-                {photos.map((photo, index) => {
+                {photos.map((photo) => {
                   const globalIndex = event.eventPhotos.findIndex(p => p.url === photo.url);
                   return (
                     <div key={photo.url} className={styles.photoCard}>

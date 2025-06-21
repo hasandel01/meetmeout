@@ -33,7 +33,7 @@ public class WebSocketCookieController {
 
         String wsJwt = jwtService.generateToken(user);
 
-        ResponseCookie cookie = ResponseCookie.from("ws_jwt", wsJwt)
+        ResponseCookie cookie = ResponseCookie.from("jwt", wsJwt)
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("None")
@@ -42,7 +42,7 @@ public class WebSocketCookieController {
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        System.out.println("✅ ws_jwt cookie set for user: " + username);
+        System.out.println("✅ jwt cookie set for user: " + username);
         return ResponseEntity.ok().build();
     }
 }

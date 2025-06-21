@@ -43,19 +43,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
-    @Bean
-    @Order(0)
-    public SecurityFilterChain wsSecurity(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/ws/**")
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        return http.build();
-    }
-
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()
@@ -65,6 +52,7 @@ public class SecurityConfig {
                         "/swagger-ui.html"
                 );
     }
+
 
     @Bean
     @Order(1)

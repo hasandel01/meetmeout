@@ -32,7 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String uri = request.getRequestURI();
-        if (uri.startsWith("/auth") || uri.startsWith("/ws") || uri.contains("sockjs")) {
+
+        if (uri.startsWith("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,7 +55,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String username = jwtService.getSubject(token);
+
         if (username != null) {
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             if (jwtService.isTokenValid(token, userDetails)) {
@@ -63,6 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
             }
         }
 

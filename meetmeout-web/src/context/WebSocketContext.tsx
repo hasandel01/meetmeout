@@ -1,6 +1,7 @@
 import { createContext, useContext, useRef, useEffect, useState } from "react";
 import { Client, IMessage, StompHeaders } from "@stomp/stompjs";
 import { toast } from "react-toastify";
+import { useUserContext } from "./UserContext";
 
 interface WebSocketContextType {
   client: Client | null;
@@ -16,6 +17,8 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
   const [isConnected, setIsConnected] = useState(false);
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
+
+  const {currentUser} = useUserContext();
 
   const subscribe = (destination: string, callback: (message: IMessage) => void, headers?: StompHeaders) => {
     if (!clientRef.current || !clientRef.current.connected) {
@@ -33,8 +36,24 @@ export const WebSocketProvider = ({ children }: { children: React.ReactNode }) =
     clientRef.current.publish({ destination, body, headers });
   };
 
+
+
   useEffect(() => {
-    const initializeWebSocket = () => {
+
+    const initializeWebSocket = async () => {
+
+       if (!currentUser?.username) {
+        console.warn("❌ currentUser.username boş, ws-cookie alınamadı.");
+        return;
+      }
+
+      // 1️⃣ ws-cookie setleme isteği
+      await fetch(`${import.meta.env.VITE_SOCKET_BASE_URL}/ws-cookie?username=${currentUser.username}`, {
+        credentials: "include",
+      });
+
+      console.log("✅ ws-cookie setlendi");
+      
       const socketUrl = `${import.meta.env.VITE_SOCKET_BASE_URL.replace("https", "wss")}/ws`;
 
       const client = new Client({

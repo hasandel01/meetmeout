@@ -4,7 +4,7 @@ C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\mee
 C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\ChatController.java
 C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\ChatMessageRepository.java
 C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\config\WebSocketConfig.java
-C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\event\ChatMessageService.java
+C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\config\WebSocketSecurityInterceptor.java
 C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\event\Event.java
 C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\event\EventChatMessage.java
 C:\Users\hasan\cse496\meetmeout-ws\meetmeout-ws\src\main\java\com\hasandel01\meetmeoutws\event\EventChatMessageDTO.java

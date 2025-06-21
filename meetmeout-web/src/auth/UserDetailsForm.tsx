@@ -42,9 +42,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
             });
     
             if (response.status === 200) {
-                localStorage.setItem('token', response.data.token);
                 navigate('/login');
-
             } else {
                 toast.error('Error registering user!');
             }

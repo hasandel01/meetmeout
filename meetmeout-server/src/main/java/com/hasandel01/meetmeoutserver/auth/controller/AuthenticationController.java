@@ -33,37 +33,15 @@ public class AuthenticationController {
 
         AuthenticationResponse authResponse = authenticationService.authenticate(authenticationRequest);
 
-        Cookie clearAccessToken = new Cookie("jwt", "");
-        clearAccessToken.setHttpOnly(true);
-        clearAccessToken.setSecure(true);
-        clearAccessToken.setPath("/");
-        clearAccessToken.setMaxAge(0);
-        response.addCookie(clearAccessToken);
+        clearCookie(response, "jwt");
+        clearCookie(response, "refresh");
 
-        Cookie clearRefreshToken = new Cookie("refresh", "");
-        clearRefreshToken.setHttpOnly(true);
-        clearRefreshToken.setSecure(true);
-        clearRefreshToken.setPath("/");
-        clearRefreshToken.setMaxAge(0);
-        response.addCookie(clearRefreshToken);
-
-        Cookie accessTokenCookie = new Cookie("jwt", authResponse.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-
-        Cookie refreshTokenCookie = new Cookie("refresh", authResponse.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(30 * 24 * 60 * 60);
-
-        response.addCookie(accessTokenCookie);
-        response.addCookie(refreshTokenCookie);
+        addCookie(response, "jwt", authResponse.getAccessToken(), 7 * 24 * 60 * 60);
+        addCookie(response, "refresh", authResponse.getRefreshToken(), 30 * 24 * 60 * 60);
 
         return ResponseEntity.ok("Login successful");
     }
+
 
     @PostMapping("/verify-email")
     public ResponseEntity<String> verifyEmail(@RequestParam("token") String token) {
@@ -74,15 +52,11 @@ public class AuthenticationController {
     public ResponseEntity<RefreshResponse> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         RefreshResponse refreshResponse = authenticationService.validateRefreshToken(request);
 
-        Cookie newAccessTokenCookie = new Cookie("jwt", refreshResponse.getAccessToken());
-        newAccessTokenCookie.setHttpOnly(true);
-        newAccessTokenCookie.setSecure(true);
-        newAccessTokenCookie.setPath("/");
-        newAccessTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-        response.addCookie(newAccessTokenCookie);
+        addCookie(response, "jwt", refreshResponse.getAccessToken(), 7 * 24 * 60 * 60);
 
         return ResponseEntity.ok(refreshResponse);
     }
+
 
 
     @PostMapping("/password-reset-link")
@@ -97,23 +71,28 @@ public class AuthenticationController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie clearAccessToken = new Cookie("jwt", "");
-        clearAccessToken.setHttpOnly(true);
-        clearAccessToken.setSecure(true);
-        clearAccessToken.setPath("/");
-        clearAccessToken.setMaxAge(0);
-
-        Cookie clearRefreshToken = new Cookie("refresh", "");
-        clearRefreshToken.setHttpOnly(true);
-        clearRefreshToken.setSecure(true);
-        clearRefreshToken.setPath("/");
-        clearRefreshToken.setMaxAge(0);
-
-        response.addCookie(clearAccessToken);
-        response.addCookie(clearRefreshToken);
-
+        clearCookie(response, "jwt");
+        clearCookie(response, "refresh");
         return ResponseEntity.ok().build();
     }
+
+
+    private void addCookie(HttpServletResponse response, String name, String value, int maxAgeSeconds) {
+        String cookieString = String.format(
+                "%s=%s; Max-Age=%d; Path=/; Secure; HttpOnly; SameSite=None",
+                name, value, maxAgeSeconds
+        );
+        response.addHeader("Set-Cookie", cookieString);
+    }
+
+    private void clearCookie(HttpServletResponse response, String name) {
+        String cookieString = String.format(
+                "%s=; Max-Age=0; Path=/; Secure; HttpOnly; SameSite=None",
+                name
+        );
+        response.addHeader("Set-Cookie", cookieString);
+    }
+
 
 
 }

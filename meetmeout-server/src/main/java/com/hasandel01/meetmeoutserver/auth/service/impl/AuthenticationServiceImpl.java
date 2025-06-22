@@ -175,4 +175,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return"Email verified";
     }
+
+    @Override
+    public Boolean checkUsername(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElse(null);
+
+
+        if(user == null) return false;
+
+        return user.getUsername().equals(username);
+    }
 }

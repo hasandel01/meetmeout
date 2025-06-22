@@ -35,13 +35,22 @@ public class NotificationServiceImpl implements NotificationService {
     private final WebSocketNotificationRelayService webSocketRelay;
 
     @Transactional
-    public Page<NotificationDTO> getNotificationsForUser(Pageable pageable) {
+    public Page<NotificationDTO> getNotificationsForUser(Pageable pageable, String filter) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        return notificationRepository.findByReceiverUsernameOrderByIdDesc(username,pageable)
-                .map(NotificationMapper::toNotificationDTO);
 
+        if(filter.equals("all")) {
+            return notificationRepository.findByReceiverUsernameOrderByCreatedAtDesc(username,pageable)
+                    .map(NotificationMapper::toNotificationDTO);
+        }
+        else {
+
+            NotificationType type = NotificationType.valueOf(filter);
+
+            return notificationRepository.findByReceiverUsernameAndNotificationTypeOrderByCreatedAtDesc(username,type,pageable)
+                    .map(NotificationMapper::toNotificationDTO);
+        }
     }
 
     @Transactional

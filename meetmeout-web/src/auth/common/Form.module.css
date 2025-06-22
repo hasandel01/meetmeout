@@ -19,7 +19,6 @@
 
 .formContainer p {
     font-size: 16px;
-    color: var(--text-color);
     text-align: center;
 }
 
@@ -116,7 +115,7 @@
 }
 
 
-.errorMessage {
+.errorMessage{
     color: red;
     font-size: 16px;
     font-weight: bold;
@@ -142,6 +141,7 @@
   border-color: var(--primary-color);
   box-shadow: 0 0 4px rgba(0, 128, 0, 0.2);
 }
+
 
 @media (max-width: 768px) {
     html, body {

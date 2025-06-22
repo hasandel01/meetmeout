@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from 'react';
+import { SetStateAction,useEffect, useState } from 'react';
 import styles from'./common/Form.module.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -20,6 +20,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
     const [username, setUsername] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
+    const [isUsernameValid, setIsUsernameValid] = useState(true);
     const navigate = useNavigate();
 
 
@@ -31,7 +32,12 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
             if (password !== confirmPassword) {
                 setError('Passwords do not match!');
                 return;
-            }        
+            }
+
+            if(!isUsernameValid) {
+                setError('Username is already taken!');
+                return;
+            }
     
             const response = await authAxios.post('/auth/register', {
                 email: email,
@@ -53,6 +59,43 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
   
     }
 
+
+    const validateUsername = (username: string) => {
+    
+        try {
+            const response = authAxios.get(`/auth/validate`, {
+                params:
+                { username: username } 
+            });
+            return response;
+        } catch (error) {
+            console.error('Error validating username:', error);
+            throw error;
+        }
+    }
+
+    useEffect(() => {   
+        const validate = async () => {
+            if (username.length >= 3) {
+                try {
+                    const response = await validateUsername(username);
+                    if (response.data) {
+                        setIsUsernameValid(false);
+                    } 
+                    else {
+                        setIsUsernameValid(true);
+                    }
+                } catch (error) {
+                    setError('Error validating username!');
+                }
+            } else {
+                setError('');
+            }
+        };
+
+        validate();
+    }, [username]);
+
     return (
     <div className={styles.formContainer}>
                     <h2> Please provide information </h2>
@@ -68,6 +111,7 @@ const UserDetailsForm: React.FC<UserDetailsFormProps> = ({email}) => {
                                     minLength={3}
                                     maxLength={30}
                                     />
+                                    {!isUsernameValid && <p className={styles.errorMessage}>Username is taken.</p>}
                                 <FormInput
                                     icon={faIdBadge}
                                     type="text"

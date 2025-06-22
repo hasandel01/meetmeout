@@ -23,6 +23,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.checkUser(request));
     }
 
+    @GetMapping("/validate")
+    public ResponseEntity<Boolean> validateUsername(@RequestParam String username) {
+        return ResponseEntity.ok(authenticationService.checkUsername(username));
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
         authenticationService.register(registerRequest);

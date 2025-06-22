@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface NotificationService {
 
-    Page<NotificationDTO> getNotificationsForUser(Pageable pageable);
+    Page<NotificationDTO> getNotificationsForUser(Pageable pageable, String filter);
     boolean changeStatusToRead(Long notificationId);
 
     void sendEventCreatedNotificationToCompanions(User creator, Event newEvent);

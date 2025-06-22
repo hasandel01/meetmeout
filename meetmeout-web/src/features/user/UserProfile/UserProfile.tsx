@@ -204,9 +204,12 @@ function UserProfile() {
 
     useEffect(() => {
 
-        if (companionStatus?.status === "PENDING" && companionStatus.sender.id === currentUser?.id)
+        const senderId = companionStatus?.sender?.id;
+        const receiverId = companionStatus?.receiver?.id;
+
+        if (companionStatus?.status === "PENDING" && senderId === currentUser?.id)
             setStatusLabel("REQUEST SENT ✓");
-        else if(companionStatus?.status === "PENDING" && companionStatus.receiver.id === currentUser?.id)
+        else if(companionStatus?.status === "PENDING" && receiverId=== currentUser?.id)
             setStatusLabel("ACCEPT REQUEST")
         else if (companionStatus?.status === "ACCEPTED")
             setStatusLabel("COMPANION ✔");
@@ -230,7 +233,11 @@ function UserProfile() {
                 null);
 
             setStatusLabel(`REQUEST SENT ✓`);
-            setCompanionStatus({ ...companionStatus, status: "PENDING" });
+        setCompanionStatus(
+        companionStatus
+            ? { ...companionStatus, status: "PENDING" }
+            : { id: "", status: "PENDING", sender: currentUser as User, receiver: user as User }
+        );
         }
         catch (error) {
         }
@@ -361,7 +368,7 @@ function UserProfile() {
                 const response = await axiosInstance.get(`/events/with-ids`, {
                     params: { ids: user.organizedEventIds },
                     paramsSerializer: (params) => {
-                        return qs.stringify(params, { arrayFormat: 'repeat' }); // --> ids=1&ids=2
+                        return qs.stringify(params, { arrayFormat: 'repeat' });
                     }
                 });
                 setOrganizedEvents(response.data);
@@ -437,7 +444,7 @@ function UserProfile() {
                         <div className={
                             companionStatus?.status === "NONE"
                                 ? `${styles.companionStatusSendRequest}`
-                                : companionStatus?.status === "PENDING" && companionStatus.receiver.id === currentUser?.id
+                                : companionStatus?.status === "PENDING" && companionStatus.receiver && companionStatus.receiver.id === currentUser?.id
                                     ? `${styles.companionAcceptRequest}`
                                     : companionStatus?.status === "ACCEPTED"
                                         ? `${styles.companionStatusAccepted}`

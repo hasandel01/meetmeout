@@ -7,6 +7,8 @@ import { useUserContext } from "./UserContext";
 interface NotificationContextType {
   notifications: Notification[];
   fetchNotifications: () => void;
+  selectedFilter: string;
+  setSelectedFilter: (filter: string) => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -16,13 +18,15 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const page = 0;
   const size = 20;
+  const [selectedFilter, setSelectedFilter] = useState('all');
+
 
   const { isConnected, subscribe } = useWebSocket();
   const {currentUser} = useUserContext();
 
   const fetchNotifications = async () => {
     try {
-      const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}`);
+      const response = await axiosInstance.get(`/notifications?page=${page}&size=${size}&filter=${selectedFilter}`);
       setNotifications(response.data.content);
     } catch (error) {
       console.error("Error fetching notifications", error);
@@ -31,7 +35,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [selectedFilter]);
 
 
   useEffect(() => {
@@ -42,7 +46,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
     try {
       unsubscribe = subscribe(`/queue/notifications/${currentUser.username}`, (msg) => {
         const newNotification: Notification = JSON.parse(msg.body);
-        setNotifications((prev) => [...prev, newNotification])
+        setNotifications((prev) => [newNotification,...prev])
       });
     } catch (error) {
       console.error("❌ WebSocket subscription failed:", error);
@@ -58,7 +62,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
 
   return (
-    <NotificationContext.Provider value={{ notifications, fetchNotifications }}>
+    <NotificationContext.Provider value={{ notifications, fetchNotifications, selectedFilter, setSelectedFilter }}>
       {children}
     </NotificationContext.Provider>
   );

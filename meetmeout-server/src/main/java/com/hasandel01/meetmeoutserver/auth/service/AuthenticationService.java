@@ -65,4 +65,7 @@ public interface AuthenticationService {
      * @return a message indicating the result
      */
     String verifyEmail(String token);
+
+
+    Boolean checkUsername(String username);
 }

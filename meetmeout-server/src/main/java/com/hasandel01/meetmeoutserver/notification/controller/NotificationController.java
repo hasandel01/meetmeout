@@ -21,8 +21,9 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    public ResponseEntity<Page<NotificationDTO>> getNotifications(Pageable pageable) {
-        return ResponseEntity.ok(notificationService.getNotificationsForUser(pageable));
+    public ResponseEntity<Page<NotificationDTO>> getNotifications(@RequestParam("filter") String filter,
+                                                                  Pageable pageable) {
+        return ResponseEntity.ok(notificationService.getNotificationsForUser(pageable,filter));
     }
 
     @PutMapping("/status/{notificationId}")

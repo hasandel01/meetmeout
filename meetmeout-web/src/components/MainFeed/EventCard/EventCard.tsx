@@ -123,6 +123,8 @@ lng
         try {
             const response = await axiosInstance.post(`/events/${eventId}/join`);
             
+            console.log(response.status);
+
             if (response.status === 200) {
             
                 if(event.isPrivate) {
@@ -133,13 +135,16 @@ lng
                 }
                 
                 await getMe();
-            } else {
-            toast.error("Couldn’t join the event.");
             }
-        } catch (error) {
-            toast.error("Couldn’t join the event.");
+
+        } catch (error: any) {
+            if (error.response?.status === 409) {
+                toast.error("Event is full, you can't join this event.");
+            } else {
+                toast.error("Couldn’t join the event.");
+            }
         }
-    };
+    }
 
     return (
         <div className={event.status !== "ENDED" ? (

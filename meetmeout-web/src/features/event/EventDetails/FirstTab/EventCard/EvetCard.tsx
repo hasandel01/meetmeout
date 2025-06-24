@@ -117,8 +117,9 @@ const EventDetailsCard = ({
     if (newCapacity < event.attendees.length) return;
 
     try {
-      await axiosInstance.put(`/events/${event.id}/capacity`, { maxCapacity: newCapacity, isCapacityRequired: true });
-      setEvent({ ...event, maximumCapacity: newCapacity });
+      const response = await axiosInstance.put(`/events/${event.id}/capacity`, { maxCapacity: newCapacity, isCapacityRequired: true });
+
+      setEvent(response.data);
       setIsEditingCapacity(false);
     } catch (error) {
       console.error("Capacity update failed", error);

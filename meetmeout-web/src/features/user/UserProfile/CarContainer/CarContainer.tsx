@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from "./CarContainer.module.css";
 import { Car } from '../../../../types/Car';
 import axiosInstance from '../../../../axios/axios';
 import { User } from '../../../../types/User';
 import {toast} from "react-toastify";
+import { useUserContext } from '../../../../context/UserContext';
 
 interface CarContainerProps {
     cars: Car[];
@@ -16,6 +17,11 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
     const [newCar, setNewCar] = useState<Partial<Car>>({});
     const [showModal, setShowModal] = useState(false);
     const [localCars, setLocalCars] = useState<Car[]>(cars);
+    const {getMe} = useUserContext();
+
+    useEffect(() => {    
+    getMe();
+    },[localCars])
 
     const addCarToUser = async () => {
         const currentYear = new Date().getFullYear();
@@ -45,6 +51,7 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
             setLocalCars(prev => [...prev, response.data]);
             setShowModal(false);
             setNewCar({});
+
         } catch (error) {
             console.log(error);
         }

@@ -1,6 +1,7 @@
 package com.hasandel01.meetmeoutserver.event.exception;
 
 
+import com.hasandel01.meetmeoutserver.exceptions.EventFullException;
 import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
 import com.hasandel01.meetmeoutserver.exceptions.RestrictedUserException;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,16 @@ public class EventExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
     }
 
+    @ExceptionHandler(EventFullException.class)
+    public ResponseEntity<String> handleEventFullException(EventFullException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
     }
+
+
 
 }

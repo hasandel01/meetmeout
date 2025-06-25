@@ -10,6 +10,7 @@ import com.hasandel01.meetmeoutserver.event.mapper.*;
 import com.hasandel01.meetmeoutserver.event.model.*;
 import com.hasandel01.meetmeoutserver.event.repository.*;
 import com.hasandel01.meetmeoutserver.event.service.EventService;
+import com.hasandel01.meetmeoutserver.exceptions.EventFullException;
 import com.hasandel01.meetmeoutserver.exceptions.EventNotFoundException;
 import com.hasandel01.meetmeoutserver.exceptions.InvalidTokenException;
 import com.hasandel01.meetmeoutserver.exceptions.RestrictedUserException;
@@ -164,6 +165,12 @@ public class EventServiceImpl implements EventService {
                 inviteRepository.save(invite.get());
             }
 
+
+            if (event.getAttendees().size() >= event.getMaximumCapacity()) {
+                System.out.println();
+                throw new EventFullException("Event is full, you can't join this event.");
+            }
+
             user.getParticipatedEvents().add(event);
             event.getAttendees().add(user);
             if(event.getAttendees().size() == event.getMaximumCapacity())
@@ -255,7 +262,7 @@ public class EventServiceImpl implements EventService {
             }
         });
 
-        if(event.getAttendees().size() != event.getMaximumCapacity())
+        if(event.getAttendees().size() < event.getMaximumCapacity())
             event.setStatus(EventStatus.ONGOING);
 
         eventRepository.save(event);
@@ -452,7 +459,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Transactional
-    public Set<String> uploadPhotos(@Valid MultipartFile[] files, long eventId) {
+    public EventDTO uploadPhotos(@Valid MultipartFile[] files, long eventId) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -475,7 +482,7 @@ public class EventServiceImpl implements EventService {
         }
 
         eventRepository.save(event);
-        return photoUrls;
+        return EventMapper.toEventDto(event);
     }
 
 
@@ -579,7 +586,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Transactional
-    public Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest) {
+    public EventDTO capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest) {
 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
@@ -604,7 +611,7 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
         notificationService.sendEventUpdatedNotificationToAttendees(event);
 
-        return true;
+        return EventMapper.toEventDto(event);
     }
 
     @Transactional

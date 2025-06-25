@@ -322,10 +322,7 @@ const EventDetails = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      setEvent(prev => ({
-        ...prev,
-        eventPhotos: [...prev.eventPhotos, ...response.data]
-      }));
+      setEvent(response.data);
       toast.success("Photos uploaded successfully!");
     } catch (error) {
       toast.error("Error uploading photos.");

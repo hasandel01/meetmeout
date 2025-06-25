@@ -47,7 +47,7 @@ public interface EventService {
     Set<EventDTO> getMyEvents();
 
     @Transactional
-    Set<String> uploadPhotos(@Valid MultipartFile[] files, long eventId);
+    EventDTO uploadPhotos(@Valid MultipartFile[] files, long eventId);
 
     EventDTO updateEvent(long eventId, EventDTO eventDTO);
 
@@ -59,7 +59,7 @@ public interface EventService {
 
     Boolean tagsUpdate(Long eventId, TagUpdateRequest tagUpdateRequest);
 
-    Boolean capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest);
+    EventDTO capacityUpdate(Long eventId, CapacityUpdateRequest capacityUpdateRequest);
 
     List<UserDTO> getAllInvitedUsersForTheEvent(long eventId);
 

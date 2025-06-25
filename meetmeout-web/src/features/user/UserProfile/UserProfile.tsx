@@ -752,7 +752,29 @@ function UserProfile() {
                             <p>No trophies unlocked.</p>
                         )
                     )}
-                    {tab === 6 && user?.cars && user && currentUser && <CarContainer user={user} cars={user.cars ?? []} currentUser={currentUser}/>}
+                    {tab === 6 && user?.cars && user && currentUser && <CarContainer 
+                    user={user} 
+                    cars={user.cars ?? []} 
+                    currentUser={currentUser}
+                    onCarAdded={(newCar) => {
+                        setUser((prevUser) => {
+                        if (!prevUser) return prevUser;
+                        return {
+                            ...prevUser,
+                            cars: [...prevUser.cars, newCar]
+                        };
+                        });
+                    }}
+                    onCarDeleted={(carId) => {
+                            setUser((prevUser) => {
+                            if (!prevUser) return prevUser;
+                            return {
+                                ...prevUser,
+                                cars: prevUser.cars.filter((c) => c.id !== Number(carId))
+                            };
+                            });
+                        }}
+                    />}
                 </div>
             </div>
         </div>

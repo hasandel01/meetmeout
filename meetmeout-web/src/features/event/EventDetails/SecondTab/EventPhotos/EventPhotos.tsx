@@ -34,36 +34,44 @@ const EventPhotos: React.FC<EventPhotosProps> = ({ event }) => {
       <h4>Photos</h4>
       {Object.keys(groupedPhotos).length > 0 ? (
         <div className={styles.groupedPhotoGrid}>
-          {Object.entries(groupedPhotos).map(([username, photos]) => (
-            <div key={username} className={styles.userPhotoGroup}>
-              <div className={styles.userInfoRow}>
-                <img
-                  src={photos[0].uploadedByProfilePictureUrl}
-                  alt={username}
-                  className={styles.avatar}
-                  title={username}
-                  onClick={() => navigate(`/user-profile/${username}`)}
-                />
-                <span className={styles.username}>{username}</span>
-              </div>
-              <div className={styles.userPhotoGrid}>
-                {photos.map((photo) => {
-                  const globalIndex = event.eventPhotos.findIndex(p => p.url === photo.url);
-                  return (
-                    <div key={photo.url} className={styles.photoCard}>
-                      <img
-                        src={photo.url}
-                        alt={`Photo`}
-                        className={styles.photo}
-                        onClick={() => openOverlay(globalIndex)}
-                      />
-                      <p>{photo.uploadedDateTime && formatTime(photo.uploadedDateTime)}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+          {Object.entries(groupedPhotos)
+            .sort((a, b) => new Date(b[1][0].uploadedDateTime).getTime() - new Date(a[1][0].uploadedDateTime).getTime())
+            .map(([username, photos]) => {
+              const sortedPhotos = [...photos].sort((a, b) =>
+                new Date(b.uploadedDateTime).getTime() - new Date(a.uploadedDateTime).getTime()
+              );
+
+              return (
+                <div key={username} className={styles.userPhotoGroup}>
+                  <div className={styles.userInfoRow}>
+                    <img
+                      src={photos[0].uploadedByProfilePictureUrl}
+                      alt={username}
+                      className={styles.avatar}
+                      title={username}
+                      onClick={() => navigate(`/user-profile/${username}`)}
+                    />
+                    <span className={styles.username}>{username}</span>
+                  </div>
+                  <div className={styles.userPhotoGrid}>
+                    {sortedPhotos.map((photo) => {
+                      const globalIndex = event.eventPhotos.findIndex(p => p.url === photo.url);
+                      return (
+                        <div key={photo.url} className={styles.photoCard}>
+                          <img
+                            src={photo.url}
+                            alt={`Photo`}
+                            className={styles.photo}
+                            onClick={() => openOverlay(globalIndex)}
+                          />
+                          <p>{photo.uploadedDateTime && formatTime(photo.uploadedDateTime)}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
         </div>
       ) : (
         <p className={styles.emptyMessage}>No photos yet.</p>

@@ -123,6 +123,7 @@ C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutser
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\exceptions\UserIsRegisteredException.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\user\controller\UserReviewController.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\dto\ReviewDTO.java
+C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\exceptions\EventFullException.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\Review.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\model\JoinEventRequest.java
 C:\Users\hasan\cse496\meetmeout-server\src\main\java\com\hasandel01\meetmeoutserver\event\dto\InviteDTO.java

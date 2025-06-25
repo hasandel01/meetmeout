@@ -53,7 +53,7 @@ public class EventController {
     }
 
     @PostMapping("/{eventId}/photos")
-    public ResponseEntity<Set<String>> uploadPhotos(@Valid MultipartFile[] files, @PathVariable long eventId) {
+    public ResponseEntity<EventDTO> uploadPhotos(@Valid MultipartFile[] files, @PathVariable long eventId) {
         return ResponseEntity.ok(eventService.uploadPhotos(files,eventId));
     }
 
@@ -85,7 +85,7 @@ public class EventController {
 
 
     @PutMapping("/{eventId}/capacity")
-    public ResponseEntity<Boolean> updateCapacity(@PathVariable Long eventId,
+    public ResponseEntity<EventDTO> updateCapacity(@PathVariable Long eventId,
                                                   @Validated @RequestBody CapacityUpdateRequest capacityUpdateRequest) {
         return ResponseEntity.ok(eventService.capacityUpdate(eventId,capacityUpdateRequest));
     }

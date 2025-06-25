@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from "./CarContainer.module.css";
 import { Car } from '../../../../types/Car';
 import axiosInstance from '../../../../axios/axios';
 import { User } from '../../../../types/User';
 import {toast} from "react-toastify";
-import { useUserContext } from '../../../../context/UserContext';
 
 interface CarContainerProps {
     cars: Car[];
     user: User;
     currentUser: User;
+    onCarAdded?: (car: Car) => void;
+    onCarDeleted?: (carId: string) => void;
 }
 
-const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) => {
+const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser, onCarAdded, onCarDeleted}) => {
     
     const [newCar, setNewCar] = useState<Partial<Car>>({});
     const [showModal, setShowModal] = useState(false);
     const [localCars, setLocalCars] = useState<Car[]>(cars);
-    const {getMe} = useUserContext();
-
-    useEffect(() => {    
-    getMe();
-    },[localCars])
 
     const addCarToUser = async () => {
         const currentYear = new Date().getFullYear();
@@ -49,6 +45,7 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
         try {
             const response = await axiosInstance.post(`/cars/${user.id}`, newCar);
             setLocalCars(prev => [...prev, response.data]);
+            if (onCarAdded) onCarAdded(response.data); 
             setShowModal(false);
             setNewCar({});
 
@@ -64,7 +61,8 @@ const CarContainer: React.FC<CarContainerProps> = ({ cars, user, currentUser }) 
 
         try {
             await axiosInstance.delete(`/cars/${car.id}`);
-            setLocalCars(prev => prev.filter(c => c.id !== car.id)); 
+            setLocalCars(prev => prev.filter(c => c.id !== car.id));
+            if (onCarDeleted) onCarDeleted(car.id.toString());
         } catch (error: any) {
             if (error.response?.data?.message) {
                 alert(error.response.data.message);

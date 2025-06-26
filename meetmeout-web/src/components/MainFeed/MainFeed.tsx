@@ -39,7 +39,7 @@ const MainFeed = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [showPastEvents, setShowPastEvents] = useState(false);
     const [showFreeEvents, setShowFreeEvents] = useState(false);
-    const [filterGroup, setFilterGroup] = useState<'All Events' | 'My Events' | 'My Drafts'>('All Events');
+    const [filterGroup, setFilterGroup] = useState<'All Events' | 'Organized Events' | 'My Drafts'>('All Events');
     const [onlyPublicEvents, setOnlyPublicEvents] = useState(false);
     const { userLatitude: lat, userLongitude: lng } = useLocationContext();
 
@@ -68,13 +68,20 @@ const MainFeed = () => {
     result = result.filter(ev => ev.category === selectedCategory);
     }
 
-
-    if (filterGroup === 'My Events') {
-        result = result.filter(ev => ev.organizer && ev.organizer.username === currentUser?.username);
+    if (filterGroup === 'All Events') {
+        result = result.filter(ev => !ev.isDraft);
     }
 
     if (filterGroup === 'My Drafts') {
-        result = result.filter(ev => ev.status === 'DRAFT' && ev.organizer && ev.organizer.username === currentUser?.username);
+        result = result.filter(ev => ev.isDraft && ev.organizer && ev.organizer.username === currentUser?.username);
+    }
+
+    if (filterGroup === 'Organized Events') {
+        result = result.filter(ev => ev.organizer && ev.organizer.username === currentUser?.username && !ev.isDraft);
+    }
+
+    if (filterGroup === 'My Drafts') {
+        result = result.filter(ev => ev.isDraft && ev.organizer && ev.organizer.username === currentUser?.username);
     }
 
     setFilteredEvents(result);

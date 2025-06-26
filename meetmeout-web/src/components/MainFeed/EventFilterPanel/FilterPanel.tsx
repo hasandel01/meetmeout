@@ -8,7 +8,7 @@ interface FilterPanelProps {
   onCategoryChange: (category: string) => void;
   onShowPastEventsChange: (show: boolean) => void;
   onShowFreeEventsChange: (freeOnly: boolean) => void;
-  onFilterGroupChange: (group: 'All Events' | 'My Events' | 'My Drafts') => void;
+  onFilterGroupChange: (group: 'All Events' | 'Organized Events' | 'My Drafts') => void;
   onlyPublicEvents: boolean;
   onOnlyPublicEventsChange: (val: boolean) => void;
 }
@@ -40,7 +40,7 @@ const FilterPanel = ({
     <>
       <div className={styles.selections}>
         <label onClick={() => onFilterGroupChange("All Events")}>All Available Events</label>
-        <label onClick={() => onFilterGroupChange("My Events")}>My Events</label>
+        <label onClick={() => onFilterGroupChange("Organized Events")}>Organized Events</label>
         <label onClick={() => onFilterGroupChange("My Drafts")}>My Drafts</label>
         <label className={styles.toggleWrapper}>
           <input type="checkbox" onChange={(e) => onShowPastEventsChange(e.target.checked)} />

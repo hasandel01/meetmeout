@@ -27,12 +27,15 @@ const MainFeedMap = ({ events }: MainFeedMapProps) => {
     });
     routeLayers.current = [];
 
-    if (!map || !userLatitude || !userLongitude) return;
+    if (!map) return;
 
     const hasFlyTo = sessionStorage.getItem("flyTo");
-    if (!hasFlyTo) {
-      map.setView([userLatitude, userLongitude], 13);
-      sessionStorage.removeItem("flyTo");
+
+    if(userLatitude && userLongitude) {
+      if (!hasFlyTo) {
+        map.setView([userLatitude, userLongitude], 13);
+        sessionStorage.removeItem("flyTo");
+      }
     }
 
     const allMarkerEls: HTMLDivElement[] = [];
@@ -253,13 +256,14 @@ const MainFeedMap = ({ events }: MainFeedMapProps) => {
 
       }
 
-
+      if(userLatitude && userLongitude) {
       const userMarker = L.marker([userLatitude, userLongitude], {
         icon: L.divIcon({
           html: `<div class="${styles.userMarker}"><img src="${currentUser?.profilePictureUrl}" /></div>`,
           className: "",
         }),
       }).addTo(map);
+      
 
       userMarker.bindTooltip("You", {
         direction: "top",
@@ -271,6 +275,7 @@ const MainFeedMap = ({ events }: MainFeedMapProps) => {
         navigate(`/user-profile/${currentUser?.username}`);
       });
     };
+  }
 
     loadEvents();
   }, [events, userLatitude, userLongitude, map, navigate]);

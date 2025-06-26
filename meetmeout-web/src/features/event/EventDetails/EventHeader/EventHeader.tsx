@@ -119,8 +119,12 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
             } else {
             toast.error("Couldn’t join the event.");
             }
-        } catch (error) {
-            toast.error("Couldn’t join the event.");
+        } catch (error: any) {
+            if (error.response?.status === 409) {
+                toast.error("Event is full, you can't join this event.");
+            } else {
+                toast.error("Couldn’t join the event.");
+            }
         }
     };
 

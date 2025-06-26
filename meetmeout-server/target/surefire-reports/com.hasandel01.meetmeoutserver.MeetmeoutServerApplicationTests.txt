@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.hasandel01.meetmeoutserver.MeetmeoutServerApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.682 s -- in com.hasandel01.meetmeoutserver.MeetmeoutServerApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.630 s -- in com.hasandel01.meetmeoutserver.MeetmeoutServerApplicationTests

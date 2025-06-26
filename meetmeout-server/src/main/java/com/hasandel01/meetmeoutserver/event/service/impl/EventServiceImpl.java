@@ -101,9 +101,12 @@ public class EventServiceImpl implements EventService {
                 .build();
 
         newEvent = eventRepository.save(newEvent);
-        notificationService.sendEventCreatedNotificationToCompanions(user,newEvent);
 
-        if(user.getOrganizedEvents().size() == 1)
+
+        if(!event.isDraft())
+            notificationService.sendEventCreatedNotificationToCompanions(user,newEvent);
+
+        if(user.getOrganizedEvents().size() == 1 && !event.isDraft())
             badgeService.addBadgeToUser(user, BadgeType.FIRST_ORGANIZER);
 
         return EventMapper.toEventDto(newEvent);

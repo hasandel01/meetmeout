@@ -250,7 +250,7 @@ const EventHeader: React.FC<EventHeaderProps> = ({ event, currentUser, joinReque
             {event.attendees.some(attendee => attendee.username == currentUser?.username) ?
                 (
                 <div className={styles.secondButtonGroup}>
-                    {event.status !== "ENDED" && event.attendees.length < event.maximumCapacity && (
+                    {event.status !== "ENDED" && event.attendees.length < event.maximumCapacity && !event.isDraft && (
                         <>
                             <FontAwesomeIcon
                             data-tooltip-id="invite-icon"
